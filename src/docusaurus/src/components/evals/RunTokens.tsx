@@ -7,6 +7,9 @@ const Classes = [
   [TokenClass.newInput, "New input"], [TokenClass.cacheWrites, "Cache writes"], [TokenClass.cachedInput, "Cached input"], [TokenClass.output, "Output"],
 ] as const;
 
+/** Claude runs from this date count their real output, so no reasoning count just means none was reported. */
+const CountedRealOutputFrom = "2026-11-03";
+
 /** Reads the reasoning count, which the run records carry but their synced types don't list. */
 function reasoningTokens(run: Run): number | null {
   const counts: unknown = run.telemetry?.tokens;
@@ -16,7 +19,7 @@ function reasoningTokens(run: Run): number | null {
 /** A run's tokens by class. Claude output without any reasoning count might come from the old telemetry, which undercounted it. */
 export function RunTokens({ run }: { readonly run: Run }) {
   if (run.telemetry?.tokens == null) return null;
-  const doubtful = run.agent.tool === ClaudeTool && reasoningTokens(run) === 0;
+  const doubtful = run.agent.tool === ClaudeTool && reasoningTokens(run) === 0 && run.startedAt !== null && run.startedAt < CountedRealOutputFrom;
   return <>
     <p>{Classes.map(([kind, title]) => `${title} ${compact(tokenClass(run, kind))}`).join(". ")}{doubtful ? ", which might be undercounted" : ""}. Cache hit rate {percent(cacheHitRate(run))}.</p>
     {doubtful ? <p className="eval-muted">{TokenNote}</p> : null}

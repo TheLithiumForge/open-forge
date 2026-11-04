@@ -28,6 +28,10 @@ export interface SetupSummary {
   readonly setup: string;
   /** Starting point, case and model combinations that have both this setup and its control. Each counts once. */
   readonly groups: number;
+  /** How many of those comparisons each figure rests on. */
+  readonly coverageGroups: number;
+  readonly judgeGroups: number;
+  readonly tokenGroups: number;
   readonly runs: number;
   readonly coverageDelta: number | null;
   readonly judgeDelta: number | null;
@@ -97,7 +101,9 @@ export function setupSummaries(items: readonly Comparison[]): SetupSummary[] {
       tokens: average(group.map((item) => item.cell.tokens.mean)),
     }));
     const compared = perGroup.filter((group) => group.coverageDelta !== null || group.tokenRatio !== null || group.judgeDelta !== null);
-    return { setup, groups: compared.length, runs: perGroup.reduce((sum, group) => sum + group.runs, 0),
+    const known = (read: (group: (typeof compared)[number]) => number | null) => compared.filter((group) => read(group) !== null).length;
+    return { setup, groups: compared.length, coverageGroups: known((group) => group.coverageDelta), judgeGroups: known((group) => group.judgeDelta), tokenGroups: known((group) => group.tokenRatio),
+      runs: compared.reduce((sum, group) => sum + group.runs, 0),
       coverageDelta: average(compared.map((group) => group.coverageDelta)), judgeDelta: average(compared.map((group) => group.judgeDelta)),
       tokenRatio: geometric(compared.map((group) => group.tokenRatio)),
       newInputRatio: geometric(compared.map((group) => group.newInputRatio)), outputRatio: geometric(compared.map((group) => group.outputRatio)),

@@ -5,7 +5,7 @@ import type { Batch } from "../records/records.types.ts";
 import { Judging } from "../records/schema-values.ts";
 import { comparisons } from "./aggregate.ts";
 import { cells, newestCells } from "./cells.ts";
-import { DoneStatus, olderBatches, preliminaryReasons, PreliminaryReason } from "./status.ts";
+import { DoneStatus, mixedModels, olderBatches, preliminaryReasons, PreliminaryReason, replacedRuns, settledText } from "./status.ts";
 
 const RunningStatus = "running";
 
@@ -55,4 +55,27 @@ test("only the newest runs of each setup count, so a later batch can add a setup
     assert.equal(item.cell.batchId, [control, added].includes(item.cell.setup) ? partial.experiment.id : older.experiment.id);
     assert.equal(item.controlCell?.batchId, item.cell.batchId, "Each setup meets its own batch's control.");
   }
+});
+
+test("a run without a judge is never called judged, and an empty view says it's empty", () => {
+  const shown = cells([previewBatch(1)]);
+  const first = shown[0];
+  assert.ok(first);
+  assert.notEqual(settledText(shown), settledText([{ ...first, judged: 0 }, ...shown.slice(1)]));
+  assert.notEqual(settledText([]), settledText(shown));
+});
+
+test("scenarios on different models are flagged, and scenarios on the same models aren't", () => {
+  const shown = cells([previewBatch(1)]);
+  assert.equal(mixedModels(shown), false);
+  const first = shown[0], other = shown.find((cell) => cell.setup !== first?.setup);
+  assert.ok(first && other);
+  assert.equal(mixedModels([...shown, { ...first, model: "another model" }]), true);
+  assert.equal(mixedModels(shown.filter((cell) => cell.runs === 0)), false);
+});
+
+test("runs that newer runs of the same work replaced are counted, and shown runs aren't", () => {
+  const batch = previewBatch(1), shown = cells([batch]);
+  assert.equal(replacedRuns([batch], shown), 0);
+  assert.equal(replacedRuns([batch], []), new Set(shown.flatMap((cell) => cell.runIds)).size);
 });

@@ -40,6 +40,8 @@ export interface Cell {
   readonly workMode: WorkModeId;
   readonly model: string;
   readonly modelLabel: string;
+  /** The agent's own program and version, such as Codex 0.166.0, when the batch recorded it. */
+  readonly agentVersion: string | null;
   readonly judge: string | null;
   readonly judgeLabel: string | null;
   /** Runs whose agent finished, without replaced failures or runs waiting to be redone. */
@@ -98,14 +100,27 @@ export function workModeOf(config: Batch["experiment"]["config"], agent: Batch["
 /**
  * Each setup's newest runs for a case and implementer. A later batch can add a setup beside its own control without hiding
  * the setups an earlier batch ran. Older runs of a setup used earlier inputs or grading, so they stay in history only.
+ * A batch with no finished run of a setup hides nothing, so an empty cell shows only while no batch has runs for it.
  */
 export function newestCells<T extends { readonly cell: Cell }>(items: readonly T[]): T[] {
-  const newest = new Map<string, string>();
+  const newest = new Map<string, { readonly createdAt: string; readonly hasRuns: boolean }>();
   for (const { cell } of items) {
-    const current = newest.get(setupKey(cell));
-    if (current === undefined || current < cell.createdAt) newest.set(setupKey(cell), cell.createdAt);
+    const current = newest.get(setupKey(cell)), hasRuns = cell.runs > 0;
+    if (current === undefined || (hasRuns && !current.hasRuns) || (hasRuns === current.hasRuns && current.createdAt < cell.createdAt)) newest.set(setupKey(cell), { createdAt: cell.createdAt, hasRuns });
   }
-  return items.filter(({ cell }) => newest.get(setupKey(cell)) === cell.createdAt);
+  return items.filter(({ cell }) => newest.get(setupKey(cell))?.createdAt === cell.createdAt);
+}
+
+const AgentPrograms: Readonly<Record<string, { readonly name: string; readonly tool: string }>> = {
+  codex: { name: "Codex", tool: "@openai/codex" },
+  claude: { name: "Claude Code", tool: "@anthropic-ai/claude-code" },
+};
+/** The agent program's version, which the batch record carries but its synced type doesn't list. */
+export function agentVersion(batch: Batch, tool: string): string | null {
+  const program = AgentPrograms[tool], pinned: unknown = Reflect.get(batch.experiment, "pinnedTools");
+  if (program === undefined || typeof pinned !== "object" || pinned === null) return null;
+  const version: unknown = Reflect.get(pinned, program.tool);
+  return typeof version === "string" ? `${program.name} ${version}` : null;
 }
 
 /**
@@ -133,7 +148,7 @@ export function cells(batches: readonly Batch[]): Cell[] {
         chain: chainOf(batch),
         workMode: workModeOf(batch.experiment.config, agent),
         judgedLater: batch.experiment.config.judging === Judging.later,
-        model: choiceKey(agent), modelLabel: modelLabel(agent, reported), runs: group.length, runIds: group.map((run) => run.id),
+        model: choiceKey(agent), modelLabel: modelLabel(agent, reported), agentVersion: agentVersion(batch, agent.tool), runs: group.length, runIds: group.map((run) => run.id),
         checked: states.filter((state) => state === CheckState.checked).length, recheck: states.filter((state) => state === CheckState.recheck).length,
         coverage: pick((value) => value.coverage), tokens: pick((value) => value.tokens), cost: pick((value) => value.cost), newInput: pick((value) => value.newInput),
         cacheWrites: pick((value) => value.cacheWrites), cachedInput: pick((value) => value.cachedInput), outputTokens: pick((value) => value.output),

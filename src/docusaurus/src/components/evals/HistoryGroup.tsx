@@ -13,7 +13,7 @@ export function HistoryGroup({ group }: {
     return null;
   return <section className="eval-panel">
     <h3><Term id={first.setup}>{setupName(first.setup)}</Term></h3>
-    <p className="eval-muted">{first.modelLabel}, judged by {first.judgeLabel ?? "no judge yet"}.</p>
+    <p className="eval-muted">{first.modelLabel}, {first.judgeLabel === null || rows.every((row) => row.judgeMissing >= row.runs) ? "not judged" : `judged by ${first.judgeLabel}`}.</p>
     <details><summary>Comparison and grading versions</summary><p className="eval-key">{first.scope}</p><p className="eval-key">{first.grading}</p></details>
     <div className="eval-trends"><Trend title="Coverage across CLI versions" metric="coverage" points={rows.map((row) => ({ label: row.version, value: row.coverage.mean, low: row.coverage.low, high: row.coverage.high }))} /><Trend title="Judge rules across CLI versions" metric="rules" points={rows.map((row) => ({ label: row.version, value: row.rules.mean, low: row.rules.low, high: row.rules.high }))} /></div>
     <div className="eval-scroll" tabIndex={0} role="region" aria-label={`${setupName(first.setup)} CLI history`}><table><caption>Each row keeps the same grading and model choices. Intervals describe screening variation.</caption><thead><tr>{["Setup", "Point", "CLI", "Graded", "Batch", "Coverage", "Working gate", "Judge code", "Wishes", "Minutes", "Tokens", "Screening result"].map((name) => <th key={name}>{name}</th>)}</tr></thead>

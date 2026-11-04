@@ -14,10 +14,11 @@ export const ReasonText: Readonly<Record<PreliminaryReason, string>> = {
 
 const plural = (count: number, one: string, many: string) => `${count} ${count === 1 ? one : many}`;
 
-function Figure({ id, value, unit }: { readonly id: string; readonly value: string; readonly unit: string }) {
+/** A figure that rests on only some of its card's comparisons says so. */
+function Figure({ id, value, unit, known, total }: { readonly id: string; readonly value: string; readonly unit: string; readonly known: number; readonly total: number }) {
   return <div className="eval-figure">
     <dt><Term id={id} /></dt>
-    <dd><span className="eval-figure-value">{value}</span> {value === NoValue ? null : <span className="eval-muted">{unit}</span>}</dd>
+    <dd><span className="eval-figure-value">{value}</span> {value === NoValue ? null : <span className="eval-muted">{unit}{known < total ? `, from ${known} of ${total}` : ""}</span>}</dd>
   </div>;
 }
 
@@ -27,9 +28,9 @@ function Card({ setup, summary }: { readonly setup: string; readonly summary: Se
     <h3><Term id={setup} /></h3>
     {summary === undefined || summary.groups === 0 ? <p className="eval-muted">No comparison with the control in these filters.</p> : <>
       <dl>
-        <Figure id="check-coverage" value={shift(summary.coverageDelta)} unit="points" />
-        <Figure id="judge-score" value={shift(summary.judgeDelta)} unit="points" />
-        <Figure id="tokens" value={change(summary.tokenRatio)} unit="tokens" />
+        <Figure id="check-coverage" value={shift(summary.coverageDelta)} unit="points" known={summary.coverageGroups} total={summary.groups} />
+        <Figure id="judge-score" value={shift(summary.judgeDelta)} unit="points" known={summary.judgeGroups} total={summary.groups} />
+        <Figure id="tokens" value={change(summary.tokenRatio)} unit="tokens" known={summary.tokenGroups} total={summary.groups} />
       </dl>
       <p className="eval-muted eval-card-classes">New input {change(summary.newInputRatio)}, output {change(summary.outputRatio)}.</p>
       <p className="eval-muted eval-card-basis">From {plural(summary.groups, "case and model", "cases and models")}, {plural(summary.runs, "run", "runs")}.</p>

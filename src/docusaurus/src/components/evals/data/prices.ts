@@ -50,9 +50,13 @@ const ModelAliases: Readonly<Record<string, string>> = { opus: "claude-opus-5-5"
 const TokensPerPrice = 1_000_000;
 const MainThread: (typeof ThreadRoles)[number] = "main";
 
+/** Providers can report a model with a context suffix, a date stamp or another case, such as claude-opus-5-5[1m]. */
+export const canonicalModel = (model: string): string => model.toLowerCase().replace(/\[[^\]]*\]$/, "").replace(/-\d{8}$/, "");
+
 /** A model's newest price, or null for a model the list doesn't have. */
 export function priceOf(model: string | null): ModelPrice | null {
-  const id = model === null ? null : ModelAliases[model] ?? model;
+  const known = model === null ? null : canonicalModel(model);
+  const id = known === null ? null : ModelAliases[known] ?? known;
   if (id === null) return null;
   for (const version of PriceVersions) {
     const price = version.models[id];

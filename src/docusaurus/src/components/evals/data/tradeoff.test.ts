@@ -8,7 +8,7 @@ import { SameTokens, TokenStep, TokenTrend, tradeoffRows, trendOf } from "./trad
 
 const setup = "essentials";
 const summary = (tokenRatio: number | null, coverageDelta: number | null): SetupSummary => ({
-  setup, groups: 1, runs: 3, coverageDelta, judgeDelta: null, tokenRatio, newInputRatio: null, outputRatio: null, coverage: null, judgeScore: null, tokens: null,
+  setup, groups: 1, coverageGroups: 1, judgeGroups: 0, tokenGroups: 1, runs: 3, coverageDelta, judgeDelta: null, tokenRatio, newInputRatio: null, outputRatio: null, coverage: null, judgeScore: null, tokens: null,
 });
 
 test("points per 10% more tokens divide the quality change by the token change", () => {

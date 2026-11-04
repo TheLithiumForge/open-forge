@@ -1,3 +1,4 @@
+import { mixedModels, MixedModelsText } from "./data/status.ts";
 import { useMemo, type ReactNode } from "react";
 import type { Batch } from "./records/records.types.ts";
 import type { Comparison } from "./data/aggregate.ts";
@@ -67,6 +68,7 @@ export function ObjectiveSection({ items, batches }: { readonly items: readonly 
   return <section className="eval-section" aria-labelledby="eval-objective">
     <h2 id="eval-objective">Where the tokens went</h2>
     <p>These measures come from each run's own logs, with no judge. Token totals are exact. How they split across classes and file types is an estimate, and every run's split adds up to its exact total.</p>
+    {mixedModels(items.map((item) => item.cell)) ? <p className="eval-preliminary">{MixedModelsText}</p> : null}
     {rows.length === 0 ? <p>No run in these filters has an analysis yet. Run <code>npm run evals -- analyze --missing</code> to add them from the saved logs.</p> : <>
       {rough > 0 && <p className="eval-muted">{rough} of these runs were saved before Codex's session log was kept, so their split is a rougher estimate from their events alone.</p>}
       <div className="eval-charts"><ContextClassChart rows={rows} /></div>

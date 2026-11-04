@@ -7,6 +7,7 @@ import Brief from "@site/docs/evals/_definitions/brief.mdx";
 import FullSpec from "@site/docs/evals/_definitions/full-spec.mdx";
 import ExistingApp from "@site/docs/evals/_definitions/existing-app.mdx";
 import Feature from "@site/docs/evals/_definitions/l4-f1-name-saves.mdx";
+import Tournament from "@site/docs/evals/_definitions/l4-f2-tournament.mdx";
 import Repair from "@site/docs/evals/_definitions/l4-b5-pasted-saves.mdx";
 import FeatureRepair from "@site/docs/evals/_definitions/l4-p2-name-and-pasted-saves.mdx";
 import BestScore from "@site/docs/evals/_definitions/l4-b1-best-score.mdx";
@@ -53,6 +54,7 @@ export const Definitions: Readonly<Record<DefinitionId, Definition>> = {
   "full-spec": { title: startingPoint("full-spec"), kind: DefinitionKind.startingPoint, Content: FullSpec },
   "existing-app": { title: startingPoint("existing-app"), kind: DefinitionKind.startingPoint, Content: ExistingApp },
   "l4-f1-name-saves": { title: CaseNames["l4-f1-name-saves"], kind: DefinitionKind.startingPoint, Content: Feature },
+  "l4-f2-tournament": { title: CaseNames["l4-f2-tournament"], kind: DefinitionKind.startingPoint, Content: Tournament },
   "l4-b5-pasted-saves": { title: CaseNames["l4-b5-pasted-saves"], kind: DefinitionKind.startingPoint, Content: Repair },
   "l4-p2-name-and-pasted-saves": { title: CaseNames["l4-p2-name-and-pasted-saves"], kind: DefinitionKind.startingPoint, Content: FeatureRepair },
   "l4-b1-best-score": { title: CaseNames["l4-b1-best-score"], kind: DefinitionKind.startingPoint, Content: BestScore },

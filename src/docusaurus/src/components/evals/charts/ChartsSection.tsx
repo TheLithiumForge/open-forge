@@ -1,3 +1,4 @@
+import { mixedModels, MixedModelsText } from "../data/status.ts";
 import { All, type Comparison, type Filters, type SetupSummary } from "../data/aggregate.ts";
 import { controlSetups, summaryRows, tokenClassRows } from "../data/chart-data.ts";
 import { NoValue, signed } from "../data/format.ts";
@@ -37,7 +38,8 @@ export function ChartsSection({ summaries, items, filters }: {
   const narrowed = filters.model !== All && filters.startingPoint !== All;
   return <section className="eval-section" aria-labelledby="eval-charts">
     <h2 id="eval-charts">Charts</h2>
-    <p>Each chart starts from the same averages as the cards, for every scenario. Each starting point has its own control: <Term id="no-setup" /> for an idea and <Term id="plain-docs" /> for the others. The control is the zero line.</p>
+    <p>Each chart starts from the same averages as the cards, for every scenario. Each batch has its own control, the first scenario in its plan, and the control is the zero line.</p>
+    {mixedModels(cells) ? <p className="eval-preliminary">{MixedModelsText}</p> : null}
     {coverage.length === 0 ? <p>No setup has a comparison with the control in these filters.</p> : <>
       <Legend />
       <div className="eval-charts">

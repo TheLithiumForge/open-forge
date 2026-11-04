@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { modelLabel } from "./names.ts";
 import type { Run, ThreadTelemetry } from "../records/records.types.ts";
 import { orchestratorCostShare, priceOf, PriceVersions, runCost, threadCost, type ModelPrice } from "./prices.ts";
 
@@ -51,4 +52,13 @@ test("a run costs nothing known without tokens or a price, and has no orchestrat
   assert.equal(runCost(run({ tool: "codex", model: "unlisted", effort: null }, { threads: [thread("main")] })), null);
   assert.equal(orchestratorCostShare(run({ tool: "codex", model: Lead, effort: null }, { threads: [thread("main")] })), null);
   assert.equal(priceOf(null), null);
+});
+
+test("a model reported with a context suffix, a date stamp or another case finds its price and its name", () => {
+  const Priced = "claude-opus-5-5";
+  for (const reported of [`${Priced}[1m]`, `${Priced}-20260901`, Priced.toUpperCase()]) {
+    assert.deepEqual(priceOf(reported), priceOf(Priced));
+    const choice = { tool: "claude", model: "opus", effort: null };
+    assert.equal(modelLabel(choice, reported), modelLabel(choice, Priced));
+  }
 });

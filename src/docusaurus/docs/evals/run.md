@@ -73,7 +73,7 @@ npm run evals -- run --plan src/evals/experiments/neon-pairs-l2-full.json --impl
 | Judge | `--judges` | Claude `opus`, high | Codex `gpt-6.1-sol`, xhigh | Claude then Codex |
 | Simulated user | `--user` | Claude `sonnet`, medium | Codex `gpt-6-luna`, max | Unavailable |
 
-`--implementers codex-orchestrators` runs Sol leading Sol subagents and Sol leading Luna subagents, with Sol at xhigh and Luna at max, as the maintainer set them, for orchestrated work. A team is part of the implementer, so its runs are planned, counted and filtered apart, as another model's are. A solo Codex run switches Codex's subagents off, and a team leader gets one level of them, one at a time, with a registered line after the request that tells it to delegate each task.
+`--implementers codex-solo` runs Luna at max and Terra at xhigh, each alone. `--implementers codex-orchestrators` runs Sol leading Sol subagents and Sol leading Luna subagents, with Sol at xhigh and Luna at max, as the maintainer set them, for orchestrated work. A team is part of the implementer, so its runs are planned, counted and filtered apart, as another model's are. A solo Codex run switches Codex's subagents off, and a team leader gets one level of them, one at a time, with a registered line after the request that tells it to delegate each task.
 
 A run goes through three stages, and a plan can split them apart:
 

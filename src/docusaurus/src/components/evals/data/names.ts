@@ -1,14 +1,21 @@
 import type { Choice } from "../records/records.types.ts";
+import { canonicalModel, PriceVersions } from "./prices.ts";
 
-/** Reader-facing names for the record ids. Each id doubles as its definition snippet's name. */
-const ModelNames: Readonly<Record<string, string>> = { "claude-opus-5-5": "Claude Opus 5.5", opus: "Claude Opus", sonnet: "Claude Sonnet", "gpt-6.1-sol": "GPT-6.1 Sol", "gpt-6-luna": "GPT-6 Luna" };
+/** Reader-facing names for the record ids: every priced model's name, and the short names Claude Code takes, which name no version. */
+const ShortModelNames: Readonly<Record<string, string>> = { opus: "Claude Opus", sonnet: "Claude Sonnet", haiku: "Claude Haiku", fable: "Claude Fable" };
+function modelName(id: string | null | undefined): string | undefined {
+  if (id === null || id === undefined) return undefined;
+  const known = canonicalModel(id);
+  return ShortModelNames[known] ?? PriceVersions.map((version) => version.models[known]?.name).find((name) => name !== undefined);
+}
 
 export function modelLabel(choice: Choice, reported?: string | null): string {
-  const name = ModelNames[reported ?? ""] ?? ModelNames[choice.model ?? ""] ?? reported ?? choice.model ?? choice.tool;
+  const name = modelName(reported) ?? modelName(choice.model) ?? reported ?? choice.model ?? choice.tool;
   const solo = choice.effort === null ? name : `${name}, ${choice.effort} reasoning`;
   if (choice.team === undefined) return solo;
-  // A team is part of the implementer, so its label names the subagents it leads.
-  return `${solo}, leading ${ModelNames[choice.team.model ?? ""] ?? choice.team.model ?? "unreported"} subagents`;
+  // A team is part of the implementer, so its label names the subagents it leads and how hard they think.
+  const team = modelName(choice.team.model) ?? choice.team.model ?? "unreported";
+  return `${solo}, leading ${team} subagents${choice.team.effort === null ? "" : ` at ${choice.team.effort}`}`;
 }
 
 /** Setups in reading order: the controls, the other setups without Open Forge, then the Open Forge presets from small to large. */
@@ -40,7 +47,7 @@ export const WorkModeNames = { "single-task": "One task", "whole-packet": "Whole
 /** The tasks and work packets of an existing app, B for a bug fix, F for a feature and P for a packet. Earlier starting points have one case each, named by the starting point. */
 export const CaseNames = {
   "l4-b1-best-score": "B1 Best score", "l4-b2-arrow-keys": "B2 Arrow keys", "l4-b3-reduced-motion": "B3 Reduced motion", "l4-b4-silence": "B4 Silence",
-  "l4-b5-pasted-saves": "B5 Pasted saves", "l4-f1-name-saves": "F1 Name saves",
+  "l4-b5-pasted-saves": "B5 Pasted saves", "l4-f1-name-saves": "F1 Name saves", "l4-f2-tournament": "F2 Tournament",
   "l4-p1-four-bugs": "P1 Four bugs", "l4-p2-name-and-pasted-saves": "P2 Name and pasted saves",
 } as const satisfies Readonly<Record<string, string>>;
 export type CaseId = keyof typeof CaseNames;

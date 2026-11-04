@@ -17,7 +17,7 @@ export function CellDialog({ item, batch, onClose }: {
   const run = runId === null ? undefined : batch?.runs.find((entry) => entry.id === runId);
   const close = () => { setRunId(null); onClose(); };
   const title = item === null ? "" : `${setupName(item.cell.setup)}, ${startingPointText(item)}`;
-  const subtitle = item === null ? undefined : `${item.cell.modelLabel}, ${item.cell.judgeLabel === null ? "not judged yet" : `judged by ${item.cell.judgeLabel}`}.`;
+  const subtitle = item === null ? undefined : `${item.cell.modelLabel}${item.cell.agentVersion === null ? "" : `, ${item.cell.agentVersion}`}, ${item.cell.judgeLabel === null || item.cell.judged === 0 ? "not judged" : `judged by ${item.cell.judgeLabel}`}.`;
   return <Dialog open={item !== null} onClose={close} title={title} subtitle={subtitle}>
     {item === null ? null : batch === undefined ? <p>This batch's records aren't loaded.</p>
       : run === undefined ? <RunList cell={item.cell} batch={batch} open={setRunId} />
