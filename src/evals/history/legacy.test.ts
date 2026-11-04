@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { ResultFiles } from "../paths.ts";
 import { summarize } from "./summary.ts";
-import { checkerErrors, recheckRun } from "../grading/recheck.ts";
+import { checkerErrors, checkerErrorSamples, recheckRun } from "../grading/recheck.ts";
 import { writeJson } from "./json-files.ts";
 import { CheckStatus, RecordSchemaVersion } from "./statuses.ts";
 import { FixtureVersions, legacyFixture, temporaryHistory } from "./test-fixtures.ts";
@@ -48,4 +48,6 @@ test("a check counts the clauses it couldn't grade, and one that ended early cou
   assert.equal(checkerErrors({ error: null, outcomes: [outcome(CheckStatus.pass), outcome(CheckStatus.fail), outcome(CheckStatus.blocked)] }), 0);
   assert.equal(checkerErrors({ error: null, outcomes: [outcome(CheckStatus.pass), outcome(CheckStatus.error), outcome(CheckStatus.error)] }), 2);
   assert.equal(checkerErrors({ error: "The verifier stopped.", outcomes: [] }), 1);
+  const errors = [outcome(CheckStatus.error), { ...outcome(CheckStatus.error), id: "second" }, { ...outcome(CheckStatus.error), id: "third" }, { ...outcome(CheckStatus.error), id: "fourth" }];
+  assert.deepEqual(checkerErrorSamples({ outcomes: [outcome(CheckStatus.pass), ...errors] }).map((sample) => sample.split(":")[0]), errors.slice(0, 3).map((item) => item.id));
 });

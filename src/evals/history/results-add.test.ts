@@ -3,13 +3,14 @@ import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { test } from "node:test";
 import { CodexRolloutFile } from "../execution/providers/codex-telemetry.ts";
+import { checksAssessment } from "./assessments.ts";
 import { artifactHash, HistoryFiles } from "./artifacts.ts";
 import { sha256 } from "./fingerprints.ts";
 import { readJson, readJsonLines } from "./json-files.ts";
 import type { ArtifactRecord, RunRecord } from "./records.types.ts";
 import { addResults, authFileSecrets, evidenceLeaks, LeakKind, ResultsScripts, scrubbedTranscript } from "./results-add.ts";
 import { RecordSchemaVersion } from "./statuses.ts";
-import { temporaryHistory, v2Fixture } from "./test-fixtures.ts";
+import { FixtureVersions, temporaryHistory, v2Fixture } from "./test-fixtures.ts";
 
 const Machine = { home: ["Q:", "Users", "example-person"].join("\\"), user: "example-person" } as const;
 
@@ -138,7 +139,7 @@ test("results add stops before staging when evidence would publish private data 
   } finally { await cleanup(); }
 });
 
-test("an imported batch is republished without treating this machine's user name as a leak, while its home path still stops it", async () => {
+test("an imported batch checks only its new evidence, so published run evidence can quote any path and a new check's evidence can't", async () => {
   const { root, store, cleanup } = await temporaryHistory();
   try {
     const repository = join(root, "repository");
@@ -151,6 +152,13 @@ test("an imported batch is republished without treating this machine's user name
     await addResults(store, named.id, repository, services);
     assert.deepEqual(calls, [ResultsScripts.stage, ResultsScripts.validate]);
     const pathed = await finishedBatch(store, `Read ${Machine.home}.`);
+    await addResults(store, pathed.id, repository, services);
+    const [run] = await store.readRuns(pathed);
+    assert.ok(run !== undefined);
+    const check = checksAssessment(run, run.checks, FixtureVersions);
+    await mkdir(store.assessmentEvidenceFolder(pathed.id, check.id), { recursive: true });
+    await writeFile(join(store.assessmentEvidenceFolder(pathed.id, check.id), "report.json"), `Read ${Machine.home}.`);
+    await store.appendAssessment(check);
     await assert.rejects(addResults(store, pathed.id, repository, services));
   } finally { await cleanup(); }
 });

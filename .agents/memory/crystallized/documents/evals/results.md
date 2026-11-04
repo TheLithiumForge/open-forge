@@ -50,7 +50,7 @@ Local unpublished runs stay in gitignored `src/evals/runs/`.
 
 Each batch keeps its evidence in Git beside its records, in `evidence/` at the paths `artifacts.json` lists: agent code without installed packages or downloaded tools, the built game, screenshots, conversations and event logs. Tool folders the task project's `.gitignore` names and any file over 50 MB stay in the run store, and a run's published manifest and hash cover what is published. Staging verifies every file's size and SHA-256, and validation checks them again. The repository can be rebuilt from saved runs, so adding a batch again replaces it. This replaced the earlier plan of one release asset per batch, because evidence in Git can be browsed, linked from the site and checked by CI.
 
-`results add` removes the user and account fields from each Codex transcript's session header. Evidence that still holds a sign-in value, a token claim, a machine path or the user name stops it before anything is staged.
+`results add` removes the user and account fields from each Codex transcript's session header. Evidence that still holds a sign-in value, a token claim, a machine path or the user name stops it before anything is staged. When a graded batch is published again, only its new evidence is checked, since its run evidence passed when first published.
 
 ## Publishing
 

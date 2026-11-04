@@ -25,6 +25,8 @@ import type { BuildResult } from "../history/results.types.ts";
 const RebuildFlag = "--rebuild";
 const MissingFlag = "--missing";
 const BuildMs = 25 * 60_000;
+const CheckerErrorSamples = 3;
+const CheckerErrorLength = 800;
 
 export interface RecheckDependencies {
   readonly evaluate: (run: RunView, assessmentId: string) => Promise<SuiteCheckOutput & { readonly build?: BuildResult }>;
@@ -48,6 +50,11 @@ export async function recheckRun(run: RunView, versions: AssessmentVersions, dep
 /** How many clauses a check couldn't grade, counting a check that ended early as one. A run with any needs checking again. */
 export function checkerErrors(assessment: Pick<ChecksAssessment, "error" | "outcomes">): number {
   return (assessment.error === null ? 0 : 1) + assessment.outcomes.filter((outcome) => outcome.status === CheckStatus.error).length;
+}
+
+/** A few of those clauses and what the checker said, because a CI job that fails publishes nothing else to read. */
+export function checkerErrorSamples(assessment: Pick<ChecksAssessment, "outcomes">): string[] {
+  return assessment.outcomes.filter((outcome) => outcome.status === CheckStatus.error).slice(0, CheckerErrorSamples).map((outcome) => `${outcome.id}: ${outcome.evidence.slice(0, CheckerErrorLength)}`);
 }
 
 async function main(): Promise<void> {
@@ -106,6 +113,7 @@ async function main(): Promise<void> {
       // A CI job that checked a run without grading it must fail, so its run stays waiting and nothing is published.
       if (errors > 0) process.exitCode = 1;
       console.log(`${run.id} ${run.setup}: ${assessment.error !== null ? `check failed. ${assessment.error}` : errors > 0 ? `checked, and ${errors} clauses couldn't be graded` : "checked"}.`);
+      for (const sample of checkerErrorSamples(assessment)) console.log(sample);
     }));
   }
   await Promise.all(graded);

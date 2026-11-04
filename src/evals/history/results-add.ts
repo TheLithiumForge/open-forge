@@ -25,7 +25,7 @@ export interface AddResultsServices {
   readonly run: (script: string, args: readonly string[], cwd: string) => Promise<number>;
   readonly secrets?: () => Promise<readonly string[]>;
   readonly machine?: Machine;
-  /** The batch came from results import, so it was scrubbed when first published and this machine's user name is no secret. */
+  /** The batch came from results import, so its run evidence was checked when first published and this machine's user name is no secret. */
   readonly imported?: boolean;
 }
 
@@ -87,16 +87,19 @@ export async function addResults(store: HistoryStore, batchId: string, repositor
   // Run evidence sits in each run folder and grading evidence in the assessment overlay. Staging reads both from one folder.
   const files = new Map<string, Buffer>();
   const artifacts: ArtifactRecord[] = [];
+  // An imported run's evidence passed this check when first published. It can quote any machine's paths, such as a tool's build folder, and CI's home is one of them.
+  const unchecked = new Map<string, Buffer>();
   for (const artifact of (await store.readArtifacts(batch)).filter(publishedFile)) {
     const [name, folder] = artifact.assessmentId === null ? [join("runs", artifact.runId, artifact.path), store.runFolder(batch.id, artifact.runId)]
       : [join("assessments", artifact.assessmentId, artifact.path), store.assessmentEvidenceFolder(batch.id, artifact.assessmentId)];
     const stored = await readFile(join(folder, artifact.path));
     const bytes = artifact.path === CodexRolloutFile ? scrubbedTranscript(stored) : stored;
     files.set(name, bytes);
+    if (services.imported !== true || artifact.assessmentId !== null) unchecked.set(name, bytes);
     artifacts.push(bytes === stored ? artifact : { ...artifact, bytes: bytes.length, sha256: sha256(bytes) });
   }
   const machine = services.machine ?? { home: homedir(), user: userInfo().username };
-  const leaks = evidenceLeaks(files, await (services.secrets ?? signInSecrets)(), services.imported === true ? { ...machine, user: "" } : machine);
+  const leaks = evidenceLeaks(unchecked, await (services.secrets ?? signInSecrets)(), services.imported === true ? { ...machine, user: "" } : machine);
   if (leaks.length > 0) throw new Error(`Evidence would publish private data, so nothing was added:\n${leaks.map((leak) => `${leak.kind}: ${leak.file}`).join("\n")}`);
   const scratch = await mkdtemp(join(tmpdir(), "eval-results-add-"));
   try {
