@@ -1,6 +1,6 @@
 import type { Comparison } from "./aggregate.ts";
 import type { Cell, Measure } from "./cells.ts";
-import { change, compact, NoValue, percent, points } from "./format.ts";
+import { change, compact, dollars, NoValue, percent, points } from "./format.ts";
 import type { MeasureId } from "./names.ts";
 import type { RunValues } from "./run-measures.ts";
 
@@ -37,6 +37,7 @@ export interface MeasureSpec {
 const minutes = (value: number | null) => value === null ? NoValue : value.toFixed(1);
 const share = (value: number | null) => value === null ? null : Math.round(value * 1000) / 10;
 const amount = (value: number | null) => value === null ? null : Math.round(value * 10) / 10;
+const money = (value: number | null) => value === null ? null : Math.round(value * 1000) / 1000;
 const shareText = (value: number | null) => value === null ? NoValue : percent(value);
 const base = { sameModelOnly: false, perJudge: false, inTable: true, inSpread: false } as const;
 const tokenMeasure = { ...base, definition: "tokens", changeKind: ChangeKind.ratio, format: compact, csv: amount } as const;
@@ -45,6 +46,7 @@ export const CellMeasures: readonly MeasureSpec[] = [
   { ...base, id: "check-coverage", definition: "check-coverage", title: "Check coverage", changeKind: ChangeKind.points, inSpread: true, value: (cell) => cell.coverage, run: (values) => values.coverage, format: shareText, csv: share },
   { ...base, id: "judge-score", definition: "judge-score", title: "Judge score", changeKind: ChangeKind.points, perJudge: true, inSpread: true, value: (cell) => cell.judgeScore, run: (values) => values.judgeScore, format: shareText, csv: share },
   { ...tokenMeasure, id: "tokens", title: "Tokens", inSpread: true, value: (cell) => cell.tokens, run: (values) => values.tokens },
+  { ...base, id: "cost", definition: "cost", title: "Cost", changeKind: ChangeKind.ratio, inSpread: true, value: (cell) => cell.cost, run: (values) => values.cost, format: dollars, csv: money },
   { ...tokenMeasure, id: "new-input", title: "New input", value: (cell) => cell.newInput, run: (values) => values.newInput },
   { ...tokenMeasure, id: "cached-input", title: "Cached input", value: (cell) => cell.cachedInput, run: (values) => values.cachedInput },
   { ...tokenMeasure, id: "output", title: "Output", value: (cell) => cell.outputTokens, run: (values) => values.output },

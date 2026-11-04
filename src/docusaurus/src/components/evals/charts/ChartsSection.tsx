@@ -47,7 +47,7 @@ export function ChartsSection({ summaries, items, filters }: {
         <DeltaChart rows={judge} format={pointText} tick={pointTick} step={PointStep}
           title={<><Term id="judge-score" /> change</>} description="Percentage points above or below the control." />
         <DeltaChart rows={tokens} format={percentText} tick={percentTick} step={PercentStep}
-          title={<><Term id="tokens" /> change</>} description="Percent more or fewer tokens than the control. Tokens are the main cost measure." />
+          title={<><Term id="tokens" /> change</>} description="Percent more or fewer tokens than the control." />
         <TokenClassChart rows={tokenClassRows(cells)} />
       </div>
     </>}

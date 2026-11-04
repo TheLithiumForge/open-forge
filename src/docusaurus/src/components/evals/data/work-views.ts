@@ -3,7 +3,9 @@ import type { Comparison } from "./aggregate.ts";
 import { WorkModeIds, type Cell, type WorkModeId } from "./cells.ts";
 import { bySetup, identity, type ChartRow } from "./chart-data.ts";
 import type { ThreadRoles } from "../records/schema-values.ts";
+import { isCaseId, PacketTasks } from "./names.ts";
 import { latestAnalyses } from "./objective.ts";
+import { orchestratorCostShare } from "./prices.ts";
 
 /** Tokens per task, milestone views and orchestration comparisons, each from the cells that have such data. */
 
@@ -58,17 +60,23 @@ export interface PacketRow extends Omit<ChartRow, "value"> {
   readonly modelLabel: string;
   /** The tasks this row adds up: one request for a whole or orchestrated packet, one per task otherwise. */
   readonly steps: number;
+  /** The tasks the packet holds, whichever way it was handed over. */
+  readonly tasks: number;
   readonly tokens: number | null;
+  readonly cost: number | null;
+  readonly costPerTask: number | null;
   readonly coverage: number | null;
   /** The orchestrator thread's share of the system's input, for orchestrated work. */
   readonly orchestratorShare: number | null;
+  /** The orchestrator thread's share of the system's cost, for orchestrated work. */
+  readonly orchestratorCostShare: number | null;
   readonly subagents: number | null;
 }
 
 export function packetRows(items: readonly Comparison[], batches: ReadonlyMap<string, Batch>): PacketRow[] {
   const cells = unique(items);
   const threads = (cell: Cell) => {
-    if (cell.workMode !== WorkModeIds.orchestrated) return { orchestratorShare: null, subagents: null };
+    if (cell.workMode !== WorkModeIds.orchestrated) return { orchestratorShare: null, orchestratorCostShare: null, subagents: null };
     const batch = batches.get(cell.batchId);
     const analyses = cell.runIds.flatMap((id) => (batch === undefined ? [] : latestAnalyses(batch).get(id) ?? []));
     const input = (tokens: { readonly newInput: number; readonly cachedInput: number; readonly cacheWrite: number }) => tokens.newInput + tokens.cachedInput + tokens.cacheWrite;
@@ -77,12 +85,16 @@ export function packetRows(items: readonly Comparison[], batches: ReadonlyMap<st
         const main = analysis.threads.find((thread) => thread.role === MainThread), all = analysis.threads.reduce((sum, thread) => sum + input(thread.tokens), 0);
         return main === undefined || all === 0 ? null : input(main.tokens) / all;
       })),
+      orchestratorCostShare: mean((batch?.runs ?? []).filter((run) => cell.runIds.includes(run.id)).map(orchestratorCostShare)),
       subagents: mean(analyses.map((analysis) => analysis.threads.filter((thread) => thread.role !== MainThread).length)),
     };
   };
-  const whole = cells.filter((cell) => cell.workMode === WorkModeIds.wholePacket || cell.workMode === WorkModeIds.orchestrated).map((cell): PacketRow => ({
-    ...identity(cell.setup), packet: cell.caseId, workMode: cell.workMode, modelLabel: cell.modelLabel, steps: 1, tokens: cell.tokens.mean, coverage: cell.coverage.mean, ...threads(cell),
-  }));
+  const perTask = (cost: number | null, tasks: number) => cost === null ? null : cost / tasks;
+  const whole = cells.filter((cell) => cell.workMode === WorkModeIds.wholePacket || cell.workMode === WorkModeIds.orchestrated).map((cell): PacketRow => {
+    const tasks = (isCaseId(cell.caseId) ? PacketTasks[cell.caseId] : undefined) ?? 1;
+    return { ...identity(cell.setup), packet: cell.caseId, workMode: cell.workMode, modelLabel: cell.modelLabel, steps: 1, tasks, tokens: cell.tokens.mean,
+      cost: cell.cost.mean, costPerTask: perTask(cell.cost.mean, tasks), coverage: cell.coverage.mean, ...threads(cell) };
+  });
   const groups = new Map<string, Cell[]>();
   for (const cell of cells) {
     if (cell.workMode !== WorkModeIds.taskByTask || cell.chain === null) continue;
@@ -92,10 +104,11 @@ export function packetRows(items: readonly Comparison[], batches: ReadonlyMap<st
   const stepped = [...groups.values()].flatMap((group): PacketRow[] => {
     const [first] = group;
     if (first?.chain == null) return [];
-    const known = group.map((cell) => cell.tokens.mean);
-    return [{ ...identity(first.setup), packet: first.chain.id, workMode: WorkModeIds.taskByTask, modelLabel: first.modelLabel, steps: group.length,
-      tokens: known.some((value) => value === null) ? null : known.reduce<number>((sum, value) => sum + (value ?? 0), 0),
-      coverage: mean(group.map((cell) => cell.coverage.mean)), orchestratorShare: null, subagents: null }];
+    const total = (values: readonly (number | null)[]) => values.some((value) => value === null) ? null : values.reduce<number>((sum, value) => sum + (value ?? 0), 0);
+    const cost = total(group.map((cell) => cell.cost.mean));
+    return [{ ...identity(first.setup), packet: first.chain.id, workMode: WorkModeIds.taskByTask, modelLabel: first.modelLabel, steps: group.length, tasks: group.length,
+      tokens: total(group.map((cell) => cell.tokens.mean)), cost, costPerTask: perTask(cost, group.length),
+      coverage: mean(group.map((cell) => cell.coverage.mean)), orchestratorShare: null, orchestratorCostShare: null, subagents: null }];
   });
   return [...whole, ...stepped].sort((a, b) => a.packet.localeCompare(b.packet) || bySetup(a, b) || ModeOrder.indexOf(a.workMode) - ModeOrder.indexOf(b.workMode) || a.modelLabel.localeCompare(b.modelLabel));
 }

@@ -924,6 +924,16 @@
               "toolCalls": {
                 "type": "integer",
                 "minimum": 0
+              },
+              "model": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               }
             },
             "required": [
@@ -1307,6 +1317,16 @@
         "toolCalls": {
           "type": "integer",
           "minimum": 0
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [

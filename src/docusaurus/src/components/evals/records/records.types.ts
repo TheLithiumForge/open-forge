@@ -24,6 +24,8 @@ export interface TokenTotals { readonly newInput: number; readonly cachedInput: 
 export interface ThreadTelemetry {
   readonly id: string; readonly parentId: string | null; readonly role: (typeof ThreadRoles)[number]; readonly requests: number;
   readonly tokens: TokenTotals; readonly peakContext: number | null; readonly toolCalls: number;
+  /** The model this thread ran on. Records before threads named it leave it out. */
+  readonly model?: string | null;
 }
 export interface Run {
   readonly implementer?: "reference"; readonly reference?: ReferenceVersion; readonly parentRunId?: string | null;

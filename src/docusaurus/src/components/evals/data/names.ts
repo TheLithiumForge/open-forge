@@ -49,6 +49,9 @@ export function isCaseId(id: string): id is CaseId {
   return Object.keys(CaseNames).includes(id);
 }
 
+/** How many tasks each work packet holds, for its cost per task. Any other case is one task. */
+export const PacketTasks: Readonly<Partial<Record<CaseId, number>>> = { "l4-p1-four-bugs": 4, "l4-p2-name-and-pasted-saves": 2 };
+
 /** The measures a reader can look up. */
-export const MeasureNames = { "check-coverage": "Check coverage", "judge-score": "Judge score", tokens: "Tokens", time: "Time" } as const;
+export const MeasureNames = { "check-coverage": "Check coverage", "judge-score": "Judge score", tokens: "Tokens", cost: "Cost", time: "Time" } as const;
 export type MeasureId = keyof typeof MeasureNames;

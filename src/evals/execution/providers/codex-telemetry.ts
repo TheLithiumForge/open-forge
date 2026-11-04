@@ -63,7 +63,7 @@ export class CodexTelemetry {
     const delegated = threads.some((thread) => thread.role === ThreadRole.subagent);
     const system = delegated ? addTokens(threads.map((thread) => thread.tokens)) : null;
     return {
-      ...(delegated ? { threads: threads.map(({ id, parentId, role, steps, tokens, peakContext, toolCalls }) => ({ id, parentId, role, requests: steps.length, tokens, peakContext, toolCalls })) } : {}),
+      ...(delegated ? { threads: threads.map(({ id, parentId, role, steps, tokens, peakContext, toolCalls, model }) => ({ id, parentId, role, requests: steps.length, tokens, peakContext, toolCalls, ...(model === undefined ? {} : { model }) })) } : {}),
       tokens: system !== null ? { input: system.newInput, cachedInput: system.cachedInput, cacheWrite: 0, output: system.output, reasoning: system.reasoning ?? 0 } : this.turns.length === 0 ? null : {
         input: sum((usage) => usage.input_tokens) - sum((usage) => usage.cached_input_tokens),
         cachedInput: sum((usage) => usage.cached_input_tokens),

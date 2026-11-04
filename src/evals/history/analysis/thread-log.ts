@@ -22,6 +22,8 @@ export interface ThreadLog {
   readonly peakContext: number | null;
   readonly toolCalls: number;
   readonly compactions: number;
+  /** The model its requests ran on, when the log names one. */
+  readonly model?: string;
   /** The first request sent after an edit's result, or null when the thread never edited a file. */
   readonly firstEditStep: number | null;
 }
@@ -34,6 +36,7 @@ export class ThreadBuilder {
   readonly parentId: string | null;
   readonly role: ThreadRole;
   toolCalls = 0;
+  model: string | null = null;
   private compactions = 0;
   private readonly steps: LedgerStep[] = [];
   private pending: Estimate[] = [];
@@ -79,7 +82,7 @@ export class ThreadBuilder {
   addOutput(tokens: number): void { this.lastOutput += tokens; }
 
   log(): ThreadLog {
-    return { id: this.id, parentId: this.parentId, role: this.role, steps: this.steps, tokens: this.tokens,
+    return { ...(this.model === null ? {} : { model: this.model }), id: this.id, parentId: this.parentId, role: this.role, steps: this.steps, tokens: this.tokens,
       peakContext: this.peak, toolCalls: this.toolCalls, compactions: this.compactions, firstEditStep: this.firstEditStep };
   }
 }

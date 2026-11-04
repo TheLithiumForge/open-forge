@@ -45,6 +45,8 @@ export interface TurnUsage {
 
 /** One agent thread. Orchestrated runs have a main thread and one per subagent. */
 export interface ThreadUsage {
+  /** The model the thread ran on. Records before threads named it leave it out. */
+  readonly model?: string;
   readonly id: string;
   readonly parentId: string | null;
   readonly role: ThreadRole;

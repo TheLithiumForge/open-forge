@@ -1,18 +1,19 @@
 ---
 title: Measures
-description: The numbers the evals compare for every run, check coverage, judge score, tokens and time, the objective measures from each run's logs, and how checks and judges grade the saved files.
+description: The numbers the evals compare for every run, check coverage, judge score, tokens, cost and time, the objective measures from each run's logs, and how checks and judges grade the saved files.
 ---
 
 import CheckCoverage from "./_definitions/check-coverage.mdx"
 import JudgeScore from "./_definitions/judge-score.mdx"
 import Tokens from "./_definitions/tokens.mdx"
+import Cost from "./_definitions/cost.mdx"
 import Time from "./_definitions/time.mdx"
 
 # Measures
 
 Measures are the numbers the evals record for every run, so you can compare setups on quality and cost.
 
-Check coverage and judge score measure quality. Tokens and time measure cost, and the [objective measures](#objective-measures) show where the tokens went. They stay apart, with no combined score. For example, a setup can raise check coverage and use more tokens, and [Results](results.mdx) shows both against the same control. Results also keep each starting point, implementer and judge apart.
+Check coverage and judge score measure quality. Tokens, cost and time measure what the work took, and the [objective measures](#objective-measures) show where the tokens went. They stay apart, with no combined score. For example, a setup can raise check coverage and use more tokens, and [Results](results.mdx) shows both against the same control. Results also keep each starting point, implementer and judge apart.
 
 ## Check coverage \{#check-coverage}
 
@@ -25,6 +26,12 @@ Check coverage and judge score measure quality. Tokens and time measure cost, an
 ## Tokens \{#tokens}
 
 <Tokens />
+
+## Cost \{#cost}
+
+<Cost />
+
+The [price list](prices.mdx) holds the prices and how each kind of token is charged.
 
 ## Time \{#time}
 

@@ -49,6 +49,28 @@
                     "string",
                     "null"
                   ]
+                },
+                "team": {
+                  "type": "object",
+                  "properties": {
+                    "model": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "effort": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "model",
+                    "effort"
+                  ],
+                  "additionalProperties": false
                 }
               },
               "required": [

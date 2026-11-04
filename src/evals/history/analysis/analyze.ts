@@ -54,7 +54,7 @@ function beforeEdit(thread: ThreadLog | undefined): BeforeEdit | null {
 }
 
 function threadUsage(thread: ThreadLog, tokens: TokenTotals): ThreadUsage {
-  return { id: thread.id, parentId: thread.parentId, role: thread.role, requests: thread.steps.length, tokens, peakContext: thread.peakContext, toolCalls: thread.toolCalls };
+  return { ...(thread.model === undefined ? {} : { model: thread.model }), id: thread.id, parentId: thread.parentId, role: thread.role, requests: thread.steps.length, tokens, peakContext: thread.peakContext, toolCalls: thread.toolCalls };
 }
 
 /** Reads the request logs into exact totals and an estimated split, or a rougher split from events, or totals alone. */

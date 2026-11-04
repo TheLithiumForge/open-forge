@@ -1,6 +1,7 @@
 import type { Assessment, Batch, Choice, Judge, Run } from "../records/records.types.ts";
 import { latestRun, tokenTotal } from "./analysis.ts";
 import { choiceKey, isReference } from "./observations.ts";
+import { runCost } from "./prices.ts";
 
 /** A run stopped by a usage limit or a rejected sign-in waits to be redone when its batch resumes. */
 const WaitingStatus = "limited";
@@ -69,6 +70,7 @@ export interface RunValues {
   readonly coverage: number | null;
   readonly judgeScore: number | null;
   readonly tokens: number | null;
+  readonly cost: number | null;
   readonly newInput: number | null;
   readonly cacheWrites: number | null;
   readonly cachedInput: number | null;
@@ -80,7 +82,7 @@ export interface RunValues {
 export function runValues(run: Run, assessments: readonly Assessment[], judge: Choice | null): RunValues {
   return {
     runId: run.id, repeat: run.repeat, coverage: coverageOf(run, assessments), judgeScore: judge === null ? null : judgeScoreOf(run, judge, assessments),
-    tokens: tokenTotal(run), newInput: tokenClass(run, TokenClass.newInput), cacheWrites: tokenClass(run, TokenClass.cacheWrites),
+    tokens: tokenTotal(run), cost: runCost(run), newInput: tokenClass(run, TokenClass.newInput), cacheWrites: tokenClass(run, TokenClass.cacheWrites),
     cachedInput: tokenClass(run, TokenClass.cachedInput), output: tokenClass(run, TokenClass.output), cacheHitRate: cacheHitRate(run),
     minutes: run.agentSeconds === null ? null : run.agentSeconds / 60,
   };

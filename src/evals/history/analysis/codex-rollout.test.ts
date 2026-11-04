@@ -14,6 +14,16 @@ const output = (id: string, text: string) => ({ type: "response_item", payload: 
 const usage = (thread: string, input: number, cached: number, out: number) => ({ type: "token_usage_record", payload: { thread_id: thread, usage: { input_tokens: input, cached_input_tokens: cached, output_tokens: out, reasoning_output_tokens: 1 } } });
 const added = (thread: { steps: readonly { added: readonly { class: string }[] }[] } | undefined, index: number) => thread?.steps[index]?.added.map((item) => item.class);
 
+test("each thread takes its model from its turns, through the turn id its usage names", () => {
+  const turn = (id: string, model: string) => ({ type: "turn_context", payload: { turn_id: id, model } });
+  const used = (thread: string, id: string) => { const record = usage(thread, 100, 0, 10); return { ...record, payload: { ...record.payload, turn_id: id } }; };
+  const threads = codexThreads(lines([
+    session(Main), turn("a", "lead-model"), used(Main, "a"), session("helper", { subagent: {} }), turn("b", "team-model"), used("helper", "b"), session(Main), used(Main, "a"),
+  ]), Known);
+  assert.deepEqual(threads.map((thread) => [thread.id, thread.model]), [[Main, "lead-model"], ["helper", "team-model"]]);
+  assert.equal(codexThreads(lines([session(Main), usage(Main, 100, 0, 10)]), Known)[0]?.model, undefined);
+});
+
 test("each request's exact usage closes a step, with the tool outputs and the agent's own output that joined since", () => {
   const [thread] = codexThreads(lines([
     session(Main), message("user", "Fix the best score."), call("a", "cat docs/rules.md"), usage(Main, 1000, 0, 50),

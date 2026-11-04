@@ -1,8 +1,9 @@
 import type { Batch, Run } from "../records/records.types.ts";
 import type { Cell } from "../data/cells.ts";
 import { tokenTotal } from "../data/analysis.ts";
-import { compact, NoValue, percent } from "../data/format.ts";
+import { compact, dollars, NoValue, percent } from "../data/format.ts";
 import { choiceKey, isReference } from "../data/observations.ts";
+import { runCost } from "../data/prices.ts";
 import { checkState, CheckState, coverageOf, judgeChoices, judgeScoreOf } from "../data/run-measures.ts";
 import { Term } from "../info/Term.tsx";
 
@@ -19,6 +20,7 @@ function RunRow({ run, batch, cell, open }: { readonly run: Run; readonly batch:
     <td>{CheckText[state] ?? percent(coverageOf(run, batch.assessments))}</td>
     <td>{score === null ? NoValue : percent(score)}</td>
     <td>{compact(tokenTotal(run))}</td>
+    <td>{dollars(runCost(run))}</td>
     <td>{run.agentSeconds === null ? NoValue : (run.agentSeconds / 60).toFixed(1)}</td>
   </tr>;
 }
@@ -33,9 +35,9 @@ export function RunList({ cell, batch, open }: { readonly cell: Cell; readonly b
       <table className="eval-table">
         <thead><tr>
           <th scope="col">Run</th><th scope="col"><Term id="check-coverage" /></th><th scope="col"><Term id="judge-score" /></th>
-          <th scope="col"><Term id="tokens" /></th><th scope="col"><Term id="time">Minutes</Term></th>
+          <th scope="col"><Term id="tokens" /></th><th scope="col"><Term id="cost" /></th><th scope="col"><Term id="time">Minutes</Term></th>
         </tr></thead>
-        <tbody>{counted.length === 0 ? <tr><td colSpan={5}>No finished runs yet.</td></tr>
+        <tbody>{counted.length === 0 ? <tr><td colSpan={6}>No finished runs yet.</td></tr>
           : counted.map((run) => <RunRow key={run.id} run={run} batch={batch} cell={cell} open={open} />)}</tbody>
       </table>
     </div>

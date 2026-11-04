@@ -20,6 +20,8 @@ const compactCount = (value: number): string => compactFormat.format(Math.abs(va
 
 /** Large counts such as tokens, as 1.9M. */
 export const compact = (value: number | null): string => value === null ? NoValue : compactCount(value);
+/** An amount of US dollars, in cents. */
+export const dollars = (value: number | null): string => value === null ? NoValue : `$${value.toFixed(2)}`;
 /** A signed number with a real minus sign, and no sign at zero. */
 export function signed(value: number, digits: number): string {
   const text = Math.abs(value).toFixed(digits);

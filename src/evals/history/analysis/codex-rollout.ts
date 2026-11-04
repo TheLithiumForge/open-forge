@@ -11,6 +11,7 @@ import { ThreadBuilder, type RequestUsage, type ThreadLog } from "./thread-log.t
  */
 
 const UsageRecord = "token_usage_record";
+const TurnContext = "turn_context";
 const CallItems = new Set(["function_call", "custom_tool_call", "local_shell_call"]);
 const OutputItems = new Set(["function_call_output", "custom_tool_call_output"]);
 const CommandItems = new Set(["CommandExecution", "command_execution"]);
@@ -43,6 +44,7 @@ class RolloutReader {
   private current: ThreadBuilder | null = null;
   private readonly calls = new Map<string, CodexCall>();
   private executed: ExecutedCommand[] = [];
+  private readonly turnModels = new Map<string, string>();
   private readonly files: KnownFiles;
   constructor(files: KnownFiles) { this.files = files; }
 
@@ -91,17 +93,24 @@ class RolloutReader {
 
   compact(): void { (this.current ?? this.thread()).compact(); }
 
+  /** A turn names its model. A usage record names only its turn, and a joined log repeats session lines, so the turn is what ties them. */
+  turn(payload: LogRecord): void {
+    const id = string(payload["turn_id"]), model = string(payload["model"]);
+    if (id !== null && model !== null) this.turnModels.set(id, model);
+  }
+
   command(fields: LogRecord | null): void {
     const command = fields?.["command"];
     const words = Array.isArray(command) ? command.map(String) : string(command) ?? "";
     this.executed.push({ command: words, output: string(fields?.["aggregated_output"]) ?? string(fields?.["formatted_output"]) ?? string(fields?.["stdout"]) ?? "" });
   }
 
-  request(value: unknown, threadId: string | null): void {
+  request(value: unknown, threadId: string | null, turnId: string | null = null): void {
     const usage = usageOf(value);
     if (usage === null) return;
     const thread = threadId === null ? this.current ?? this.thread() : this.threads.get(threadId) ?? this.current ?? this.thread(threadId);
     thread.request(usage);
+    thread.model = this.turnModels.get(turnId ?? "") ?? thread.model;
   }
 }
 
@@ -116,7 +125,8 @@ export function codexThreads(content: string, files: KnownFiles): ThreadLog[] {
     else if (type === "response_item") reader.item(payload);
     else if (type === "event_msg") reader.event(payload, usageRecords);
     else if (type === "compacted") reader.compact();
-    else if (type === UsageRecord) reader.request(payload["usage"], string(payload["thread_id"]));
+    else if (type === TurnContext) reader.turn(payload);
+    else if (type === UsageRecord) reader.request(payload["usage"], string(payload["thread_id"]), string(payload["turn_id"]));
   }
   return [...reader.threads.values()].map((thread) => thread.log()).filter((thread) => thread.steps.length > 0);
 }

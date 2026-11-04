@@ -56,6 +56,7 @@ export interface Cell {
   readonly coverage: Measure;
   readonly judgeScore: Measure;
   readonly tokens: Measure;
+  readonly cost: Measure;
   /** Token classes. They add up to the total. */
   readonly newInput: Measure;
   readonly cacheWrites: Measure;
@@ -134,7 +135,7 @@ export function cells(batches: readonly Batch[]): Cell[] {
         judgedLater: batch.experiment.config.judging === Judging.later,
         model: choiceKey(agent), modelLabel: modelLabel(agent, reported), runs: group.length, runIds: group.map((run) => run.id),
         checked: states.filter((state) => state === CheckState.checked).length, recheck: states.filter((state) => state === CheckState.recheck).length,
-        coverage: pick((value) => value.coverage), tokens: pick((value) => value.tokens), newInput: pick((value) => value.newInput),
+        coverage: pick((value) => value.coverage), tokens: pick((value) => value.tokens), cost: pick((value) => value.cost), newInput: pick((value) => value.newInput),
         cacheWrites: pick((value) => value.cacheWrites), cachedInput: pick((value) => value.cachedInput), outputTokens: pick((value) => value.output),
         cacheHitRate: pick((value) => value.cacheHitRate), minutes: pick((value) => value.minutes),
       };

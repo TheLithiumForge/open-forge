@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { StartingPoints, type StartingPointId } from "../data/cells.ts";
 import { CaseNames, MeasureNames, SetupNames, type CaseId, type MeasureId, type SetupId } from "../data/names.ts";
+import Cost from "@site/docs/evals/_definitions/cost.mdx";
 import Idea from "@site/docs/evals/_definitions/idea.mdx";
 import Brief from "@site/docs/evals/_definitions/brief.mdx";
 import FullSpec from "@site/docs/evals/_definitions/full-spec.mdx";
@@ -74,6 +75,7 @@ export const Definitions: Readonly<Record<DefinitionId, Definition>> = {
   "check-coverage": { title: MeasureNames["check-coverage"], kind: DefinitionKind.measure, Content: CheckCoverage },
   "judge-score": { title: MeasureNames["judge-score"], kind: DefinitionKind.measure, Content: JudgeScore },
   tokens: { title: MeasureNames.tokens, kind: DefinitionKind.measure, Content: Tokens },
+  cost: { title: MeasureNames.cost, kind: DefinitionKind.measure, Content: Cost },
   time: { title: MeasureNames.time, kind: DefinitionKind.measure, Content: Time },
 };
 

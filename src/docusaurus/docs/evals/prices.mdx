@@ -1,0 +1,28 @@
+---
+title: Prices
+description: The API prices the evals use to turn a run's tokens into a cost, for Claude and GPT models, and how each kind of token is charged.
+---
+
+import PriceTables from "@site/src/components/evals/PriceTables"
+
+# Prices
+
+The evals turn each run's tokens into a [cost](measures.mdx#cost) with this price list. It's kept here by hand and isn't fetched when a page opens, so a result reads the same until the list changes.
+
+<PriceTables />
+
+## How a run's cost adds up
+
+- New input, cached input, cache writes and output each have their own price. An agent resends its whole context on every request, so most input is cached, and the cached price often decides the total.
+- Output already includes reasoning, so reasoning isn't charged twice.
+- Each thread is charged at its own model's prices. An orchestrator on one model leading subagents on another adds up both.
+- Codex reports no cache writes, so its runs have none to charge.
+
+## What it leaves out
+
+- Batch and fast modes, because no run uses them.
+- The higher rates for one large request. A run's totals don't show each request's size. GPT's higher rates start above 272,000 input tokens, and Codex's context window stays below that. Claude Haiku's start above 100,000, so a run on Haiku would need its requests priced one by one.
+
+## When prices change
+
+A change adds a new version to the list in `src/docusaurus/src/components/evals/data/prices.ts`, and the earlier prices stay on this page. Results always use the newest price of each model, so a price cut can't make a newer result look cheaper than an older one.
