@@ -16,6 +16,7 @@ import { buildEvalImages } from "./execution/containers/docker-image.ts";
 import { HistoryStore } from "./history/store.ts";
 import { addResults } from "./history/results-add.ts";
 import { importResults } from "./history/results-import.ts";
+import { triggerGrading } from "./history/results-grade.ts";
 import { EvalPaths, evalsRoot } from "./paths.ts";
 import { validateCase } from "./grading/brownfield/validate.ts";
 import { checkChain } from "./execution/chain-check.ts";
@@ -41,6 +42,8 @@ export interface CliServices {
   readonly site: (options: SiteOptions) => Promise<number>;
   readonly launch: typeof launchNode;
   readonly results: (batch: string, repository: string, imported?: boolean) => Promise<string>;
+  /** Starts the results repository's grading workflow with the graders of a pushed commit. */
+  readonly grade?: (results: string, ref: string | null) => Promise<{ readonly repository: string; readonly commit: string }>;
   /** Rebuilds a published batch folder in the run store, for grading it on another machine. */
   readonly importResults?: (folder: string) => Promise<string>;
   readonly validateCase: typeof validateCase;
@@ -226,6 +229,13 @@ export async function runCli(argv: readonly string[], services: CliServices = de
     }
     case Command.results: {
       const [action, batch] = args;
+      if (action === ResultsAction.grade) {
+        checkedArgs(args.slice(1), [], [Flag.ref, Flag.repository], 0);
+        const repository = args.includes(Flag.repository) ? resolve(option(args, Flag.repository)) : EvalPaths.resultsRepository;
+        const started = await (services.grade ?? ((results, ref) => triggerGrading(join(evalsRoot, "..", ".."), results, ref)))(repository, args.includes(Flag.ref) ? option(args, Flag.ref) : null);
+        services.print(`Started grading in ${started.repository} with the graders of ${started.commit}.`);
+        return 0;
+      }
       if (action === ResultsAction.import && batch !== undefined && !batch.startsWith("--")) {
         checkedArgs(args.slice(1), [], [], 1);
         services.print(`Imported batch ${await (services.importResults ?? ((folder) => importResults(folder, new HistoryStore(EvalPaths.runs))))(resolve(batch))}`);

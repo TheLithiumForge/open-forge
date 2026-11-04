@@ -138,7 +138,7 @@ npm run evals -- judge <batch> --judges claude --missing
 
 ## `results`
 
-Add a finished batch, with its code, game, screenshots and conversations, to the results repository, replacing an earlier copy, then validate the repository. Evidence holding a sign-in, a machine path or the user name stops it. --repository picks another results repository than src/evals/results. results import, given a published batch folder, rebuilds that batch in the run store, so check --missing and judge --missing can grade it on any machine before results add publishes it again.
+Add a finished batch, with its code, game, screenshots and conversations, to the results repository, replacing an earlier copy, then validate the repository. Evidence holding a sign-in, a machine path or the user name stops it. --repository picks another results repository than src/evals/results. results grade starts the results repository's grading workflow, which checks every published run waiting for its checks with this repository's pushed graders and pushes the grades to its main branch. results import, given a published batch folder, rebuilds that batch in the run store, so check --missing and judge --missing can grade it on any machine before results add publishes it again.
 
 ```sh
 npm run evals -- results add <batch>
@@ -164,6 +164,7 @@ npm run evals -- results add <batch>
 | `--rebuild` | `check` | Build the saved project again before checking it |
 | `--missing` | `judge`, `check`, `analyze` | Grade or analyze only runs without a usable result. For judge, that's a run without a judgment from that judge or one that ended in an error. For check, it's a run whose latest check graded nothing or ended a clause in an error. For analyze, it's a run without an analysis from the current analyzer or one that ended in an error |
 | `--batch <id>` | `summary` | The batch to summarize |
+| `--ref <commit>` | `results` | The Open Forge commit whose graders results grade runs, HEAD by default. It must be pushed, since the workflow checks it out from GitHub |
 | `--imported` | `results` | Republish a batch that results import brought in. It was scrubbed when first published, so this machine's user name is neither scrubbed nor treated as a leak |
 | `--repository <folder>` | `results`, `site` | The results repository to add to, src/evals/results by default, or a folder in its layout for site to show |
 | `--port <n>` | `site` | Serve the docs site on another port than 4320. Its data server takes the next port |

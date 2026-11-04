@@ -61,7 +61,7 @@ Publishing follows these steps:
 1. Add finished batches with `results add` and commit them in the results repository.
 2. The maintainer pushes the results repository and updates the submodule pin.
 3. CI validates schemas, references, evidence hashes and the catalogue.
-4. For a batch published with its checks left for later, the Grade published runs workflow checks it on GitHub's runners and self-hosted ones, from the Open Forge commit in `OPEN_FORGE_REF`, and opens one pull request with the grades. AI judges never run there, since those jobs build agent-written code. The [results repository council](../../../emerging/analysis/results-repository-council.md) records why.
+4. For a batch published with its checks left for later, `npm run evals -- results grade` starts the Grade published runs workflow, which checks it on GitHub's runners and self-hosted ones with the graders of Open Forge's pushed commit and pushes the grades to the results repository's `main`, with no pull request. AI judges never run there, since those jobs build agent-written code. The [results repository council](../../../emerging/analysis/results-repository-council.md) records why.
 
 Each publication changes a remote repository and needs the maintainer's go. A failed validation keeps invalid records out of the site. The [proposal's publish flow](../../../emerging/analysis/eval-product-proposal.md#results-repository-and-site) defines these steps and permission.
 

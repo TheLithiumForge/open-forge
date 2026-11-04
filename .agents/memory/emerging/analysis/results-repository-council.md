@@ -25,9 +25,11 @@ All three chose the same shape: keep the results repository a data store, with r
 ## Pipeline
 
 1. `npm run evals -- results add <batch>` publishes a batch whose checks were left for later, and the maintainer pushes it.
-2. The Grade published runs workflow finds the waiting batches, gives each a runner from `GRADE_RUNNERS` in turn, imports it into an Open Forge checkout pinned by `OPEN_FORGE_REF`, runs `check --missing` and republishes it with `--imported`.
-3. A publish job copies only the expected grades under append-only rules, validates and opens one pull request, then dispatches validation on its branch.
-4. After the merge, the Evals pages show the grades on their next open.
+2. `npm run evals -- results grade` starts the Grade published runs workflow from the Open Forge repository with the graders of its pushed commit. The workflow finds the waiting batches, gives each a runner from `GRADE_RUNNERS` in turn, imports it, runs `check --missing` and republishes it with `--imported`.
+3. A publish job copies only the expected grades under append-only rules, validates and pushes them to `main`.
+4. The Evals pages show the grades on their next open.
+
+The council proposed a pull request per grading run. The maintainer chose on 2026-11-04 to start grading from the Open Forge repository and push the grades straight to `main` instead. No review sits between a grading job and `main` now, so the append-only rules are the only guard against a job that ran agent code.
 
 ## Changes before the first push
 
@@ -35,14 +37,13 @@ Made on 2026-11-04 in the results repository's `ed099c1` and the main repository
 
 - The catalogue no longer lists a batch that was never published. It moved to `D:\eval-workspaces\results-unpublished`.
 - `versions/** -text` keeps evidence bytes equal to their hashes.
-- Grading pins its graders to a required commit, ignores pushes that only add assessments, force-adds evidence that agent `.gitignore` files would hide, dispatches validation on the grade branch and never runs judges beside agent code.
+- Grading runs only when started with a commit for its graders, force-adds evidence that agent `.gitignore` files would hide, pushes to `main` with a rebase when it moved, and never runs judges beside agent code.
 - The main docs workflow checks out the results submodule and rebuilds when its pin moves.
 
 ## Still open
 
 - Push the results repository before the main repository, since the main one pins results commits that aren't public yet.
-- In the results repository settings, allow Actions to create pull requests and turn the old Pages site off.
-- Set `OPEN_FORGE_REF` to a public Open Forge commit that has `results import` and `results add --imported`.
+- In the results repository settings, turn the old Pages site off, and let GitHub Actions push to `main` if it's protected.
 - Keep self-hosted runners out of pull request workflows, wipe their Docker state between jobs and limit their runner group to this repository.
-- Skip batches that already have an open grade pull request, so overlapping runs don't conflict.
+- Grading runs one at a time, so two runs never push grades for the same batch.
 - Watch repository size. One batch of 12 runs took about 17 MB. Before it nears 1 GB, move screenshots to release assets referenced by hash, and add a summary file so the pages make fewer requests.

@@ -147,7 +147,7 @@ npm run evals -- check <batch> --missing
 npm run evals -- results add <batch>
 ```
 
-The results repository's Grade published runs workflow does this for every batch with waiting runs, spreading the batches over GitHub's runners and self-hosted ones, and opens one pull request with the grades.
+`npm run evals -- results grade` does this in CI: it starts the results repository's Grade published runs workflow with the graders of this repository's pushed commit. The workflow grades every batch with waiting runs, spreading the batches over GitHub's runners and self-hosted ones, and pushes the grades to the results repository's `main`.
 
 The [objective measures](measures.mdx#objective-measures) come from saved logs too, without a model:
 
