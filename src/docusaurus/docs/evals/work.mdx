@@ -65,11 +65,14 @@ Earlier batches ran one task alone from a clean start. They show as One task.
 | Plan | Work mode | Runs |
 | --- | --- | --- |
 | `neon-pairs-p1-smoke.json` | Whole packet, Organized docs only, checked inline | 1 |
-| `neon-pairs-p1-whole-packet.json` | Whole packet | 7, one per scenario |
-| `neon-pairs-p1-task-by-task.json` | Task by task | 28, four tasks per scenario |
-| `neon-pairs-p1-orchestrated.json` | Orchestrated | 14, two orchestrators per scenario |
+| `neon-pairs-p1-whole-packet.json` | Whole packet | 14, two per scenario |
+| `neon-pairs-p1-task-by-task.json` | Task by task | 56, four tasks twice per scenario |
+| `neon-pairs-p1-orchestrated.json` | Orchestrated | 28, two orchestrators twice per scenario |
+| `neon-pairs-p2-whole-packet.json` | Whole packet | 14 |
+| `neon-pairs-p2-orchestrated.json` | Orchestrated | 28 |
+| `neon-pairs-l3-sol.json` | The full spec built by Sol alone and leading Sol or Luna subagents | 42 |
 
-Each cell runs once for now, so the numbers are a first read, not a measured difference. Small fixes like these reach nearly full coverage in every scenario, so the first differences show in tokens and time.
+P2 doesn't run task by task. B5's bug can't be planted on top of F1's result, since both change the saved-game code, and a later task needs a planted bug. Two runs per cell are still a first read, not a measured difference. Small fixes like these reach nearly full coverage in every scenario, so the first differences show in tokens and time.
 
 ## Layer 3
 
