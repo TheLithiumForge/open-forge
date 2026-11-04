@@ -22,7 +22,8 @@ The maintainer asked for the Claude Layer 4 evals, then Layer 3, one plan per ch
 The runner works here after two local changes, approved by the maintainer. Neither changes tracked files:
 
 - Docker Hub refuses this machine's pulls with 429. Docker uses `mirror.gcr.io` as a registry mirror, and the pinned digest still checks the image.
-- The network proxy re-signs TLS, so containers fail with `SELF_SIGNED_CERT_IN_CHAIN`. The images are built locally with the proxy CA, under the tags the unchanged runner expects. `run` then finds them and skips its own build. Don't run `npm run evals -- images`, since it rebuilds without the CA.
+- The network's egress gateway re-signs TLS, so containers fail with `SELF_SIGNED_CERT_IN_CHAIN`. The images are built locally with the CAs from the host's `/usr/local/share/ca-certificates`, under the tags the unchanged runner expects. `run` then finds them and skips its own build. Don't run `npm run evals -- images`, since it rebuilds without the CAs.
+- Tested: from the agent image, `fetch` to `api.anthropic.com` returns 401, and Claude Code with a fake key answers "Invalid API key". The local proxy CA alone in `/root/.ccr` doesn't cover container traffic.
 
 The sign-in is `CLAUDE_CODE_OAUTH_TOKEN` in the Default cloud environment, so a new session has it in its process environment. Never print it.
 
@@ -55,15 +56,19 @@ Build script:
 ```sh
 #!/usr/bin/env bash
 set -euo pipefail
-CA=${CA:-/root/.ccr/agent-proxy-ca.crt}
+CAS=${CAS:-/usr/local/share/ca-certificates}
 CTX=$(mktemp -d)
 cp -r src/evals/images/. "$CTX/"
-cp "$CA" "$CTX/extra-ca.crt"
-echo '!extra-ca.crt' >> "$CTX/.dockerignore"
+mkdir "$CTX/extra-ca"
+cp "$CAS"/*.crt "$CTX/extra-ca/"
+# awk adds the final newline a certificate file can lack, so the joined file stays valid PEM.
+awk 1 "$CAS"/*.crt > "$CTX/extra-ca.pem"
+# The tracked .dockerignore lets only the listed files into the build, so let the CAs in too.
+printf '%s\n' '!extra-ca.pem' '!extra-ca' '!extra-ca/*' >> "$CTX/.dockerignore"
 for kind in agent verifier assessor; do
   awk -v last="$(grep -n '^FROM' "$CTX/$kind.Dockerfile" | tail -1 | cut -d: -f1)" '
     { print }
-    NR == last { print "COPY extra-ca.crt /usr/local/share/ca-certificates/extra-ca.crt"; print "ENV NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/extra-ca.crt" }
+    NR == last { print "COPY extra-ca/ /usr/local/share/ca-certificates/extra/"; print "COPY extra-ca.pem /etc/ssl/extra-ca.pem"; print "ENV NODE_EXTRA_CA_CERTS=/etc/ssl/extra-ca.pem" }
     END { print "RUN update-ca-certificates" }' "$CTX/$kind.Dockerfile" > "$CTX/$kind.ca.Dockerfile"
 done
 ARGS=$(cd src/evals && node --input-type=module -e '
