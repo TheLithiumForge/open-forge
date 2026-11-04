@@ -1,12 +1,25 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { ContainerStage, DockerNetworkMessages, OverflowSubnets, StageLabel } from "./stage.ts";
-import { containerLimits, ContainerTimeouts, DefaultContainerLimits, StageKind } from "./settings.ts";
+import { ContainerStage, CopyInOwner, DockerNetworkMessages, OverflowSubnets, StageLabel } from "./stage.ts";
+import { containerLimits, ContainerTimeouts, ContainerUsers, DefaultContainerLimits, StageKind } from "./settings.ts";
 import { evalImageTag } from "./docker-image.ts";
 import { assertStrictStage, containerFixture, FakeResult } from "./test-docker.ts";
 
 const TimeoutMs = 10_000;
 const TestLimits = { cpus: 1.5, memory: "2g", processes: 64 };
+
+test("a stage's user is root and files are copied in with its owner, so they belong to root from a Linux host too", async () => {
+  const fixture = await containerFixture();
+  const stage = new ContainerStage({ docker: fixture.client, timeoutMs: TimeoutMs });
+  try {
+    await stage.open(evalImageTag());
+    await stage.copyIn(fixture.space.work, "/input");
+    await stage.remove();
+    const created = fixture.client.calls.find((call) => call.args[0] === "create")?.args ?? [];
+    assert.equal(created[created.indexOf("--user") + 1], ContainerUsers.root);
+    assert.equal(fixture.client.calls.find((call) => call.args[0] === "cp")?.args.at(-1), CopyInOwner);
+  } finally { await fixture.dispose(); }
+});
 
 for (const command of ["create", "start", "cp", "exec"]) {
   test(`container is removed when Docker ${command} fails`, async () => {

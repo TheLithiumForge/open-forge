@@ -6,7 +6,7 @@ import { createRunSpace, removeFolder } from "../execution/workspace.ts";
 import { buildProject } from "./build.ts";
 import { Isolation } from "../config/choices.ts";
 import { ResultFiles } from "../paths.ts";
-import { RunStatus } from "../history/statuses.ts";
+import { CheckStatus, RunStatus } from "../history/statuses.ts";
 import { assessmentBase, checksAssessment, failedChecksAssessment } from "../history/assessments.ts";
 import { gradingVersions } from "../history/capture.ts";
 import type { AssessmentVersions, ChecksAssessment, RunView } from "../history/records.types.ts";
@@ -43,6 +43,11 @@ export async function recheckRun(run: RunView, versions: AssessmentVersions, dep
   }
   await dependencies.append(assessment);
   return assessment;
+}
+
+/** How many clauses a check couldn't grade, counting a check that ended early as one. A run with any needs checking again. */
+export function checkerErrors(assessment: Pick<ChecksAssessment, "error" | "outcomes">): number {
+  return (assessment.error === null ? 0 : 1) + assessment.outcomes.filter((outcome) => outcome.status === CheckStatus.error).length;
 }
 
 async function main(): Promise<void> {
@@ -96,7 +101,12 @@ async function main(): Promise<void> {
       } finally {
         if (space !== null) await removeFolder(space.root);
       }
-    }) }).then((assessment) => console.log(`${run.id} ${run.setup}: ${assessment.error === null ? "checked" : `check failed. ${assessment.error}`}.`)));
+    }) }).then((assessment) => {
+      const errors = checkerErrors(assessment);
+      // A CI job that checked a run without grading it must fail, so its run stays waiting and nothing is published.
+      if (errors > 0) process.exitCode = 1;
+      console.log(`${run.id} ${run.setup}: ${assessment.error !== null ? `check failed. ${assessment.error}` : errors > 0 ? `checked, and ${errors} clauses couldn't be graded` : "checked"}.`);
+    }));
   }
   await Promise.all(graded);
 }

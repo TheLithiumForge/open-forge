@@ -32,8 +32,12 @@ function sweepLeftoverNetworks(client: Docker): Promise<unknown> {
   return leftoversSwept;
 }
 
+// A plain docker cp from Linux keeps the host's file owner, and root without capabilities can't change another owner's
+// files. With this flag copied files take the container's user, so they belong to root from every host.
+export const CopyInOwner = "--archive";
+
 export function createArguments(name: string, image: string, limits: ContainerLimits): string[] {
-  return ["create", "--name", name, "--network", `${name}-net`, "--cap-drop", "ALL", "--security-opt", "no-new-privileges", "--init",
+  return ["create", "--name", name, "--user", ContainerUsers.root, "--network", `${name}-net`, "--cap-drop", "ALL", "--security-opt", "no-new-privileges", "--init",
     "--cpus", String(limits.cpus), "--memory", limits.memory, "--pids-limit", String(limits.processes),
     "--entrypoint", "sleep", image, "infinity"];
 }
@@ -113,7 +117,7 @@ export class ContainerStage {
   }
 
   async copyIn(source: string, target: string): Promise<void> {
-    await this.required(["cp", source, `${this.name}:${target}`]);
+    await this.required(["cp", source, `${this.name}:${target}`, CopyInOwner]);
   }
 
   async copyOut(source: string, target: string): Promise<void> {

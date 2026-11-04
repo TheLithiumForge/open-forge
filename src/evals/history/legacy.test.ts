@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { ResultFiles } from "../paths.ts";
 import { summarize } from "./summary.ts";
-import { recheckRun } from "../grading/recheck.ts";
+import { checkerErrors, recheckRun } from "../grading/recheck.ts";
 import { writeJson } from "./json-files.ts";
 import { CheckStatus, RecordSchemaVersion } from "./statuses.ts";
 import { FixtureVersions, legacyFixture, temporaryHistory } from "./test-fixtures.ts";
@@ -41,4 +41,11 @@ test("an old folder lists and feeds the summaries without rewriting its files", 
     assert.deepEqual(await readFile(join(store.batchFolder(batch.id), ResultFiles.batch)), beforeBatch);
     assert.deepEqual((await readdir(store.batchFolder(batch.id))).sort(), [ResultFiles.batch, "runs", ResultFiles.setups].sort());
   } finally { await cleanup(); }
+});
+
+test("a check counts the clauses it couldn't grade, and one that ended early counts as one", () => {
+  const outcome = (status: CheckStatus) => ({ id: status, area: status, status, evidence: status });
+  assert.equal(checkerErrors({ error: null, outcomes: [outcome(CheckStatus.pass), outcome(CheckStatus.fail), outcome(CheckStatus.blocked)] }), 0);
+  assert.equal(checkerErrors({ error: null, outcomes: [outcome(CheckStatus.pass), outcome(CheckStatus.error), outcome(CheckStatus.error)] }), 2);
+  assert.equal(checkerErrors({ error: "The verifier stopped.", outcomes: [] }), 1);
 });

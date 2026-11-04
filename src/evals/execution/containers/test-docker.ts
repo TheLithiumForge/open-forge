@@ -6,7 +6,7 @@ import { PassThrough } from "node:stream";
 import type { Docker, DockerOptions } from "./docker.ts";
 import type { ProcessResult } from "../process.ts";
 import type { RunSpace } from "./executor.ts";
-import { ContainerPaths, DefaultContainerLimits, type StageKind as ImageKind } from "./settings.ts";
+import { ContainerPaths, ContainerUsers, DefaultContainerLimits, type StageKind as ImageKind } from "./settings.ts";
 import { evalImageTag } from "./docker-image.ts";
 import assert from "node:assert/strict";
 
@@ -98,7 +98,7 @@ export function assertStrictStage(client: FakeDocker, kind: ImageKind, limits = 
   assert.ok(create);
   const name = create.args[create.args.indexOf("--name") + 1];
   assert.ok(name);
-  assert.deepEqual(create.args, ["create", "--name", name, "--network", `${name}-net`, "--cap-drop", "ALL", "--security-opt", "no-new-privileges", "--init",
+  assert.deepEqual(create.args, ["create", "--name", name, "--user", ContainerUsers.root, "--network", `${name}-net`, "--cap-drop", "ALL", "--security-opt", "no-new-privileges", "--init",
     "--cpus", String(limits.cpus), "--memory", limits.memory, "--pids-limit", String(limits.processes), "--entrypoint", "sleep", evalImageTag(kind), "infinity"]);
   for (const call of client.calls) {
     if (call.args[0] === "create") assert.equal(call.args.some((arg) => ["-v", "--volume", "--volumes-from", "--mount", "-p", "--publish", "--publish-all", "--privileged", "--cap-add"].includes(arg)), false);
