@@ -63,7 +63,7 @@ export const FlagHelp: readonly FlagDoc[] = [
   { flag: `${Flag.parent} <batch>`, commands: [Command.run, Command.chainCheck], effect: "Name the previous task's batch. Each run starts from the parent run with the same setup and repeat" },
   { flag: Flag.all, commands: [Command.validateCase], effect: "Validate every case of the plan" },
   { flag: `${Flag.layer} <n>`, commands: [Command.reference], effect: "Grade the reference against Layer 2 or 3" },
-  { flag: `${Flag.parallel} <n>`, commands: [Command.run, Command.resume], effect: "How many runs go at once. The full plans run two, because every run spends the signed-in account's own model limits" },
+  { flag: `${Flag.parallel} <n>`, commands: [Command.run, Command.resume, Command.judge], effect: "How many runs go at once. The full plans run two, because every run spends the signed-in account's own model limits" },
   { flag: Flag.acceptHarness, commands: [Command.resume], effect: "Continue a batch on changed runner code and list the change in the batch record. Changed inputs, checks, rubric, tooling or models still need a new batch" },
   { flag: Flag.development, commands: [Command.run, Command.qualify], effect: "Allow local isolation, which is never fit for scoring" },
   { flag: Flag.rebuild, commands: [Command.check], effect: "Build the saved project again before checking it" },

@@ -24,7 +24,7 @@ import { checkChain } from "./execution/chain-check.ts";
 import { BrownfieldFiles } from "./materialize/brownfield-case.ts";
 import { batchMatrixSummary } from "./config/summary.ts";
 import { savedAnalysis, savedProgress, savedUsage } from "./history/saved-batches.ts";
-import { judgeOptions, runPresetOptions } from "./config/preset-options.ts";
+import { judgeOptions, parallelOption, runPresetOptions } from "./config/preset-options.ts";
 import { referenceOptions } from "./config/reference.ts";
 import { runReference } from "./execution/reference.ts";
 import { applyMachineOptions, splitMachineOptions } from "./config/machine-options.ts";
@@ -73,13 +73,6 @@ function checkedArgs(args: readonly string[], flags: readonly string[], values: 
     else operands += 1;
   }
   if (operands !== positions) throw new Error("Wrong number of operands. Use --help for an example.");
-}
-
-/** How many attempts may run at once. A plan's own setting applies unless this caps it. */
-function parallelOption(args: readonly string[]): number {
-  const value = Number(option(args, Flag.parallel));
-  if (!Number.isInteger(value) || value < 1) throw new Error("Give --parallel a whole number of at least 1.");
-  return value;
 }
 
 /** Narrows a plan to some of its setups, in the plan's order. The plan's first setup is every comparison's control, so it stays. */

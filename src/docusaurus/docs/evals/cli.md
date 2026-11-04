@@ -158,7 +158,7 @@ npm run evals -- results add <batch>
 | `--parent <batch>` | `run`, `chain-check` | Name the previous task's batch. Each run starts from the parent run with the same setup and repeat |
 | `--all` | `validate-case` | Validate every case of the plan |
 | `--layer <n>` | `reference` | Grade the reference against Layer 2 or 3 |
-| `--parallel <n>` | `run`, `resume` | How many runs go at once. The full plans run two, because every run spends the signed-in account's own model limits |
+| `--parallel <n>` | `run`, `resume`, `judge` | How many runs go at once. The full plans run two, because every run spends the signed-in account's own model limits |
 | `--accept-harness` | `resume` | Continue a batch on changed runner code and list the change in the batch record. Changed inputs, checks, rubric, tooling or models still need a new batch |
 | `--development` | `run`, `qualify` | Allow local isolation, which is never fit for scoring |
 | `--rebuild` | `check` | Build the saved project again before checking it |
