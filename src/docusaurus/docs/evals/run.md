@@ -171,7 +171,7 @@ npm run evals -- site
 npm run evals -- results add <batch>
 ```
 
-`results add` copies a finished batch's records and evidence into the results repository in `src/evals/results`: agent code without installed packages, the built game, screenshots, conversations and event logs. Adding a batch again replaces it. The command stops if evidence holds a sign-in, a machine path or your user name, and it validates the whole repository afterwards. Publishing the repository is a separate maintainer decision.
+`results add` copies a finished batch's records and evidence into the results repository in `src/evals/results`: agent code without installed packages or downloaded tools, the built game, screenshots, conversations and event logs. A browser an agent downloaded stays in the run store, and so does any file over 50 MB. Adding a batch again replaces it. The command stops if evidence holds a sign-in, a machine path or your user name, and it validates the whole repository afterwards. Publishing the repository is a separate maintainer decision.
 
 ## Reference
 

@@ -1,4 +1,4 @@
-export const Redacted = { path: "[machine-path]", user: "[user]" } as const;
+export const Redacted = { path: "[machine-path]", user: "[user]", account: "[account]" } as const;
 const privateKeys = new Set(["username", "user", "sessionid", "hostname", "homedir", "cwd", "machinepath", "sourcepath", "credential", "credentials", "apikey", "token", "authorization"]);
 
 export interface SanitizingOptions {

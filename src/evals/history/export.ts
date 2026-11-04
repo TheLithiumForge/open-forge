@@ -1,12 +1,12 @@
 import { mkdir, rename, rm, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { dirname, join, resolve, sep } from "node:path";
-import { HistoryFiles } from "./artifacts.ts";
+import { artifactHash, HistoryFiles, publishedFile } from "./artifacts.ts";
 import { AnalysisFile } from "./analysis/classes.ts";
 import { storedRun } from "./assessments.ts";
 import { jsonLines, readJson, safeId } from "./json-files.ts";
 import { legacyAssessments, legacyPicks } from "./legacy.ts";
-import type { AssessmentRecord, ExperimentRecord, RunRecord, RunView } from "./records.types.ts";
+import type { ArtifactRecord, AssessmentRecord, ExperimentRecord, RunRecord, RunView } from "./records.types.ts";
 import type { LegacyRunRecord, Preference } from "./results.types.ts";
 import { sanitizeRecords, type SanitizingOptions } from "./sanitize.ts";
 import { AssessmentKind, BatchStatus, RunStatus } from "./statuses.ts";
@@ -16,8 +16,11 @@ import { ResultFiles } from "../paths.ts";
 export const ExportFolders = { versions: "versions", batches: "batches" } as const;
 const finishedStatuses: readonly string[] = [RunStatus.done, RunStatus.failed, RunStatus.limited];
 
-/** A batch published before was scrubbed then, so its republication on another machine scrubs no machine user, such as a CI runner's generic name. */
-export interface ExportOptions extends SanitizingOptions { readonly scrubMachineUser?: boolean }
+/**
+ * A batch published before was scrubbed then, so its republication on another machine scrubs no machine user, such as
+ * a CI runner's generic name. Results add names the artifacts when a scrubbed file's size and hash changed.
+ */
+export interface ExportOptions extends SanitizingOptions { readonly scrubMachineUser?: boolean; readonly artifacts?: readonly ArtifactRecord[] }
 
 export async function exportBatch(store: HistoryStore, batchId: string, destination: string, options: ExportOptions = {}): Promise<string> {
   const batch = await store.readBatch(batchId);
@@ -29,7 +32,7 @@ export async function exportBatch(store: HistoryStore, batchId: string, destinat
   const source = resolve(store.batchFolder(batch.id));
   if (target === source || target.startsWith(source + sep)) throw new Error("Export outside the source batch.");
   if (existsSync(target)) throw new Error("An exported batch is immutable. Export a linked correction instead.");
-  const files = await batchFiles(store, batch, views);
+  const files = await batchFiles(store, batch, views, options.artifacts);
   // Scrub the whole pack together so a name found in one record is removed from every record.
   const userNames = options.scrubMachineUser === false ? [] : [process.env["USERNAME"], process.env["USER"]].filter((name): name is string => name !== undefined);
   const sanitized = sanitizeRecords(files, { userNames: [...userNames, ...options.userNames ?? []] });
@@ -56,9 +59,21 @@ export function recordText(name: string, value: unknown): string {
   return name.endsWith(".jsonl") && Array.isArray(value) ? jsonLines(value) : `${JSON.stringify(value, null, 2)}\n`;
 }
 
+/** Each run's hash covers the evidence it publishes, and a pick names the same hash as its run. */
+function publishedHashes(runs: readonly RunRecord[], artifacts: readonly ArtifactRecord[], assessments: readonly AssessmentRecord[]): { runs: RunRecord[]; assessments: AssessmentRecord[] } {
+  const hashed = runs.map((run) => run.artifactHash === null ? run
+    : { ...run, artifactHash: artifactHash(artifacts.filter((artifact) => artifact.runId === run.id && artifact.assessmentId === null)) });
+  const hashes = new Map(hashed.map((run) => [run.id, run.artifactHash]));
+  return { runs: hashed, assessments: assessments.map((record) => record.kind !== AssessmentKind.pick ? record : {
+    ...record,
+    left: { ...record.left, artifactHash: hashes.get(record.left.runId) ?? record.left.artifactHash },
+    right: { ...record.right, artifactHash: hashes.get(record.right.runId) ?? record.right.artifactHash },
+  }) };
+}
+
 /** A batch's record files in the published layout, keyed by their path inside the batch folder. */
-export async function batchFiles(store: HistoryStore, batch: ExperimentRecord, views: readonly RunView[]): Promise<Readonly<Record<string, unknown>>> {
-  const runs = await Promise.all(views.map(async (view): Promise<RunRecord> => batch.legacy ? storedRun(view)
+export async function batchFiles(store: HistoryStore, batch: ExperimentRecord, views: readonly RunView[], named?: readonly ArtifactRecord[]): Promise<Readonly<Record<string, unknown>>> {
+  const stored = await Promise.all(views.map(async (view): Promise<RunRecord> => batch.legacy ? storedRun(view)
     : readJson(join(store.runFolder(batch.id, view.id), ResultFiles.run))));
   const assessments: AssessmentRecord[] = [];
   if (batch.legacy) {
@@ -67,10 +82,12 @@ export async function batchFiles(store: HistoryStore, batch: ExperimentRecord, v
     if (existsSync(preferences)) assessments.push(...legacyPicks(batch.id, await readJson<Preference[]>(preferences)));
   }
   assessments.push(...await store.readAssessments(batch.id));
+  const artifacts = named ?? (await store.readArtifacts(batch)).filter(publishedFile);
+  const published = publishedHashes(stored, artifacts, assessments);
   return {
     [HistoryFiles.experiment]: batch, [HistoryFiles.setups]: await store.readSetups(batch),
-    [HistoryFiles.runs]: runs, [HistoryFiles.artifacts]: await store.readArtifacts(batch),
-    ...Object.fromEntries(Object.values(AssessmentKind).map((kind) => [`${HistoryFiles.assessments}/${kind}.jsonl`, assessments.filter((record) => record.kind === kind)])),
+    [HistoryFiles.runs]: published.runs, [HistoryFiles.artifacts]: artifacts,
+    ...Object.fromEntries(Object.values(AssessmentKind).map((kind) => [`${HistoryFiles.assessments}/${kind}.jsonl`, published.assessments.filter((record) => record.kind === kind)])),
     [`${HistoryFiles.assessments}/${AnalysisFile}`]: await store.readAnalyses(batch.id),
   };
 }

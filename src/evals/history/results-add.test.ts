@@ -1,8 +1,13 @@
 import assert from "node:assert/strict";
-import { mkdir, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
 import { test } from "node:test";
-import { addResults, evidenceLeaks, LeakKind, ResultsScripts } from "./results-add.ts";
+import { CodexRolloutFile } from "../execution/providers/codex-telemetry.ts";
+import { artifactHash, HistoryFiles } from "./artifacts.ts";
+import { sha256 } from "./fingerprints.ts";
+import { readJson, readJsonLines } from "./json-files.ts";
+import type { ArtifactRecord, RunRecord } from "./records.types.ts";
+import { addResults, authFileSecrets, evidenceLeaks, LeakKind, ResultsScripts, scrubbedTranscript } from "./results-add.ts";
 import { RecordSchemaVersion } from "./statuses.ts";
 import { temporaryHistory, v2Fixture } from "./test-fixtures.ts";
 
@@ -50,6 +55,70 @@ test("results add stages the exported batch with its evidence folder, then valid
       [ResultsScripts.validate, [], repository],
     ]);
   } finally { await cleanup(); }
+});
+
+test("tool downloads reach neither staging nor the leak check, since they never publish", async () => {
+  const { root, store, cleanup } = await temporaryHistory();
+  try {
+    const { batch, run } = v2Fixture();
+    const download = join("files", ".npm-cache", "tool.tgz");
+    await store.saveBatch(batch);
+    await mkdir(dirname(join(store.runFolder(batch.id, run.id), download)), { recursive: true });
+    await writeFile(join(store.runFolder(batch.id, run.id), download), `Thanks, ${Machine.user}.`);
+    await writeFile(join(store.runFolder(batch.id, run.id), "conversation.json"), "Plain evidence.");
+    await store.saveRun(run);
+    await store.saveSetups(batch.id, [{ schemaVersion: RecordSchemaVersion, id: run.setup, experimentId: batch.id, label: run.setup, commands: [], files: [], contentHash: null }]);
+    const repository = join(root, "repository");
+    await mkdir(join(repository, "scripts"), { recursive: true });
+    await mkdir(join(repository, "node_modules"));
+    await writeFile(join(repository, ResultsScripts.stage), "");
+    let staged: string[] = [];
+    await addResults(store, batch.id, repository, { run: async (script, args) => {
+      if (script === ResultsScripts.stage) staged = await readdir(join(args[2] ?? "", "runs", run.id));
+      return 0;
+    }, secrets: async () => [], machine: Machine });
+    assert.deepEqual(staged, ["conversation.json"]);
+  } finally { await cleanup(); }
+});
+
+test("a transcript's account fields are scrubbed with its record following, and the same id elsewhere still stops the publish", async () => {
+  const { root, store, cleanup } = await temporaryHistory();
+  try {
+    const repository = join(root, "repository");
+    await mkdir(join(repository, "scripts"), { recursive: true });
+    await mkdir(join(repository, "node_modules"));
+    await writeFile(join(repository, ResultsScripts.stage), "");
+    const { batch, run } = v2Fixture();
+    const account = "account-id-long-enough-to-count", transcript = (text: string) => `{"type":"session_meta","payload":{"creator_user_id":"${account}","creator_account_id":"${account}","id":"kept"}}\n${text}\n`;
+    await store.saveBatch(batch);
+    await mkdir(store.runFolder(batch.id, run.id), { recursive: true });
+    const save = async (text: string) => { await writeFile(join(store.runFolder(batch.id, run.id), CodexRolloutFile), transcript(text)); await store.saveRun(run); };
+    await save("plain");
+    await store.saveSetups(batch.id, [{ schemaVersion: RecordSchemaVersion, id: run.setup, experimentId: batch.id, label: run.setup, commands: [], files: [], contentHash: null }]);
+    const services = (seen: (exported: string, evidence: string) => Promise<void>) => ({ secrets: async () => [account], machine: Machine,
+      run: async (script: string, args: readonly string[]) => { if (script === ResultsScripts.stage) await seen(args[0] ?? "", args[2] ?? ""); return 0; } });
+    let checked = false;
+    await addResults(store, batch.id, repository, services(async (exported, evidence) => {
+      const staged = await readFile(join(evidence, "runs", run.id, CodexRolloutFile));
+      assert.equal(staged.includes(account), false);
+      assert.deepEqual(staged, scrubbedTranscript(Buffer.from(transcript("plain"))));
+      const [artifact] = await readJson<ArtifactRecord[]>(join(exported, HistoryFiles.artifacts));
+      assert.deepEqual([artifact?.bytes, artifact?.sha256], [staged.length, sha256(staged)]);
+      const [record] = await readJsonLines<RunRecord>(join(exported, HistoryFiles.runs));
+      assert.equal(record?.artifactHash, artifactHash(artifact === undefined ? [] : [artifact]));
+      checked = true;
+    }));
+    assert.equal(checked, true);
+    await save(account);
+    await assert.rejects(addResults(store, batch.id, repository, services(async () => { assert.fail(); })));
+  } finally { await cleanup(); }
+});
+
+test("a sign-in file's secrets include its tokens' claims, except the provider's web addresses", () => {
+  const email = "someone@example.invalid", provider = "https://issuer.example.invalid";
+  const token = ["header", Buffer.from(JSON.stringify({ email, iss: provider })).toString("base64url"), "signature"].join(".");
+  const auth = { refresh: "not-a-token", tokens: { id_token: token, broken: "one.%%%.two" } };
+  assert.deepEqual(authFileSecrets(auth), ["not-a-token", token, "one.%%%.two", email]);
 });
 
 test("results add stops before staging when evidence would publish private data or the repository isn't ready", async () => {
