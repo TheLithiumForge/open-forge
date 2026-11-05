@@ -6,6 +6,7 @@ export const CardState = { closed: 'closed', revealed: 'revealed', matched: 'mat
 export const MismatchMs = 800;
 const CardName = /^Row \d+, column \d+, (closed|revealed|matched)(?:, (.+))?$/;
 const AttemptsPerCard = 6;
+const MainBoardMark = 'data-eval-main-board';
 
 export interface GamePlan {
   /** A layout already seen, so the game can be played without reading it again. */
@@ -24,16 +25,29 @@ function parsed(names: readonly string[]): Card[] {
     return { state: match?.[1] ?? '', face: match?.[2] ?? null };
   });
 }
+/** Notes the cards on screen before a tournament starts. A page may keep the main game's board beside the tournament's, and a player plays only the new one. */
+export async function markMainBoard(page: Page): Promise<void> {
+  await page.evaluate(({ pattern, mark }) => { for (const button of document.querySelectorAll('button')) if (new RegExp(pattern).test(button.getAttribute('aria-label') ?? '')) button.setAttribute(mark, ''); }, { pattern: CardName.source, mark: MainBoardMark });
+}
 export async function boardCards(page: Page): Promise<Card[]> {
-  return parsed(await page.evaluate((pattern) => [...document.querySelectorAll('button')].map((button) => button.getAttribute('aria-label') ?? '').filter((name) => new RegExp(pattern).test(name)), CardName.source));
+  return parsed(await page.evaluate(({ pattern, mark }) => {
+    // A page may also hide the main game's board and keep it in the document, so only cards on screen count.
+    const cards = [...document.querySelectorAll('button')].filter((button) => new RegExp(pattern).test(button.getAttribute('aria-label') ?? '') && button.getClientRects().length > 0);
+    const fresh = cards.filter((button) => !button.hasAttribute(mark));
+    return (fresh.length > 0 ? fresh : cards).map((button) => button.getAttribute('aria-label') ?? '');
+  }, { pattern: CardName.source, mark: MainBoardMark }));
 }
 async function reveal(page: Page, index: number): Promise<Card[]> {
-  return parsed(await page.evaluate(async ({ index, pattern, tasks }) => {
-    const cards = () => [...document.querySelectorAll('button')].filter((button) => new RegExp(pattern).test(button.getAttribute('aria-label') ?? ''));
+  return parsed(await page.evaluate(async ({ index, pattern, tasks, mark }) => {
+    const cards = () => {
+      const all = [...document.querySelectorAll('button')].filter((button) => new RegExp(pattern).test(button.getAttribute('aria-label') ?? '') && button.getClientRects().length > 0);
+      const fresh = all.filter((button) => !button.hasAttribute(mark));
+      return fresh.length > 0 ? fresh : all;
+    };
     cards()[index]?.click();
     for (let task = 0; task < tasks; task++) await new Promise<void>((done) => { const channel = new MessageChannel(); channel.port1.onmessage = () => { channel.port1.close(); done(); }; channel.port2.postMessage(null); });
     return cards().map((button) => button.getAttribute('aria-label') ?? '');
-  }, { index, pattern: CardName.source, tasks: SettleTasks }));
+  }, { index, pattern: CardName.source, tasks: SettleTasks, mark: MainBoardMark }));
 }
 function closedIndexes(cards: readonly Card[]): number[] {
   return cards.flatMap((card, index) => card.state === CardState.closed ? [index] : []);

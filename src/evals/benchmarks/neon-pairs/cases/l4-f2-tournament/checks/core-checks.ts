@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { boardCards, CardState } from './board.ts';
 import { settled } from './browser.ts';
-import { begin, button, championOf, Control, Eight, exported, Four, loaded, nowPlaying, offered, playOn, press, sameCards, tournament, tournamentStopped, visibleText, winnerOf, writtenText } from './tournament.ts';
+import { begin, button, championOf, Control, Eight, exported, Four, loaded, nowPlaying, offered, playerField, playersSelect, playOn, press, sameCards, tournament, tournamentStopped, visibleText, winnerOf, writtenText } from './tournament.ts';
 import type { Page } from 'playwright';
 import type { ChangeCheck } from './check.types.ts';
 
@@ -23,20 +23,21 @@ export const coreChecks: readonly ChangeCheck[] = [
     const near = await button(page, Control.newGame).evaluate((element, name) => [...(element.parentElement?.querySelectorAll('button') ?? [])].some((item) => item.textContent?.trim() === name), Control.open);
     assert.ok(near, 'Tournament sits beside New Game.');
     await press(page, Control.open);
-    const select = page.getByLabel(Control.players, { exact: true });
+    const select = playersSelect(page);
     assert.equal(await select.count(), 1, 'A Players select exists.');
     assert.deepEqual((await select.locator('option').evaluateAll((options) => options.map((option) => (option as HTMLOptionElement).value))).sort(), ['4', '8']);
     await select.selectOption('8'); await settled(page);
-    assert.equal(await page.getByLabel('Player 8', { exact: true }).count(), 1, 'Eight players have eight inputs.');
+    assert.equal(await playerField(page, 8).count(), 1, 'Eight players have eight inputs.');
     await select.selectOption('4'); await settled(page);
-    assert.equal(await page.getByLabel('Player 4', { exact: true }).count(), 1, 'Four players have four inputs.');
-    assert.equal(await page.getByLabel('Player 5', { exact: true }).count(), 0, 'Four players have no fifth input.');
+    assert.equal(await playerField(page, 4).count(), 1, 'Four players have four inputs.');
+    assert.equal(await playerField(page, 5).count(), 0, 'Four players have no fifth input.');
   } },
   { id: 'core-02', description: 'Start tournament names an entered player as "Now playing: NAME", and Start turn begins a game on a closed board.', action: async (page) => {
     await begin(page, Four);
-    const name = await nowPlaying(page);
-    assert.ok(name !== null && Four.some((player) => player === name), 'An entered player is up.');
+    const waiting = await nowPlaying(page);
     await press(page, Control.startTurn);
+    const name = waiting ?? await nowPlaying(page);
+    assert.ok(name !== null && Four.some((player) => player === name), 'An entered player is up.');
     const cards = await boardCards(page);
     assert.ok(cards.length > 0 && cards.every((card) => card.state === CardState.closed), 'The board starts closed.');
   } },

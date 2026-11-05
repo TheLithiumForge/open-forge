@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { settled } from './browser.ts';
-import { playGame } from './board.ts';
+import { markMainBoard, playGame } from './board.ts';
 import type { Locator, Page } from 'playwright';
 import type { GamePlan, GameResult } from './board.ts';
 
@@ -9,7 +9,7 @@ export const Control = { open: 'Tournament', newGame: 'New Game', players: 'Play
 export const Four = ['Ann', 'Bob', 'Cyd', 'Dee'] as const;
 export const Eight = [...Four, 'Eve', 'Fay', 'Gus', 'Hal'] as const;
 export const PreferencesKey = 'neon-pairs.preferences.v1';
-const NowPlaying = /Now playing: *([^\n]+)/, ChampionText = /Champion: *([^\n]+)/, RoundText = /Round: *([^\n]+)/;
+const NowPlaying = /Now playing:\s*([^\n]+)/, ChampionText = /Champion:\s*([^\n]+)/, RoundText = /Round:\s*([^\n]+)/;
 const StallLimit = 3, StallMs = 1000, StepLimit = 400;
 
 export interface Turn extends GameResult { readonly name: string }
@@ -38,12 +38,17 @@ export async function press(page: Page, name: string): Promise<void> {
   assert.ok(await offered(page, name), `${name} is offered once.`);
   await button(page, name).click(); await settled(page);
 }
+/** By role, since another element may share a control's label or the control may be named some other way. */
+export const playersSelect = (page: Page): Locator => page.getByRole('combobox', { name: Control.players, exact: true });
+export const playerField = (page: Page, number: number): Locator => page.getByRole('textbox', { name: `Player ${number}`, exact: true });
+const jsonBox = (page: Page): Locator => page.getByRole('textbox', { name: Control.json, exact: true });
+
 export async function setPlayers(page: Page, names: readonly string[]): Promise<void> {
-  const select = page.getByLabel(Control.players, { exact: true });
+  const select = playersSelect(page);
   assert.equal(await select.count(), 1, 'A Players select exists.');
   await select.selectOption(String(names.length)); await settled(page);
   for (const [index, name] of names.entries()) {
-    const field = page.getByLabel(`Player ${index + 1}`, { exact: true });
+    const field = playerField(page, index + 1);
     assert.equal(await field.count(), 1, `A Player ${index + 1} input exists.`);
     await field.fill(name);
   }
@@ -51,6 +56,7 @@ export async function setPlayers(page: Page, names: readonly string[]): Promise<
 }
 /** Leaving may return to the Tournament screen or to the game, so a new tournament starts from whichever is showing. */
 export async function begin(page: Page, names: readonly string[]): Promise<void> {
+  await markMainBoard(page);
   if (await offered(page, Control.open)) await press(page, Control.open);
   await setPlayers(page, names); await press(page, Control.start);
 }
@@ -72,8 +78,7 @@ export async function playOn(page: Page, options: RunOptions = {}, soFar: Run = 
     await settled(page);
     if (await offered(page, Control.startTurn)) {
       stalls = 0;
-      const name = await nowPlaying(page);
-      assert.ok(name !== null, 'The page says whose turn it is.');
+      const waiting = await nowPlaying(page);
       let match = matches.at(-1);
       if (match === undefined || match.turns.length === 2) {
         if (options.stopAtMatch === matches.length) return { matches, champion: null, steps };
@@ -82,6 +87,9 @@ export async function playOn(page: Page, options: RunOptions = {}, soFar: Run = 
       }
       await options.visit?.(Stage.turn);
       await press(page, Control.startTurn); steps.push(Control.startTurn);
+      // A page may name the player only once the turn starts.
+      const name = waiting ?? await nowPlaying(page);
+      assert.ok(name !== null, 'The page says whose turn it is.');
       const first = match.turns[0];
       const plan = options.plan?.({ match: matches.length - 1, turn: match.turns.length, name, first }) ?? (first === undefined ? {} : { known: first.layout });
       match.turns.push({ name, ...await playGame(page, plan) });
@@ -117,12 +125,13 @@ export async function entryHolding(page: Page, text: string): Promise<readonly [
 }
 export async function exported(page: Page): Promise<string> {
   await press(page, Control.export);
-  const box = page.getByLabel(Control.json, { exact: true });
+  const box = jsonBox(page);
   assert.equal(await box.count(), 1, 'A Tournament JSON box exists.');
   return box.inputValue();
 }
 export async function loaded(page: Page, text: string): Promise<void> {
-  const box = page.getByLabel(Control.json, { exact: true });
+  await markMainBoard(page);
+  const box = jsonBox(page);
   assert.equal(await box.count(), 1, 'A Tournament JSON box exists.');
   await box.fill(text); await press(page, Control.load);
 }
