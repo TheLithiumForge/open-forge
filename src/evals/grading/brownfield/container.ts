@@ -17,7 +17,7 @@ export const BrownfieldContainer = { harness: "/home/agent/brownfield-harness", 
 export const BrownfieldEnvironment = { HOME: "/home/agent", PLAYWRIGHT_BROWSERS_PATH: "/ms-playwright", OPEN_FORGE_BROWNFIELD_WORKER: "1" } as const;
 const HarnessPackages = ["playwright", "playwright-core"] as const;
 const PageByteLimit = 12 * 1024 * 1024;
-const ChangeTimeoutMs = 10 * 60_000;
+const ChangeTimeoutMs = 30 * 60_000;
 
 export async function runChangeChecks(item: BrownfieldCase, declared: readonly ChangeCheck[], input: SuiteCheckInput): Promise<CheckOutcome[]> {
   const scratch = await mkdtemp(join(tmpdir(), "eval-brownfield-checks-"));

@@ -22,7 +22,8 @@ export async function checkDocumentSetup(folder: string, manifest: SetupManifest
     if (manifest.kind === SetupKind.forge && JSON.stringify(documentMetadata(bytes)) !== JSON.stringify(metadata)) throw new Error("Product routing descriptions changed.");
   }
 for (const note of manifest.notes ?? []) {    const bytes = actual.get(note.path);    if (!bytes || sha256(stripFrontmatter(bytes)) !== note.sha256) throw new Error(`An overload note is missing or changed: ${note.path}`);  }
-  for (const scope of manifest.scopes?.scopes ?? []) {
+  // Only an Open Forge setup has entrypoints. Organized docs have the same folders without them.
+  for (const scope of manifest.kind === SetupKind.forge ? manifest.scopes?.scopes ?? [] : []) {
     const bytes = actual.get(`${SetupFiles.docs}/${scopeEntrypoint(scope)}`);
     if (!bytes || documentMetadata(bytes).description !== scope.description) throw new Error(`The ${scope.title} scope lost its description.`);
   }

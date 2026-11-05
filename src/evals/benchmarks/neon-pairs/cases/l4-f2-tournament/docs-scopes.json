@@ -1,0 +1,341 @@
+{
+  "schemaVersion": 1,
+  "upFront": [
+    "README.md"
+  ],
+  "scopes": [
+    {
+      "slug": "gameplay",
+      "title": "Gameplay",
+      "description": "Gameplay scope for the board, turns, scoring, the clock, saved sizes and best scores",
+      "tags": [
+        "Game",
+        "Gameplay"
+      ],
+      "documents": [
+        "rules.md",
+        "deck-generation.md",
+        "selection-state.md",
+        "turn-resolution.md",
+        "scoring-and-moves.md",
+        "best-score-records.md",
+        "board-size-catalogue.md",
+        "win-conditions.md",
+        "game-state-model.md",
+        "pair-identity.md",
+        "mismatch-interval.md",
+        "elapsed-time-rules.md",
+        "new-game-and-restart.md",
+        "gameplay-faq.md"
+      ]
+    },
+    {
+      "slug": "interface",
+      "title": "Controls and input",
+      "description": "Interface scope for the game's controls, pointer, touch, keyboard, focus, names, dialogs, tables and screen reader behavior",
+      "tags": [
+        "Game",
+        "Interface",
+        "Accessibility"
+      ],
+      "documents": [
+        "controls.md",
+        "input.md",
+        "control-bar.md",
+        "reproduction-panel.md",
+        "status-bar.md",
+        "board-keyboard-navigation.md",
+        "pointer-and-touch.md",
+        "focus-policy.md",
+        "dialog-policy.md",
+        "target-size-policy.md",
+        "text-entry-policy.md",
+        "name-length-policy.md",
+        "duplicate-names-policy.md",
+        "announcements-policy.md",
+        "tables-policy.md",
+        "screen-reader-notes.md",
+        "form-layout-guide.md",
+        "error-display-guide.md",
+        "native-controls-guide.md",
+        "disabled-state-guide.md",
+        "interface-review-checklist.md"
+      ]
+    },
+    {
+      "slug": "visuals",
+      "title": "Visuals",
+      "description": "Visuals scope for layout, card artwork, colors, motion, type and zoom",
+      "tags": [
+        "Game",
+        "Visuals"
+      ],
+      "documents": [
+        "visuals.md",
+        "motion-policy.md",
+        "color-policy.md",
+        "card-artwork.md",
+        "face-catalogue.md",
+        "layout-grid.md",
+        "zoom-behaviour.md",
+        "theme-tokens.md",
+        "spacing-scale.md",
+        "typography.md",
+        "large-board-rendering.md",
+        "icon-and-glyph-policy.md",
+        "contrast-audit.md",
+        "visual-review-checklist.md"
+      ]
+    },
+    {
+      "slug": "sound",
+      "title": "Sound",
+      "description": "Sound scope for the silent game and feedback without audio",
+      "tags": [
+        "Game",
+        "Sound"
+      ],
+      "documents": [
+        "sound.md",
+        "feedback-without-audio.md",
+        "audio-research-notes.md"
+      ]
+    },
+    {
+      "slug": "sharing",
+      "title": "Sharing and formats",
+      "description": "Sharing scope for board codes, snapshots, replays, exports and imports",
+      "tags": [
+        "Game",
+        "Reproducibility",
+        "Formats"
+      ],
+      "documents": [
+        "reproducibility.md",
+        "data-exchange-policy.md",
+        "import-safety-policy.md",
+        "board-code-format.md",
+        "snapshot-format.md",
+        "replay-format.md",
+        "snapshot-selection-notes.md",
+        "format-versioning-guide.md",
+        "sharing-faq.md"
+      ]
+    },
+    {
+      "slug": "persistence",
+      "title": "Persistence",
+      "description": "Persistence scope for what is stored in the browser and how it fails",
+      "tags": [
+        "Game",
+        "Storage"
+      ],
+      "documents": [
+        "persistence-overview.md",
+        "persistence-envelope.md",
+        "retention-policy.md",
+        "storage-failure-policy.md",
+        "corrupt-data-policy.md",
+        "preferences-store.md",
+        "storage-quota-notes.md",
+        "private-browsing-notes.md",
+        "storage-testing-guide.md"
+      ]
+    },
+    {
+      "slug": "competition",
+      "title": "Competition",
+      "description": "Competition scope for knockout play between people sharing a device",
+      "tags": [
+        "Game",
+        "Competition"
+      ],
+      "documents": [
+        "competition-overview.md",
+        "competition-pairing.md",
+        "competition-rounds.md",
+        "competition-boards.md",
+        "competition-deals.md",
+        "competition-ties.md",
+        "competition-scores.md",
+        "competition-research.md"
+      ]
+    },
+    {
+      "slug": "architecture",
+      "title": "Architecture and technology",
+      "description": "Architecture scope for code structure, modules, dependencies, randomness, time, tests and the build",
+      "tags": [
+        "Game",
+        "Architecture",
+        "Technology"
+      ],
+      "documents": [
+        "architecture.md",
+        "technology.md",
+        "module-layout-policy.md",
+        "dependency-policy.md",
+        "randomness-policy.md",
+        "time-policy.md",
+        "test-policy.md",
+        "source-layout.md",
+        "session-module.md",
+        "react-boundaries.md",
+        "build-pipeline.md",
+        "offline-delivery.md",
+        "clock-design.md",
+        "purity-guide.md",
+        "typescript-settings.md",
+        "css-organization.md",
+        "source-audit-notes.md",
+        "code-review-guide.md"
+      ]
+    },
+    {
+      "slug": "decisions",
+      "title": "Decisions",
+      "description": "Decisions scope for the numbered decision records, including superseded ones",
+      "tags": [
+        "Game",
+        "Decisions"
+      ],
+      "documents": [
+        "adr-001-react.md",
+        "adr-002-typescript.md",
+        "adr-003-single-file.md",
+        "adr-004-no-backend.md",
+        "adr-005-vite.md",
+        "adr-006-native-controls.md",
+        "adr-007-svg-faces.md",
+        "adr-008-seven-sizes.md",
+        "adr-009-board-codes.md",
+        "adr-010-snapshot-json.md",
+        "adr-011-storage-keys.md",
+        "adr-012-no-sound.md",
+        "adr-013-monotonic-clock.md",
+        "adr-014-pause-on-hidden.md",
+        "adr-015-replay-cli.md",
+        "adr-016-no-state-library.md",
+        "adr-017-colocated-tests.md",
+        "adr-018-playwright.md",
+        "adr-019-modal-overlays.md",
+        "adr-020-vitest.md",
+        "adr-021-seeded-decks.md",
+        "adr-022-card-names.md",
+        "adr-023-results-as-lists.md",
+        "adr-024-roving-focus.md",
+        "adr-025-reduced-motion.md",
+        "adr-026-dark-theme.md",
+        "adr-027-offline-first.md",
+        "adr-028-prettier.md",
+        "adr-029-pinned-versions.md",
+        "adr-030-move-cap.md",
+        "adr-031-toast-announcements.md",
+        "adr-032-best-score-scope.md",
+        "adr-033-mismatch-800ms.md",
+        "adr-034-face-count.md",
+        "adr-035-scroll-large-boards.md",
+        "adr-036-motion-opt-in.md",
+        "adr-037-snapshot-pause.md",
+        "adr-038-no-analytics.md",
+        "adr-039-contrast-floor.md",
+        "adr-040-file-size-aim.md",
+        "adr-041-name-limits.md",
+        "adr-042-error-copy.md",
+        "adr-043-keyboard-parity.md",
+        "adr-044-no-routing.md",
+        "adr-045-no-i18n-yet.md",
+        "adr-046-print-styles.md",
+        "adr-047-touch-scroll.md",
+        "adr-048-replay-order.md",
+        "adr-049-zoom-floor.md",
+        "adr-050-completion-banner.md",
+        "adr-051-test-artifacts.md",
+        "adr-052-release-tags.md",
+        "adr-053-docs-in-repo.md",
+        "adr-054-acceptance-journeys.md",
+        "adr-055-review-before-merge.md",
+        "adr-056-no-feature-flags.md",
+        "adr-057-small-components.md",
+        "adr-058-storage-namespace.md"
+      ]
+    },
+    {
+      "slug": "writing",
+      "title": "Writing",
+      "description": "Writing scope for interface text, numbers, terms and documentation style",
+      "tags": [
+        "Writing",
+        "Interface"
+      ],
+      "documents": [
+        "voice-guide.md",
+        "numbers-style.md",
+        "glossary.md",
+        "error-message-style.md",
+        "documentation-style.md",
+        "changelog-style.md"
+      ]
+    },
+    {
+      "slug": "quality",
+      "title": "Quality",
+      "description": "Quality scope for acceptance, testing, performance and releases",
+      "tags": [
+        "Game",
+        "Testing",
+        "Acceptance"
+      ],
+      "documents": [
+        "acceptance.md",
+        "test-strategy.md",
+        "browser-test-guide.md",
+        "unit-test-guide.md",
+        "regression-catalogue.md",
+        "performance-budget.md",
+        "accessibility-audit.md",
+        "release-checklist.md",
+        "known-issues.md",
+        "browser-support.md",
+        "fixtures-guide.md",
+        "flaky-test-notes.md"
+      ]
+    },
+    {
+      "slug": "history",
+      "title": "History",
+      "description": "History scope for release notes, incident reviews, research notes and retired ideas",
+      "tags": [
+        "Game",
+        "History"
+      ],
+      "documents": [
+        "release-notes-1-0.md",
+        "release-notes-1-1.md",
+        "release-notes-1-2.md",
+        "release-notes-1-3.md",
+        "release-notes-1-4.md",
+        "release-notes-2-0.md",
+        "release-notes-2-1.md",
+        "release-notes-2-2.md",
+        "incident-lost-best-scores.md",
+        "incident-focus-trap.md",
+        "incident-clock-drift.md",
+        "incident-16x16-layout.md",
+        "incident-snapshot-rejects.md",
+        "research-playtest-spring.md",
+        "research-playtest-autumn.md",
+        "research-screen-reader-sessions.md",
+        "research-phone-usage.md",
+        "research-memory-games-survey.md",
+        "retired-idea-hints.md",
+        "retired-idea-themes.md",
+        "retired-idea-timed-mode.md",
+        "retired-idea-online-play.md",
+        "roadmap-notes.md",
+        "meeting-notes-architecture.md",
+        "meeting-notes-accessibility.md"
+      ]
+    }
+  ]
+}

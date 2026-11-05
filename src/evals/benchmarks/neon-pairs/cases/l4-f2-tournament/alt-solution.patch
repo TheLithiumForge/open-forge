@@ -1,0 +1,1916 @@
+diff --git a/README.md b/README.md
+index 4a20f0e..cebef69 100755
+--- a/README.md
++++ b/README.md
+@@ -24,6 +24,8 @@ Use Grid size to choose a board. Reveal two cards with a click, tap, Enter or Sp
+ 
+ Open Reproduce a game to load a board code or export progress. Loading an unfinished snapshot pauses it. Resume returns focus to the remembered card and continues the remaining mismatch interval. A completed snapshot loads as completed without Resume. Elapsed time stops at 359999999ms while play continues. The minutes and seconds display reaches 5999:59. Moves stop at 999999. Matching and victory continue at that count. Saved bests use the same move limit.
+ 
++Choose Tournament beside New Game to run a knockout for 4 or 8 people sharing the device. Players take turns on the same deal, and fewer moves wins. Completed brackets remain in Past tournaments after reload. See [Tournament mode](docs/tournament.md) for the rules and JSON format.
++
+ ## Replay
+ 
+ Run `npm run --silent replay -- PATH` with a version 1 replay JSON file. Valid input prints only its final version 1 snapshot JSON to stdout and exits 0. Invalid input prints nothing to stdout, writes a message to stderr and exits nonzero. The command's silent flag suppresses its npm banner so stdout stays JSON. Other npm commands keep their errors and warnings. Replay timestamps can reach the safe integer limit. Elapsed time uses the same cap as browser play.
+diff --git a/docs/tournament.md b/docs/tournament.md
+new file mode 100644
+index 0000000..13d82f4
+--- /dev/null
++++ b/docs/tournament.md
+@@ -0,0 +1,15 @@
++# Tournament mode
++
++Choose Tournament beside New Game, select 4 or 8 players, enter their names and select Start tournament. Entry order sets seeds. Four players meet as 1–4 and 2–3. Eight players meet as 1–8, 4–5, 3–6 and 2–7. Names use NFC, trimmed ends and single spaces between words, with 2–20 Unicode code points and no duplicates ignoring case.
++
++Start turn reveals a fresh board for the named player. Both players in a match use the same deal, with a different code for each match. Quarterfinals use 4x4, semifinals 6x6 and the final 8x8. Fewer moves wins, then lower active time, then the higher seed. Next turn hands the device to the second player; Next match advances the bracket. The final result opens the Champion screen. Leave tournament asks before discarding unfinished progress.
++
++Tournament play shares the board, matching rules and session clock with the normal game. It pauses the normal game and leaves saved board size and best scores unchanged. Hidden documents and confirmation dialogs add no active time. Brackets and past tournaments use captioned tables, winners include a text marker, and screen changes focus the screen heading. All announcements use the status paragraph in Game.tsx.
++
++Completed brackets are stored newest first under `np3:tournaments` as `{ "v": 3, "items": [...] }`, with at most ten records. Invalid saved data is ignored until the next save replaces it. If storage is blocked, completed records remain available for the current page session and the Past tournaments area explains that progress cannot be saved.
++
++Every tournament screen has Export tournament and Load tournament controls beside a Tournament JSON box. The export format is `neon-pairs/tournament`, version 3. Object keys are sorted recursively. The `state` contains the phase, setup draft, current match index, tournament and current player's game snapshot. The snapshot preserves fractional active milliseconds and any remaining mismatch time. Setup exports retain entered names and player count. Invalid names block export or import with the same validation messages as starting a tournament. Empty setup fields represent names not yet entered.
++
++Loading validates the complete schedule, board sizes, distinct board codes, seed progression, results, winners and current game before replacing state. Unknown fields are reported by name. Replacing unfinished work opens the native leave dialog; Keep playing and Escape preserve current progress. Completed imports also appear in history, without duplicating an identical record.
++
++The pure reducer and tournament rules live in `src/game/knockout/rules.ts`. Its neighboring unit tests cover both brackets, tie-breaking, normalized names, import validation and storage behavior. `tests/knockout.e2e.test.ts` plays complete four- and eight-player tournaments in Chromium, including each card activation, and verifies history after reload, focus, target sizes, JSON handling and normal preferences.
+diff --git a/src/game/Game.tsx b/src/game/Game.tsx
+index e965799..86b9179 100755
+--- a/src/game/Game.tsx
++++ b/src/game/Game.tsx
+@@ -1,21 +1,56 @@
+-import { useRef } from 'react';
++import { useLayoutEffect, useRef, useState } from 'react';
+ import { Board } from './board/Board.tsx';
+ import { Controls } from './controls/Controls.tsx';
+ import { Reproduction } from './controls/Reproduction.tsx';
+ import { GameStatus } from './status/GameStatus.tsx';
+ import type { BoardFocus } from './board/Board.tsx';
+ import { useGame } from './session/use-game.ts';
++import { isWon } from './game.ts';
++import { useKnockout } from './knockout/use-knockout.ts';
++import { Tournament } from './knockout/Tournament.tsx';
++import { LeaveDialog } from './knockout/LeaveDialog.tsx';
++import { currentName } from './knockout/rules.ts';
+ import './game.css';
+ 
+ export function Game() {
+-  const controller = useGame();
++  const [tournamentOpen, setTournamentOpen] = useState(false);
++  const [visited, setVisited] = useState(false);
++  const [pending, setPending] = useState<{ action(): void; focus: HTMLElement | null } | null>(
++    null,
++  );
++  const controller = useGame(!tournamentOpen && !pending);
++  const knockout = useKnockout(!!pending);
+   const { session } = controller;
+   const { game } = session;
+   const board = useRef<BoardFocus>(null);
++  const heading = useRef<HTMLHeadingElement>(null);
++  useLayoutEffect(() => {
++    if (!tournamentOpen && visited) heading.current?.focus();
++  }, [tournamentOpen, visited]);
+   function resume(): void {
+     board.current?.focusRemembered();
+     controller.resume();
+   }
++  function confirm(action: () => void): void {
++    controller.synchronize();
++    knockout.synchronize();
++    setPending({
++      action,
++      focus: document.activeElement instanceof HTMLElement ? document.activeElement : null,
++    });
++  }
++  function openTournament(): void {
++    const action = () => {
++      controller.synchronize();
++      setVisited(true);
++      setTournamentOpen(true);
++    };
++    if (game.started && !isWon(game)) confirm(action);
++    else action();
++  }
++  const tournamentState = knockout.state;
++  const round = tournamentState.tournament?.matches[tournamentState.index]?.round;
++  const playing = tournamentState.phase === 'ready' || tournamentState.phase === 'playing';
+   return (
+     <main>
+       <header>
+@@ -23,32 +58,78 @@ export function Game() {
+         <h1>Neon Pairs</h1>
+       </header>
+       <p className="intro">Reveal two cards. Match their shape and marker to keep the pair.</p>
+-      <Controls size={game.size} newGame={controller.newGame} restart={controller.restart} />
+-      <GameStatus
+-        game={game}
+-        best={session.preferences.bestMoves[String(game.size)]}
+-        celebration={session.celebration}
+-      />
+-      <p id="board-help" className="help">
+-        Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space
+-        reveals a card.
+-      </p>
++      {!tournamentOpen && (
++        <>
++          {visited && (
++            <h2 className="game-heading" tabIndex={-1} ref={heading}>
++              Game
++            </h2>
++          )}
++          <Controls
++            size={game.size}
++            newGame={controller.newGame}
++            restart={controller.restart}
++            tournament={openTournament}
++          />
++          <GameStatus
++            game={game}
++            best={session.preferences.bestMoves[String(game.size)]}
++            celebration={session.celebration}
++          />
++          <p id="board-help" className="help">
++            Use a pointer or Tab to enter the board. Arrow keys move between cards. Enter or Space
++            reveals a card.
++          </p>
++        </>
++      )}
+       <div className="game-result">
+         <p role="status" aria-live="polite" aria-atomic="true">
+-          <span key={session.announcement}>{session.feedback}</span>
++          {tournamentOpen ? (
++            <>
++              {round && tournamentState.phase !== 'champion' && (
++                <span className="tournament-status">Round: {round}</span>
++              )}
++              {playing && (
++                <span className="tournament-status">
++                  Now playing: {currentName(tournamentState)}
++                </span>
++              )}
++              <span>{knockout.notice}</span>
++            </>
++          ) : (
++            <span key={session.announcement}>{session.feedback}</span>
++          )}
+         </p>
+       </div>
+-      <Board key={session.generation} game={game} activate={controller.activate} ref={board} />
+-      <Reproduction
+-        game={game}
+-        generation={session.generation}
+-        exportSnapshot={controller.exportSnapshot}
+-        loadBoard={controller.loadBoard}
+-        loadSnapshot={controller.loadSnapshot}
+-        notice={session.loadNotice}
+-        paused={session.paused}
+-        resume={resume}
+-      />
++      {tournamentOpen ? (
++        <Tournament controller={knockout} back={() => setTournamentOpen(false)} confirm={confirm} />
++      ) : (
++        <>
++          <Board key={session.generation} game={game} activate={controller.activate} ref={board} />
++          <Reproduction
++            game={game}
++            generation={session.generation}
++            exportSnapshot={controller.exportSnapshot}
++            loadBoard={controller.loadBoard}
++            loadSnapshot={controller.loadSnapshot}
++            notice={session.loadNotice}
++            paused={session.paused}
++            resume={resume}
++          />
++        </>
++      )}
++      {pending && (
++        <LeaveDialog
++          keep={() => {
++            setPending(null);
++            pending.focus?.focus();
++          }}
++          leave={() => {
++            setPending(null);
++            pending.action();
++          }}
++        />
++      )}
+     </main>
+   );
+ }
+diff --git a/src/game/controls/Controls.tsx b/src/game/controls/Controls.tsx
+index 1be1bcd..1daec74 100755
+--- a/src/game/controls/Controls.tsx
++++ b/src/game/controls/Controls.tsx
+@@ -7,9 +7,10 @@ interface ControlsProps {
+   size: number;
+   newGame(size?: number): void;
+   restart(): void;
++  tournament(): void;
+ }
+ 
+-export function Controls({ size, newGame, restart }: ControlsProps) {
++export function Controls({ size, newGame, restart, tournament }: ControlsProps) {
+   return (
+     <div className="controls">
+       <div className="size-control">
+@@ -30,6 +31,9 @@ export function Controls({ size, newGame, restart }: ControlsProps) {
+       <button type="button" className="control" onClick={() => newGame()}>
+         {DealControl.newGame}
+       </button>
++      <button type="button" className="control tournament-control" onClick={tournament}>
++        Tournament
++      </button>
+       <button type="button" className="control" onClick={restart}>
+         {DealControl.restart}
+       </button>
+diff --git a/src/game/knockout/Bracket.tsx b/src/game/knockout/Bracket.tsx
+new file mode 100644
+index 0000000..b5c88cb
+--- /dev/null
++++ b/src/game/knockout/Bracket.tsx
+@@ -0,0 +1,43 @@
++import { formatElapsed } from '../elapsed-time.ts';
++import { moveText } from './rules.ts';
++import type { Tournament } from './rules.ts';
++
++export function Bracket({ tournament }: { tournament: Tournament }) {
++  return (
++    <div className="knockout-table">
++      <table>
++        <caption>Tournament bracket</caption>
++        <thead>
++          <tr>
++            <th scope="col">Round</th>
++            <th scope="col">Player</th>
++            <th scope="col">Moves</th>
++            <th scope="col">Time</th>
++          </tr>
++        </thead>
++        <tbody>
++          {tournament.matches.flatMap((match, index) =>
++            [0, 1].map((turn) => {
++              const seed = match.players[turn];
++              const result = match.results[turn];
++              return (
++                <tr key={`${index}-${turn}`}>
++                  <td>
++                    {match.round} {index + 1}
++                  </td>
++                  <td>
++                    {seed
++                      ? `${tournament.names[seed - 1]}${match.winner === seed ? ' (winner)' : ''}`
++                      : 'To be decided'}
++                  </td>
++                  <td>{result ? moveText(result.moves) : '—'}</td>
++                  <td>{result ? formatElapsed(result.time) : '—'}</td>
++                </tr>
++              );
++            }),
++          )}
++        </tbody>
++      </table>
++    </div>
++  );
++}
+diff --git a/src/game/knockout/Entrants.tsx b/src/game/knockout/Entrants.tsx
+new file mode 100644
+index 0000000..1795fa8
+--- /dev/null
++++ b/src/game/knockout/Entrants.tsx
+@@ -0,0 +1,47 @@
++import { normalizeName } from './rules.ts';
++import type { KnockoutController } from './use-knockout.ts';
++
++export function Entrants({ controller }: { controller: KnockoutController }) {
++  const names = controller.state.draft;
++  return (
++    <form
++      onSubmit={(event) => {
++        event.preventDefault();
++        controller.start(names);
++      }}
++    >
++      <div className="knockout-field">
++        <label htmlFor="tournament-players">Players</label>
++        <select
++          id="tournament-players"
++          className="control"
++          value={names.length}
++          onChange={(event) =>
++            controller.dispatch({ type: 'players', count: Number(event.currentTarget.value) })
++          }
++        >
++          <option value={4}>4</option>
++          <option value={8}>8</option>
++        </select>
++      </div>
++      <div className="knockout-names">
++        {names.map((name, index) => (
++          <label className="knockout-field" key={index}>
++            Player {index + 1}
++            <input
++              className="control"
++              value={name}
++              onBlur={() => controller.dispatch({ type: 'name', index, name: normalizeName(name) })}
++              onChange={(event) =>
++                controller.dispatch({ type: 'name', index, name: event.currentTarget.value })
++              }
++            />
++          </label>
++        ))}
++      </div>
++      <button className="control" type="submit">
++        Start tournament
++      </button>
++    </form>
++  );
++}
+diff --git a/src/game/knockout/LeaveDialog.tsx b/src/game/knockout/LeaveDialog.tsx
+new file mode 100644
+index 0000000..78761d8
+--- /dev/null
++++ b/src/game/knockout/LeaveDialog.tsx
+@@ -0,0 +1,42 @@
++import { useLayoutEffect, useRef } from 'react';
++
++export function LeaveDialog({ keep, leave }: { keep(): void; leave(): void }) {
++  const dialog = useRef<HTMLDialogElement>(null);
++  const keepButton = useRef<HTMLButtonElement>(null);
++  useLayoutEffect(() => {
++    dialog.current?.showModal();
++    keepButton.current?.focus();
++  }, []);
++  function keepPlaying(): void {
++    dialog.current?.close();
++    keep();
++  }
++  return (
++    <dialog
++      ref={dialog}
++      className="knockout-dialog"
++      aria-labelledby="leave-title"
++      onCancel={(event) => {
++        event.preventDefault();
++        keepPlaying();
++      }}
++    >
++      <h2 id="leave-title">Leave unfinished work?</h2>
++      <p>Your unfinished progress will be replaced.</p>
++      <div className="controls">
++        <button className="control" ref={keepButton} onClick={keepPlaying}>
++          Keep playing
++        </button>
++        <button
++          className="control"
++          onClick={() => {
++            dialog.current?.close();
++            leave();
++          }}
++        >
++          Leave
++        </button>
++      </div>
++    </dialog>
++  );
++}
+diff --git a/src/game/knockout/Tournament.tsx b/src/game/knockout/Tournament.tsx
+new file mode 100644
+index 0000000..a900112
+--- /dev/null
++++ b/src/game/knockout/Tournament.tsx
+@@ -0,0 +1,157 @@
++import { useLayoutEffect, useRef, useState } from 'react';
++import { Board } from '../board/Board.tsx';
++import { formatElapsed } from '../elapsed-time.ts';
++import { champion, moveText } from './rules.ts';
++import { importTournament } from './format.ts';
++import { STORAGE_NOTICE } from './storage.ts';
++import type { BoardFocus } from '../board/Board.tsx';
++import { Entrants } from './Entrants.tsx';
++import { Bracket } from './Bracket.tsx';
++import type { KnockoutController } from './use-knockout.ts';
++import './knockout.css';
++
++interface Props {
++  controller: KnockoutController;
++  back(): void;
++  confirm(action: () => void): void;
++}
++export function Tournament({ controller, back, confirm }: Props) {
++  const { state, history, notice } = controller;
++  const [json, setJson] = useState('');
++  const [loadNumber, setLoadNumber] = useState(0);
++  const heading = useRef<HTMLHeadingElement>(null);
++  const board = useRef<BoardFocus>(null);
++  const unfinished =
++    (state.phase !== 'setup' && state.phase !== 'champion') ||
++    (state.phase === 'setup' && state.draft.some((name) => name.trim()));
++  useLayoutEffect(() => {
++    heading.current?.focus();
++  }, [state.phase, state.index, loadNumber]);
++  const tournament = state.tournament;
++  function leave(): void {
++    const action = () => {
++      controller.dispatch({ type: 'leave' });
++      back();
++    };
++    if (unfinished) confirm(action);
++    else action();
++  }
++  function load(): void {
++    // Validate before asking to replace unfinished work.
++    const parsed = importTournament(json);
++    const action = () => {
++      if (controller.load(json)) setLoadNumber((value) => value + 1);
++    };
++    if ('state' in parsed && unfinished) confirm(action);
++    else action();
++  }
++  return (
++    <section className="knockout" aria-labelledby="tournament-title">
++      <h2 id="tournament-title" tabIndex={-1} ref={heading}>
++        {state.phase === 'champion' && tournament
++          ? `Champion: ${champion(tournament)}`
++          : 'Tournament'}
++      </h2>
++      {state.phase === 'setup' ? (
++        <>
++          <Entrants controller={controller} />
++          {history.blocked && <p>{STORAGE_NOTICE}</p>}
++          <div className="knockout-table">
++            <table>
++              <caption>Past tournaments</caption>
++              <thead>
++                <tr>
++                  <th scope="col">Champion</th>
++                  <th scope="col">Players</th>
++                  <th scope="col">Bracket</th>
++                </tr>
++              </thead>
++              <tbody>
++                {history.items.map((item, index) => (
++                  <tr key={index}>
++                    <td>{champion(item)} (winner)</td>
++                    <td>
++                      {item.names.length}: {item.names.join(', ')}
++                    </td>
++                    <td>
++                      <details>
++                        <summary>View tournament {index + 1}</summary>
++                        <Bracket tournament={item} />
++                      </details>
++                    </td>
++                  </tr>
++                ))}
++              </tbody>
++            </table>
++          </div>
++          {history.items.length === 0 && <p>No past tournaments.</p>}
++        </>
++      ) : (
++        <>
++          {state.phase === 'ready' && (
++            <button className="control" onClick={() => controller.dispatch({ type: 'startTurn' })}>
++              Start turn
++            </button>
++          )}
++          {state.game && state.phase === 'playing' && (
++            <>
++              <p>
++                {moveText(state.game.moves)} · {formatElapsed(state.game.elapsedMs)}
++              </p>
++              <p id="board-help" className="help">
++                Arrow keys move between cards. Enter or Space reveals a card.
++              </p>
++              <p>Board code: {state.game.boardCode}</p>
++              <Board
++                key={controller.generation}
++                ref={board}
++                game={state.game}
++                activate={(index) => controller.dispatch({ type: 'activate', index })}
++              />
++            </>
++          )}
++          {state.phase === 'turnDone' && (
++            <button className="control" onClick={() => controller.dispatch({ type: 'next' })}>
++              Next turn
++            </button>
++          )}
++          {state.phase === 'matchDone' && (
++            <button className="control" onClick={() => controller.dispatch({ type: 'next' })}>
++              Next match
++            </button>
++          )}
++          {tournament && <Bracket tournament={tournament} />}
++        </>
++      )}
++      {notice && <p className="knockout-notice">{notice}</p>}
++      <div className="controls">
++        <button className="control" onClick={leave}>
++          {state.phase === 'champion' || state.phase === 'setup'
++            ? 'Back to game'
++            : 'Leave tournament'}
++        </button>
++        <button
++          className="control"
++          onClick={() => {
++            const text = controller.exportJson();
++            if (text !== null) setJson(text);
++          }}
++        >
++          Export tournament
++        </button>
++        <button className="control" onClick={load}>
++          Load tournament
++        </button>
++      </div>
++      <div className="knockout-field">
++        <label htmlFor="tournament-json">Tournament JSON</label>
++        <textarea
++          id="tournament-json"
++          className="control"
++          value={json}
++          onChange={(event) => setJson(event.currentTarget.value)}
++        />
++      </div>
++    </section>
++  );
++}
+diff --git a/src/game/knockout/format.ts b/src/game/knockout/format.ts
+new file mode 100644
+index 0000000..8f6bfc8
+--- /dev/null
++++ b/src/game/knockout/format.ts
+@@ -0,0 +1,150 @@
++import { isWon } from '../game.ts';
++import { encodeSnapshot, SNAPSHOT_KEYS } from '../snapshot.ts';
++import { hasExactKeys, isJsonObject, parseJson } from '../saved-format.ts';
++import { initialState, nameError, normalizeName } from './rules.ts';
++import type { GameState } from '../game.ts';
++import type { State } from './rules.ts';
++
++import { sortedJson } from './json.ts';
++import { readGame, readTournament } from './validation.ts';
++
++const STATE_KEYS = ['phase', 'tournament', 'index', 'game', 'draft'];
++const TOURNAMENT_KEYS = ['names', 'matches'];
++const MATCH_KEYS = ['round', 'boardCode', 'players', 'results', 'winner'];
++const RESULT_KEYS = ['moves', 'time'];
++
++type Shape = { keys: readonly string[]; children?: Record<string, Shape>; array?: Shape };
++const resultShape: Shape = { keys: RESULT_KEYS };
++const tournamentShape: Shape = {
++  keys: TOURNAMENT_KEYS,
++  children: {
++    matches: {
++      keys: [],
++      array: { keys: MATCH_KEYS, children: { results: { keys: [], array: resultShape } } },
++    },
++  },
++};
++const stateShape: Shape = {
++  keys: STATE_KEYS,
++  children: {
++    tournament: tournamentShape,
++    game: {
++      keys: SNAPSHOT_KEYS,
++      children: { selection: { keys: ['kind', 'index', 'first', 'second', 'remainingMs'] } },
++    },
++  },
++};
++function unknownField(value: unknown, shape: Shape): string | null {
++  if (shape.array) {
++    if (!Array.isArray(value)) return null;
++    for (const item of value) {
++      const error = unknownField(item, shape.array);
++      if (error) return error;
++    }
++    return null;
++  }
++  if (!isJsonObject(value)) return null;
++  // A selection's fields depend on its discriminant.
++  const keys = shape.keys.includes('kind')
++    ? value.kind === 'closed'
++      ? ['kind']
++      : value.kind === 'one'
++        ? ['kind', 'index']
++        : ['kind', 'first', 'second', 'remainingMs']
++    : shape.keys;
++  for (const key of Object.keys(value)) if (!keys.includes(key)) return `Unknown field: ${key}.`;
++  for (const [key, child] of Object.entries(shape.children ?? {})) {
++    const error = unknownField(value[key], child);
++    if (error) return error;
++  }
++  return null;
++}
++function snapshot(game: GameState | null): unknown {
++  return game
++    ? {
++        ...JSON.parse(encodeSnapshot(game)),
++        elapsedMs: game.elapsedMs,
++        selection: game.selection,
++        matched: game.matched,
++      }
++    : null;
++}
++export function exportTournament(state: State): string {
++  return sortedJson({
++    format: 'neon-pairs/tournament',
++    version: 3,
++    state: { ...state, draft: state.draft.map(normalizeName), game: snapshot(state.game) },
++  });
++}
++export function importTournament(text: string): { state: State } | { error: string } {
++  const value = text.length <= 200_000 ? parseJson(text) : undefined;
++  const unknown = unknownField(value, {
++    keys: ['format', 'version', 'state'],
++    children: { state: stateShape },
++  });
++  if (unknown) return { error: unknown };
++  const invalid = { error: 'Invalid tournament.' };
++  if (
++    !isJsonObject(value) ||
++    !hasExactKeys(value, ['format', 'version', 'state']) ||
++    value.format !== 'neon-pairs/tournament' ||
++    value.version !== 3 ||
++    !isJsonObject(value.state) ||
++    !hasExactKeys(value.state, STATE_KEYS)
++  )
++    return invalid;
++  const raw = value.state;
++  if (typeof raw.index !== 'number' || !Number.isSafeInteger(raw.index)) return invalid;
++  if (
++    !Array.isArray(raw.draft) ||
++    (raw.draft.length !== 4 && raw.draft.length !== 8) ||
++    !raw.draft.every((name): name is string => typeof name === 'string')
++  )
++    return invalid;
++  const draft = raw.draft.map(normalizeName);
++  const draftError = nameError(draft.filter(Boolean));
++  if (draftError) return { error: draftError };
++  if (raw.phase === 'setup')
++    return raw.tournament === null && raw.game === null && raw.index === 0
++      ? { state: { ...initialState, draft } }
++      : invalid;
++  if (
++    isJsonObject(raw.tournament) &&
++    Array.isArray(raw.tournament.names) &&
++    raw.tournament.names.every((name): name is string => typeof name === 'string')
++  ) {
++    const error = nameError(raw.tournament.names);
++    if (error) return { error };
++  }
++  const tournament = readTournament(raw.tournament);
++  if (!tournament) return invalid;
++  const index = tournament.matches.findIndex((match) => match.winner === null);
++  const current = index === -1 ? tournament.matches.length - 1 : index;
++  // A finished match remains on screen until Next match.
++  const matchDone =
++    raw.phase === 'matchDone' && index !== -1 && current > 0 && raw.index === current - 1;
++  if (!matchDone && raw.index !== current) return invalid;
++  const match = tournament.matches[raw.index];
++  if (!match) return invalid;
++  const game = raw.game === null ? null : readGame(raw.game);
++  if (raw.game !== null && !game) return invalid;
++  const count = match.results.length;
++  const phase = raw.phase;
++  if (phase === 'ready') {
++    if (count > 1 || game || index === -1) return invalid;
++  } else if (phase === 'playing') {
++    if (count > 1 || !game || isWon(game) || index === -1) return invalid;
++  } else if (phase === 'turnDone' || phase === 'matchDone' || phase === 'champion') {
++    if (
++      !game ||
++      !isWon(game) ||
++      count !== (phase === 'turnDone' ? 1 : 2) ||
++      (phase === 'champion' ? index !== -1 : phase === 'matchDone' ? !matchDone : index === -1)
++    )
++      return invalid;
++    const result = match.results.at(-1)!;
++    if (game.moves !== result.moves || game.elapsedMs !== result.time) return invalid;
++  } else return invalid;
++  if (game && game.boardCode !== match.boardCode) return invalid;
++  return { state: { phase, tournament, index: raw.index, game, draft } };
++}
+diff --git a/src/game/knockout/json.ts b/src/game/knockout/json.ts
+new file mode 100644
+index 0000000..418fe54
+--- /dev/null
++++ b/src/game/knockout/json.ts
+@@ -0,0 +1,16 @@
++import { isJsonObject } from '../saved-format.ts';
++
++export function sortedJson(value: unknown): string {
++  return JSON.stringify(
++    value,
++    (_key, item: unknown) =>
++      isJsonObject(item)
++        ? Object.fromEntries(
++            Object.keys(item)
++              .sort()
++              .map((key) => [key, item[key]]),
++          )
++        : item,
++    2,
++  );
++}
+diff --git a/src/game/knockout/knockout.css b/src/game/knockout/knockout.css
+new file mode 100644
+index 0000000..2357cb6
+--- /dev/null
++++ b/src/game/knockout/knockout.css
+@@ -0,0 +1,85 @@
++.knockout > *,
++.knockout form > * {
++  margin-bottom: 16px;
++}
++.knockout h2:focus {
++  outline-offset: 4px;
++}
++.knockout-field {
++  display: flex;
++  flex-direction: column;
++  gap: 6px;
++  min-width: 0;
++}
++.knockout-names {
++  display: grid;
++  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
++  gap: 12px;
++}
++.knockout .control,
++.knockout summary,
++.knockout-dialog .control {
++  min-width: 44px;
++  min-height: 44px;
++}
++.knockout textarea.control {
++  width: 100%;
++  min-height: 160px;
++}
++.knockout-table {
++  overflow-x: auto;
++}
++.knockout table {
++  border-collapse: collapse;
++  width: 100%;
++  text-align: left;
++}
++.knockout caption {
++  text-align: left;
++  font-weight: bold;
++  padding: 8px 0;
++}
++.knockout th,
++.knockout td {
++  padding: 12px 8px;
++  border-bottom: 1px solid var(--border);
++  overflow-wrap: anywhere;
++}
++.knockout summary {
++  cursor: pointer;
++  padding: 12px;
++}
++.knockout-dialog {
++  background: var(--panel);
++  color: var(--text);
++  border: 1px solid var(--border);
++  border-radius: 8px;
++  max-width: calc(100% - 32px);
++}
++.knockout-dialog::backdrop {
++  background: #090b14cc;
++}
++.knockout-dialog p {
++  margin-bottom: 16px;
++}
++.game-heading:focus {
++  outline-offset: 4px;
++}
++@media (prefers-reduced-motion: reduce) {
++  .knockout *,
++  .knockout-dialog *,
++  .tournament-control {
++    animation: none !important;
++    transition: none !important;
++  }
++}
++.tournament-status {
++  display: block;
++}
++
++.knockout th:nth-child(3),
++.knockout th:nth-child(4),
++.knockout td:nth-child(3),
++.knockout td:nth-child(4) {
++  white-space: nowrap;
++}
+diff --git a/src/game/knockout/rules.test.ts b/src/game/knockout/rules.test.ts
+new file mode 100644
+index 0000000..e4bd664
+--- /dev/null
++++ b/src/game/knockout/rules.test.ts
+@@ -0,0 +1,186 @@
++import { expect, test } from 'vitest';
++import { boardCode } from '../deck.ts';
++import {
++  champion,
++  createTournament,
++  initialState,
++  nameError,
++  normalizeName,
++  reducer,
++  rounds,
++  roundSize,
++  winner,
++} from './rules.ts';
++import { exportTournament, importTournament } from './format.ts';
++import { sortedJson } from './json.ts';
++import { readHistory, saveHistory, TOURNAMENTS_KEY } from './storage.ts';
++import type { State } from './rules.ts';
++
++const names = ['Ada', 'Bea', 'Cy', 'Dee', 'Eve', 'Flo', 'Gia', 'Hal'];
++function start(count: number): State {
++  return reducer(initialState, {
++    type: 'start',
++    names: names.slice(0, count),
++    codes: rounds(count).map((round, index) => boardCode(roundSize(round), index + 1)),
++  });
++}
++function finishTurn(state: State): State {
++  state = reducer(state, { type: 'startTurn' });
++  const deck = state.game!.deck;
++  for (let face = 0; face < deck.length / 2; face += 1) {
++    for (const [index, value] of deck.entries())
++      if (face === value) state = reducer(state, { type: 'activate', index });
++    state = reducer(state, { type: 'tick', milliseconds: 10.25 });
++  }
++  return state;
++}
++function complete(count: number): State {
++  let state = start(count);
++  while (state.phase !== 'champion') {
++    state = finishTurn(state);
++    expect(importTournament(exportTournament(state))).toEqual({ state });
++    if (state.phase !== 'champion') state = reducer(state, { type: 'next' });
++  }
++  return state;
++}
++test('names normalize whitespace and NFC, count Unicode code points and compare case insensitively', () => {
++  expect(normalizeName('  A\u0301da \n  Lee  ')).toBe('Áda Lee');
++  expect(nameError(['A', 'Bea'])).toBe('Use 2 to 20 characters.');
++  expect(nameError(['😀'.repeat(20), 'Bea'])).toBeNull();
++  expect(nameError(['😀'.repeat(21), 'Bea'])).toBe('Use 2 to 20 characters.');
++  expect(nameError([' A\u0301da ', 'áda'])).toBe('Each name must be different.');
++  expect(nameError(['ΟΣ', 'οσ'])).toBe('Each name must be different.');
++  expect(nameError(['Straße', 'STRASSE'])).toBe('Each name must be different.');
++});
++test('entry seeds form the specified brackets and rounds with unique deals of the right sizes', () => {
++  expect(start(4).tournament!.matches.map((match) => match.players)).toEqual([[1, 4], [2, 3], []]);
++  expect(start(8).tournament!.matches.map((match) => match.players)).toEqual([
++    [1, 8],
++    [4, 5],
++    [3, 6],
++    [2, 7],
++    [],
++    [],
++    [],
++  ]);
++  expect(createTournament(names.slice(0, 4), ['np1-6-1', 'np1-6-1', 'np1-8-1'])).toBeNull();
++  expect(createTournament(names.slice(0, 4), ['np1-4-1', 'np1-6-2', 'np1-8-1'])).toBeNull();
++  expect(start(4).tournament!.matches.map((match) => match.round)).toEqual([
++    'Semifinal',
++    'Semifinal',
++    'Final',
++  ]);
++});
++test('fewer moves wins before active time, then the higher seed wins an exact tie', () => {
++  expect(
++    winner(
++      [4, 1],
++      [
++        { moves: 8, time: 20 },
++        { moves: 9, time: 0 },
++      ],
++    ),
++  ).toBe(4);
++  expect(
++    winner(
++      [4, 1],
++      [
++        { moves: 8, time: 20.1 },
++        { moves: 8, time: 20.2 },
++      ],
++    ),
++  ).toBe(4);
++  expect(
++    winner(
++      [4, 1],
++      [
++        { moves: 8, time: 20 },
++        { moves: 8, time: 20 },
++      ],
++    ),
++  ).toBe(1);
++});
++test('the reducer completes both bracket sizes, requires Start turn, shares deals and stops clocks between turns', () => {
++  for (const count of [4, 8]) {
++    let state = start(count);
++    expect(reducer(state, { type: 'activate', index: 0 })).toBe(state);
++    state = finishTurn(state);
++    const first = state.game!.boardCode;
++    expect(reducer(state, { type: 'tick', milliseconds: 1000 })).toBe(state);
++    state = reducer(state, { type: 'next' });
++    state = reducer(state, { type: 'startTurn' });
++    expect(state.game!.boardCode).toBe(first);
++    const completed = complete(count);
++    expect(champion(completed.tournament!)).toBe('Ada');
++    expect(completed.tournament!.matches.every((match) => match.results.length === 2)).toBe(true);
++    expect(reducer(completed, { type: 'leave' })).toEqual(initialState);
++  }
++});
++test('JSON round trips every phase and fractions, sorts nested keys and rejects unknown or inconsistent data', () => {
++  expect(importTournament(exportTournament(initialState))).toEqual({ state: initialState });
++  const draft = reducer(reducer(initialState, { type: 'players', count: 8 }), {
++    type: 'name',
++    index: 0,
++    name: '  Áda   Lee  ',
++  });
++  expect(importTournament(exportTournament(draft))).toEqual({
++    state: { ...draft, draft: ['Áda Lee', '', '', '', '', '', '', ''] },
++  });
++  const idle = JSON.parse(exportTournament(reducer(start(4), { type: 'startTurn' })));
++  idle.state.game.elapsedMs = 0.5;
++  expect(importTournament(JSON.stringify(idle))).toEqual({ error: 'Invalid tournament.' });
++  let state = start(4);
++  expect(importTournament(exportTournament(state))).toEqual({ state });
++  state = reducer(state, { type: 'startTurn' });
++  state = reducer(state, { type: 'activate', index: 0 });
++  state = reducer(state, { type: 'tick', milliseconds: 1.25 });
++  expect(importTournament(exportTournament(state))).toEqual({ state });
++  const text = exportTournament(state);
++  const value = JSON.parse(text);
++  expect(text).toBe(sortedJson(value));
++  value.state.game.selection.extra = true;
++  expect(importTournament(JSON.stringify(value))).toEqual({ error: 'Unknown field: extra.' });
++  delete value.state.game.selection.extra;
++  value.state.tournament.names[0] = 'A';
++  expect(importTournament(JSON.stringify(value))).toEqual({ error: 'Use 2 to 20 characters.' });
++  value.state.tournament.names[0] = 'Ada';
++  value.state.tournament.matches[0].winner = 4;
++  expect(importTournament(JSON.stringify(value))).toEqual({ error: 'Invalid tournament.' });
++  expect(importTournament('{')).toEqual({ error: 'Invalid tournament.' });
++});
++test('history validates envelopes, preserves corrupt storage until saving, caps at ten and survives blocked storage', () => {
++  let text = '{broken';
++  const store = {
++    getItem: () => text,
++    setItem: (key: string, value: string) => {
++      expect(key).toBe(TOURNAMENTS_KEY);
++      text = value;
++    },
++  };
++  expect(readHistory(store)).toEqual({ items: [], blocked: false });
++  expect(text).toBe('{broken');
++  let history = readHistory(store);
++  const tournament = complete(4).tournament!;
++  for (let index = 0; index < 12; index += 1)
++    history = saveHistory(store, history, {
++      ...tournament,
++      names: [`Player ${index}`, ...tournament.names.slice(1)],
++    });
++  expect(history.items).toHaveLength(10);
++  expect(history.items[0]!.names[0]).toBe('Player 11');
++  expect(readHistory(store)).toEqual(history);
++  expect(Object.keys(JSON.parse(text)).sort()).toEqual(['items', 'v']);
++  const blocked = {
++    getItem: () => {
++      throw Error('blocked');
++    },
++    setItem: () => {
++      throw Error('blocked');
++    },
++  };
++  expect(readHistory(blocked)).toEqual({ items: [], blocked: true });
++  expect(saveHistory(blocked, readHistory(blocked), tournament)).toEqual({
++    items: [tournament],
++    blocked: true,
++  });
++});
+diff --git a/src/game/knockout/rules.ts b/src/game/knockout/rules.ts
+new file mode 100644
+index 0000000..a75baa6
+--- /dev/null
++++ b/src/game/knockout/rules.ts
+@@ -0,0 +1,194 @@
++import { parseBoardCode } from '../deck.ts';
++import { activateCard, advanceGame, createGame, isWon } from '../game.ts';
++import type { GameState } from '../game.ts';
++
++type Round = 'Quarterfinal' | 'Semifinal' | 'Final';
++type Phase = 'setup' | 'ready' | 'playing' | 'turnDone' | 'matchDone' | 'champion';
++interface Result {
++  readonly moves: number;
++  readonly time: number;
++}
++interface Match {
++  readonly round: Round;
++  readonly boardCode: string;
++  readonly players: readonly number[];
++  readonly results: readonly Result[];
++  readonly winner: number | null;
++}
++export interface Tournament {
++  readonly names: readonly string[];
++  readonly matches: readonly Match[];
++}
++export interface State {
++  readonly draft: readonly string[];
++  readonly phase: Phase;
++  readonly tournament: Tournament | null;
++  readonly index: number;
++  readonly game: GameState | null;
++}
++export const initialState: State = {
++  phase: 'setup',
++  tournament: null,
++  index: 0,
++  game: null,
++  draft: ['', '', '', ''],
++};
++export type Action =
++  | { type: 'players'; count: number }
++  | { type: 'name'; index: number; name: string }
++  | { type: 'start'; names: readonly string[]; codes: readonly string[] }
++  | { type: 'startTurn' }
++  | { type: 'activate'; index: number }
++  | { type: 'tick'; milliseconds: number }
++  | { type: 'next' }
++  | { type: 'leave' };
++export function normalizeName(name: string): string {
++  return name.trim().replace(/\s+/gu, ' ').normalize('NFC');
++}
++export function nameError(names: readonly string[]): string | null {
++  const normalized = names.map(normalizeName);
++  if (normalized.some((name) => [...name].length < 2 || [...name].length > 20))
++    return 'Use 2 to 20 characters.';
++  if (
++    new Set(normalized.map((name) => name.toUpperCase().normalize('NFC'))).size !==
++    normalized.length
++  )
++    return 'Each name must be different.';
++  return null;
++}
++export function rounds(count: number): readonly Round[] {
++  const finals: readonly Round[] = ['Semifinal', 'Semifinal', 'Final'];
++  return count === 8 ? [...Array<Round>(4).fill('Quarterfinal'), ...finals] : finals;
++}
++export function roundSize(round: Round): number {
++  return { Quarterfinal: 4, Semifinal: 6, Final: 8 }[round];
++}
++export function createTournament(
++  names: readonly string[],
++  codes: readonly string[],
++): Tournament | null {
++  if ((names.length !== 4 && names.length !== 8) || nameError(names)) return null;
++  const schedule = rounds(names.length);
++  if (codes.length !== schedule.length || new Set(codes).size !== codes.length) return null;
++  const seeds =
++    names.length === 4
++      ? [
++          [1, 4],
++          [2, 3],
++        ]
++      : [
++          [1, 8],
++          [4, 5],
++          [3, 6],
++          [2, 7],
++        ];
++  const matches: Match[] = [];
++  for (const [index, round] of schedule.entries()) {
++    const code = codes[index];
++    if (!code || parseBoardCode(code)?.size !== roundSize(round)) return null;
++    matches.push({
++      round,
++      boardCode: code,
++      players: seeds[index] ?? [],
++      results: [],
++      winner: null,
++    });
++  }
++  return { names: names.map(normalizeName), matches };
++}
++export function winner(players: readonly number[], results: readonly Result[]): number {
++  const first = players[0]!;
++  const second = players[1]!;
++  const a = results[0]!;
++  const b = results[1]!;
++  return a.moves !== b.moves
++    ? a.moves < b.moves
++      ? first
++      : second
++    : a.time !== b.time
++      ? a.time < b.time
++        ? first
++        : second
++      : Math.min(first, second);
++}
++export function recordResult(tournament: Tournament, index: number, result: Result): Tournament {
++  const matches = [...tournament.matches];
++  const match = matches[index]!;
++  const results = [...match.results, result];
++  const won = results.length === 2 ? winner(match.players, results) : null;
++  matches[index] = { ...match, results, winner: won };
++  if (won !== null && index < matches.length - 1) {
++    const firstRoundCount = tournament.names.length / 2;
++    const target =
++      index < firstRoundCount ? firstRoundCount + Math.floor(index / 2) : matches.length - 1;
++    const next = matches[target]!;
++    matches[target] = { ...next, players: [...next.players, won] };
++  }
++  return { ...tournament, matches };
++}
++export function reducer(state: State, action: Action): State {
++  if (action.type === 'leave') return initialState;
++  if (
++    state.phase === 'setup' &&
++    action.type === 'players' &&
++    (action.count === 4 || action.count === 8)
++  )
++    return {
++      ...state,
++      draft: Array.from({ length: action.count }, (_, index) => state.draft[index] ?? ''),
++    };
++  if (state.phase === 'setup' && action.type === 'name')
++    return {
++      ...state,
++      draft: state.draft.map((name, index) => (index === action.index ? action.name : name)),
++    };
++  if (action.type === 'start') {
++    const tournament = createTournament(action.names, action.codes);
++    return tournament
++      ? { ...initialState, phase: 'ready', tournament, index: 0, game: null }
++      : state;
++  }
++  const tournament = state.tournament;
++  if (!tournament) return state;
++  const match = tournament.matches[state.index]!;
++  if (action.type === 'startTurn' && state.phase === 'ready')
++    return { ...state, phase: 'playing', game: createGame(match.boardCode) };
++  if (action.type === 'next') {
++    if (state.phase === 'turnDone') return { ...state, phase: 'ready', game: null };
++    if (state.phase === 'matchDone')
++      return { ...state, index: state.index + 1, phase: 'ready', game: null };
++  }
++  if (state.phase !== 'playing' || !state.game) return state;
++  if (action.type === 'tick') {
++    const game = advanceGame(state.game, action.milliseconds);
++    return game === state.game ? state : { ...state, game };
++  }
++  if (action.type !== 'activate') return state;
++  const game = activateCard(state.game, action.index);
++  if (game === state.game) return state;
++  if (!isWon(game)) return { ...state, game };
++  const next = recordResult(tournament, state.index, { moves: game.moves, time: game.elapsedMs });
++  const phase =
++    match.results.length === 0
++      ? 'turnDone'
++      : state.index === tournament.matches.length - 1
++        ? 'champion'
++        : 'matchDone';
++  return { ...state, game, tournament: next, phase };
++}
++export function currentName(state: State): string {
++  const tournament = state.tournament;
++  if (!tournament) return '';
++  const match = tournament.matches[state.index]!;
++  const turn =
++    state.phase === 'ready' || state.phase === 'playing'
++      ? match.results.length
++      : match.results.length - 1;
++  return tournament.names[match.players[turn]! - 1] ?? '';
++}
++export function champion(tournament: Tournament): string {
++  return tournament.names[tournament.matches.at(-1)!.winner! - 1] ?? '';
++}
++export function moveText(moves: number): string {
++  return `${moves} ${moves === 1 ? 'move' : 'moves'}`;
++}
+diff --git a/src/game/knockout/storage.ts b/src/game/knockout/storage.ts
+new file mode 100644
+index 0000000..1ac4202
+--- /dev/null
++++ b/src/game/knockout/storage.ts
+@@ -0,0 +1,50 @@
++import { hasExactKeys, isJsonObject, parseJson } from '../saved-format.ts';
++import type { PreferenceStore } from '../session/storage.ts';
++import { readTournament } from './validation.ts';
++import type { Tournament } from './rules.ts';
++
++export const TOURNAMENTS_KEY = 'np3:tournaments';
++export const STORAGE_NOTICE = "Progress won't be saved on this device.";
++interface History {
++  readonly items: readonly Tournament[];
++  readonly blocked: boolean;
++}
++export function readHistory(store: PreferenceStore | null): History {
++  if (!store) return { items: [], blocked: true };
++  try {
++    const text = store.getItem(TOURNAMENTS_KEY);
++    if (!text) return { items: [], blocked: false };
++    const value = parseJson(text);
++    if (
++      !isJsonObject(value) ||
++      !hasExactKeys(value, ['v', 'items']) ||
++      value.v !== 3 ||
++      !Array.isArray(value.items) ||
++      value.items.length > 10
++    )
++      return { items: [], blocked: false };
++    const items: Tournament[] = [];
++    for (const raw of value.items) {
++      const item = readTournament(raw);
++      if (!item || item.matches.at(-1)?.winner === null) return { items: [], blocked: false };
++      items.push(item);
++    }
++    return { items, blocked: false };
++  } catch {
++    return { items: [], blocked: true };
++  }
++}
++export function saveHistory(
++  store: PreferenceStore | null,
++  history: History,
++  tournament: Tournament,
++): History {
++  const items = [tournament, ...history.items].slice(0, 10);
++  try {
++    if (!store) return { items, blocked: true };
++    store.setItem(TOURNAMENTS_KEY, JSON.stringify({ v: 3, items }));
++    return { items, blocked: history.blocked };
++  } catch {
++    return { items, blocked: true };
++  }
++}
+diff --git a/src/game/knockout/use-knockout.ts b/src/game/knockout/use-knockout.ts
+new file mode 100644
+index 0000000..85a44ff
+--- /dev/null
++++ b/src/game/knockout/use-knockout.ts
+@@ -0,0 +1,142 @@
++import { useRef, useState } from 'react';
++import { formatElapsed } from '../elapsed-time.ts';
++import { createGame } from '../game.ts';
++import { useBoardClock } from '../session/use-board-clock.ts';
++import { browserStore } from '../session/use-saved-preferences.ts';
++import { freshBoardCode } from '../session/fresh-board.ts';
++import { exportTournament, importTournament } from './format.ts';
++import { sortedJson } from './json.ts';
++import {
++  champion,
++  currentName,
++  normalizeName,
++  initialState,
++  moveText,
++  nameError,
++  reducer,
++  rounds,
++  roundSize,
++} from './rules.ts';
++import { readHistory, saveHistory } from './storage.ts';
++import type { Action, State } from './rules.ts';
++
++const idleGame = createGame('np1-4-1');
++export function useKnockout(suspended = false) {
++  const [state, setState] = useState(initialState);
++  const current = useRef(state);
++  const [generation, setGeneration] = useState(0);
++  const [store] = useState(browserStore);
++  const [history, setHistory] = useState(() => readHistory(store));
++  const [notice, setNotice] = useState('');
++  const clockState = {
++    game: state.game ?? idleGame,
++    paused: suspended || state.phase !== 'playing',
++    generation,
++  };
++  const clockCurrent = useRef(clockState);
++  clockCurrent.current = clockState;
++
++  function commit(next: State): void {
++    if (next === current.current) return;
++    const previous = current.current;
++    if (
++      next.phase === 'champion' &&
++      next.tournament &&
++      (previous.phase !== 'champion' ||
++        sortedJson(previous.tournament) !== sortedJson(next.tournament))
++    ) {
++      const tournament = next.tournament;
++      setHistory((saved) =>
++        saved.items.some((item) => sortedJson(item) === sortedJson(tournament))
++          ? saved
++          : saveHistory(store, saved, tournament),
++      );
++    }
++    current.current = next;
++    clockCurrent.current = {
++      game: next.game ?? idleGame,
++      paused: suspended || next.phase !== 'playing',
++      generation,
++    };
++    setState(next);
++  }
++  const clock = useBoardClock(clockState, clockCurrent, (_generation, milliseconds) => {
++    commit(reducer(current.current, { type: 'tick', milliseconds }));
++  });
++  function dispatch(action: Action): void {
++    clock.synchronize();
++    const next = reducer(current.current, action);
++    if (next.phase !== current.current.phase) {
++      clock.reset();
++      setGeneration((value) => value + 1);
++    }
++    if (
++      action.type === 'activate' &&
++      next.game &&
++      next.game.moves !== current.current.game?.moves
++    ) {
++      setNotice(
++        next.phase === 'champion' && next.tournament
++          ? `Champion: ${champion(next.tournament)}.`
++          : next.phase !== 'playing'
++            ? `${currentName(next)} finished in ${moveText(next.game.moves)} and ${formatElapsed(next.game.elapsedMs)}.`
++            : next.game.selection.kind === 'mismatch'
++              ? 'No match. Cards close after a short pause.'
++              : 'Pair found.',
++      );
++    } else if (action.type !== 'activate') setNotice('');
++    commit(next);
++  }
++  function start(names: readonly string[]): void {
++    const error = nameError(names);
++    if (error) {
++      setNotice(error);
++      return;
++    }
++    const used = new Set<string>();
++    const codes = rounds(names.length).map((round) => {
++      let code: string;
++      do {
++        code = freshBoardCode(roundSize(round));
++      } while (used.has(code));
++      used.add(code);
++      return code;
++    });
++    dispatch({ type: 'start', names, codes });
++  }
++  function load(text: string): boolean {
++    const loaded = importTournament(text);
++    if ('error' in loaded) {
++      setNotice(loaded.error);
++      return false;
++    }
++    clock.reset();
++    setGeneration((value) => value + 1);
++    commit(loaded.state);
++    setNotice('Tournament loaded.');
++    return true;
++  }
++  function exportJson(): string | null {
++    clock.synchronize();
++    if (current.current.phase === 'setup') {
++      const error = nameError(current.current.draft.filter((name) => normalizeName(name)));
++      if (error) {
++        setNotice(error);
++        return null;
++      }
++    }
++    return exportTournament(current.current);
++  }
++  return {
++    state,
++    history,
++    notice,
++    start,
++    dispatch,
++    load,
++    exportJson,
++    generation,
++    synchronize: clock.synchronize,
++  };
++}
++export type KnockoutController = ReturnType<typeof useKnockout>;
+diff --git a/src/game/knockout/validation.ts b/src/game/knockout/validation.ts
+new file mode 100644
+index 0000000..1191666
+--- /dev/null
++++ b/src/game/knockout/validation.ts
+@@ -0,0 +1,94 @@
++import { ELAPSED_MAX_MS, MOVES_MAX } from '../game.ts';
++import { decodeSnapshot } from '../snapshot.ts';
++import { hasExactKeys, isJsonObject } from '../saved-format.ts';
++import { createTournament, normalizeName, recordResult, roundSize } from './rules.ts';
++import { sortedJson } from './json.ts';
++import type { GameState } from '../game.ts';
++import type { Tournament } from './rules.ts';
++const TOURNAMENT_KEYS = ['names', 'matches'];
++const MATCH_KEYS = ['round', 'boardCode', 'players', 'results', 'winner'];
++const RESULT_KEYS = ['moves', 'time'];
++
++function finiteTime(value: unknown): value is number {
++  return (
++    typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= ELAPSED_MAX_MS
++  );
++}
++export function readTournament(value: unknown): Tournament | null {
++  if (
++    !isJsonObject(value) ||
++    !hasExactKeys(value, TOURNAMENT_KEYS) ||
++    !Array.isArray(value.names) ||
++    !value.names.every((name): name is string => typeof name === 'string') ||
++    !Array.isArray(value.matches)
++  )
++    return null;
++  let tournament = createTournament(
++    value.names,
++    value.matches.map((match: unknown) =>
++      isJsonObject(match) && typeof match.boardCode === 'string' ? match.boardCode : '',
++    ),
++  );
++  if (!tournament) return null;
++  let unfinished = false;
++  for (const [index, raw] of value.matches.entries()) {
++    if (
++      !isJsonObject(raw) ||
++      !hasExactKeys(raw, MATCH_KEYS) ||
++      !Array.isArray(raw.results) ||
++      raw.results.length > 2
++    )
++      return null;
++    if (unfinished && raw.results.length) return null;
++    for (const result of raw.results) {
++      const minimum = roundSize(tournament.matches[index]!.round) ** 2 / 2;
++      if (
++        !isJsonObject(result) ||
++        !hasExactKeys(result, RESULT_KEYS) ||
++        typeof result.moves !== 'number' ||
++        !Number.isSafeInteger(result.moves) ||
++        result.moves < minimum ||
++        result.moves > MOVES_MAX ||
++        !finiteTime(result.time)
++      )
++        return null;
++      tournament = recordResult(tournament, index, { moves: result.moves, time: result.time });
++    }
++    if (raw.results.length < 2) unfinished = true;
++    if (sortedJson(raw) !== sortedJson(tournament.matches[index])) return null;
++  }
++  return { ...tournament, names: value.names.map(normalizeName) };
++}
++export function readGame(value: unknown): GameState | null {
++  if (!isJsonObject(value) || !finiteTime(value.elapsedMs) || !isJsonObject(value.selection))
++    return null;
++  if (value.started === false && value.elapsedMs !== 0) return null;
++  const selection = value.selection;
++  const remainingMs = selection.remainingMs;
++  if (selection.kind === 'mismatch' && (!finiteTime(remainingMs) || remainingMs <= 0)) return null;
++  const game = decodeSnapshot(
++    JSON.stringify({
++      ...value,
++      elapsedMs: Math.floor(value.elapsedMs),
++      selection:
++        selection.kind === 'mismatch'
++          ? {
++              ...selection,
++              remainingMs: typeof remainingMs === 'number' ? Math.ceil(remainingMs) : 0,
++            }
++          : selection,
++    }),
++  );
++  return game
++    ? {
++        ...game,
++        elapsedMs: value.elapsedMs,
++        selection:
++          selection.kind === 'mismatch' &&
++          game.selection.kind === 'mismatch' &&
++          typeof remainingMs === 'number'
++            ? { ...game.selection, remainingMs }
++            : game.selection,
++      }
++    : null;
++}
+diff --git a/src/game/session/use-board-clock.ts b/src/game/session/use-board-clock.ts
+new file mode 100644
+index 0000000..58f1384
+--- /dev/null
++++ b/src/game/session/use-board-clock.ts
+@@ -0,0 +1,85 @@
++import { useEffect, useLayoutEffect, useRef } from 'react';
++import { isWon } from '../game.ts';
++import { SelectionKind } from '../selection.ts';
++import { CLOCK_INTERVAL_MS, createClock, elapsedStep } from './browser-clock.ts';
++import type { GameState } from '../game.ts';
++import type { RefObject } from 'react';
++
++interface ClockState {
++  readonly game: GameState;
++  readonly generation: number;
++  readonly paused: boolean;
++}
++
++export function useBoardClock(
++  session: ClockState,
++  current: RefObject<ClockState>,
++  tick: (generation: number, milliseconds: number) => void,
++) {
++  const clock = useRef(createClock(performance.now()));
++  const visible = useRef(!document.hidden);
++  const won = isWon(session.game);
++
++  function running(): boolean {
++    return (
++      visible.current &&
++      !current.current.paused &&
++      current.current.game.started &&
++      !isWon(current.current.game)
++    );
++  }
++
++  function synchronize(generation = current.current.generation): void {
++    if (generation !== current.current.generation) return;
++    const now = performance.now();
++    const step = elapsedStep(clock.current, now, running());
++    clock.current = step.clock;
++    if (step.milliseconds) tick(generation, step.milliseconds);
++  }
++
++  useLayoutEffect(() => {
++    clock.current = createClock(performance.now());
++  }, [session.paused, session.generation]);
++
++  useEffect(() => {
++    if (session.paused) return;
++    visible.current = !document.hidden;
++    const generation = session.generation;
++    let active = true;
++    let timer: number | undefined;
++    function schedule(): void {
++      window.clearTimeout(timer);
++      if (!active || generation !== current.current.generation || !running()) return;
++      const selection = current.current.game.selection;
++      const delay =
++        selection.kind === SelectionKind.mismatch
++          ? Math.min(CLOCK_INTERVAL_MS, selection.remainingMs)
++          : CLOCK_INTERVAL_MS;
++      timer = window.setTimeout(() => {
++        if (!active) return;
++        synchronize(generation);
++        schedule();
++      }, delay);
++    }
++    function visibilityChanged(): void {
++      if (!active || generation !== current.current.generation) return;
++      synchronize(generation);
++      visible.current = !document.hidden;
++      schedule();
++    }
++    schedule();
++    document.addEventListener('visibilitychange', visibilityChanged);
++    return () => {
++      active = false;
++      window.clearTimeout(timer);
++      document.removeEventListener('visibilitychange', visibilityChanged);
++    };
++  }, [session.generation, session.game.started, session.paused, won]);
++
++  return {
++    synchronize,
++    reset: () => {
++      clock.current = createClock(performance.now());
++    },
++  };
++}
+diff --git a/src/game/session/use-game.ts b/src/game/session/use-game.ts
+index b8bf7cd..c3a9f7c 100755
+--- a/src/game/session/use-game.ts
++++ b/src/game/session/use-game.ts
+@@ -9,7 +9,7 @@ import { browserStore, useSavedPreferences } from './use-saved-preferences.ts';
+ import { useSessionClock } from './use-session-clock.ts';
+ import type { Session } from './session.ts';
+ 
+-export function useGame() {
++export function useGame(active = true) {
+   const [store] = useState(browserStore);
+   const [session, setSession] = useState(() => {
+     const preferences = readPreferences(store);
+@@ -23,7 +23,7 @@ export function useGame() {
+     setSession(next);
+   }
+ 
+-  const clock = useSessionClock(session, current, commit);
++  const clock = useSessionClock(session, current, commit, active);
+   useSavedPreferences(store, session.preferences);
+ 
+   function newGame(size = current.current.game.size): void {
+@@ -90,5 +90,15 @@ export function useGame() {
+     });
+   }
+ 
+-  return { session, newGame, restart, loadBoard, loadSnapshot, exportSnapshot, activate, resume };
++  return {
++    synchronize: clock.synchronize,
++    session,
++    newGame,
++    restart,
++    loadBoard,
++    loadSnapshot,
++    exportSnapshot,
++    activate,
++    resume,
++  };
+ }
+diff --git a/src/game/session/use-session-clock.ts b/src/game/session/use-session-clock.ts
+index 8d5b160..c8eb55b 100755
+--- a/src/game/session/use-session-clock.ts
++++ b/src/game/session/use-session-clock.ts
+@@ -1,8 +1,6 @@
+-import { useEffect, useRef } from 'react';
+-import { isWon } from '../game.ts';
+-import { SelectionKind } from '../selection.ts';
+-import { CLOCK_INTERVAL_MS, createClock, elapsedStep } from './browser-clock.ts';
++import { useRef } from 'react';
+ import { tickSession } from './session.ts';
++import { useBoardClock } from './use-board-clock.ts';
+ import type { RefObject } from 'react';
+ import type { Session } from './session.ts';
+ 
+@@ -10,65 +8,13 @@ export function useSessionClock(
+   session: Session,
+   current: RefObject<Session>,
+   commit: (next: Session) => void,
++  active = true,
+ ) {
+-  const clock = useRef(createClock(performance.now()));
+-  const visible = useRef(!document.hidden);
+-  const won = isWon(session.game);
+-
+-  function running(): boolean {
+-    return (
+-      visible.current &&
+-      !current.current.paused &&
+-      current.current.game.started &&
+-      !isWon(current.current.game)
+-    );
+-  }
+-
+-  function synchronize(generation = current.current.generation): void {
+-    if (generation !== current.current.generation) return;
+-    const now = performance.now();
+-    const step = elapsedStep(clock.current, now, running());
+-    clock.current = step.clock;
+-    if (step.milliseconds) commit(tickSession(current.current, generation, step.milliseconds));
+-  }
+-
+-  useEffect(() => {
+-    const generation = session.generation;
+-    let active = true;
+-    let timer: number | undefined;
+-    function schedule(): void {
+-      window.clearTimeout(timer);
+-      if (!active || generation !== current.current.generation || !running()) return;
+-      const selection = current.current.game.selection;
+-      const delay =
+-        selection.kind === SelectionKind.mismatch
+-          ? Math.min(CLOCK_INTERVAL_MS, selection.remainingMs)
+-          : CLOCK_INTERVAL_MS;
+-      timer = window.setTimeout(() => {
+-        if (!active) return;
+-        synchronize(generation);
+-        schedule();
+-      }, delay);
+-    }
+-    function visibilityChanged(): void {
+-      if (!active || generation !== current.current.generation) return;
+-      synchronize(generation);
+-      visible.current = !document.hidden;
+-      schedule();
+-    }
+-    schedule();
+-    document.addEventListener('visibilitychange', visibilityChanged);
+-    return () => {
+-      active = false;
+-      window.clearTimeout(timer);
+-      document.removeEventListener('visibilitychange', visibilityChanged);
+-    };
+-  }, [session.generation, session.game.started, session.paused, won]);
+-
+-  return {
+-    synchronize,
+-    reset: () => {
+-      clock.current = createClock(performance.now());
+-    },
+-  };
++  const clockState = { ...session, paused: session.paused || !active };
++  const clockCurrent = useRef(clockState);
++  clockCurrent.current = clockState;
++  return useBoardClock(clockState, clockCurrent, (generation, milliseconds) => {
++    commit(tickSession(current.current, generation, milliseconds));
++    clockCurrent.current = { ...current.current, paused: current.current.paused || !active };
++  });
+ }
+diff --git a/tests/accessibility.e2e.test.ts b/tests/accessibility.e2e.test.ts
+index f1083f8..befe9f4 100755
+--- a/tests/accessibility.e2e.test.ts
++++ b/tests/accessibility.e2e.test.ts
+@@ -31,6 +31,7 @@ test(
+     ).toBe(true);
+     await page.keyboard.press('Tab');
+     await page.keyboard.press('Tab');
++    await page.keyboard.press('Tab');
+     const closed = await capture('board-entry');
+     for (const name of expected.closed) accessibilityNode(closed, 'button', name);
+     expect(accessibilityNode(closed, 'button', expected.closed[0]).properties.focused).toBe(true);
+@@ -79,6 +80,7 @@ test(
+     await page.keyboard.press('Shift+Tab');
+     await page.keyboard.press('Shift+Tab');
+     await page.keyboard.press('Shift+Tab');
++    await page.keyboard.press('Shift+Tab');
+     await page.keyboard.press('Enter');
+     const reset = await capture('new-game');
+     expect(accessibilityNode(reset, 'button', expected.controls.newGame).properties.focused).toBe(
+diff --git a/tests/knockout.e2e.test.ts b/tests/knockout.e2e.test.ts
+new file mode 100644
+index 0000000..a088cbd
+--- /dev/null
++++ b/tests/knockout.e2e.test.ts
+@@ -0,0 +1,169 @@
++import { expect, Scrollbars, test, TestTimeouts } from './browser-test.ts';
++import { loadTimedBoard } from './game-fixture.ts';
++import { specDeal } from './deal-oracle.ts';
++import { isJsonObject } from '../src/game/saved-format.ts';
++import type { Page } from '@playwright/test';
++
++async function exportJson(page: Page): Promise<string> {
++  await page.getByRole('button', { name: 'Export tournament', exact: true }).click();
++  return page.getByLabel('Tournament JSON', { exact: true }).inputValue();
++}
++async function playTurn(page: Page): Promise<string> {
++  await page.getByRole('button', { name: 'Start turn', exact: true }).click();
++  const code = (await page.getByText(/^Board code: /).innerText()).slice('Board code: '.length);
++  const [, size, seed] = code.split('-');
++  const deal = specDeal(Number(size), Number(seed));
++  for (let face = 0; face < deal.length / 2; face += 1) {
++    for (const [index, value] of deal.entries())
++      if (value === face) await page.locator('.card').nth(index).click({ force: true });
++    await page.clock.runFor(5);
++  }
++  return code;
++}
++for (const count of [4, 8]) {
++  test(
++    `plays a complete ${count} player tournament and reloads its history without changing normal preferences`,
++    async ({ page, gameURL }, artifacts) => {
++      await page.setViewportSize({ width: 390, height: 844 });
++      await loadTimedBoard(page, gameURL);
++      const preferences = await page.evaluate(() =>
++        localStorage.getItem('neon-pairs.preferences.v1'),
++      );
++      await page.getByRole('button', { name: 'Tournament', exact: true }).click();
++      await expect(page.getByRole('heading', { name: 'Tournament', exact: true })).toBeFocused();
++      await page.getByLabel('Players', { exact: true }).selectOption(String(count));
++      for (let player = 1; player <= count; player += 1)
++        await page.getByLabel(`Player ${player}`, { exact: true }).fill(`  Player   ${player}  `);
++      for (const control of await page
++        .locator('.knockout button, .knockout input, .knockout select, .knockout textarea')
++        .all()) {
++        const box = await control.boundingBox();
++        expect(box?.width).toBeGreaterThanOrEqual(44);
++        expect(box?.height).toBeGreaterThanOrEqual(44);
++      }
++      await page.getByRole('button', { name: 'Start tournament', exact: true }).click();
++      await expect(page.getByRole('status')).toContainText('Now playing: Player 1');
++      const saved = await exportJson(page);
++      const unknown: unknown = JSON.parse(saved);
++      if (!isJsonObject(unknown)) throw Error('Expected tournament object');
++      await page
++        .getByLabel('Tournament JSON', { exact: true })
++        .fill(JSON.stringify({ ...unknown, extra: 1 }));
++      await page.getByRole('button', { name: 'Load tournament', exact: true }).click();
++      await expect(page.getByRole('status')).toContainText('Unknown field: extra.');
++      expect(await exportJson(page)).toBe(saved);
++      await page.getByRole('button', { name: 'Load tournament', exact: true }).click();
++      await expect(page.getByRole('button', { name: 'Keep playing', exact: true })).toBeFocused();
++      await page.keyboard.press('Escape');
++      await expect(page.getByRole('dialog')).toHaveCount(0);
++      const codes = new Set<string>();
++      for (let match = 0; match < count - 1; match += 1) {
++        const round =
++          count === 8 && match < 4 ? 'Quarterfinal' : match < count - 2 ? 'Semifinal' : 'Final';
++        await expect(page.getByRole('status')).toContainText(`Round: ${round}`);
++        const first = await playTurn(page);
++        await page.getByRole('button', { name: 'Next turn', exact: true }).click();
++        expect(await playTurn(page)).toBe(first);
++        expect(codes.has(first)).toBe(false);
++        codes.add(first);
++        if (match < count - 2)
++          await page.getByRole('button', { name: 'Next match', exact: true }).click();
++      }
++      await expect(
++        page.getByRole('heading', { name: 'Champion: Player 1', exact: true }),
++      ).toBeFocused();
++      await expect(page.locator('[aria-live]')).toHaveCount(1);
++      await expect(
++        page
++          .getByRole('table', { name: 'Tournament bracket', exact: true })
++          .getByText(/\(winner\)/),
++      ).toHaveCount(count - 1);
++      await page.screenshot({ path: artifacts.outputPath('champion.png'), fullPage: true });
++      const completed = await exportJson(page);
++      await page.getByRole('button', { name: 'Back to game', exact: true }).click();
++      await expect(page.getByRole('heading', { name: 'Game', exact: true })).toBeFocused();
++      expect(await page.evaluate(() => localStorage.getItem('neon-pairs.preferences.v1'))).toBe(
++        preferences,
++      );
++      await page.reload();
++      await page.getByRole('button', { name: 'Tournament', exact: true }).click();
++      await expect(
++        page.getByRole('table', { name: 'Past tournaments', exact: true }),
++      ).toContainText('Player 1 (winner)');
++      await page.getByLabel('Tournament JSON', { exact: true }).fill(completed);
++      await page.getByRole('button', { name: 'Load tournament', exact: true }).click();
++      await expect(
++        page.getByRole('heading', { name: 'Champion: Player 1', exact: true }),
++      ).toBeFocused();
++    },
++    {},
++    Scrollbars.hidden,
++    TestTimeouts.long,
++  );
++}
++
++test('validates names, confirms replacement and restores partial tournament and normal game clocks', async ({
++  page,
++  gameURL,
++}) => {
++  await loadTimedBoard(page, gameURL);
++  await page.locator('.card').first().click();
++  await page.clock.runFor(1000);
++  const open = page.getByRole('button', { name: 'Tournament', exact: true });
++  await open.click();
++  await expect(page.getByRole('button', { name: 'Keep playing', exact: true })).toBeFocused();
++  await page.keyboard.press('Escape');
++  await expect(open).toBeFocused();
++  await open.click();
++  await page.getByRole('button', { name: 'Leave', exact: true }).click();
++  await page.clock.runFor(30_000);
++  for (const [index, name] of ['A', 'Bea', 'Cy', 'Dee'].entries())
++    await page.getByLabel(`Player ${index + 1}`, { exact: true }).fill(name);
++  await page.getByRole('button', { name: 'Start tournament', exact: true }).click();
++  await expect(page.getByRole('status')).toHaveText('Use 2 to 20 characters.');
++  await page.getByLabel('Player 1', { exact: true }).fill('  A\u0301da   Lee  ');
++  await page.getByLabel('Player 2', { exact: true }).fill('áda lee');
++  await page.getByRole('button', { name: 'Start tournament', exact: true }).click();
++  await expect(page.getByRole('status')).toHaveText('Each name must be different.');
++  await page.getByLabel('Player 2', { exact: true }).fill('Bea');
++  await page.getByRole('button', { name: 'Start tournament', exact: true }).click();
++  await page.getByRole('button', { name: 'Start turn', exact: true }).click();
++  await expect(page.getByRole('status')).toContainText('Now playing: Áda Lee');
++  await page.locator('.card').first().click();
++  await page.clock.runFor(125);
++  const saved = await exportJson(page);
++  await page.getByRole('button', { name: 'Load tournament', exact: true }).click();
++  await page.clock.runFor(30_000);
++  await page.getByRole('button', { name: 'Leave', exact: true }).click();
++  expect(await exportJson(page)).toBe(saved);
++  await page.getByRole('button', { name: 'Leave tournament', exact: true }).click();
++  await page.getByRole('button', { name: 'Keep playing', exact: true }).click();
++  await expect(page.getByRole('button', { name: 'Leave tournament', exact: true })).toBeFocused();
++  await page.getByRole('button', { name: 'Leave tournament', exact: true }).click();
++  await page.getByRole('button', { name: 'Leave', exact: true }).click();
++  await expect(page.locator('.card.revealed')).toHaveCount(1);
++  await page.locator('summary').click();
++  await page.getByRole('button', { name: 'Export snapshot', exact: true }).click();
++  expect(
++    JSON.parse(await page.getByLabel('Snapshot JSON', { exact: true }).inputValue()).elapsedMs,
++  ).toBe(1000);
++});
++
++test('blocked storage leaves Tournament usable and explains the in-memory history', async ({
++  page,
++  gameURL,
++}) => {
++  await page.addInitScript(() => {
++    Object.defineProperty(window, 'localStorage', {
++      get() {
++        throw Error('blocked');
++      },
++    });
++  });
++  await page.goto(gameURL);
++  await page.getByRole('button', { name: 'Tournament', exact: true }).click();
++  await expect(
++    page.getByText("Progress won't be saved on this device.", { exact: true }),
++  ).toBeVisible();
++  expect(JSON.parse(await exportJson(page)).format).toBe('neon-pairs/tournament');
++});

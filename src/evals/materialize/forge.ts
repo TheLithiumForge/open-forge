@@ -39,6 +39,7 @@ export function frameworkRequests(preset: ForgePreset = ForgePreset.minimal, ext
   return [install, ["extension", "install", ...extensions, "--automatic"], ...ForgeRequests.slice(1), ["index"]];
 }
 
+const ForgeErrorChars = 1500;
 export async function installFramework(destination: string, run: ForgeRunner, preset: ForgePreset = ForgePreset.minimal, additions: FrameworkAdditions = {}): Promise<ForgeReceipt[]> {
   const version = await run([ForgeFlags.version], destination);
   if (version.code !== 0 || version.stdout.trim() !== FrameworkVersion) throw new Error(`Expected Open Forge ${FrameworkVersion}.`);
@@ -52,7 +53,7 @@ export async function installFramework(destination: string, run: ForgeRunner, pr
       const result = await run(args, destination);
       const envelope: unknown = JSON.parse(result.stdout);
       const status = isRecord(envelope) ? envelope["status"] ?? (isRecord(envelope["result"]) ? envelope["result"]["status"] : undefined) : undefined;
-      if (result.code !== 0 || status !== ForgeStatus.completed) throw new Error(`Open Forge stopped for ${request.join(" ")}.`);
+      if (result.code !== 0 || status !== ForgeStatus.completed) throw new Error(`Open Forge stopped for ${request.join(" ")}: ${result.stdout.slice(0, ForgeErrorChars)}`);
       receipts.push({ args, status });
     }
   }

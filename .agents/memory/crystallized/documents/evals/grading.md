@@ -21,7 +21,7 @@ The approved check plan is:
 | 1 | `L1-v2`, 6 working checks, 16 stated checks and 3 wishes apart | Working gate passes all 6. Stated success passes all 16 |
 | 2 | About 48 checks, Layer 1's 16 plus about 32 from provided clauses | Every provided clause passes |
 | 3 | About 160 assertions across 94 requirement IDs | Every executable clause passes, with review clauses apart |
-| 4 | Full Layer 3 suite, 10 to 20 change checks and 3 guards | Change works and no earlier check fails |
+| 4 | Full Layer 3 suite, 10 to 50 change checks and 3 guards | Change works and no earlier check fails |
 
 Layer 1's working checks cover the built page opening offline, finishing a 4x4 game by pointer, phone tap and keyboard, showing the win and New Game clearing the board and moves. All run without an uncaught error. Starting size, remembered size and no sound are wishes. Asking belongs to collaboration. Earlier G1 records keep their grading version.
 

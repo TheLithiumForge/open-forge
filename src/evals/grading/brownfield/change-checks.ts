@@ -9,8 +9,8 @@ import type { AssertionOutcome } from "../../benchmarks/neon-pairs/checks/spec-l
 
 export const ChangeCheckFiles = { manifest: "checks.json", worker: "worker.ts", report: "report.json" } as const;
 export const ChangeCheckVersion = 1;
-/** A case's own checks number 10 to 20. A case graded only by full-spec clauses has 3 to 30, so several scoped tasks can combine. */
-export const ChangeCheckLimits = { minimum: 10, maximum: 20, clauseMinimum: 3, clauseMaximum: 30, reportBytes: 1024 * 1024 } as const;
+/** A case's own checks number 10 to 50. A case graded only by full-spec clauses has 3 to 30, so several scoped tasks can combine. */
+export const ChangeCheckLimits = { minimum: 10, maximum: 50, clauseMinimum: 3, clauseMaximum: 30, reportBytes: 1024 * 1024 } as const;
 export const ChangeKind = { feature: "feature", repair: "repair" } as const;
 /** Clause checks take their result from the full-spec checker's assertion for one clause, so the case needs no worker of its own. */
 export const ChangeMethod = { clause: "clause" } as const;

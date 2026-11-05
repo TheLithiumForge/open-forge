@@ -1,0 +1,3343 @@
+{
+  "schemaVersion": 1,
+  "fixture": "neon-pairs",
+  "sourceHash": "e2e141913e17e7999b2eda2ccb8b4891e34011ddf496dc3704f6e0dd03506553",
+  "sourceFiles": [
+    {
+      "path": "README.md",
+      "sha256": "33d1b631d3a3059c76956c90b3a3de7bd974d3b012fc47e3cfd1341602d7ba3d"
+    },
+    {
+      "path": "acceptance.md",
+      "sha256": "b10c9502e036d3c76cbba8d47d65ff6facb282d91f9d6f7c794c1cac54cce5bd"
+    },
+    {
+      "path": "accessibility-audit.md",
+      "sha256": "76c2c1207415fb8049c732a837f35d1c5a55e029554716148fdd5e7f25683e89"
+    },
+    {
+      "path": "adr-001-react.md",
+      "sha256": "18dc93fa14de437857571e5808d2720227f73ebd8f26cdddad3653676c5a0698"
+    },
+    {
+      "path": "adr-002-typescript.md",
+      "sha256": "e6cf917ab91aa007d436676b738ec54e86c4bf8182ed9e590b1538c9c1ed237d"
+    },
+    {
+      "path": "adr-003-single-file.md",
+      "sha256": "523ae6f39870b2df182c8fa013828c70bb6edb58e4b024a853a2f4b39ef290a3"
+    },
+    {
+      "path": "adr-004-no-backend.md",
+      "sha256": "2dc9e087327ae29d946de4c89ae0a1ed3d6bafa8837d1ff6c8fc18bd0a614656"
+    },
+    {
+      "path": "adr-005-vite.md",
+      "sha256": "de6b19e8ae32a7fdf1f81a7a2bdaf876f64bb36d802eebda1feb578835d8cc8a"
+    },
+    {
+      "path": "adr-006-native-controls.md",
+      "sha256": "8877f94fe661382a2bb5c116c15aa5925a1a23506feb56b5e6cf50d09bd4cb7f"
+    },
+    {
+      "path": "adr-007-svg-faces.md",
+      "sha256": "f5cb0a8fcc1a4bc8f0a66885e9189b792639f15a3854fd94a21aea3cdda66980"
+    },
+    {
+      "path": "adr-008-seven-sizes.md",
+      "sha256": "69140281750e0b4ab4464681d59699d09cc03c15659da9792f8be27b59ffb82b"
+    },
+    {
+      "path": "adr-009-board-codes.md",
+      "sha256": "ad09d4939e5f78d2983e5d43e22568110a8a4eeb6bddca9222d87a41f53b6e44"
+    },
+    {
+      "path": "adr-010-snapshot-json.md",
+      "sha256": "62589563ad8a38f9e349a051bf917fba40fd0cde3d5e3479c862a2738357ef54"
+    },
+    {
+      "path": "adr-011-storage-keys.md",
+      "sha256": "6984b023699236d475155c98bd7641fce9103b79fbf958b744121d64527ef9e7"
+    },
+    {
+      "path": "adr-012-no-sound.md",
+      "sha256": "abcdff68875b8ccf9d784adf4b2cda389cc2a5be6b0bd9fe20b8c057dfaa0f38"
+    },
+    {
+      "path": "adr-013-monotonic-clock.md",
+      "sha256": "7cf00f5eb0da00695d2e8169213182a6d2c7a38067f95b577e18c24b4aba92da"
+    },
+    {
+      "path": "adr-014-pause-on-hidden.md",
+      "sha256": "e94adaa222939a511f47741bf73a7bf001831f58fdec70a40b2126b9b66a989f"
+    },
+    {
+      "path": "adr-015-replay-cli.md",
+      "sha256": "88e1eddd662b725a9123e426ecd8c965aae93807bf7ee820db1e67957ec18086"
+    },
+    {
+      "path": "adr-016-no-state-library.md",
+      "sha256": "ddd23e7f7cfe08816cfb75699a2aa8513f94c7b33ddae913c5f89e34b7455c7c"
+    },
+    {
+      "path": "adr-017-colocated-tests.md",
+      "sha256": "5eb7f873f04a15c501c00fd8036273c806c80fb8f25e06842b3ab70cc113d1d4"
+    },
+    {
+      "path": "adr-018-playwright.md",
+      "sha256": "de787a26462442febf51c744b1a47ba5895c40f4bb7a91af34e7d365d6e67625"
+    },
+    {
+      "path": "adr-019-modal-overlays.md",
+      "sha256": "281c0dddb6ed4bbc375e1f6f95122553da640567cb6ffd71f455c21d254ae4a5"
+    },
+    {
+      "path": "adr-020-vitest.md",
+      "sha256": "312bde2f2d648630926e269be5a3024e4d002084d674aed7a291e14783ca4448"
+    },
+    {
+      "path": "adr-021-seeded-decks.md",
+      "sha256": "7abe82e974bb9f9c1c4013920488eda0938d6cbb6846a74fca5cbe5d8b5d07c8"
+    },
+    {
+      "path": "adr-022-card-names.md",
+      "sha256": "978bb560e24c780b4772bd25de27dc92f10602996309b2e3384652142e5c4eca"
+    },
+    {
+      "path": "adr-023-results-as-lists.md",
+      "sha256": "d6a9ea5e882d06226ad1b57079d097900ac0961e8fa5c427780255458c3a06d5"
+    },
+    {
+      "path": "adr-024-roving-focus.md",
+      "sha256": "12a75a814f286887c3c06a242d9784e29cadd27c6c2f00cd4c9b5d632fe82973"
+    },
+    {
+      "path": "adr-025-reduced-motion.md",
+      "sha256": "7217fc052a14aefbe5b729f050bb05870629360bcd4e30b888098730e3a73efb"
+    },
+    {
+      "path": "adr-026-dark-theme.md",
+      "sha256": "9bfe32a267bcfb66a3f1dbd738763512215d557c6b15c207bbe88975054fb643"
+    },
+    {
+      "path": "adr-027-offline-first.md",
+      "sha256": "a65bc741b49886db3853b3c4a2f7f7e85eb8bf18a6c7adec569d3c2f83452f53"
+    },
+    {
+      "path": "adr-028-prettier.md",
+      "sha256": "5a08be7202f33f2c5d3738882953796c3b78c01a7e628b1c021a5d9f277688db"
+    },
+    {
+      "path": "adr-029-pinned-versions.md",
+      "sha256": "bd28adfd29dc3524ac80c182a81b51388e2fdd2be8eee0849c0bc2eb340395f5"
+    },
+    {
+      "path": "adr-030-move-cap.md",
+      "sha256": "fb8e9a9ba0cb7495d52f1d8be878338165e8926f39a5dcf83c275628ddf380e3"
+    },
+    {
+      "path": "adr-031-toast-announcements.md",
+      "sha256": "f7c5a123595c1cf305aa3d8cbf4b8313b0141e5ffa78625fbbf44449a6e83cd0"
+    },
+    {
+      "path": "adr-032-best-score-scope.md",
+      "sha256": "b4c01fadb32742b4bb15670cbeca6f7414e3128316a77b0b850b4d2eb39387f4"
+    },
+    {
+      "path": "adr-033-mismatch-800ms.md",
+      "sha256": "be79dd58b097317e932db745d95e3b04699007cba6a6da56efa0a4c3f4a157fa"
+    },
+    {
+      "path": "adr-034-face-count.md",
+      "sha256": "76399192b76614653f7075805a4687589f33ebb32698eae7658e68342fb7fc3a"
+    },
+    {
+      "path": "adr-035-scroll-large-boards.md",
+      "sha256": "85998f97c1e41249b4b293688dca2f31a5d4b315bb71f87d25903f9d31dbd16a"
+    },
+    {
+      "path": "adr-036-motion-opt-in.md",
+      "sha256": "ce06a5f579c37cea9bfc81cad4fad7098e05ecc52c213bbb802e6c31990dccb5"
+    },
+    {
+      "path": "adr-037-snapshot-pause.md",
+      "sha256": "974c3cbafab42748e532fa062492df82aa2887901700b73430dce5cbcad7fd68"
+    },
+    {
+      "path": "adr-038-no-analytics.md",
+      "sha256": "b8469c56abc0ce0ae321b0085442879873a76fde132916a918485968ad884528"
+    },
+    {
+      "path": "adr-039-contrast-floor.md",
+      "sha256": "0e713642cc40024663de86e56e77e58ab91bf6749c757cc615d271e5a436ac91"
+    },
+    {
+      "path": "adr-040-file-size-aim.md",
+      "sha256": "a7a9440992d106f22a0e3d377d3fd1ea868f4e94d0751f7b9232c8b45ac8c5f6"
+    },
+    {
+      "path": "adr-041-name-limits.md",
+      "sha256": "7f8293b2dc2862bb9467cb3c24898b7ce8677018b55f229f9a853ad3c9df251e"
+    },
+    {
+      "path": "adr-042-error-copy.md",
+      "sha256": "a101cfcef801c560a0e68787d12cb5ad38bca661726f391d0439cac21ce66799"
+    },
+    {
+      "path": "adr-043-keyboard-parity.md",
+      "sha256": "e37a43b2fdd32b538a74e0798d24441012876b6dde91fc91124d8814126890e5"
+    },
+    {
+      "path": "adr-044-no-routing.md",
+      "sha256": "3ee88d22153d6413539ebdf2883d56587d9a5d41ace28d7bf2b6fd63dfbca389"
+    },
+    {
+      "path": "adr-045-no-i18n-yet.md",
+      "sha256": "4dc6b9ec7ab4efbf1375845263969d488440785750fe3608ba3ea1bf3419f568"
+    },
+    {
+      "path": "adr-046-print-styles.md",
+      "sha256": "ae2219e1e938d368822659b316261ad0a719a24b12e6bea2dd9dcd1b4950ba73"
+    },
+    {
+      "path": "adr-047-touch-scroll.md",
+      "sha256": "8b09353695a2a91587030c4ac30912f13b1d41250c8463ed90e960108eeb8f4c"
+    },
+    {
+      "path": "adr-048-replay-order.md",
+      "sha256": "8f91dddb2e390457ecbc0ca702a7648baae8fcc4c1f925b36975d00b982c6c89"
+    },
+    {
+      "path": "adr-049-zoom-floor.md",
+      "sha256": "6860db8c022a164a6929fbbcdeb8efcf0c0f628c30bb3136a8e17db3d1ef1be5"
+    },
+    {
+      "path": "adr-050-completion-banner.md",
+      "sha256": "5718b8c9a45786cdb8b50ffb60243f5f3e20b2295c9bda60404a0e9456536d7f"
+    },
+    {
+      "path": "adr-051-test-artifacts.md",
+      "sha256": "68b37a4f2d0a1a93504ee46a9c71a7e61c7eff606b1a15654b230e157daf7dad"
+    },
+    {
+      "path": "adr-052-release-tags.md",
+      "sha256": "d45c007644ee33baf78ea9c406429da00710ab57942a5a00e83323669a74a35f"
+    },
+    {
+      "path": "adr-053-docs-in-repo.md",
+      "sha256": "c695fea5a61a34f5590aa5ecaca341f8d0cfd53e08bc24974473c708188a391b"
+    },
+    {
+      "path": "adr-054-acceptance-journeys.md",
+      "sha256": "c67350f3047c1f912fe59724a84fa952fa564b367616469f95349d0040178f61"
+    },
+    {
+      "path": "adr-055-review-before-merge.md",
+      "sha256": "031fc5f8a54015742a88cf468415b53e46c1dc29f289c8385bc1432778d0f4e0"
+    },
+    {
+      "path": "adr-056-no-feature-flags.md",
+      "sha256": "738c00edce91dab3563d2fd9f5f14265f07cb10e979fe72b1ddf63152e9ffb53"
+    },
+    {
+      "path": "adr-057-small-components.md",
+      "sha256": "900b66dc2a11c14969ea01d8640aa69167a8b8e4daff63a656bbd48024ba267b"
+    },
+    {
+      "path": "adr-058-storage-namespace.md",
+      "sha256": "4c2bce1d49f72a6f5cc075bb3f1060a2935a67f649ae1fe9b01a6b707299ccf3"
+    },
+    {
+      "path": "announcements-policy.md",
+      "sha256": "269593b1c5fb67f12d86ba0206adcd9438ff0d44be5d3b14b3bcec964b3a4aca"
+    },
+    {
+      "path": "architecture.md",
+      "sha256": "8707282e3b30a5e5a771cfa8651a481e683d8d0f9bc48e68be8de37d89a34f52"
+    },
+    {
+      "path": "audio-research-notes.md",
+      "sha256": "a3ba8fd23a569a7de93e057a642a678b62560f3dfaae7de6a4da343453f0582f"
+    },
+    {
+      "path": "best-score-records.md",
+      "sha256": "f75119edf53b332c13cfb31d111d3c5b6262e0feb2fba80f6accbecdc7cf0637"
+    },
+    {
+      "path": "board-code-format.md",
+      "sha256": "cae92b454063eb7c9722f193dabe99ffde7001eabc1ea814f4c527cca66af850"
+    },
+    {
+      "path": "board-keyboard-navigation.md",
+      "sha256": "bb971d65d94264f266fb872e12f953cd644869366f92ffa9c293387c3f44554a"
+    },
+    {
+      "path": "board-size-catalogue.md",
+      "sha256": "ff6cf07bc130ccd5a3e2aae1764695fa683b3da110611b72651c8ceef0b4b7a1"
+    },
+    {
+      "path": "browser-support.md",
+      "sha256": "1f588075398072b0116fc4bce2f4bdcaa00b6b1779bbc81086b5766dfe3613b0"
+    },
+    {
+      "path": "browser-test-guide.md",
+      "sha256": "77010a1ae0169bee557b2070e6a3b05ff9ef0bb821ec267f8a8235405514d98f"
+    },
+    {
+      "path": "build-pipeline.md",
+      "sha256": "a58b0078c5af1089c693de3fd9dc98a28316807299ad30cde79e9a3acf4127f8"
+    },
+    {
+      "path": "card-artwork.md",
+      "sha256": "dddcb90afde6f9c6c283a1a1a34e0d55f105bb64b6f6b9a70fff82a2628ed45a"
+    },
+    {
+      "path": "changelog-style.md",
+      "sha256": "f275b18c19e44f23fdd1f1b5193f4914aae6f9808091092e42cfb70da1e153b3"
+    },
+    {
+      "path": "clock-design.md",
+      "sha256": "6de6a48be0f8e8983efb0d3057a1e223e93ee2f28467f9ab143d4f820a1e8fbe"
+    },
+    {
+      "path": "code-review-guide.md",
+      "sha256": "4f786c91d227bb967aa770ee7a308493100dd87a1e27cdb85c84703940e7489c"
+    },
+    {
+      "path": "color-policy.md",
+      "sha256": "f11a21e7c4013db86a83b0cc6dda2906778fc8555fea4664be0f3843345c4b25"
+    },
+    {
+      "path": "competition-boards.md",
+      "sha256": "317b913f6135f274a6555776b917dc8e5f334bca983331967455190c64ec6326"
+    },
+    {
+      "path": "competition-deals.md",
+      "sha256": "6fbd1a488c24d78b47277f7e077e65849bed629b6f718d9d221af1e391d90356"
+    },
+    {
+      "path": "competition-overview.md",
+      "sha256": "9bca7661c75f83ca7ffe610ad8fad8cca955a1e72f519a6983dff16a471d3242"
+    },
+    {
+      "path": "competition-pairing.md",
+      "sha256": "f01d591ea68a8e330c1b932fc6cb11c917b8b0b42dfb6d0ece98fdd4f5965e77"
+    },
+    {
+      "path": "competition-research.md",
+      "sha256": "1c2906a764e22e2e997a7340689e07bf53070d3aa3598184a5fc38dd372bf9c5"
+    },
+    {
+      "path": "competition-rounds.md",
+      "sha256": "a8ce9f85eea47b5f2ff5b23115d3af95b2b966cac59e848f81a5ad8225386128"
+    },
+    {
+      "path": "competition-scores.md",
+      "sha256": "4e9aefa59741d0da12d411425da78a572577e8b32a7ef72291e3af45e1222b42"
+    },
+    {
+      "path": "competition-ties.md",
+      "sha256": "c1f34c6c05c70b24a9714f509c908859f93d67853e3dcc148328d843425b5b82"
+    },
+    {
+      "path": "contrast-audit.md",
+      "sha256": "ddb712a0ea8887e44a4d836465d4189bfb368e113735a002f9b19d5b5523aa0b"
+    },
+    {
+      "path": "control-bar.md",
+      "sha256": "64846d4ca123a13ab072fe255cd934e511d46793fbe924b5c01d0e704eeb2b97"
+    },
+    {
+      "path": "controls.md",
+      "sha256": "a199800ba9c73479eb83af0f39c40815b92a8b81b9819ff212365b3e06fd7442"
+    },
+    {
+      "path": "corrupt-data-policy.md",
+      "sha256": "c6996d8f7b652490a18296e717f3da14e8f1321995c8b0dbdd1aa83b1a8a8c0a"
+    },
+    {
+      "path": "css-organization.md",
+      "sha256": "33266191df010113bf81c2166402f492d2bc0883454c69f833f050c9d280ba9b"
+    },
+    {
+      "path": "data-exchange-policy.md",
+      "sha256": "5bd8db018d701455b8fff0e7672a4857c12b0b0003de6c9e7d382e87c509e2c0"
+    },
+    {
+      "path": "deck-generation.md",
+      "sha256": "a36f01c0bf86bc80c82205dea1a6eae0ccca4ed97e81bc69a3d6fa57b856088e"
+    },
+    {
+      "path": "dependency-policy.md",
+      "sha256": "b989c294ca9586e340a94f0792e2896f12270cf318b59ebbc4502d8ddddcd0e0"
+    },
+    {
+      "path": "dialog-policy.md",
+      "sha256": "f3a7eea8705341eb17731652b0022d802ce16cb29bf70b5bb2f6cca6ef1de8f9"
+    },
+    {
+      "path": "disabled-state-guide.md",
+      "sha256": "737b3c08fd7de3646014713aed9a9f6e06227f6f847eb33bfec32e48aa6e7dd2"
+    },
+    {
+      "path": "documentation-style.md",
+      "sha256": "d36277825e9c3ff1416de6c2573f8a2b0fec25dc3071a04f800c6765608a0de4"
+    },
+    {
+      "path": "duplicate-names-policy.md",
+      "sha256": "158a7b2c200af05454a3e597669a21dfe96262e64956a92e81356177ef191669"
+    },
+    {
+      "path": "elapsed-time-rules.md",
+      "sha256": "32cf9f6253ceee3483e55c818e8d32f6ef0a96bb85b8c1f041872050939c86cc"
+    },
+    {
+      "path": "error-display-guide.md",
+      "sha256": "6f3ccea1b5ca9cc3f89a6bc7716aa0cd04d91625286a09adcdc0e226cfbe502f"
+    },
+    {
+      "path": "error-message-style.md",
+      "sha256": "d6f2ec8484c70e6091b28a63d2633539f45601e10c95ff05ae05124e3609208d"
+    },
+    {
+      "path": "face-catalogue.md",
+      "sha256": "1a34651049adccb8dd842cf7e7a66c68fd9db377942b3853207752240a597ee6"
+    },
+    {
+      "path": "feedback-without-audio.md",
+      "sha256": "3bac3d4186a52efcb06d9eb39aa1352819e74707a7a59dddd0ee9b696131c0a6"
+    },
+    {
+      "path": "fixtures-guide.md",
+      "sha256": "595d7dcaa36ab6bffc167cce6ab038617fff7a25c8626ecb5f0712d228ba70f6"
+    },
+    {
+      "path": "flaky-test-notes.md",
+      "sha256": "4d5df782602efa36dd93c39a19da61b9d38742a5aa6e88fa06fa880185891427"
+    },
+    {
+      "path": "focus-policy.md",
+      "sha256": "ed138d401256cea51e172be2241d4bf489b3f1f73753ca86fd61409f609661fb"
+    },
+    {
+      "path": "form-layout-guide.md",
+      "sha256": "b43aa2fe75651128c8e0a5036c59ae1023b6e32ecaceb66fed7aa43f17b3a45a"
+    },
+    {
+      "path": "format-versioning-guide.md",
+      "sha256": "722615a0791c1aa7efc385089dd68fabcbd86f2899748e98a6caeeadff0c911f"
+    },
+    {
+      "path": "game-state-model.md",
+      "sha256": "c953eefe0ee1b054f8cd84bdabc81b302021511dc0a88e97d4ffe94c1311b1eb"
+    },
+    {
+      "path": "gameplay-faq.md",
+      "sha256": "62ceb2e38412e2b31c7e34528cb9323c6570d7acf7b06dd716a68a1f29cd6b59"
+    },
+    {
+      "path": "glossary.md",
+      "sha256": "0744aebd2478ea9b02e21f49edb9eb3a12f1ae5892c1849f00e6e09b62711ea0"
+    },
+    {
+      "path": "icon-and-glyph-policy.md",
+      "sha256": "6d27c6f9d79edd35cb1077b46cead4ffb6fc08e87407ac56be2babbf4e3c41f3"
+    },
+    {
+      "path": "import-safety-policy.md",
+      "sha256": "ce1c5d6db4c8c10e0136ee352115c720dd8892f5382006445e46db78ba2efed8"
+    },
+    {
+      "path": "incident-16x16-layout.md",
+      "sha256": "3cc369b685e45690f568cf99bf602c86f62446708aa2d1bfc57ef91ebb1e38d9"
+    },
+    {
+      "path": "incident-clock-drift.md",
+      "sha256": "c4b37f958bb6f1da7b6d8d080bb14eb5a2e39eacaf900d6e9cf4451618b179ac"
+    },
+    {
+      "path": "incident-focus-trap.md",
+      "sha256": "06dca2c43e3d64212802404cdeab52434b44139460776374e5773c376ec81954"
+    },
+    {
+      "path": "incident-lost-best-scores.md",
+      "sha256": "72a2df13489383faa0f053cbe3ceacf690fc25a6d36a36e2a33ecae123c72717"
+    },
+    {
+      "path": "incident-snapshot-rejects.md",
+      "sha256": "19e4657f6d28f6b6745f758db839b16538aa4241716b1cda8620146de8ac3f5c"
+    },
+    {
+      "path": "input.md",
+      "sha256": "561521000c174f0d3dba669739599b816a2df5edf325c56597195b3f0ebcdc53"
+    },
+    {
+      "path": "interface-review-checklist.md",
+      "sha256": "5796c67f4db0dd42ca2eeed4edcee5b5db8a9fdfa8f9292d79357cda295bd74a"
+    },
+    {
+      "path": "known-issues.md",
+      "sha256": "85acabc0c74c05d8e7ef6454dcb114a314e26d69ef28d08d31c44499638d7bda"
+    },
+    {
+      "path": "large-board-rendering.md",
+      "sha256": "6ba8cba14ff9a4c4af8a3e6305d3f4f29e7be617a3e67723f5afbbe3f931f964"
+    },
+    {
+      "path": "layout-grid.md",
+      "sha256": "ed9d2b33286d53d9ed34a55dbb96624817627a2aaa746fb5d3ab2309c310221d"
+    },
+    {
+      "path": "meeting-notes-accessibility.md",
+      "sha256": "e05837bda67d82881c064bd434f5614c33dd75c62502b1ae3a8ff4ddacfb4d9c"
+    },
+    {
+      "path": "meeting-notes-architecture.md",
+      "sha256": "a28a7a344b550ab5a3ed57c9df67230e67631b9c0ac3dfc650a267e23432a28c"
+    },
+    {
+      "path": "mismatch-interval.md",
+      "sha256": "a55340984f44e134df1ef4310b1d4daeb6407a730a9b6ee0b263c11a6005b1c2"
+    },
+    {
+      "path": "module-layout-policy.md",
+      "sha256": "300f79f43a3e3928faee6f94c378676e5c9aa47dec6e5b16f9489733b977ccce"
+    },
+    {
+      "path": "motion-policy.md",
+      "sha256": "884df566e5f7cf6caef26b1a12d0278d315a44348feed98c510e1bb2b9ed00f9"
+    },
+    {
+      "path": "name-length-policy.md",
+      "sha256": "fb107cd3735759c078b6511d529137bb45da0fbe89638849b93ba05338b728b2"
+    },
+    {
+      "path": "native-controls-guide.md",
+      "sha256": "1d396cd63f7eaa61641cba8267aeef5fa2e20ab23568fd9c9e95c583502b2d0f"
+    },
+    {
+      "path": "new-game-and-restart.md",
+      "sha256": "6dd3eeb8f0e117b2551598c0508ff192204af03c7e5483b69826103fc574ba15"
+    },
+    {
+      "path": "numbers-style.md",
+      "sha256": "0ab3a9dc4c7cd0c7080f90f96959f7419915ecb3747d613ccf9123060cc675a1"
+    },
+    {
+      "path": "offline-delivery.md",
+      "sha256": "a7a9cfe8cbabbe27a450cedf88aec3035f4477478232537debb216cef7774cae"
+    },
+    {
+      "path": "pair-identity.md",
+      "sha256": "2056fbe01e6b5751fe4baf2c0b77722a5d28016d3cbeea2592a9b31ab69c93a9"
+    },
+    {
+      "path": "performance-budget.md",
+      "sha256": "3ec53513df5369d63547a42869b81501c9e9f5deac5536eb34b22f75db343330"
+    },
+    {
+      "path": "persistence-envelope.md",
+      "sha256": "66d62578fa5907230bbbc338f43f8e95d4cdf15a8feee29f631736f38585bdd6"
+    },
+    {
+      "path": "persistence-overview.md",
+      "sha256": "7c655b57761e5f653246355bf08c82b79513b0f1964ef6bec248f2bd3401b23c"
+    },
+    {
+      "path": "pointer-and-touch.md",
+      "sha256": "9729b609fa604a54c856f4892b920c603a2bc0432557cf5aef11854902c66cc2"
+    },
+    {
+      "path": "preferences-store.md",
+      "sha256": "d855d82188994bcb4b6d30ae33327703ca2f485cfb6f69d984bdff31ec5bbc5f"
+    },
+    {
+      "path": "private-browsing-notes.md",
+      "sha256": "5da8c45d6b3916023e8c4d5ada8f4de5923d99686818ef4ad44a767f3cb7448c"
+    },
+    {
+      "path": "purity-guide.md",
+      "sha256": "cd81f45bb145eb343579e245456b443c4f9f5ee0859c108f3022a08bfe720eba"
+    },
+    {
+      "path": "randomness-policy.md",
+      "sha256": "c3606515bb968ff288c4b79d07b851047d6c7910ad692ff818de553f2b815d58"
+    },
+    {
+      "path": "react-boundaries.md",
+      "sha256": "e53755ff33b83e5197a9f1a0ef0d65ac2ec083511ac404b1b486fabad66a0577"
+    },
+    {
+      "path": "regression-catalogue.md",
+      "sha256": "d751f6f7a4c81f56573803d6cf78a4fbf993c888ef31f63182892dd5ca770726"
+    },
+    {
+      "path": "release-checklist.md",
+      "sha256": "0134b24223d795e27962602bea0fc309708835fc83c55e4f2279cb8ebf00d484"
+    },
+    {
+      "path": "release-notes-1-0.md",
+      "sha256": "d53c80c99f0a0450816e50d599f27bee35373802f88dae3c9b8bfe6cd63b596e"
+    },
+    {
+      "path": "release-notes-1-1.md",
+      "sha256": "bf4bbd52865e5e0fb3fb089a72699ea6843d993c74980c4f2b1d1ac60a94687d"
+    },
+    {
+      "path": "release-notes-1-2.md",
+      "sha256": "6c8a77097e26df1493e0f774ba4169fcae8e2cc45fd2c3ffd1f1221e4051c082"
+    },
+    {
+      "path": "release-notes-1-3.md",
+      "sha256": "faddccf7639d8b4c55405a8dce96dfa8b17674a46a4be244a824a1ad085b2c4f"
+    },
+    {
+      "path": "release-notes-1-4.md",
+      "sha256": "61e19a47ae510dea29490637dda4f003896e4f7cc48121bf473e89753107d626"
+    },
+    {
+      "path": "release-notes-2-0.md",
+      "sha256": "2739acc099b77da78c77c6a5b1bef96ecc1457b92b1658dbf1da7add58bac96f"
+    },
+    {
+      "path": "release-notes-2-1.md",
+      "sha256": "034693d7f4230e1ae2631a55136ce48063c664af90709f86fe2e7f74ab3e9da4"
+    },
+    {
+      "path": "release-notes-2-2.md",
+      "sha256": "e37844f378c830bed96e5a68ac808edce6e4db588d8cd2f4b6a310f346f91474"
+    },
+    {
+      "path": "replay-format.md",
+      "sha256": "7ee234efe37cf8f504c65a5f3a048c09dca07609cedcd7d0aac645b4f07e0288"
+    },
+    {
+      "path": "reproducibility.md",
+      "sha256": "00610b3365bbccefd942a3b53f961f6062251d6ec080c1dbeef4ee075effbb8d"
+    },
+    {
+      "path": "reproduction-panel.md",
+      "sha256": "76b38646a342199a79e7ef312db441e32b184805fcf39761ddcd5ec9ff61bba8"
+    },
+    {
+      "path": "research-memory-games-survey.md",
+      "sha256": "1cdf6ad80d0e002dc3a6c8fd604ba370ebe01ae7b7fda790f2218603ba335eb3"
+    },
+    {
+      "path": "research-phone-usage.md",
+      "sha256": "ed5750cb544f50fa2981d6c2cb9479c3f3f97df994cf75a7a4faff7021b7b6b0"
+    },
+    {
+      "path": "research-playtest-autumn.md",
+      "sha256": "b42a25030a556d791997df679609f583af7bcbad1a9a37465ffdc00bb5fdfbc9"
+    },
+    {
+      "path": "research-playtest-spring.md",
+      "sha256": "3336dd1f5da880899ce40fda9c889060794384abfbe785865c18e4ceb0af8628"
+    },
+    {
+      "path": "research-screen-reader-sessions.md",
+      "sha256": "662b78ba0a03e20fe9faaba165f0b72abd223ef770b48b77932cbed787159aca"
+    },
+    {
+      "path": "retention-policy.md",
+      "sha256": "1f1041c214473a6e1914ad4dc4f78cf47d557524258664e0185ea104c6ae4aa1"
+    },
+    {
+      "path": "retired-idea-hints.md",
+      "sha256": "e29d6dff1fc6c38f88e0615851185d85afd663e4aee17e5814b50b4d1f805226"
+    },
+    {
+      "path": "retired-idea-online-play.md",
+      "sha256": "c73c1d4ee6ebbbe9a6250de6abb6b80bf1fddc95209abaa3a48bceb915001cb3"
+    },
+    {
+      "path": "retired-idea-themes.md",
+      "sha256": "33647c92476d340f25c611e12ef5c179fcdd84d0e68593f6ca78894b6a5d0b47"
+    },
+    {
+      "path": "retired-idea-timed-mode.md",
+      "sha256": "1350e3df46eadec84df216161cd2e0c1352c0a589e88ac5f4da77daf11c2d70e"
+    },
+    {
+      "path": "roadmap-notes.md",
+      "sha256": "64d27be0573609c86f4798918e78cffde622ec750c770c5e75116504f3d03198"
+    },
+    {
+      "path": "rules.md",
+      "sha256": "5bc52beb2a0af82dde856db4a8092e499c75f0e395db553f814ec6df0f5f5cb2"
+    },
+    {
+      "path": "scoring-and-moves.md",
+      "sha256": "6492e76e308c96e66e9a8ac6743ffd49ecf65fc87eaca37df3fee9ef93aac424"
+    },
+    {
+      "path": "screen-reader-notes.md",
+      "sha256": "f71c6605a7514471d730e3381ff8ddf312a7124d4c849e8e4bf723afbf32c143"
+    },
+    {
+      "path": "selection-state.md",
+      "sha256": "36c7f30950afcc897a4dd59b2625aec1eff2193859ef87bec719ff749b527b58"
+    },
+    {
+      "path": "session-module.md",
+      "sha256": "ad977007312e3118158dc2d9a6697925590ed808469b3ab800d55503c364d9c7"
+    },
+    {
+      "path": "sharing-faq.md",
+      "sha256": "8172aa81142a24b28a367eaf6ca24b05151144396deaf4f51a72820bf7727340"
+    },
+    {
+      "path": "snapshot-format.md",
+      "sha256": "423449e9dfc6f0cd47aed7fe1cfd303560ab73b3025aa43d31ca52094dce17c0"
+    },
+    {
+      "path": "snapshot-selection-notes.md",
+      "sha256": "39889b1132a2d90316ec7c7cde999d990ccfaa505e5de07315c72945b134a4ca"
+    },
+    {
+      "path": "sound.md",
+      "sha256": "ac13cd631905b38c47279868c12826bd57babdcde0a73974fa4bd071ff29b05d"
+    },
+    {
+      "path": "source-audit-notes.md",
+      "sha256": "5e37637ee915949d278c016c572a7ee0ebe51381c031058f2bd2a20bc65a2d0e"
+    },
+    {
+      "path": "source-layout.md",
+      "sha256": "162005e983bff11d5b4f10312eda5837395e1a7022fe03ea39bba64fa2bec4e5"
+    },
+    {
+      "path": "spacing-scale.md",
+      "sha256": "27f10a4520136ae8fb14860acfab7507fa109cfdd738c0940649a707ca29c6d8"
+    },
+    {
+      "path": "status-bar.md",
+      "sha256": "a3547c3592e9d9c4b8e02b0dfd7666fce49fcb829359fb9b53fc580ae4686de7"
+    },
+    {
+      "path": "storage-failure-policy.md",
+      "sha256": "0119a8f404d42440283af51c6676d664d1513ff20d00f5711289f4d892863334"
+    },
+    {
+      "path": "storage-quota-notes.md",
+      "sha256": "bbc817b326bac04ead880a83d873c6a3cfff4bac7342843fba25d063b159483e"
+    },
+    {
+      "path": "storage-testing-guide.md",
+      "sha256": "d1fd734276d28992af970cbc20ecf767c1ad0bb5934444b16c59d4689cb35b1b"
+    },
+    {
+      "path": "tables-policy.md",
+      "sha256": "e3514df2bc297badc6e7d225cbdc25a5432cc8b3d20ccf907f6941a654a0469f"
+    },
+    {
+      "path": "target-size-policy.md",
+      "sha256": "a8d4091a6fc7bcf3edefedaa31e37fc2bca1c78d3134db09efb228837ac59b03"
+    },
+    {
+      "path": "technology.md",
+      "sha256": "8af9ea621c07687b75543a282c119f4d66f9b5df82a2d5621f9cfdef3076605e"
+    },
+    {
+      "path": "test-policy.md",
+      "sha256": "ee8b30b59748a040493db2471f6536282b1262426a6974bbde1e2b93622e8d2f"
+    },
+    {
+      "path": "test-strategy.md",
+      "sha256": "0972b480a7fcdb397819761a607d73d3b04221864c87601d50034bde042a7f34"
+    },
+    {
+      "path": "text-entry-policy.md",
+      "sha256": "f32082205b9867b0edcc5ee8ee63282b635d8d8349f88ec6476252a87447bcc5"
+    },
+    {
+      "path": "theme-tokens.md",
+      "sha256": "819b30c752333595a503ef7c4a1788f4794cf6ecc788491d9d5a0d62a728a234"
+    },
+    {
+      "path": "time-policy.md",
+      "sha256": "63f0a865b9f9730e72dee3ad27779f5d9451900c9e6d1d2ab4f48f9b256b690b"
+    },
+    {
+      "path": "turn-resolution.md",
+      "sha256": "a917ab39fe464552f949c19150a666146db4eba1e17daf11d4705ec958d255dc"
+    },
+    {
+      "path": "typescript-settings.md",
+      "sha256": "ec937a393f7470b83b5e5f0adc3e43135bcf2cb94b56c5f59c51ce70fe6bb9a9"
+    },
+    {
+      "path": "typography.md",
+      "sha256": "4a8055ab6a510a3ba2927824856095524e1533d808845bcd8776c374c1981716"
+    },
+    {
+      "path": "unit-test-guide.md",
+      "sha256": "43954c6c5fcce1aad6a894cd20a69adf61dc6a852b7b307fe0ee84986a5aca7d"
+    },
+    {
+      "path": "visual-review-checklist.md",
+      "sha256": "24f23c6c32a19c835788a3cca47c1225bdabb7b73d3a8fe8d595511b95a42d9b"
+    },
+    {
+      "path": "visuals.md",
+      "sha256": "3686d12b2ee43f357e05d1e4777d5f3f0a3b4e407b2a276eb828196a5fe59642"
+    },
+    {
+      "path": "voice-guide.md",
+      "sha256": "44cd657575015b9996c0b98162a85e003e84f6a8b4ea1e342f824f3f010c883b"
+    },
+    {
+      "path": "win-conditions.md",
+      "sha256": "98c1ba838e63eadc51070d3f969851d95df04839f6295c0760a75ced0488e89d"
+    },
+    {
+      "path": "zoom-behaviour.md",
+      "sha256": "dcc27e2bfbe61787cdfab7aab25f75eaafd623fb4f5e1a03945c38de4ee4b367"
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "33d1b631d3a3059c76956c90b3a3de7bd974d3b012fc47e3cfd1341602d7ba3d",
+      "sourceSha256": "33d1b631d3a3059c76956c90b3a3de7bd974d3b012fc47e3cfd1341602d7ba3d",
+      "metadata": {
+        "description": "Neon Pairs game specification and document map",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Specification"
+        ]
+      }
+    },
+    {
+      "path": "acceptance.md",
+      "sha256": "b10c9502e036d3c76cbba8d47d65ff6facb282d91f9d6f7c794c1cac54cce5bd",
+      "sourceSha256": "b10c9502e036d3c76cbba8d47d65ff6facb282d91f9d6f7c794c1cac54cce5bd",
+      "metadata": {
+        "description": "Public game acceptance examples",
+        "tags": [
+          "Game",
+          "Acceptance"
+        ]
+      }
+    },
+    {
+      "path": "accessibility-audit.md",
+      "sha256": "76c2c1207415fb8049c732a837f35d1c5a55e029554716148fdd5e7f25683e89",
+      "sourceSha256": "76c2c1207415fb8049c732a837f35d1c5a55e029554716148fdd5e7f25683e89",
+      "metadata": {
+        "description": "Accessibility findings, automated evidence and the remaining spoken and device acceptance boundaries.",
+        "tags": [
+          "Quality",
+          "Accessibility",
+          "Audit"
+        ]
+      }
+    },
+    {
+      "path": "adr-001-react.md",
+      "sha256": "18dc93fa14de437857571e5808d2720227f73ebd8f26cdddad3653676c5a0698",
+      "sourceSha256": "18dc93fa14de437857571e5808d2720227f73ebd8f26cdddad3653676c5a0698",
+      "metadata": {
+        "description": "This record explains why React owns the browser view while plain functions own the game rules.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-002-typescript.md",
+      "sha256": "e6cf917ab91aa007d436676b738ec54e86c4bf8182ed9e590b1538c9c1ed237d",
+      "sourceSha256": "e6cf917ab91aa007d436676b738ec54e86c4bf8182ed9e590b1538c9c1ed237d",
+      "metadata": {
+        "description": "This record explains the strict TypeScript model and why parsed data still needs runtime validation.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-003-single-file.md",
+      "sha256": "523ae6f39870b2df182c8fa013828c70bb6edb58e4b024a853a2f4b39ef290a3",
+      "sourceSha256": "523ae6f39870b2df182c8fa013828c70bb6edb58e4b024a853a2f4b39ef290a3",
+      "metadata": {
+        "description": "This record explains the single HTML distribution and the distinction between delivery and source organization.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-004-no-backend.md",
+      "sha256": "2dc9e087327ae29d946de4c89ae0a1ed3d6bafa8837d1ff6c8fc18bd0a614656",
+      "sourceSha256": "2dc9e087327ae29d946de4c89ae0a1ed3d6bafa8837d1ff6c8fc18bd0a614656",
+      "metadata": {
+        "description": "This record explains why the playable game has no backend and what that means for records and sharing.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-005-vite.md",
+      "sha256": "de6b19e8ae32a7fdf1f81a7a2bdaf876f64bb36d802eebda1feb578835d8cc8a",
+      "sourceSha256": "de6b19e8ae32a7fdf1f81a7a2bdaf876f64bb36d802eebda1feb578835d8cc8a",
+      "metadata": {
+        "description": "This record explains Vite’s role in transforming the source and producing the offline artifact.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-006-native-controls.md",
+      "sha256": "8877f94fe661382a2bb5c116c15aa5925a1a23506feb56b5e6cf50d09bd4cb7f",
+      "sourceSha256": "8877f94fe661382a2bb5c116c15aa5925a1a23506feb56b5e6cf50d09bd4cb7f",
+      "metadata": {
+        "description": "This record explains why cards and controls use browser elements rather than custom interaction widgets.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-007-svg-faces.md",
+      "sha256": "f5cb0a8fcc1a4bc8f0a66885e9189b792639f15a3854fd94a21aea3cdda66980",
+      "sourceSha256": "f5cb0a8fcc1a4bc8f0a66885e9189b792639f15a3854fd94a21aea3cdda66980",
+      "metadata": {
+        "description": "This record explains the generated SVG artwork and why face identity is expressed through geometry.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-008-seven-sizes.md",
+      "sha256": "69140281750e0b4ab4464681d59699d09cc03c15659da9792f8be27b59ffb82b",
+      "sourceSha256": "69140281750e0b4ab4464681d59699d09cc03c15659da9792f8be27b59ffb82b",
+      "metadata": {
+        "description": "This record explains the supported board sizes and their effect on rules, artwork and layout.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-009-board-codes.md",
+      "sha256": "ad09d4939e5f78d2983e5d43e22568110a8a4eeb6bddca9222d87a41f53b6e44",
+      "sourceSha256": "ad09d4939e5f78d2983e5d43e22568110a8a4eeb6bddca9222d87a41f53b6e44",
+      "metadata": {
+        "description": "This record explains why a compact versioned code identifies the initial deck separately from progress.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-010-snapshot-json.md",
+      "sha256": "62589563ad8a38f9e349a051bf917fba40fd0cde3d5e3479c862a2738357ef54",
+      "sourceSha256": "62589563ad8a38f9e349a051bf917fba40fd0cde3d5e3479c862a2738357ef54",
+      "metadata": {
+        "description": "This record explains the JSON snapshot format, its validation boundary and its relationship to a board code.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-011-storage-keys.md",
+      "sha256": "6984b023699236d475155c98bd7641fce9103b79fbf958b744121d64527ef9e7",
+      "sourceSha256": "6984b023699236d475155c98bd7641fce9103b79fbf958b744121d64527ef9e7",
+      "metadata": {
+        "description": "This historical record explains the original dotted storage keys and the reasoning behind the preferences key.",
+        "tags": [
+          "Decision",
+          "History",
+          "Persistence"
+        ]
+      }
+    },
+    {
+      "path": "adr-012-no-sound.md",
+      "sha256": "abcdff68875b8ccf9d784adf4b2cda389cc2a5be6b0bd9fe20b8c057dfaa0f38",
+      "sourceSha256": "abcdff68875b8ccf9d784adf4b2cda389cc2a5be6b0bd9fe20b8c057dfaa0f38",
+      "metadata": {
+        "description": "This record explains why Neon Pairs uses visual state and accessible text feedback without game audio.",
+        "tags": [
+          "Decision",
+          "Sound",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "adr-013-monotonic-clock.md",
+      "sha256": "7cf00f5eb0da00695d2e8169213182a6d2c7a38067f95b577e18c24b4aba92da",
+      "sourceSha256": "7cf00f5eb0da00695d2e8169213182a6d2c7a38067f95b577e18c24b4aba92da",
+      "metadata": {
+        "description": "This record explains measured browser deltas, fractional milliseconds and the separation from logical game time.",
+        "tags": [
+          "Decision",
+          "Time",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-014-pause-on-hidden.md",
+      "sha256": "e94adaa222939a511f47741bf73a7bf001831f58fdec70a40b2126b9b66a989f",
+      "sourceSha256": "e94adaa222939a511f47741bf73a7bf001831f58fdec70a40b2126b9b66a989f",
+      "metadata": {
+        "description": "This record explains why hiding the page suspends both elapsed time and a pending mismatch interval.",
+        "tags": [
+          "Decision",
+          "Time",
+          "Gameplay"
+        ]
+      }
+    },
+    {
+      "path": "adr-015-replay-cli.md",
+      "sha256": "88e1eddd662b725a9123e426ecd8c965aae93807bf7ee820db1e67957ec18086",
+      "sourceSha256": "88e1eddd662b725a9123e426ecd8c965aae93807bf7ee820db1e67957ec18086",
+      "metadata": {
+        "description": "This record explains why replay is a command-line diagnostic and how it shares the browser’s rules.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-016-no-state-library.md",
+      "sha256": "ddd23e7f7cfe08816cfb75699a2aa8513f94c7b33ddae913c5f89e34b7455c7c",
+      "sourceSha256": "ddd23e7f7cfe08816cfb75699a2aa8513f94c7b33ddae913c5f89e34b7455c7c",
+      "metadata": {
+        "description": "This record explains why the game uses React state and explicit transitions without a global state library.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-017-colocated-tests.md",
+      "sha256": "5eb7f873f04a15c501c00fd8036273c806c80fb8f25e06842b3ab70cc113d1d4",
+      "sourceSha256": "5eb7f873f04a15c501c00fd8036273c806c80fb8f25e06842b3ab70cc113d1d4",
+      "metadata": {
+        "description": "This record explains the split between neighboring unit tests and application-level browser journeys.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-018-playwright.md",
+      "sha256": "de787a26462442febf51c744b1a47ba5895c40f4bb7a91af34e7d365d6e67625",
+      "sourceSha256": "de787a26462442febf51c744b1a47ba5895c40f4bb7a91af34e7d365d6e67625",
+      "metadata": {
+        "description": "This record explains the browser automation choice and the limits of its accessibility and device evidence.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-019-modal-overlays.md",
+      "sha256": "281c0dddb6ed4bbc375e1f6f95122553da640567cb6ffd71f455c21d254ae4a5",
+      "sourceSha256": "281c0dddb6ed4bbc375e1f6f95122553da640567cb6ffd71f455c21d254ae4a5",
+      "metadata": {
+        "description": "This historical record explains the retired div-based confirmation overlay and its original interaction model.",
+        "tags": [
+          "Decision",
+          "History",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "adr-020-vitest.md",
+      "sha256": "312bde2f2d648630926e269be5a3024e4d002084d674aed7a291e14783ca4448",
+      "sourceSha256": "312bde2f2d648630926e269be5a3024e4d002084d674aed7a291e14783ca4448",
+      "metadata": {
+        "description": "This record explains the unit runner and the kinds of behavior it verifies without a browser.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-021-seeded-decks.md",
+      "sha256": "7abe82e974bb9f9c1c4013920488eda0938d6cbb6846a74fca5cbe5d8b5d07c8",
+      "sourceSha256": "7abe82e974bb9f9c1c4013920488eda0938d6cbb6846a74fca5cbe5d8b5d07c8",
+      "metadata": {
+        "description": "This record explains the seeded shuffle, exact draw mapping and independent generation evidence.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-022-card-names.md",
+      "sha256": "978bb560e24c780b4772bd25de27dc92f10602996309b2e3384652142e5c4eca",
+      "sourceSha256": "978bb560e24c780b4772bd25de27dc92f10602996309b2e3384652142e5c4eca",
+      "metadata": {
+        "description": "This record explains positional card names, revealed face names and the boundary around hidden identity.",
+        "tags": [
+          "Decision",
+          "Accessibility",
+          "Input"
+        ]
+      }
+    },
+    {
+      "path": "adr-023-results-as-lists.md",
+      "sha256": "d6a9ea5e882d06226ad1b57079d097900ac0961e8fa5c427780255458c3a06d5",
+      "sourceSha256": "d6a9ea5e882d06226ad1b57079d097900ac0961e8fa5c427780255458c3a06d5",
+      "metadata": {
+        "description": "This historical record explains the retired ordered-list presentation for rankings and results.",
+        "tags": [
+          "Decision",
+          "History",
+          "Interface"
+        ]
+      }
+    },
+    {
+      "path": "adr-024-roving-focus.md",
+      "sha256": "12a75a814f286887c3c06a242d9784e29cadd27c6c2f00cd4c9b5d632fe82973",
+      "sourceSha256": "12a75a814f286887c3c06a242d9784e29cadd27c6c2f00cd4c9b5d632fe82973",
+      "metadata": {
+        "description": "This record explains roving tabindex, edge-stopping navigation and focus memory independent of play.",
+        "tags": [
+          "Decision",
+          "Input",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "adr-025-reduced-motion.md",
+      "sha256": "7217fc052a14aefbe5b729f050bb05870629360bcd4e30b888098730e3a73efb",
+      "sourceSha256": "7217fc052a14aefbe5b729f050bb05870629360bcd4e30b888098730e3a73efb",
+      "metadata": {
+        "description": "This record explains the original reduced-motion commitment for card feedback and game completion.",
+        "tags": [
+          "Decision",
+          "Motion",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "adr-026-dark-theme.md",
+      "sha256": "9bfe32a267bcfb66a3f1dbd738763512215d557c6b15c207bbe88975054fb643",
+      "sourceSha256": "9bfe32a267bcfb66a3f1dbd738763512215d557c6b15c207bbe88975054fb643",
+      "metadata": {
+        "description": "This record explains the single dark theme and its relationship to artwork, native controls and review scope.",
+        "tags": [
+          "Decision",
+          "Visuals",
+          "Interface"
+        ]
+      }
+    },
+    {
+      "path": "adr-027-offline-first.md",
+      "sha256": "a65bc741b49886db3853b3c4a2f7f7e85eb8bf18a6c7adec569d3c2f83452f53",
+      "sourceSha256": "a65bc741b49886db3853b3c4a2f7f7e85eb8bf18a6c7adec569d3c2f83452f53",
+      "metadata": {
+        "description": "This record explains offline operation beyond merely caching a previously visited web page.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-028-prettier.md",
+      "sha256": "5a08be7202f33f2c5d3738882953796c3b78c01a7e628b1c021a5d9f277688db",
+      "sourceSha256": "5a08be7202f33f2c5d3738882953796c3b78c01a7e628b1c021a5d9f277688db",
+      "metadata": {
+        "description": "This record explains the formatter’s narrow role and how formatting checks differ from behavioral review.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-029-pinned-versions.md",
+      "sha256": "bd28adfd29dc3524ac80c182a81b51388e2fdd2be8eee0849c0bc2eb340395f5",
+      "sourceSha256": "bd28adfd29dc3524ac80c182a81b51388e2fdd2be8eee0849c0bc2eb340395f5",
+      "metadata": {
+        "description": "This record explains exact dependency versions, the lockfile and the difference between supported and recorded runtimes.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-030-move-cap.md",
+      "sha256": "fb8e9a9ba0cb7495d52f1d8be878338165e8926f39a5dcf83c275628ddf380e3",
+      "sourceSha256": "fb8e9a9ba0cb7495d52f1d8be878338165e8926f39a5dcf83c275628ddf380e3",
+      "metadata": {
+        "description": "This record explains the move limit and why reaching it does not stop matching or completion.",
+        "tags": [
+          "Decision",
+          "Gameplay",
+          "Scoring"
+        ]
+      }
+    },
+    {
+      "path": "adr-031-toast-announcements.md",
+      "sha256": "f7c5a123595c1cf305aa3d8cbf4b8313b0141e5ffa78625fbbf44449a6e83cd0",
+      "sourceSha256": "f7c5a123595c1cf305aa3d8cbf4b8313b0141e5ffa78625fbbf44449a6e83cd0",
+      "metadata": {
+        "description": "This historical record explains the retired feature-owned live-region and toast announcement design.",
+        "tags": [
+          "Decision",
+          "History",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "adr-032-best-score-scope.md",
+      "sha256": "b4c01fadb32742b4bb15670cbeca6f7414e3128316a77b0b850b4d2eb39387f4",
+      "sourceSha256": "b4c01fadb32742b4bb15670cbeca6f7414e3128316a77b0b850b4d2eb39387f4",
+      "metadata": {
+        "description": "This record explains per-size best move records and why elapsed time is not a competing score.",
+        "tags": [
+          "Decision",
+          "Scoring",
+          "Persistence"
+        ]
+      }
+    },
+    {
+      "path": "adr-033-mismatch-800ms.md",
+      "sha256": "be79dd58b097317e932db745d95e3b04699007cba6a6da56efa0a4c3f4a157fa",
+      "sourceSha256": "be79dd58b097317e932db745d95e3b04699007cba6a6da56efa0a4c3f4a157fa",
+      "metadata": {
+        "description": "This record explains the mismatch observation interval and why it belongs to logical game time.",
+        "tags": [
+          "Decision",
+          "Gameplay",
+          "Time"
+        ]
+      }
+    },
+    {
+      "path": "adr-034-face-count.md",
+      "sha256": "76399192b76614653f7075805a4687589f33ebb32698eae7658e68342fb7fc3a",
+      "sourceSha256": "76399192b76614653f7075805a4687589f33ebb32698eae7658e68342fb7fc3a",
+      "metadata": {
+        "description": "This record explains how the artwork catalogue covers the largest board without relying on color alone.",
+        "tags": [
+          "Decision",
+          "Visuals",
+          "Gameplay"
+        ]
+      }
+    },
+    {
+      "path": "adr-035-scroll-large-boards.md",
+      "sha256": "85998f97c1e41249b4b293688dca2f31a5d4b315bb71f87d25903f9d31dbd16a",
+      "sourceSha256": "85998f97c1e41249b4b293688dca2f31a5d4b315bb71f87d25903f9d31dbd16a",
+      "metadata": {
+        "description": "This record explains why large boards scroll internally instead of shrinking cards to fit every viewport.",
+        "tags": [
+          "Decision",
+          "Layout",
+          "Input"
+        ]
+      }
+    },
+    {
+      "path": "adr-036-motion-opt-in.md",
+      "sha256": "ce06a5f579c37cea9bfc81cad4fad7098e05ecc52c213bbb802e6c31990dccb5",
+      "sourceSha256": "ce06a5f579c37cea9bfc81cad4fad7098e05ecc52c213bbb802e6c31990dccb5",
+      "metadata": {
+        "description": "This historical record explains the retired duration-based exception to reduced-motion handling.",
+        "tags": [
+          "Decision",
+          "History",
+          "Motion"
+        ]
+      }
+    },
+    {
+      "path": "adr-037-snapshot-pause.md",
+      "sha256": "974c3cbafab42748e532fa062492df82aa2887901700b73430dce5cbcad7fd68",
+      "sourceSha256": "974c3cbafab42748e532fa062492df82aa2887901700b73430dce5cbcad7fd68",
+      "metadata": {
+        "description": "This record explains why an unfinished snapshot waits for Resume before accepting play or active time.",
+        "tags": [
+          "Decision",
+          "Sharing",
+          "Time"
+        ]
+      }
+    },
+    {
+      "path": "adr-038-no-analytics.md",
+      "sha256": "b8469c56abc0ce0ae321b0085442879873a76fde132916a918485968ad884528",
+      "sourceSha256": "b8469c56abc0ce0ae321b0085442879873a76fde132916a918485968ad884528",
+      "metadata": {
+        "description": "This record explains why the game sends no play telemetry and how engineers investigate problems locally.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-039-contrast-floor.md",
+      "sha256": "0e713642cc40024663de86e56e77e58ab91bf6749c757cc615d271e5a436ac91",
+      "sourceSha256": "0e713642cc40024663de86e56e77e58ab91bf6749c757cc615d271e5a436ac91",
+      "metadata": {
+        "description": "This record explains the contrast rationale and the limits of the palette and artwork evidence.",
+        "tags": [
+          "Decision",
+          "Visuals",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "adr-040-file-size-aim.md",
+      "sha256": "a7a9440992d106f22a0e3d377d3fd1ea868f4e94d0751f7b9232c8b45ac8c5f6",
+      "sourceSha256": "a7a9440992d106f22a0e3d377d3fd1ea868f4e94d0751f7b9232c8b45ac8c5f6",
+      "metadata": {
+        "description": "This record explains the compact-artifact aim and its architectural tradeoffs.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-041-name-limits.md",
+      "sha256": "7f8293b2dc2862bb9467cb3c24898b7ce8677018b55f229f9a853ad3c9df251e",
+      "sourceSha256": "7f8293b2dc2862bb9467cb3c24898b7ce8677018b55f229f9a853ad3c9df251e",
+      "metadata": {
+        "description": "This historical record explains the retired one-to-thirty-two-character name limit and literal storage choice.",
+        "tags": [
+          "Decision",
+          "History",
+          "Interface"
+        ]
+      }
+    },
+    {
+      "path": "adr-042-error-copy.md",
+      "sha256": "a101cfcef801c560a0e68787d12cb5ad38bca661726f391d0439cac21ce66799",
+      "sourceSha256": "a101cfcef801c560a0e68787d12cb5ad38bca661726f391d0439cac21ce66799",
+      "metadata": {
+        "description": "This record explains the current reproduction errors and why failed validation leaves the game available.",
+        "tags": [
+          "Decision",
+          "Interface",
+          "Sharing"
+        ]
+      }
+    },
+    {
+      "path": "adr-043-keyboard-parity.md",
+      "sha256": "e37a43b2fdd32b538a74e0798d24441012876b6dde91fc91124d8814126890e5",
+      "sourceSha256": "e37a43b2fdd32b538a74e0798d24441012876b6dde91fc91124d8814126890e5",
+      "metadata": {
+        "description": "This record explains keyboard parity for revealing cards while keeping navigation separate from play.",
+        "tags": [
+          "Decision",
+          "Input",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "adr-044-no-routing.md",
+      "sha256": "3ee88d22153d6413539ebdf2883d56587d9a5d41ace28d7bf2b6fd63dfbca389",
+      "sourceSha256": "3ee88d22153d6413539ebdf2883d56587d9a5d41ace28d7bf2b6fd63dfbca389",
+      "metadata": {
+        "description": "This record explains why the current game has no router, route state or navigation layer.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-045-no-i18n-yet.md",
+      "sha256": "4dc6b9ec7ab4efbf1375845263969d488440785750fe3608ba3ea1bf3419f568",
+      "sourceSha256": "4dc6b9ec7ab4efbf1375845263969d488440785750fe3608ba3ea1bf3419f568",
+      "metadata": {
+        "description": "This record explains the English-only scope and the existing separation between labels, formats and game data.",
+        "tags": [
+          "Decision",
+          "Writing",
+          "Interface"
+        ]
+      }
+    },
+    {
+      "path": "adr-046-print-styles.md",
+      "sha256": "ae2219e1e938d368822659b316261ad0a719a24b12e6bea2dd9dcd1b4950ba73",
+      "sourceSha256": "ae2219e1e938d368822659b316261ad0a719a24b12e6bea2dd9dcd1b4950ba73",
+      "metadata": {
+        "description": "This record explains why the game has no dedicated print presentation and what existing export tools provide instead.",
+        "tags": [
+          "Decision",
+          "Visuals",
+          "Scope"
+        ]
+      }
+    },
+    {
+      "path": "adr-047-touch-scroll.md",
+      "sha256": "8b09353695a2a91587030c4ac30912f13b1d41250c8463ed90e960108eeb8f4c",
+      "sourceSha256": "8b09353695a2a91587030c4ac30912f13b1d41250c8463ed90e960108eeb8f4c",
+      "metadata": {
+        "description": "This record explains completed-click activation and the focus-scrolling order that preserves pointer and touch input.",
+        "tags": [
+          "Decision",
+          "Input",
+          "Layout"
+        ]
+      }
+    },
+    {
+      "path": "adr-048-replay-order.md",
+      "sha256": "8f91dddb2e390457ecbc0ca702a7648baae8fcc4c1f925b36975d00b982c6c89",
+      "sourceSha256": "8f91dddb2e390457ecbc0ca702a7648baae8fcc4c1f925b36975d00b982c6c89",
+      "metadata": {
+        "description": "This record explains stable equal-time actions and timeout resolution at an exact replay boundary.",
+        "tags": [
+          "Decision",
+          "Sharing",
+          "Time"
+        ]
+      }
+    },
+    {
+      "path": "adr-049-zoom-floor.md",
+      "sha256": "6860db8c022a164a6929fbbcdeb8efcf0c0f628c30bb3136a8e17db3d1ef1be5",
+      "sourceSha256": "6860db8c022a164a6929fbbcdeb8efcf0c0f628c30bb3136a8e17db3d1ef1be5",
+      "metadata": {
+        "description": "This record explains the equivalent 200% zoom layout and why scrolling is preferred to shrinking the game.",
+        "tags": [
+          "Decision",
+          "Layout",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "adr-050-completion-banner.md",
+      "sha256": "5718b8c9a45786cdb8b50ffb60243f5f3e20b2295c9bda60404a0e9456536d7f",
+      "sourceSha256": "5718b8c9a45786cdb8b50ffb60243f5f3e20b2295c9bda60404a0e9456536d7f",
+      "metadata": {
+        "description": "This record explains the persistent completion summary and the distinction between a played win and loaded completion.",
+        "tags": [
+          "Decision",
+          "Gameplay",
+          "Interface"
+        ]
+      }
+    },
+    {
+      "path": "adr-051-test-artifacts.md",
+      "sha256": "68b37a4f2d0a1a93504ee46a9c71a7e61c7eff606b1a15654b230e157daf7dad",
+      "sourceSha256": "68b37a4f2d0a1a93504ee46a9c71a7e61c7eff606b1a15654b230e157daf7dad",
+      "metadata": {
+        "description": "This record explains diagnostic builds, screenshots and runtime records without adding debug controls to the distribution.",
+        "tags": [
+          "Decision",
+          "Testing",
+          "Build"
+        ]
+      }
+    },
+    {
+      "path": "adr-052-release-tags.md",
+      "sha256": "d45c007644ee33baf78ea9c406429da00710ab57942a5a00e83323669a74a35f",
+      "sourceSha256": "d45c007644ee33baf78ea9c406429da00710ab57942a5a00e83323669a74a35f",
+      "metadata": {
+        "description": "This record explains the release-tag rationale and separates product, package and data-format versions.",
+        "tags": [
+          "Decision",
+          "History",
+          "Release"
+        ]
+      }
+    },
+    {
+      "path": "adr-053-docs-in-repo.md",
+      "sha256": "c695fea5a61a34f5590aa5ecaca341f8d0cfd53e08bc24974473c708188a391b",
+      "sourceSha256": "c695fea5a61a34f5590aa5ecaca341f8d0cfd53e08bc24974473c708188a391b",
+      "metadata": {
+        "description": "This record explains repository documentation as a reviewable companion to code, tests and reproducible examples.",
+        "tags": [
+          "Decision",
+          "Documentation",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-054-acceptance-journeys.md",
+      "sha256": "c67350f3047c1f912fe59724a84fa952fa564b367616469f95349d0040178f61",
+      "sourceSha256": "c67350f3047c1f912fe59724a84fa952fa564b367616469f95349d0040178f61",
+      "metadata": {
+        "description": "This record explains why acceptance combines rule evidence with complete input, reproduction and delivery journeys.",
+        "tags": [
+          "Decision",
+          "Testing",
+          "Acceptance"
+        ]
+      }
+    },
+    {
+      "path": "adr-055-review-before-merge.md",
+      "sha256": "031fc5f8a54015742a88cf468415b53e46c1dc29f289c8385bc1432778d0f4e0",
+      "sourceSha256": "031fc5f8a54015742a88cf468415b53e46c1dc29f289c8385bc1432778d0f4e0",
+      "metadata": {
+        "description": "This record explains the rationale for reviewing behavior and evidence before integration.",
+        "tags": [
+          "Decision",
+          "Review",
+          "Quality"
+        ]
+      }
+    },
+    {
+      "path": "adr-056-no-feature-flags.md",
+      "sha256": "738c00edce91dab3563d2fd9f5f14265f07cb10e979fe72b1ddf63152e9ffb53",
+      "sourceSha256": "738c00edce91dab3563d2fd9f5f14265f07cb10e979fe72b1ddf63152e9ffb53",
+      "metadata": {
+        "description": "This record explains why the playable game has no feature-flag system and how test switches remain separate.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-057-small-components.md",
+      "sha256": "900b66dc2a11c14969ea01d8640aa69167a8b8e4daff63a656bbd48024ba267b",
+      "sourceSha256": "900b66dc2a11c14969ea01d8640aa69167a8b8e4daff63a656bbd48024ba267b",
+      "metadata": {
+        "description": "This record explains the component boundaries and the targeted rendering work that keeps large boards responsive.",
+        "tags": [
+          "Decision",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "adr-058-storage-namespace.md",
+      "sha256": "4c2bce1d49f72a6f5cc075bb3f1060a2935a67f649ae1fe9b01a6b707299ccf3",
+      "sourceSha256": "4c2bce1d49f72a6f5cc075bb3f1060a2935a67f649ae1fe9b01a6b707299ccf3",
+      "metadata": {
+        "description": "This record explains the naming rule for new stored data while preserving the existing preferences key.",
+        "tags": [
+          "Decision",
+          "Persistence",
+          "Compatibility"
+        ]
+      }
+    },
+    {
+      "path": "announcements-policy.md",
+      "sha256": "269593b1c5fb67f12d86ba0206adcd9438ff0d44be5d3b14b3bcec964b3a4aca",
+      "sourceSha256": "269593b1c5fb67f12d86ba0206adcd9438ff0d44be5d3b14b3bcec964b3a4aca",
+      "metadata": {
+        "description": "Status publication, repeated event identity, turn results and load feedback.",
+        "tags": [
+          "Input",
+          "Accessibility",
+          "Status"
+        ]
+      }
+    },
+    {
+      "path": "architecture.md",
+      "sha256": "8707282e3b30a5e5a771cfa8651a481e683d8d0f9bc48e68be8de37d89a34f52",
+      "sourceSha256": "8707282e3b30a5e5a771cfa8651a481e683d8d0f9bc48e68be8de37d89a34f52",
+      "metadata": {
+        "description": "Game code structure and module responsibilities",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "audio-research-notes.md",
+      "sha256": "a3ba8fd23a569a7de93e057a642a678b62560f3dfaae7de6a4da343453f0582f",
+      "sourceSha256": "a3ba8fd23a569a7de93e057a642a678b62560f3dfaae7de6a4da343453f0582f",
+      "metadata": {
+        "description": "Records the discarded audio exploration and relates its tradeoffs to the current silent design and evidence.",
+        "tags": [
+          "Sound",
+          "Research",
+          "Decisions"
+        ]
+      }
+    },
+    {
+      "path": "best-score-records.md",
+      "sha256": "f75119edf53b332c13cfb31d111d3c5b6262e0feb2fba80f6accbecdc7cf0637",
+      "sourceSha256": "f75119edf53b332c13cfb31d111d3c5b6262e0feb2fba80f6accbecdc7cf0637",
+      "metadata": {
+        "description": "Per-size best move comparison, preference validation, persistence, and imported-completion behavior.",
+        "tags": [
+          "Game",
+          "Gameplay",
+          "Persistence"
+        ]
+      }
+    },
+    {
+      "path": "board-code-format.md",
+      "sha256": "cae92b454063eb7c9722f193dabe99ffde7001eabc1ea814f4c527cca66af850",
+      "sourceSha256": "cae92b454063eb7c9722f193dabe99ffde7001eabc1ea814f4c527cca66af850",
+      "metadata": {
+        "description": "Version 1 code syntax, exact deal generation, bounded draws and independent vectors.",
+        "tags": [
+          "Sharing",
+          "Generation",
+          "Formats"
+        ]
+      }
+    },
+    {
+      "path": "board-keyboard-navigation.md",
+      "sha256": "bb971d65d94264f266fb872e12f953cd644869366f92ffa9c293387c3f44554a",
+      "sourceSha256": "bb971d65d94264f266fb872e12f953cd644869366f92ffa9c293387c3f44554a",
+      "metadata": {
+        "description": "Arrow target calculations, remembered board entry, DOM focus and nearest scrolling.",
+        "tags": [
+          "Input",
+          "Keyboard",
+          "Focus"
+        ]
+      }
+    },
+    {
+      "path": "board-size-catalogue.md",
+      "sha256": "ff6cf07bc130ccd5a3e2aae1764695fa683b3da110611b72651c8ceef0b4b7a1",
+      "sourceSha256": "ff6cf07bc130ccd5a3e2aae1764695fa683b3da110611b72651c8ceef0b4b7a1",
+      "metadata": {
+        "description": "The seven board sizes, exact card and pair counts, included faces, and size selection behavior.",
+        "tags": [
+          "Game",
+          "Gameplay",
+          "Boards"
+        ]
+      }
+    },
+    {
+      "path": "browser-support.md",
+      "sha256": "1f588075398072b0116fc4bce2f4bdcaa00b6b1779bbc81086b5766dfe3613b0",
+      "sourceSha256": "1f588075398072b0116fc4bce2f4bdcaa00b6b1779bbc81086b5766dfe3613b0",
+      "metadata": {
+        "description": "Recorded runtime compatibility and the browser, viewport, origin and input conditions covered by tests.",
+        "tags": [
+          "Quality",
+          "Compatibility",
+          "Browser"
+        ]
+      }
+    },
+    {
+      "path": "browser-test-guide.md",
+      "sha256": "77010a1ae0169bee557b2070e6a3b05ff9ef0bb821ec267f8a8235405514d98f",
+      "sourceSha256": "77010a1ae0169bee557b2070e6a3b05ff9ef0bb821ec267f8a8235405514d98f",
+      "metadata": {
+        "description": "How the Node and Playwright harness builds, drives and observes the game distribution.",
+        "tags": [
+          "Quality",
+          "Browser",
+          "Testing"
+        ]
+      }
+    },
+    {
+      "path": "build-pipeline.md",
+      "sha256": "a58b0078c5af1089c693de3fd9dc98a28316807299ad30cde79e9a3acf4127f8",
+      "sourceSha256": "a58b0078c5af1089c693de3fd9dc98a28316807299ad30cde79e9a3acf4127f8",
+      "metadata": {
+        "description": "Manifest commands, compiler checks, Vite entries and production versus diagnostic output.",
+        "tags": [
+          "Technology",
+          "Build",
+          "Delivery"
+        ]
+      }
+    },
+    {
+      "path": "card-artwork.md",
+      "sha256": "dddcb90afde6f9c6c283a1a1a34e0d55f105bb64b6f6b9a70fff82a2628ed45a",
+      "sourceSha256": "dddcb90afde6f9c6c283a1a1a34e0d55f105bb64b6f6b9a70fff82a2628ed45a",
+      "metadata": {
+        "description": "Card props, hidden-face rendering, button naming, back decoration, face SVG and matched overlays.",
+        "tags": [
+          "Visuals",
+          "Cards",
+          "React"
+        ]
+      }
+    },
+    {
+      "path": "changelog-style.md",
+      "sha256": "f275b18c19e44f23fdd1f1b5193f4914aae6f9808091092e42cfb70da1e153b3",
+      "sourceSha256": "f275b18c19e44f23fdd1f1b5193f4914aae6f9808091092e42cfb70da1e153b3",
+      "metadata": {
+        "description": "Shows how release notes connect changed behavior with compatibility, source details and verification evidence.",
+        "tags": [
+          "Writing",
+          "Releases",
+          "History"
+        ]
+      }
+    },
+    {
+      "path": "clock-design.md",
+      "sha256": "6de6a48be0f8e8983efb0d3057a1e223e93ee2f28467f9ab143d4f820a1e8fbe",
+      "sourceSha256": "6de6a48be0f8e8983efb0d3057a1e223e93ee2f28467f9ab143d4f820a1e8fbe",
+      "metadata": {
+        "description": "Clock arithmetic, timeout scheduling, visibility ordering and stale-work cleanup.",
+        "tags": [
+          "Architecture",
+          "Time",
+          "Browser"
+        ]
+      }
+    },
+    {
+      "path": "code-review-guide.md",
+      "sha256": "4f786c91d227bb967aa770ee7a308493100dd87a1e27cdb85c84703940e7489c",
+      "sourceSha256": "4f786c91d227bb967aa770ee7a308493100dd87a1e27cdb85c84703940e7489c",
+      "metadata": {
+        "description": "Behavior-focused review paths and evidence for rules, lifecycle, formats and delivery.",
+        "tags": [
+          "Quality",
+          "Review",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "color-policy.md",
+      "sha256": "f11a21e7c4013db86a83b0cc6dda2906778fc8555fea4664be0f3843345c4b25",
+      "sourceSha256": "f11a21e7c4013db86a83b0cc6dda2906778fc8555fea4664be0f3843345c4b25",
+      "metadata": {
+        "description": "Interface and artwork color roles, redundant state cues, palette indexing and color checks.",
+        "tags": [
+          "Visuals",
+          "Color",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "competition-boards.md",
+      "sha256": "317b913f6135f274a6555776b917dc8e5f334bca983331967455190c64ec6326",
+      "sourceSha256": "317b913f6135f274a6555776b917dc8e5f334bca983331967455190c64ec6326",
+      "metadata": {
+        "description": "Board dimensions by stage, their face sets, and implications for layout and navigation.",
+        "tags": [
+          "Competition",
+          "Boards",
+          "Visuals"
+        ]
+      }
+    },
+    {
+      "path": "competition-deals.md",
+      "sha256": "6fbd1a488c24d78b47277f7e077e65849bed629b6f718d9d221af1e391d90356",
+      "sourceSha256": "6fbd1a488c24d78b47277f7e077e65849bed629b6f718d9d221af1e391d90356",
+      "metadata": {
+        "description": "Match deal identity, board-code reproducibility, and the limits of the current fresh-deal helper.",
+        "tags": [
+          "Competition",
+          "Reproducibility",
+          "Deals"
+        ]
+      }
+    },
+    {
+      "path": "competition-overview.md",
+      "sha256": "9bca7661c75f83ca7ffe610ad8fad8cca955a1e72f519a6983dff16a471d3242",
+      "sourceSha256": "9bca7661c75f83ca7ffe610ad8fad8cca955a1e72f519a6983dff16a471d3242",
+      "metadata": {
+        "description": "Purpose and social context of shared-device competition, with an honest boundary around the solo implementation.",
+        "tags": [
+          "Competition",
+          "Product",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "competition-pairing.md",
+      "sha256": "f01d591ea68a8e330c1b932fc6cb11c917b8b0b42dfb6d0ece98fdd4f5965e77",
+      "sourceSha256": "f01d591ea68a8e330c1b932fc6cb11c917b8b0b42dfb6d0ece98fdd4f5965e77",
+      "metadata": {
+        "description": "Entry-order seeds and opening pairings for four- and eight-person brackets, with named examples.",
+        "tags": [
+          "Competition",
+          "Pairing"
+        ]
+      }
+    },
+    {
+      "path": "competition-research.md",
+      "sha256": "1c2906a764e22e2e997a7340689e07bf53070d3aa3598184a5fc38dd372bf9c5",
+      "sourceSha256": "1c2906a764e22e2e997a7340689e07bf53070d3aa3598184a5fc38dd372bf9c5",
+      "metadata": {
+        "description": "Playtests about face recognition, keyboard travel, device handoff and spectating.",
+        "tags": [
+          "Competition",
+          "Research",
+          "Input"
+        ]
+      }
+    },
+    {
+      "path": "competition-rounds.md",
+      "sha256": "a8ce9f85eea47b5f2ff5b23115d3af95b2b966cac59e848f81a5ad8225386128",
+      "sourceSha256": "a8ce9f85eea47b5f2ff5b23115d3af95b2b966cac59e848f81a5ad8225386128",
+      "metadata": {
+        "description": "Round names and their displayed text, with distinctions between event stages and browser session generations.",
+        "tags": [
+          "Competition",
+          "Rounds",
+          "Interface"
+        ]
+      }
+    },
+    {
+      "path": "competition-scores.md",
+      "sha256": "4e9aefa59741d0da12d411425da78a572577e8b32a7ef72291e3af45e1222b42",
+      "sourceSha256": "4e9aefa59741d0da12d411425da78a572577e8b32a7ef72291e3af45e1222b42",
+      "metadata": {
+        "description": "Competition isolation from ordinary saved size and best moves, including the current session write paths.",
+        "tags": [
+          "Competition",
+          "Persistence",
+          "Scores"
+        ]
+      }
+    },
+    {
+      "path": "competition-ties.md",
+      "sha256": "c1f34c6c05c70b24a9714f509c908859f93d67853e3dcc148328d843425b5b82",
+      "sourceSha256": "c1f34c6c05c70b24a9714f509c908859f93d67853e3dcc148328d843425b5b82",
+      "metadata": {
+        "description": "Ordered result comparison, active-time precision, and seed priority for equal results.",
+        "tags": [
+          "Competition",
+          "Results",
+          "Time"
+        ]
+      }
+    },
+    {
+      "path": "contrast-audit.md",
+      "sha256": "ddb712a0ea8887e44a4d836465d4189bfb368e113735a002f9b19d5b5523aa0b",
+      "sourceSha256": "ddb712a0ea8887e44a4d836465d4189bfb368e113735a002f9b19d5b5523aa0b",
+      "metadata": {
+        "description": "Reproducible sRGB contrast calculations for surfaces, text, artwork and the pulse midpoint.",
+        "tags": [
+          "Visuals",
+          "Contrast",
+          "Audit"
+        ]
+      }
+    },
+    {
+      "path": "control-bar.md",
+      "sha256": "64846d4ca123a13ab072fe255cd934e511d46793fbe924b5c01d0e704eeb2b97",
+      "sourceSha256": "64846d4ca123a13ab072fe255cd934e511d46793fbe924b5c01d0e704eeb2b97",
+      "metadata": {
+        "description": "The deal buttons, size selector, responsive arrangement and session callbacks in Controls.tsx.",
+        "tags": [
+          "Controls",
+          "Layout",
+          "Session"
+        ]
+      }
+    },
+    {
+      "path": "controls.md",
+      "sha256": "a199800ba9c73479eb83af0f39c40815b92a8b81b9819ff212365b3e06fd7442",
+      "sourceSha256": "a199800ba9c73479eb83af0f39c40815b92a8b81b9819ff212365b3e06fd7442",
+      "metadata": {
+        "description": "Game options and reproduction controls",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Controls"
+        ]
+      }
+    },
+    {
+      "path": "corrupt-data-policy.md",
+      "sha256": "c6996d8f7b652490a18296e717f3da14e8f1321995c8b0dbdd1aa83b1a8a8c0a",
+      "sourceSha256": "c6996d8f7b652490a18296e717f3da14e8f1321995c8b0dbdd1aa83b1a8a8c0a",
+      "metadata": {
+        "description": "Preference validation, silent rejection and the timing of read rejection and later replacement.",
+        "tags": [
+          "Persistence",
+          "Validation"
+        ]
+      }
+    },
+    {
+      "path": "css-organization.md",
+      "sha256": "33266191df010113bf81c2166402f492d2bc0883454c69f833f050c9d280ba9b",
+      "sourceSha256": "33266191df010113bf81c2166402f492d2bc0883454c69f833f050c9d280ba9b",
+      "metadata": {
+        "description": "Stylesheet ownership, global cascade, grid geometry and visual-test seams.",
+        "tags": [
+          "Architecture",
+          "CSS",
+          "Visuals"
+        ]
+      }
+    },
+    {
+      "path": "data-exchange-policy.md",
+      "sha256": "5bd8db018d701455b8fff0e7672a4857c12b0b0003de6c9e7d382e87c509e2c0",
+      "sourceSha256": "5bd8db018d701455b8fff0e7672a4857c12b0b0003de6c9e7d382e87c509e2c0",
+      "metadata": {
+        "description": "How board codes, snapshots and replays cross application boundaries, with policy for future exports.",
+        "tags": [
+          "Sharing",
+          "Formats",
+          "Policy"
+        ]
+      }
+    },
+    {
+      "path": "deck-generation.md",
+      "sha256": "a36f01c0bf86bc80c82205dea1a6eae0ccca4ed97e81bc69a3d6fa57b856088e",
+      "sourceSha256": "a36f01c0bf86bc80c82205dea1a6eae0ccca4ed97e81bc69a3d6fa57b856088e",
+      "metadata": {
+        "description": "Board-code parsing, paired deck construction, deterministic shuffle arithmetic, and fresh seed selection.",
+        "tags": [
+          "Game",
+          "Gameplay",
+          "Generation"
+        ]
+      }
+    },
+    {
+      "path": "dependency-policy.md",
+      "sha256": "b989c294ca9586e340a94f0792e2896f12270cf318b59ebbc4502d8ddddcd0e0",
+      "sourceSha256": "b989c294ca9586e340a94f0792e2896f12270cf318b59ebbc4502d8ddddcd0e0",
+      "metadata": {
+        "description": "Locked packages, runtime versus tooling roles and dependency evidence.",
+        "tags": [
+          "Architecture",
+          "Dependencies",
+          "Build"
+        ]
+      }
+    },
+    {
+      "path": "dialog-policy.md",
+      "sha256": "f3a7eea8705341eb17731652b0022d802ce16cb29bf70b5bb2f6cca6ef1de8f9",
+      "sourceSha256": "f3a7eea8705341eb17731652b0022d802ce16cb29bf70b5bb2f6cca6ef1de8f9",
+      "metadata": {
+        "description": "The leave-work confirmation policy and its boundary with current direct deal actions.",
+        "tags": [
+          "Controls",
+          "Dialogs",
+          "Policy"
+        ]
+      }
+    },
+    {
+      "path": "disabled-state-guide.md",
+      "sha256": "737b3c08fd7de3646014713aed9a9f6e06227f6f847eb33bfec32e48aa6e7dd2",
+      "sourceSha256": "737b3c08fd7de3646014713aed9a9f6e06227f6f847eb33bfec32e48aa6e7dd2",
+      "metadata": {
+        "description": "Matched ARIA state, game eligibility, imported pause and continued focus movement.",
+        "tags": [
+          "Input",
+          "State",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "documentation-style.md",
+      "sha256": "d36277825e9c3ff1416de6c2573f8a2b0fec25dc3071a04f800c6765608a0de4",
+      "sourceSha256": "d36277825e9c3ff1416de6c2573f8a2b0fec25dc3071a04f800c6765608a0de4",
+      "metadata": {
+        "description": "Explains source-grounded documentation, scoped examples, ownership links and bounded evidence claims.",
+        "tags": [
+          "Writing",
+          "Documentation",
+          "Review"
+        ]
+      }
+    },
+    {
+      "path": "duplicate-names-policy.md",
+      "sha256": "158a7b2c200af05454a3e597669a21dfe96262e64956a92e81356177ef191669",
+      "sourceSha256": "158a7b2c200af05454a3e597669a21dfe96262e64956a92e81356177ef191669",
+      "metadata": {
+        "description": "Group-scoped name comparison, case handling and evidence for repeat detection.",
+        "tags": [
+          "Forms",
+          "Names",
+          "Validation"
+        ]
+      }
+    },
+    {
+      "path": "elapsed-time-rules.md",
+      "sha256": "32cf9f6253ceee3483e55c818e8d32f6ef0a96bb85b8c1f041872050939c86cc",
+      "sourceSha256": "32cf9f6253ceee3483e55c818e8d32f6ef0a96bb85b8c1f041872050939c86cc",
+      "metadata": {
+        "description": "Active-time accumulation, browser observations, display conversion, caps, and snapshot precision.",
+        "tags": [
+          "Game",
+          "Gameplay",
+          "Timing"
+        ]
+      }
+    },
+    {
+      "path": "error-display-guide.md",
+      "sha256": "6f3ccea1b5ca9cc3f89a6bc7716aa0cd04d91625286a09adcdc0e226cfbe502f",
+      "sourceSha256": "6f3ccea1b5ca9cc3f89a6bc7716aa0cd04d91625286a09adcdc0e226cfbe502f",
+      "metadata": {
+        "description": "Load validation, visible notices, preserved drafts, focus and retry behavior.",
+        "tags": [
+          "Forms",
+          "Errors",
+          "Validation"
+        ]
+      }
+    },
+    {
+      "path": "error-message-style.md",
+      "sha256": "d6f2ec8484c70e6091b28a63d2633539f45601e10c95ff05ae05124e3609208d",
+      "sourceSha256": "d6f2ec8484c70e6091b28a63d2633539f45601e10c95ff05ae05124e3609208d",
+      "metadata": {
+        "description": "Documents exact browser notices, replay diagnostics, recovery context and internal exception boundaries.",
+        "tags": [
+          "Writing",
+          "Errors",
+          "Diagnostics"
+        ]
+      }
+    },
+    {
+      "path": "face-catalogue.md",
+      "sha256": "1a34651049adccb8dd842cf7e7a66c68fd9db377942b3853207752240a597ee6",
+      "sourceSha256": "1a34651049adccb8dd842cf7e7a66c68fd9db377942b3853207752240a597ee6",
+      "metadata": {
+        "description": "All face identity ranges, shape paths, marker coordinates, fill modes and face-sheet evidence.",
+        "tags": [
+          "Visuals",
+          "Artwork",
+          "Geometry"
+        ]
+      }
+    },
+    {
+      "path": "feedback-without-audio.md",
+      "sha256": "3bac3d4186a52efcb06d9eb39aa1352819e74707a7a59dddd0ee9b696131c0a6",
+      "sourceSha256": "3bac3d4186a52efcb06d9eb39aa1352819e74707a7a59dddd0ee9b696131c0a6",
+      "metadata": {
+        "description": "Traces silent card, turn, status, completion and load feedback through the current components and checks.",
+        "tags": [
+          "Sound",
+          "Feedback",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "fixtures-guide.md",
+      "sha256": "595d7dcaa36ab6bffc167cce6ab038617fff7a25c8626ecb5f0712d228ba70f6",
+      "sourceSha256": "595d7dcaa36ab6bffc167cce6ab038617fff7a25c8626ecb5f0712d228ba70f6",
+      "metadata": {
+        "description": "Literal deal data, independent oracles, reviewed JSON expectations, browser helpers and generated artifacts.",
+        "tags": [
+          "Quality",
+          "Fixtures",
+          "Testing"
+        ]
+      }
+    },
+    {
+      "path": "flaky-test-notes.md",
+      "sha256": "4d5df782602efa36dd93c39a19da61b9d38742a5aa6e88fa06fa880185891427",
+      "sourceSha256": "4d5df782602efa36dd93c39a19da61b9d38742a5aa6e88fa06fa880185891427",
+      "metadata": {
+        "description": "How controlled clocks, visibility inputs, scroll settling and local tolerances isolate timing failures.",
+        "tags": [
+          "Quality",
+          "Timing",
+          "Testing"
+        ]
+      }
+    },
+    {
+      "path": "focus-policy.md",
+      "sha256": "ed138d401256cea51e172be2241d4bf489b3f1f73753ca86fd61409f609661fb",
+      "sourceSha256": "ed138d401256cea51e172be2241d4bf489b3f1f73753ca86fd61409f609661fb",
+      "metadata": {
+        "description": "Current action focus and board memory, plus the policy for main-screen replacements.",
+        "tags": [
+          "Input",
+          "Focus",
+          "Policy"
+        ]
+      }
+    },
+    {
+      "path": "form-layout-guide.md",
+      "sha256": "b43aa2fe75651128c8e0a5036c59ae1023b6e32ecaceb66fed7aa43f17b3a45a",
+      "sourceSha256": "b43aa2fe75651128c8e0a5036c59ae1023b6e32ecaceb66fed7aa43f17b3a45a",
+      "metadata": {
+        "description": "Label associations, responsive field rows, text editing surfaces and load-notice layout.",
+        "tags": [
+          "Forms",
+          "Layout",
+          "Controls"
+        ]
+      }
+    },
+    {
+      "path": "format-versioning-guide.md",
+      "sha256": "722615a0791c1aa7efc385089dd68fabcbd86f2899748e98a6caeeadff0c911f",
+      "sourceSha256": "722615a0791c1aa7efc385089dd68fabcbd86f2899748e98a6caeeadff0c911f",
+      "metadata": {
+        "description": "Format and product versions, exact-key compatibility and changes to artifact meaning.",
+        "tags": [
+          "Formats",
+          "Compatibility",
+          "Engineering"
+        ]
+      }
+    },
+    {
+      "path": "game-state-model.md",
+      "sha256": "c953eefe0ee1b054f8cd84bdabc81b302021511dc0a88e97d4ffe94c1311b1eb",
+      "sourceSha256": "c953eefe0ee1b054f8cd84bdabc81b302021511dc0a88e97d4ffe94c1311b1eb",
+      "metadata": {
+        "description": "GameState fields, invariants, derived values, immutable transitions, and session boundaries.",
+        "tags": [
+          "Game",
+          "Gameplay",
+          "State"
+        ]
+      }
+    },
+    {
+      "path": "gameplay-faq.md",
+      "sha256": "62ceb2e38412e2b31c7e34528cb9323c6570d7acf7b06dd716a68a1f29cd6b59",
+      "sourceSha256": "62ceb2e38412e2b31c7e34528cb9323c6570d7acf7b06dd716a68a1f29cd6b59",
+      "metadata": {
+        "description": "Answers to common play and maintenance questions, with links to detailed behavior pages.",
+        "tags": [
+          "Game",
+          "Gameplay",
+          "FAQ"
+        ]
+      }
+    },
+    {
+      "path": "glossary.md",
+      "sha256": "0744aebd2478ea9b02e21f49edb9eb3a12f1ae5892c1849f00e6e09b62711ea0",
+      "sourceSha256": "0744aebd2478ea9b02e21f49edb9eb3a12f1ae5892c1849f00e6e09b62711ea0",
+      "metadata": {
+        "description": "Defines player and engineering terms for cards, turns, session state, time and reproduction tools.",
+        "tags": [
+          "Writing",
+          "Terminology",
+          "Game"
+        ]
+      }
+    },
+    {
+      "path": "icon-and-glyph-policy.md",
+      "sha256": "6d27c6f9d79edd35cb1077b46cead4ffb6fc08e87407ac56be2babbf4e3c41f3",
+      "sourceSha256": "6d27c6f9d79edd35cb1077b46cead4ffb6fc08e87407ac56be2babbf4e3c41f3",
+      "metadata": {
+        "description": "Why the current artwork uses SVG paths and CSS decoration, with native control affordances.",
+        "tags": [
+          "Visuals",
+          "SVG",
+          "Icons"
+        ]
+      }
+    },
+    {
+      "path": "import-safety-policy.md",
+      "sha256": "ce1c5d6db4c8c10e0136ee352115c720dd8892f5382006445e46db78ba2efed8",
+      "sourceSha256": "ce1c5d6db4c8c10e0136ee352115c720dd8892f5382006445e46db78ba2efed8",
+      "metadata": {
+        "description": "Untrusted-input validation, replacement safety, current diagnostics and the field-error policy.",
+        "tags": [
+          "Sharing",
+          "Validation",
+          "Policy"
+        ]
+      }
+    },
+    {
+      "path": "incident-16x16-layout.md",
+      "sha256": "3cc369b685e45690f568cf99bf602c86f62446708aa2d1bfc57ef91ebb1e38d9",
+      "sourceSha256": "3cc369b685e45690f568cf99bf602c86f62446708aa2d1bfc57ef91ebb1e38d9",
+      "metadata": {
+        "description": "Layout investigation covering intrinsic width, scrollbars, pointer timing, and clipped focus outlines.",
+        "tags": [
+          "History",
+          "Incidents",
+          "Layout"
+        ]
+      }
+    },
+    {
+      "path": "incident-clock-drift.md",
+      "sha256": "c4b37f958bb6f1da7b6d8d080bb14eb5a2e39eacaf900d6e9cf4451618b179ac",
+      "sourceSha256": "c4b37f958bb6f1da7b6d8d080bb14eb5a2e39eacaf900d6e9cf4451618b179ac",
+      "metadata": {
+        "description": "Timing investigation covering observed deltas, visibility pauses, fractional time, and stale callbacks.",
+        "tags": [
+          "History",
+          "Incidents",
+          "Timing"
+        ]
+      }
+    },
+    {
+      "path": "incident-focus-trap.md",
+      "sha256": "06dca2c43e3d64212802404cdeab52434b44139460776374e5773c376ec81954",
+      "sourceSha256": "06dca2c43e3d64212802404cdeab52434b44139460776374e5773c376ec81954",
+      "metadata": {
+        "description": "Focus investigation covering native Tab exit, Resume handoff, and visible remembered positions.",
+        "tags": [
+          "History",
+          "Incidents",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "incident-lost-best-scores.md",
+      "sha256": "72a2df13489383faa0f053cbe3ceacf690fc25a6d36a36e2a33ecae123c72717",
+      "sourceSha256": "72a2df13489383faa0f053cbe3ceacf690fc25a6d36a36e2a33ecae123c72717",
+      "metadata": {
+        "description": "Score-loss investigation distinguishing deal replacement, record updates, and storage fallback.",
+        "tags": [
+          "History",
+          "Incidents",
+          "Persistence"
+        ]
+      }
+    },
+    {
+      "path": "incident-snapshot-rejects.md",
+      "sha256": "19e4657f6d28f6b6745f758db839b16538aa4241716b1cda8620146de8ac3f5c",
+      "sourceSha256": "19e4657f6d28f6b6745f758db839b16538aa4241716b1cda8620146de8ac3f5c",
+      "metadata": {
+        "description": "Parser investigation separating valid state from canonical JSON presentation and transport limits.",
+        "tags": [
+          "History",
+          "Incidents",
+          "Snapshots"
+        ]
+      }
+    },
+    {
+      "path": "input.md",
+      "sha256": "561521000c174f0d3dba669739599b816a2df5edf325c56597195b3f0ebcdc53",
+      "sourceSha256": "561521000c174f0d3dba669739599b816a2df5edf325c56597195b3f0ebcdc53",
+      "metadata": {
+        "description": "Pointer, touch, keyboard and focus behavior",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Input"
+        ]
+      }
+    },
+    {
+      "path": "interface-review-checklist.md",
+      "sha256": "5796c67f4db0dd42ca2eeed4edcee5b5db8a9fdfa8f9292d79357cda295bd74a",
+      "sourceSha256": "5796c67f4db0dd42ca2eeed4edcee5b5db8a9fdfa8f9292d79357cda295bd74a",
+      "metadata": {
+        "description": "Populated interface review journeys and the source or browser evidence for each.",
+        "tags": [
+          "Review",
+          "Testing",
+          "Controls"
+        ]
+      }
+    },
+    {
+      "path": "known-issues.md",
+      "sha256": "85acabc0c74c05d8e7ef6454dcb114a314e26d69ef28d08d31c44499638d7bda",
+      "sourceSha256": "85acabc0c74c05d8e7ef6454dcb114a314e26d69ef28d08d31c44499638d7bda",
+      "metadata": {
+        "description": "Observed missing verification inputs and documented limits on compatibility and acceptance evidence.",
+        "tags": [
+          "Quality",
+          "Issues",
+          "Evidence"
+        ]
+      }
+    },
+    {
+      "path": "large-board-rendering.md",
+      "sha256": "6ba8cba14ff9a4c4af8a3e6305d3f4f29e7be617a3e67723f5afbbe3f931f964",
+      "sourceSha256": "6ba8cba14ff9a4c4af8a3e6305d3f4f29e7be617a3e67723f5afbbe3f931f964",
+      "metadata": {
+        "description": "Full 256-card rendering, bounded scrolling, focus clearance, touch input and rendering optimizations.",
+        "tags": [
+          "Visuals",
+          "Boards",
+          "Scrolling"
+        ]
+      }
+    },
+    {
+      "path": "layout-grid.md",
+      "sha256": "ed9d2b33286d53d9ed34a55dbb96624817627a2aaa746fb5d3ab2309c310221d",
+      "sourceSha256": "ed9d2b33286d53d9ed34a55dbb96624817627a2aaa746fb5d3ab2309c310221d",
+      "metadata": {
+        "description": "Page and board sizing, width calculations, scrollbars, responsive wrapping and layout tests.",
+        "tags": [
+          "Visuals",
+          "Layout",
+          "CSS"
+        ]
+      }
+    },
+    {
+      "path": "meeting-notes-accessibility.md",
+      "sha256": "e05837bda67d82881c064bd434f5614c33dd75c62502b1ae3a8ff4ddacfb4d9c",
+      "sourceSha256": "e05837bda67d82881c064bd434f5614c33dd75c62502b1ae3a8ff4ddacfb4d9c",
+      "metadata": {
+        "description": "Access review connecting keyboard journeys, hidden information, result events, visual reach, and evidence.",
+        "tags": [
+          "History",
+          "Reviews",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "meeting-notes-architecture.md",
+      "sha256": "a28a7a344b550ab5a3ed57c9df67230e67631b9c0ac3dfc650a267e23432a28c",
+      "sourceSha256": "a28a7a344b550ab5a3ed57c9df67230e67631b9c0ac3dfc650a267e23432a28c",
+      "metadata": {
+        "description": "Architecture review tracing attempt ownership, session effects, rendering work, validation, and delivery.",
+        "tags": [
+          "History",
+          "Reviews",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "mismatch-interval.md",
+      "sha256": "a55340984f44e134df1ef4310b1d4daeb6407a730a9b6ee0b263c11a6005b1c2",
+      "sourceSha256": "a55340984f44e134df1ef4310b1d4daeb6407a730a9b6ee0b263c11a6005b1c2",
+      "metadata": {
+        "description": "The exact 800-millisecond active interval, synchronization, pauses, and stale timer protection.",
+        "tags": [
+          "Game",
+          "Gameplay",
+          "Timing"
+        ]
+      }
+    },
+    {
+      "path": "module-layout-policy.md",
+      "sha256": "300f79f43a3e3928faee6f94c378676e5c9aa47dec6e5b16f9489733b977ccce",
+      "sourceSha256": "300f79f43a3e3928faee6f94c378676e5c9aa47dec6e5b16f9489733b977ccce",
+      "metadata": {
+        "description": "Behavior ownership, dependency direction and feature placement in the game source.",
+        "tags": [
+          "Architecture",
+          "Modules",
+          "Code"
+        ]
+      }
+    },
+    {
+      "path": "motion-policy.md",
+      "sha256": "884df566e5f7cf6caef26b1a12d0278d315a44348feed98c510e1bb2b9ed00f9",
+      "sourceSha256": "884df566e5f7cf6caef26b1a12d0278d315a44348feed98c510e1bb2b9ed00f9",
+      "metadata": {
+        "description": "Current card and completion effects, reduced motion, session flags and motion test coverage.",
+        "tags": [
+          "Visuals",
+          "Motion",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "name-length-policy.md",
+      "sha256": "fb107cd3735759c078b6511d529137bb45da0fbe89638849b93ba05338b728b2",
+      "sourceSha256": "fb107cd3735759c078b6511d529137bb45da0fbe89638849b93ba05338b728b2",
+      "metadata": {
+        "description": "Name-length acceptance, Unicode counting units and boundary examples.",
+        "tags": [
+          "Forms",
+          "Names",
+          "Unicode"
+        ]
+      }
+    },
+    {
+      "path": "native-controls-guide.md",
+      "sha256": "1d396cd63f7eaa61641cba8267aeef5fa2e20ab23568fd9c9e95c583502b2d0f",
+      "sourceSha256": "1d396cd63f7eaa61641cba8267aeef5fa2e20ab23568fd9c9e95c583502b2d0f",
+      "metadata": {
+        "description": "Native element choices and the browser behavior retained around React callbacks.",
+        "tags": [
+          "Controls",
+          "Semantics",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "new-game-and-restart.md",
+      "sha256": "6dd3eeb8f0e117b2551598c0508ff192204af03c7e5483b69826103fc574ba15",
+      "sourceSha256": "6dd3eeb8f0e117b2551598c0508ff192204af03c7e5483b69826103fc574ba15",
+      "metadata": {
+        "description": "What fresh deals, repeats, size changes, loads, Resume, exports, and reloads preserve or reset.",
+        "tags": [
+          "Game",
+          "Gameplay",
+          "Sessions"
+        ]
+      }
+    },
+    {
+      "path": "numbers-style.md",
+      "sha256": "0ab3a9dc4c7cd0c7080f90f96959f7419915ecb3747d613ccf9123060cc675a1",
+      "sourceSha256": "0ab3a9dc4c7cd0c7080f90f96959f7419915ecb3747d613ccf9123060cc675a1",
+      "metadata": {
+        "description": "Distinguishes displayed counts and durations from indices, numeric limits and serialized values.",
+        "tags": [
+          "Writing",
+          "Numbers",
+          "Formats"
+        ]
+      }
+    },
+    {
+      "path": "offline-delivery.md",
+      "sha256": "a7a9cfe8cbabbe27a450cedf88aec3035f4477478232537debb216cef7774cae",
+      "sourceSha256": "a7a9cfe8cbabbe27a450cedf88aec3035f4477478232537debb216cef7774cae",
+      "metadata": {
+        "description": "Single-file distribution, disk and HTTP behavior and self-containment evidence.",
+        "tags": [
+          "Technology",
+          "Offline",
+          "Delivery"
+        ]
+      }
+    },
+    {
+      "path": "pair-identity.md",
+      "sha256": "2056fbe01e6b5751fe4baf2c0b77722a5d28016d3cbeea2592a9b31ab69c93a9",
+      "sourceSha256": "2056fbe01e6b5751fe4baf2c0b77722a5d28016d3cbeea2592a9b31ab69c93a9",
+      "metadata": {
+        "description": "Position indices versus face numbers, artwork identity dimensions, and hidden-face rendering.",
+        "tags": [
+          "Game",
+          "Gameplay",
+          "Faces"
+        ]
+      }
+    },
+    {
+      "path": "performance-budget.md",
+      "sha256": "3ec53513df5369d63547a42869b81501c9e9f5deac5536eb34b22f75db343330",
+      "sourceSha256": "3ec53513df5369d63547a42869b81501c9e9f5deac5536eb34b22f75db343330",
+      "metadata": {
+        "description": "Existing performance constraints, render and input work, and the absence of measured latency thresholds.",
+        "tags": [
+          "Quality",
+          "Performance",
+          "Rendering"
+        ]
+      }
+    },
+    {
+      "path": "persistence-envelope.md",
+      "sha256": "66d62578fa5907230bbbc338f43f8e95d4cdf15a8feee29f631736f38585bdd6",
+      "sourceSha256": "66d62578fa5907230bbbc338f43f8e95d4cdf15a8feee29f631736f38585bdd6",
+      "metadata": {
+        "description": "The feature JSON envelope and its distinction from the existing versioned preference aggregate.",
+        "tags": [
+          "Persistence",
+          "Formats"
+        ]
+      }
+    },
+    {
+      "path": "persistence-overview.md",
+      "sha256": "7c655b57761e5f653246355bf08c82b79513b0f1964ef6bec248f2bd3401b23c",
+      "sourceSha256": "7c655b57761e5f653246355bf08c82b79513b0f1964ef6bec248f2bd3401b23c",
+      "metadata": {
+        "description": "What the current game saves, what remains in memory and which persistence page to consult.",
+        "tags": [
+          "Persistence",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "pointer-and-touch.md",
+      "sha256": "9729b609fa604a54c856f4892b920c603a2bc0432557cf5aef11854902c66cc2",
+      "sourceSha256": "9729b609fa604a54c856f4892b920c603a2bc0432557cf5aef11854902c66cc2",
+      "metadata": {
+        "description": "Native click and tap activation, press timing and scrolling through large boards.",
+        "tags": [
+          "Input",
+          "Pointer",
+          "Touch"
+        ]
+      }
+    },
+    {
+      "path": "preferences-store.md",
+      "sha256": "d855d82188994bcb4b6d30ae33327703ca2f485cfb6f69d984bdff31ec5bbc5f",
+      "sourceSha256": "d855d82188994bcb4b6d30ae33327703ca2f485cfb6f69d984bdff31ec5bbc5f",
+      "metadata": {
+        "description": "Code-level guide to preference data, best selection, browser-store acquisition and the save effect.",
+        "tags": [
+          "Persistence",
+          "React",
+          "Code"
+        ]
+      }
+    },
+    {
+      "path": "private-browsing-notes.md",
+      "sha256": "5da8c45d6b3916023e8c4d5ada8f4de5923d99686818ef4ad44a767f3cb7448c",
+      "sourceSha256": "5da8c45d6b3916023e8c4d5ada8f4de5923d99686818ef4ad44a767f3cb7448c",
+      "metadata": {
+        "description": "Private-session storage lifetime, denied operations and comparisons that distinguish their effects.",
+        "tags": [
+          "Persistence",
+          "Browsers",
+          "Privacy"
+        ]
+      }
+    },
+    {
+      "path": "purity-guide.md",
+      "sha256": "cd81f45bb145eb343579e245456b443c4f9f5ee0859c108f3022a08bfe720eba",
+      "sourceSha256": "cd81f45bb145eb343579e245456b443c4f9f5ee0859c108f3022a08bfe720eba",
+      "metadata": {
+        "description": "Explicit inputs, immutable transitions, validation and effect separation in the core.",
+        "tags": [
+          "Architecture",
+          "Rules",
+          "Purity"
+        ]
+      }
+    },
+    {
+      "path": "randomness-policy.md",
+      "sha256": "c3606515bb968ff288c4b79d07b851047d6c7910ad692ff818de553f2b815d58",
+      "sourceSha256": "c3606515bb968ff288c4b79d07b851047d6c7910ad692ff818de553f2b815d58",
+      "metadata": {
+        "description": "Fresh seed selection, rejection sampling and the boundary with reproducible decks.",
+        "tags": [
+          "Architecture",
+          "Randomness",
+          "Reproducibility"
+        ]
+      }
+    },
+    {
+      "path": "react-boundaries.md",
+      "sha256": "e53755ff33b83e5197a9f1a0ef0d65ac2ec083511ac404b1b486fabad66a0577",
+      "sourceSha256": "e53755ff33b83e5197a9f1a0ef0d65ac2ec083511ac404b1b486fabad66a0577",
+      "metadata": {
+        "description": "React components, hooks, local state and the data-only rule boundary.",
+        "tags": [
+          "Architecture",
+          "React",
+          "Rendering"
+        ]
+      }
+    },
+    {
+      "path": "regression-catalogue.md",
+      "sha256": "d751f6f7a4c81f56573803d6cf78a4fbf993c888ef31f63182892dd5ca770726",
+      "sourceSha256": "d751f6f7a4c81f56573803d6cf78a4fbf993c888ef31f63182892dd5ca770726",
+      "metadata": {
+        "description": "Recognizable failure modes and the current tests protecting clock, focus, formats and delivery.",
+        "tags": [
+          "Quality",
+          "Regressions",
+          "Testing"
+        ]
+      }
+    },
+    {
+      "path": "release-checklist.md",
+      "sha256": "0134b24223d795e27962602bea0fc309708835fc83c55e4f2279cb8ebf00d484",
+      "sourceSha256": "0134b24223d795e27962602bea0fc309708835fc83c55e4f2279cb8ebf00d484",
+      "metadata": {
+        "description": "Existing release commands, candidate checks, delivery evidence and acceptance handoff.",
+        "tags": [
+          "Quality",
+          "Release",
+          "Verification"
+        ]
+      }
+    },
+    {
+      "path": "release-notes-1-0.md",
+      "sha256": "d53c80c99f0a0450816e50d599f27bee35373802f88dae3c9b8bfe6cd63b596e",
+      "sourceSha256": "d53c80c99f0a0450816e50d599f27bee35373802f88dae3c9b8bfe6cd63b596e",
+      "metadata": {
+        "description": "First-release history covering turns, move counting, visible progress, and local records.",
+        "tags": [
+          "History",
+          "Releases",
+          "Gameplay"
+        ]
+      }
+    },
+    {
+      "path": "release-notes-1-1.md",
+      "sha256": "bf4bbd52865e5e0fb3fb089a72699ea6843d993c74980c4f2b1d1ac60a94687d",
+      "sourceSha256": "bf4bbd52865e5e0fb3fb089a72699ea6843d993c74980c4f2b1d1ac60a94687d",
+      "metadata": {
+        "description": "Keyboard release history covering spatial movement, card names, focus, and native page traversal.",
+        "tags": [
+          "History",
+          "Releases",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "release-notes-1-2.md",
+      "sha256": "6c8a77097e26df1493e0f774ba4169fcae8e2cc45fd2c3ffd1f1221e4051c082",
+      "sourceSha256": "6c8a77097e26df1493e0f774ba4169fcae8e2cc45fd2c3ffd1f1221e4051c082",
+      "metadata": {
+        "description": "Large-board release history covering seven sizes, scroll containment, artwork variety, and focus reachability.",
+        "tags": [
+          "History",
+          "Releases",
+          "Layout"
+        ]
+      }
+    },
+    {
+      "path": "release-notes-1-3.md",
+      "sha256": "faddccf7639d8b4c55405a8dce96dfa8b17674a46a4be244a824a1ad085b2c4f",
+      "sourceSha256": "faddccf7639d8b4c55405a8dce96dfa8b17674a46a4be244a824a1ad085b2c4f",
+      "metadata": {
+        "description": "Board-code release history explaining deterministic generation, repeatable deals, and load behavior.",
+        "tags": [
+          "History",
+          "Releases",
+          "Reproducibility"
+        ]
+      }
+    },
+    {
+      "path": "release-notes-1-4.md",
+      "sha256": "61e19a47ae510dea29490637dda4f003896e4f7cc48121bf473e89753107d626",
+      "sourceSha256": "61e19a47ae510dea29490637dda4f003896e4f7cc48121bf473e89753107d626",
+      "metadata": {
+        "description": "Snapshot release history covering explicit progress transport, validation, paused restoration, and completed imports.",
+        "tags": [
+          "History",
+          "Releases",
+          "Snapshots"
+        ]
+      }
+    },
+    {
+      "path": "release-notes-2-0.md",
+      "sha256": "2739acc099b77da78c77c6a5b1bef96ecc1457b92b1658dbf1da7add58bac96f",
+      "sourceSha256": "2739acc099b77da78c77c6a5b1bef96ecc1457b92b1658dbf1da7add58bac96f",
+      "metadata": {
+        "description": "Specification consolidation history connecting pure transitions, browser effects, data lifetimes, and acceptance journeys.",
+        "tags": [
+          "History",
+          "Releases",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "release-notes-2-1.md",
+      "sha256": "034693d7f4230e1ae2631a55136ce48063c664af90709f86fe2e7f74ab3e9da4",
+      "sourceSha256": "034693d7f4230e1ae2631a55136ce48063c664af90709f86fe2e7f74ab3e9da4",
+      "metadata": {
+        "description": "Motion review history explaining reduced-motion CSS, completion effects, and unchanged game timing.",
+        "tags": [
+          "History",
+          "Releases",
+          "Motion"
+        ]
+      }
+    },
+    {
+      "path": "release-notes-2-2.md",
+      "sha256": "e37844f378c830bed96e5a68ac808edce6e4db588d8cd2f4b6a310f346f91474",
+      "sourceSha256": "e37844f378c830bed96e5a68ac808edce6e4db588d8cd2f4b6a310f346f91474",
+      "metadata": {
+        "description": "Current spec 2.2 behavior and recorded evidence for timing, navigation, zoom, builds, and accessibility.",
+        "tags": [
+          "History",
+          "Releases",
+          "Verification"
+        ]
+      }
+    },
+    {
+      "path": "replay-format.md",
+      "sha256": "7ee234efe37cf8f504c65a5f3a048c09dca07609cedcd7d0aac645b4f07e0288",
+      "sourceSha256": "7ee234efe37cf8f504c65a5f3a048c09dca07609cedcd7d0aac645b4f07e0288",
+      "metadata": {
+        "description": "Replay schema, logical timing, validation results and CLI conversion to a final snapshot.",
+        "tags": [
+          "Sharing",
+          "Replay",
+          "CLI"
+        ]
+      }
+    },
+    {
+      "path": "reproducibility.md",
+      "sha256": "00610b3365bbccefd942a3b53f961f6062251d6ec080c1dbeef4ee075effbb8d",
+      "sourceSha256": "00610b3365bbccefd942a3b53f961f6062251d6ec080c1dbeef4ee075effbb8d",
+      "metadata": {
+        "description": "Board codes, snapshots and replay formats",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Reproducibility"
+        ]
+      }
+    },
+    {
+      "path": "reproduction-panel.md",
+      "sha256": "76b38646a342199a79e7ef312db441e32b184805fcf39761ddcd5ec9ff61bba8",
+      "sourceSha256": "76b38646a342199a79e7ef312db441e32b184805fcf39761ddcd5ec9ff61bba8",
+      "metadata": {
+        "description": "Board-code drafts, snapshot editing, load outcomes, export and Resume behavior.",
+        "tags": [
+          "Controls",
+          "Forms",
+          "Sharing"
+        ]
+      }
+    },
+    {
+      "path": "research-memory-games-survey.md",
+      "sha256": "1cdf6ad80d0e002dc3a6c8fd604ba370ebe01ae7b7fda790f2218603ba335eb3",
+      "sourceSha256": "1cdf6ad80d0e002dc3a6c8fd604ba370ebe01ae7b7fda790f2218603ba335eb3",
+      "metadata": {
+        "description": "Pattern survey comparing miss timing, solved positions, scoring, face identity, and local repeatability.",
+        "tags": [
+          "History",
+          "Research",
+          "Design"
+        ]
+      }
+    },
+    {
+      "path": "research-phone-usage.md",
+      "sha256": "ed5750cb544f50fa2981d6c2cb9479c3f3f97df994cf75a7a4faff7021b7b6b0",
+      "sourceSha256": "ed5750cb544f50fa2981d6c2cb9479c3f3f97df994cf75a7a4faff7021b7b6b0",
+      "metadata": {
+        "description": "Phone observations about touch travel, board containment, interruptions, and evidence limits.",
+        "tags": [
+          "History",
+          "Research",
+          "Touch"
+        ]
+      }
+    },
+    {
+      "path": "research-playtest-autumn.md",
+      "sha256": "b42a25030a556d791997df679609f583af7bcbad1a9a37465ffdc00bb5fdfbc9",
+      "sourceSha256": "b42a25030a556d791997df679609f583af7bcbad1a9a37465ffdc00bb5fdfbc9",
+      "metadata": {
+        "description": "Follow-up observations about large boards, repeated deals, corrected drafts, and restored progress.",
+        "tags": [
+          "History",
+          "Research",
+          "Reproducibility"
+        ]
+      }
+    },
+    {
+      "path": "research-playtest-spring.md",
+      "sha256": "3336dd1f5da880899ce40fda9c889060794384abfbe785865c18e4ceb0af8628",
+      "sourceSha256": "3336dd1f5da880899ce40fda9c889060794384abfbe785865c18e4ceb0af8628",
+      "metadata": {
+        "description": "Introductory playtest observations about learning turns, reading counters, and recognizing completion.",
+        "tags": [
+          "History",
+          "Research",
+          "Gameplay"
+        ]
+      }
+    },
+    {
+      "path": "research-screen-reader-sessions.md",
+      "sha256": "662b78ba0a03e20fe9faaba165f0b72abd223ef770b48b77932cbed787159aca",
+      "sourceSha256": "662b78ba0a03e20fe9faaba165f0b72abd223ef770b48b77932cbed787159aca",
+      "metadata": {
+        "description": "Access research paired with the actual limits of automated accessibility-tree evidence.",
+        "tags": [
+          "History",
+          "Research",
+          "Accessibility"
+        ]
+      }
+    },
+    {
+      "path": "retention-policy.md",
+      "sha256": "1f1041c214473a6e1914ad4dc4f78cf47d557524258664e0185ea104c6ae4aa1",
+      "sourceSha256": "1f1041c214473a6e1914ad4dc4f78cf47d557524258664e0185ea104c6ae4aa1",
+      "metadata": {
+        "description": "Saved-list retention, aggregate best-score lifetime and the absence of an attempt history.",
+        "tags": [
+          "Persistence",
+          "Retention"
+        ]
+      }
+    },
+    {
+      "path": "retired-idea-hints.md",
+      "sha256": "e29d6dff1fc6c38f88e0615851185d85afd663e4aee17e5814b50b4d1f805226",
+      "sourceSha256": "e29d6dff1fc6c38f88e0615851185d85afd663e4aee17e5814b50b4d1f805226",
+      "metadata": {
+        "description": "Unbuilt hint proposals and their unresolved effects on information history, scores, snapshots, and access.",
+        "tags": [
+          "History",
+          "RetiredIdeas",
+          "Gameplay"
+        ]
+      }
+    },
+    {
+      "path": "retired-idea-online-play.md",
+      "sha256": "c73c1d4ee6ebbbe9a6250de6abb6b80bf1fddc95209abaa3a48bceb915001cb3",
+      "sourceSha256": "c73c1d4ee6ebbbe9a6250de6abb6b80bf1fddc95209abaa3a48bceb915001cb3",
+      "metadata": {
+        "description": "Unbuilt connected-play proposals and the service, ordering, trust, and synchronization questions they raised.",
+        "tags": [
+          "History",
+          "RetiredIdeas",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "retired-idea-themes.md",
+      "sha256": "33647c92476d340f25c611e12ef5c179fcdd84d0e68593f6ca78894b6a5d0b47",
+      "sourceSha256": "33647c92476d340f25c611e12ef5c179fcdd84d0e68593f6ca78894b6a5d0b47",
+      "metadata": {
+        "description": "Unbuilt theme proposals distinguishing surface colors, face replacement, naming, and offline asset delivery.",
+        "tags": [
+          "History",
+          "RetiredIdeas",
+          "Visuals"
+        ]
+      }
+    },
+    {
+      "path": "retired-idea-timed-mode.md",
+      "sha256": "1350e3df46eadec84df216161cd2e0c1352c0a589e88ac5f4da77daf11c2d70e",
+      "sourceSha256": "1350e3df46eadec84df216161cd2e0c1352c0a589e88ac5f4da77daf11c2d70e",
+      "metadata": {
+        "description": "Unbuilt countdown proposals and unresolved questions about deadlines, active time, board difficulty, and records.",
+        "tags": [
+          "History",
+          "RetiredIdeas",
+          "Timing"
+        ]
+      }
+    },
+    {
+      "path": "roadmap-notes.md",
+      "sha256": "64d27be0573609c86f4798918e78cffde622ec750c770c5e75116504f3d03198",
+      "sourceSha256": "64d27be0573609c86f4798918e78cffde622ec750c770c5e75116504f3d03198",
+      "metadata": {
+        "description": "Noncommittal planning discussions about evidence, explanations, dense boards, reproduction, and maintenance.",
+        "tags": [
+          "History",
+          "Planning",
+          "Maintenance"
+        ]
+      }
+    },
+    {
+      "path": "rules.md",
+      "sha256": "5bc52beb2a0af82dde856db4a8092e499c75f0e395db553f814ec6df0f5f5cb2",
+      "sourceSha256": "5bc52beb2a0af82dde856db4a8092e499c75f0e395db553f814ec6df0f5f5cb2",
+      "metadata": {
+        "description": "Card matching, moves, timing and victory rules",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Rules"
+        ]
+      }
+    },
+    {
+      "path": "scoring-and-moves.md",
+      "sha256": "6492e76e308c96e66e9a8ac6743ffd49ecf65fc87eaca37df3fee9ef93aac424",
+      "sourceSha256": "6492e76e308c96e66e9a8ac6743ffd49ecf65fc87eaca37df3fee9ef93aac424",
+      "metadata": {
+        "description": "Pair progress, move accounting, minimum completions, and continued play at the move cap.",
+        "tags": [
+          "Game",
+          "Gameplay",
+          "Scoring"
+        ]
+      }
+    },
+    {
+      "path": "screen-reader-notes.md",
+      "sha256": "f71c6605a7514471d730e3381ff8ddf312a7124d4c849e8e4bf723afbf32c143",
+      "sourceSha256": "f71c6605a7514471d730e3381ff8ddf312a7124d4c849e8e4bf723afbf32c143",
+      "metadata": {
+        "description": "A complete game through exposed names and states, with accessibility evidence limits.",
+        "tags": [
+          "Input",
+          "Accessibility",
+          "Testing"
+        ]
+      }
+    },
+    {
+      "path": "selection-state.md",
+      "sha256": "36c7f30950afcc897a4dd59b2625aec1eff2193859ef87bec719ff749b527b58",
+      "sourceSha256": "36c7f30950afcc897a4dd59b2625aec1eff2193859ef87bec719ff749b527b58",
+      "metadata": {
+        "description": "The closed, one-card, and mismatch selection alternatives, visibility, and decoding boundaries.",
+        "tags": [
+          "Game",
+          "Gameplay",
+          "State"
+        ]
+      }
+    },
+    {
+      "path": "session-module.md",
+      "sha256": "ad977007312e3118158dc2d9a6697925590ed808469b3ab800d55503c364d9c7",
+      "sourceSha256": "ad977007312e3118158dc2d9a6697925590ed808469b3ab800d55503c364d9c7",
+      "metadata": {
+        "description": "Session fields, controller actions, replacement generations and preference effects.",
+        "tags": [
+          "Architecture",
+          "Session",
+          "State"
+        ]
+      }
+    },
+    {
+      "path": "sharing-faq.md",
+      "sha256": "8172aa81142a24b28a367eaf6ca24b05151144396deaf4f51a72820bf7727340",
+      "sourceSha256": "8172aa81142a24b28a367eaf6ca24b05151144396deaf4f51a72820bf7727340",
+      "metadata": {
+        "description": "Practical answers for copying deals, loading progress, fixing drafts and reporting sharing bugs.",
+        "tags": [
+          "Sharing",
+          "Help",
+          "Reproduction"
+        ]
+      }
+    },
+    {
+      "path": "snapshot-format.md",
+      "sha256": "423449e9dfc6f0cd47aed7fe1cfd303560ab73b3025aa43d31ca52094dce17c0",
+      "sourceSha256": "423449e9dfc6f0cd47aed7fe1cfd303560ab73b3025aa43d31ca52094dce17c0",
+      "metadata": {
+        "description": "Snapshot fields, shared JSON helpers, consistency checks, rounding and import lifecycle.",
+        "tags": [
+          "Sharing",
+          "Snapshots",
+          "Formats"
+        ]
+      }
+    },
+    {
+      "path": "snapshot-selection-notes.md",
+      "sha256": "39889b1132a2d90316ec7c7cde999d990ccfaa505e5de07315c72945b134a4ca",
+      "sourceSha256": "39889b1132a2d90316ec7c7cde999d990ccfaa505e5de07315c72945b134a4ca",
+      "metadata": {
+        "description": "How matched positions and selection variants are validated against a regenerated deck.",
+        "tags": [
+          "Snapshots",
+          "Validation",
+          "Implementation"
+        ]
+      }
+    },
+    {
+      "path": "sound.md",
+      "sha256": "ac13cd631905b38c47279868c12826bd57babdcde0a73974fa4bd071ff29b05d",
+      "sourceSha256": "ac13cd631905b38c47279868c12826bd57babdcde0a73974fa4bd071ff29b05d",
+      "metadata": {
+        "description": "Game sound behavior",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Sound"
+        ]
+      }
+    },
+    {
+      "path": "source-audit-notes.md",
+      "sha256": "5e37637ee915949d278c016c572a7ee0ebe51381c031058f2bd2a20bc65a2d0e",
+      "sourceSha256": "5e37637ee915949d278c016c572a7ee0ebe51381c031058f2bd2a20bc65a2d0e",
+      "metadata": {
+        "description": "Source inspection patterns, discovery, package checks and regex coverage limits.",
+        "tags": [
+          "Quality",
+          "Audits",
+          "Source"
+        ]
+      }
+    },
+    {
+      "path": "source-layout.md",
+      "sha256": "162005e983bff11d5b4f10312eda5837395e1a7022fe03ea39bba64fa2bec4e5",
+      "sourceSha256": "162005e983bff11d5b4f10312eda5837395e1a7022fe03ea39bba64fa2bec4e5",
+      "metadata": {
+        "description": "A file-by-file map of application code, tooling, diagnostics and test support.",
+        "tags": [
+          "Architecture",
+          "Source",
+          "Navigation"
+        ]
+      }
+    },
+    {
+      "path": "spacing-scale.md",
+      "sha256": "27f10a4520136ae8fb14860acfab7507fa109cfdd738c0940649a707ca29c6d8",
+      "sourceSha256": "27f10a4520136ae8fb14860acfab7507fa109cfdd738c0940649a707ca29c6d8",
+      "metadata": {
+        "description": "Authored spacing values by component, resets, scroll clearance and the computed spacing audit.",
+        "tags": [
+          "Visuals",
+          "Spacing",
+          "CSS"
+        ]
+      }
+    },
+    {
+      "path": "status-bar.md",
+      "sha256": "a3547c3592e9d9c4b8e02b0dfd7666fce49fcb829359fb9b53fc580ae4686de7",
+      "sourceSha256": "a3547c3592e9d9c4b8e02b0dfd7666fce49fcb829359fb9b53fc580ae4686de7",
+      "metadata": {
+        "description": "The statistics definition list, counter sources, elapsed display and completion output.",
+        "tags": [
+          "Controls",
+          "Status",
+          "Gameplay"
+        ]
+      }
+    },
+    {
+      "path": "storage-failure-policy.md",
+      "sha256": "0119a8f404d42440283af51c6676d664d1513ff20d00f5711289f4d892863334",
+      "sourceSha256": "0119a8f404d42440283af51c6676d664d1513ff20d00f5711289f4d892863334",
+      "metadata": {
+        "description": "Unavailable-storage behavior, feature feedback and the current adapter’s catch boundaries.",
+        "tags": [
+          "Persistence",
+          "Failures"
+        ]
+      }
+    },
+    {
+      "path": "storage-quota-notes.md",
+      "sha256": "bbc817b326bac04ead880a83d873c6a3cfff4bac7342843fba25d063b159483e",
+      "sourceSha256": "bbc817b326bac04ead880a83d873c6a3cfff4bac7342843fba25d063b159483e",
+      "metadata": {
+        "description": "Measured preference payload sizes, browser capacity guidance and the scope of quota evidence.",
+        "tags": [
+          "Persistence",
+          "Browsers",
+          "Capacity"
+        ]
+      }
+    },
+    {
+      "path": "storage-testing-guide.md",
+      "sha256": "d1fd734276d28992af970cbc20ecf767c1ad0bb5934444b16c59d4689cb35b1b",
+      "sourceSha256": "d1fd734276d28992af970cbc20ecf767c1ad0bb5934444b16c59d4689cb35b1b",
+      "metadata": {
+        "description": "Existing persistence tests and practical checks for decoding, failures, completion and reload.",
+        "tags": [
+          "Persistence",
+          "Testing"
+        ]
+      }
+    },
+    {
+      "path": "tables-policy.md",
+      "sha256": "e3514df2bc297badc6e7d225cbdc25a5432cc8b3d20ccf907f6941a654a0469f",
+      "sourceSha256": "e3514df2bc297badc6e7d225cbdc25a5432cc8b3d20ccf907f6941a654a0469f",
+      "metadata": {
+        "description": "The result-table markup policy and how it differs from current statistics and cards.",
+        "tags": [
+          "Controls",
+          "Semantics",
+          "Policy"
+        ]
+      }
+    },
+    {
+      "path": "target-size-policy.md",
+      "sha256": "a8d4091a6fc7bcf3edefedaa31e37fc2bca1c78d3134db09efb228837ac59b03",
+      "sourceSha256": "a8d4091a6fc7bcf3edefedaa31e37fc2bca1c78d3134db09efb228837ac59b03",
+      "metadata": {
+        "description": "The new-control size policy, existing CSS dimensions and rendered target measurement.",
+        "tags": [
+          "Controls",
+          "Layout",
+          "Policy"
+        ]
+      }
+    },
+    {
+      "path": "technology.md",
+      "sha256": "8af9ea621c07687b75543a282c119f4d66f9b5df82a2d5621f9cfdef3076605e",
+      "sourceSha256": "8af9ea621c07687b75543a282c119f4d66f9b5df82a2d5621f9cfdef3076605e",
+      "metadata": {
+        "description": "Language, package versions, build and distribution",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Technology"
+        ]
+      }
+    },
+    {
+      "path": "test-policy.md",
+      "sha256": "ee8b30b59748a040493db2471f6536282b1262426a6974bbde1e2b93622e8d2f",
+      "sourceSha256": "ee8b30b59748a040493db2471f6536282b1262426a6974bbde1e2b93622e8d2f",
+      "metadata": {
+        "description": "Unit, source and browser verification layers and what their results establish.",
+        "tags": [
+          "Quality",
+          "Testing",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "test-strategy.md",
+      "sha256": "0972b480a7fcdb397819761a607d73d3b04221864c87601d50034bde042a7f34",
+      "sourceSha256": "0972b480a7fcdb397819761a607d73d3b04221864c87601d50034bde042a7f34",
+      "metadata": {
+        "description": "How pure tests, browser journeys, source checks and acceptance contribute different evidence.",
+        "tags": [
+          "Quality",
+          "Testing",
+          "Architecture"
+        ]
+      }
+    },
+    {
+      "path": "text-entry-policy.md",
+      "sha256": "f32082205b9867b0edcc5ee8ee63282b635d8d8349f88ec6476252a87447bcc5",
+      "sourceSha256": "f32082205b9867b0edcc5ee8ee63282b635d8d8349f88ec6476252a87447bcc5",
+      "metadata": {
+        "description": "Accepted name representation and its separation from board-code and JSON input.",
+        "tags": [
+          "Forms",
+          "Names",
+          "Policy"
+        ]
+      }
+    },
+    {
+      "path": "theme-tokens.md",
+      "sha256": "819b30c752333595a503ef7c4a1788f4794cf6ecc788491d9d5a0d62a728a234",
+      "sourceSha256": "819b30c752333595a503ef7c4a1788f4794cf6ecc788491d9d5a0d62a728a234",
+      "metadata": {
+        "description": "Existing CSS variables, literal values, artwork color tables and their cascade relationships.",
+        "tags": [
+          "Visuals",
+          "CSS",
+          "Theme"
+        ]
+      }
+    },
+    {
+      "path": "time-policy.md",
+      "sha256": "63f0a865b9f9730e72dee3ad27779f5d9451900c9e6d1d2ab4f48f9b256b690b",
+      "sourceSha256": "63f0a865b9f9730e72dee3ad27779f5d9451900c9e6d1d2ab4f48f9b256b690b",
+      "metadata": {
+        "description": "Active-time ownership, pause conditions, synchronization and logical interval handling.",
+        "tags": [
+          "Architecture",
+          "Time",
+          "Session"
+        ]
+      }
+    },
+    {
+      "path": "turn-resolution.md",
+      "sha256": "a917ab39fe464552f949c19150a666146db4eba1e17daf11d4705ec958d255dc",
+      "sourceSha256": "a917ab39fe464552f949c19150a666146db4eba1e17daf11d4705ec958d255dc",
+      "metadata": {
+        "description": "Activation guards, second-reveal resolution, and the ordering of time, feedback, and turns.",
+        "tags": [
+          "Game",
+          "Gameplay",
+          "Turns"
+        ]
+      }
+    },
+    {
+      "path": "typescript-settings.md",
+      "sha256": "ec937a393f7470b83b5e5f0adc3e43135bcf2cb94b56c5f59c51ce70fe6bb9a9",
+      "sourceSha256": "ec937a393f7470b83b5e5f0adc3e43135bcf2cb94b56c5f59c51ce70fe6bb9a9",
+      "metadata": {
+        "description": "Compiler projects, exact options, strictness and environment coverage.",
+        "tags": [
+          "Technology",
+          "TypeScript",
+          "Tooling"
+        ]
+      }
+    },
+    {
+      "path": "typography.md",
+      "sha256": "4a8055ab6a510a3ba2927824856095524e1533d808845bcd8776c374c1981716",
+      "sourceSha256": "4a8055ab6a510a3ba2927824856095524e1533d808845bcd8776c374c1981716",
+      "metadata": {
+        "description": "System font inheritance, text hierarchy, numeric styling, controls and text readability evidence.",
+        "tags": [
+          "Visuals",
+          "Typography",
+          "Readability"
+        ]
+      }
+    },
+    {
+      "path": "unit-test-guide.md",
+      "sha256": "43954c6c5fcce1aad6a894cd20a69adf61dc6a852b7b307fe0ee84986a5aca7d",
+      "sourceSha256": "43954c6c5fcce1aad6a894cd20a69adf61dc6a852b7b307fe0ee84986a5aca7d",
+      "metadata": {
+        "description": "How direct state, parser, session, storage and CLI tests isolate decisions and boundaries.",
+        "tags": [
+          "Quality",
+          "UnitTests",
+          "Game"
+        ]
+      }
+    },
+    {
+      "path": "visual-review-checklist.md",
+      "sha256": "24f23c6c32a19c835788a3cca47c1225bdabb7b73d3a8fe8d595511b95a42d9b",
+      "sourceSha256": "24f23c6c32a19c835788a3cca47c1225bdabb7b73d3a8fe8d595511b95a42d9b",
+      "metadata": {
+        "description": "Existing visual requirements and relevant source tests grouped into a concrete review journey.",
+        "tags": [
+          "Visuals",
+          "Review",
+          "Quality"
+        ]
+      }
+    },
+    {
+      "path": "visuals.md",
+      "sha256": "3686d12b2ee43f357e05d1e4777d5f3f0a3b4e407b2a276eb828196a5fe59642",
+      "sourceSha256": "3686d12b2ee43f357e05d1e4777d5f3f0a3b4e407b2a276eb828196a5fe59642",
+      "metadata": {
+        "description": "Layout, card artwork, colors and motion",
+        "tags": [
+          "LoadNow",
+          "Game",
+          "Visuals"
+        ]
+      }
+    },
+    {
+      "path": "voice-guide.md",
+      "sha256": "44cd657575015b9996c0b98162a85e003e84f6a8b4ea1e342f824f3f010c883b",
+      "sourceSha256": "44cd657575015b9996c0b98162a85e003e84f6a8b4ea1e342f824f3f010c883b",
+      "metadata": {
+        "description": "Explains the game's restrained voice through current labels, help, accessible names and result feedback.",
+        "tags": [
+          "Writing",
+          "Interface",
+          "Voice"
+        ]
+      }
+    },
+    {
+      "path": "win-conditions.md",
+      "sha256": "98c1ba838e63eadc51070d3f969851d95df04839f6295c0760a75ced0488e89d",
+      "sourceSha256": "98c1ba838e63eadc51070d3f969851d95df04839f6295c0760a75ced0488e89d",
+      "metadata": {
+        "description": "Full matched coverage, the final transition, stopped time, and played versus imported completion.",
+        "tags": [
+          "Game",
+          "Gameplay",
+          "Completion"
+        ]
+      }
+    },
+    {
+      "path": "zoom-behaviour.md",
+      "sha256": "dcc27e2bfbe61787cdfab7aab25f75eaafd623fb4f5e1a03945c38de4ee4b367",
+      "sourceSha256": "dcc27e2bfbe61787cdfab7aab25f75eaafd623fb4f5e1a03945c38de4ee4b367",
+      "metadata": {
+        "description": "Equivalent zoom geometry, text reflow, native controls and playable scrolling boards.",
+        "tags": [
+          "Visuals",
+          "Zoom",
+          "Accessibility"
+        ]
+      }
+    }
+  ]
+}

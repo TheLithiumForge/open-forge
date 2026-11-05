@@ -1,0 +1,308 @@
+{
+  "schemaVersion": 1,
+  "rules": [
+    {
+      "id": "T01",
+      "scope": "competition",
+      "document": "competition-pairing.md",
+      "sentence": "Seeds follow entry order, so the first player entered is seed 1. A bracket of four meets as 1 against 4, then 2 against 3. A bracket of eight meets as 1 against 8, 4 against 5, 3 against 6, then 2 against 7.",
+      "markers": [
+        "1 against 8",
+        "1 against 4"
+      ]
+    },
+    {
+      "id": "T02",
+      "scope": "competition",
+      "document": "competition-rounds.md",
+      "sentence": "Name each round Quarterfinal, Semifinal or Final, and show it as \"Round: NAME\" while that round is played. A bracket of four has no Quarterfinal.",
+      "markers": [
+        "Round: NAME"
+      ]
+    },
+    {
+      "id": "T03",
+      "scope": "competition",
+      "document": "competition-boards.md",
+      "sentence": "Quarterfinals are played on 4x4, semifinals on 6x6 and finals on 8x8.",
+      "markers": [
+        "finals on 8x8"
+      ]
+    },
+    {
+      "id": "T04",
+      "scope": "competition",
+      "document": "competition-deals.md",
+      "sentence": "Both players of a match play one board code, and every match in a tournament has a different board code.",
+      "markers": [
+        "every match in a tournament has a different board code"
+      ]
+    },
+    {
+      "id": "T05",
+      "scope": "competition",
+      "document": "competition-ties.md",
+      "sentence": "When both players of a match finish in the same number of moves, the lower active time wins, and if that is also equal the higher seed wins.",
+      "markers": [
+        "the higher seed wins"
+      ]
+    },
+    {
+      "id": "T06",
+      "scope": "competition",
+      "document": "competition-scores.md",
+      "sentence": "Tournament games never change best scores or the saved board size.",
+      "markers": [
+        "never change best scores"
+      ]
+    },
+    {
+      "id": "N01",
+      "scope": "interface",
+      "document": "text-entry-policy.md",
+      "sentence": "Every name a person types is stored and shown after trimming both ends, collapsing each run of inner whitespace to one space and normalizing to NFC.",
+      "markers": [
+        "normalizing to NFC"
+      ]
+    },
+    {
+      "id": "N02",
+      "scope": "interface",
+      "document": "name-length-policy.md",
+      "sentence": "A name has 2 to 20 Unicode code points after normalization. Anything else blocks the action and shows \"Use 2 to 20 characters.\"",
+      "markers": [
+        "Use 2 to 20 characters."
+      ]
+    },
+    {
+      "id": "N03",
+      "scope": "interface",
+      "document": "duplicate-names-policy.md",
+      "sentence": "Names in one group compare without regard to case, after normalization. A repeat blocks the action and shows \"Each name must be different.\"",
+      "markers": [
+        "Each name must be different."
+      ]
+    },
+    {
+      "id": "P01",
+      "scope": "decisions",
+      "document": "adr-058-storage-namespace.md",
+      "sentence": "New stored data uses a key of the form np3:THING, where THING is a lowercase plural noun for what is stored. Keys that already exist keep their names.",
+      "markers": [
+        "np3:"
+      ]
+    },
+    {
+      "id": "P02",
+      "scope": "persistence",
+      "document": "persistence-envelope.md",
+      "sentence": "Every value a feature adds to browser storage is a JSON object with exactly two keys: \"v\", the number 3, and \"items\", the array of records.",
+      "markers": [
+        "\"items\""
+      ]
+    },
+    {
+      "id": "P03",
+      "scope": "persistence",
+      "document": "retention-policy.md",
+      "sentence": "A stored list keeps its newest 10 records and drops older ones when a new record is saved.",
+      "markers": [
+        "newest 10 records"
+      ]
+    },
+    {
+      "id": "P04",
+      "scope": "persistence",
+      "document": "storage-failure-policy.md",
+      "sentence": "When browser storage is blocked, a feature keeps working in memory and shows \"Progress won't be saved on this device.\" where its saved records would appear.",
+      "markers": [
+        "Progress won't be saved on this device."
+      ]
+    },
+    {
+      "id": "P05",
+      "scope": "persistence",
+      "document": "corrupt-data-policy.md",
+      "sentence": "A stored value that fails to parse or validate is treated as empty, without any error, and stays untouched until the next save replaces it.",
+      "markers": [
+        "stays untouched until the next save"
+      ]
+    },
+    {
+      "id": "E01",
+      "scope": "sharing",
+      "document": "data-exchange-policy.md",
+      "sentence": "Every new exported JSON object has a \"format\" of \"neon-pairs/KIND\", naming what it holds, and a whole-number \"version\", with its keys in alphabetical order at every level. Formats that already exist stay as they are.",
+      "markers": [
+        "neon-pairs/KIND"
+      ]
+    },
+    {
+      "id": "E02",
+      "scope": "sharing",
+      "document": "import-safety-policy.md",
+      "sentence": "An import with a field its format doesn't define shows \"Unknown field: NAME.\" for the first such field and leaves the current state unchanged.",
+      "markers": [
+        "Unknown field: NAME."
+      ]
+    },
+    {
+      "id": "A01",
+      "scope": "interface",
+      "document": "tables-policy.md",
+      "sentence": "Ranked or bracket data is a table element with a caption and th scope=\"col\" header cells.",
+      "markers": [
+        "Ranked or bracket data"
+      ]
+    },
+    {
+      "id": "A02",
+      "scope": "interface",
+      "document": "announcements-policy.md",
+      "sentence": "The page has exactly one live region, the status paragraph in Game.tsx. New status text, such as whose turn it is, goes through that region.",
+      "markers": [
+        "exactly one live region"
+      ]
+    },
+    {
+      "id": "A03",
+      "scope": "interface",
+      "document": "focus-policy.md",
+      "sentence": "When a feature replaces what the main area shows, focus moves to that screen's h2, which has tabindex=\"-1\".",
+      "markers": [
+        "that screen's h2"
+      ]
+    },
+    {
+      "id": "A04",
+      "scope": "interface",
+      "document": "dialog-policy.md",
+      "sentence": "Leaving unfinished work asks first in a native dialog element with two buttons, Keep playing and Leave. Keep playing takes focus when it opens, and Escape keeps playing.",
+      "markers": [
+        "Keep playing"
+      ]
+    },
+    {
+      "id": "A05",
+      "scope": "interface",
+      "document": "target-size-policy.md",
+      "sentence": "Every new control is at least 44 by 44 CSS pixels at a 390 pixel wide viewport.",
+      "markers": [
+        "44 by 44 CSS pixels at a 390"
+      ]
+    },
+    {
+      "id": "V01",
+      "scope": "visuals",
+      "document": "motion-policy.md",
+      "sentence": "Under prefers-reduced-motion: reduce, new elements run no animation and no transition.",
+      "markers": [
+        "new elements run no animation"
+      ]
+    },
+    {
+      "id": "V02",
+      "scope": "visuals",
+      "document": "color-policy.md",
+      "sentence": "State is never shown by color alone, so a winner is marked with the text \"(winner)\" after the name.",
+      "markers": [
+        "(winner)"
+      ]
+    },
+    {
+      "id": "C01",
+      "scope": "writing",
+      "document": "voice-guide.md",
+      "sentence": "Interface text has no exclamation marks.",
+      "markers": [
+        "Interface text has no exclamation marks"
+      ]
+    },
+    {
+      "id": "C02",
+      "scope": "writing",
+      "document": "numbers-style.md",
+      "sentence": "Counts of moves read \"1 move\" and \"2 moves\", and durations read M:SS, such as 0:07 and 12:30.",
+      "markers": [
+        "durations read M:SS"
+      ]
+    },
+    {
+      "id": "K01",
+      "scope": "architecture",
+      "document": "randomness-policy.md",
+      "sentence": "Only src/game/session/fresh-board.ts may call a random source. Everything else that needs randomness imports it from there.",
+      "markers": [
+        "may call a random source"
+      ]
+    },
+    {
+      "id": "K02",
+      "scope": "architecture",
+      "document": "time-policy.md",
+      "sentence": "Game code reads time only through the session clock. Only files in src/game/session/ may call performance.now, and no game code may use Date.",
+      "markers": [
+        "no game code may use Date"
+      ]
+    },
+    {
+      "id": "K03",
+      "scope": "architecture",
+      "document": "module-layout-policy.md",
+      "sentence": "A feature lives in src/game/FEATURE/, and its rules live in src/game/FEATURE/rules.ts, which imports neither React nor any browser global.",
+      "markers": [
+        "src/game/FEATURE/rules.ts"
+      ]
+    },
+    {
+      "id": "K04",
+      "scope": "architecture",
+      "document": "dependency-policy.md",
+      "sentence": "A feature adds no entries to dependencies or devDependencies.",
+      "markers": [
+        "adds no entries to dependencies"
+      ]
+    },
+    {
+      "id": "K05",
+      "scope": "architecture",
+      "document": "test-policy.md",
+      "sentence": "A feature's rules.ts has a rules.test.ts beside it.",
+      "markers": [
+        "rules.test.ts beside it"
+      ]
+    }
+  ],
+  "superseded": [
+    {
+      "document": "adr-011-storage-keys.md",
+      "by": "adr-058-storage-namespace.md",
+      "statement": "Stored data uses keys of the form neon-pairs.THING.v1, which is what the preferences key does today."
+    },
+    {
+      "document": "adr-019-modal-overlays.md",
+      "by": "dialog-policy.md",
+      "statement": "Confirmations use a div overlay with role=\"alertdialog\" and a focus trap written by hand, with buttons Cancel and Discard."
+    },
+    {
+      "document": "adr-023-results-as-lists.md",
+      "by": "tables-policy.md",
+      "statement": "Rankings and results are ordered lists, because they read well on phones."
+    },
+    {
+      "document": "adr-031-toast-announcements.md",
+      "by": "announcements-policy.md",
+      "statement": "Each feature owns its own aria-live region for its messages, shown as a toast."
+    },
+    {
+      "document": "adr-036-motion-opt-in.md",
+      "by": "motion-policy.md",
+      "statement": "Decorative animation is allowed under reduced motion when it lasts under 200 milliseconds."
+    },
+    {
+      "document": "adr-041-name-limits.md",
+      "by": "name-length-policy.md",
+      "statement": "Names may have 1 to 32 characters and are stored exactly as typed."
+    }
+  ]
+}

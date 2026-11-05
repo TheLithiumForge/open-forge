@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "layer": 4,
+  "cases": ["l4-f2-tournament"],
+  "setups": ["organized-docs", "code-only", "plain-docs", "full-core-scoped"],
+  "runsPerSetup": 3,
+  "parallelRuns": 6,
+  "agents": "codex",
+  "judges": "codex",
+  "judging": "later",
+  "checking": "later",
+  "simulatedUser": "codex",
+  "isolation": "docker",
+  "limits": { "questionRounds": 3, "runMinutes": 180, "checkMinutes": 90 }
+}

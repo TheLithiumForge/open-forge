@@ -1,0 +1,662 @@
+diff --git a/README.md b/README.md
+index deb8533d2..4a20f0ee2 100644
+--- a/README.md
++++ b/README.md
+@@ -12,14 +12,9 @@ Use the named test combination, Node 26.12.1, npm 11.20.0 and Playwright 1.64.1
+ 
+ ```powershell
+ npm ci --cache .npm-cache
+-$env:PLAYWRIGHT_BROWSERS_PATH = Join-Path $PWD '.playwright-browsers'
+-$env:TEMP = Join-Path $PWD '.browser-work'
+-$env:TMP = $env:TEMP
+-New-Item -ItemType Directory -Force -Path $env:TEMP | Out-Null
+-npm exec --cache .npm-cache -- playwright install chromium
+ ```
+ 
+-These settings keep the browser download and temporary files inside the project. Browser tests use fresh contexts. They stop their browser and local HTTP server when they finish.
++Chromium 156.0.8078.4 comes with the project's image, so browser tests need no download. Browser tests use fresh contexts. They stop their browser and local HTTP server when they finish.
+ 
+ ## Play
+ 
+diff --git a/scripts/replay.test.ts b/scripts/replay.test.ts
+index 936adc1d0..2eb32e058 100644
+--- a/scripts/replay.test.ts
++++ b/scripts/replay.test.ts
+@@ -16,84 +16,100 @@ const NPM_CLI = 'node_modules/npm/bin/npm-cli.js';
+ // Each test starts the CLI in child processes, which a busy machine slows far past vitest's default limit.
+ const CLI_TIMEOUT_MS = 60_000;
+ 
+-test('replay CLI prints a final snapshot and rejects invalid files and arguments', async () => {
+-  await mkdir(TEST_ROOT, { recursive: true });
+-  const directory = await mkdtemp(join(TEST_ROOT, 'replay-'));
+-  onTestFinished(() => rm(directory, { recursive: true, force: true }));
+-  const file = join(directory, 'replay.json');
+-  await writeFile(
+-    file,
+-    JSON.stringify({
+-      version: REPLAY_VERSION,
++test(
++  'replay CLI prints a final snapshot and rejects invalid files and arguments',
++  async () => {
++    await mkdir(TEST_ROOT, { recursive: true });
++    const directory = await mkdtemp(join(TEST_ROOT, 'replay-'));
++    onTestFinished(() => rm(directory, { recursive: true, force: true }));
++    const file = join(directory, 'replay.json');
++    await writeFile(
++      file,
++      JSON.stringify({
++        version: REPLAY_VERSION,
++        boardCode: EXAMPLE_CODE,
++        actions: [
++          { atMs: 0, index: 0 },
++          { atMs: 0, index: 11 },
++        ],
++        endMs: SPEC_VECTOR.mismatchMs,
++      }),
++    );
++    const valid = spawnSync(process.execPath, [CLI, file], { encoding: 'utf8' });
++    assert.equal(valid.status, ReplayExit.success);
++    assert.equal(valid.stderr, '');
++    const actual: unknown = JSON.parse(valid.stdout);
++    assert.deepEqual(actual, {
++      version: SNAPSHOT_VERSION,
+       boardCode: EXAMPLE_CODE,
+-      actions: [
+-        { atMs: 0, index: 0 },
+-        { atMs: 0, index: 11 },
+-      ],
+-      endMs: SPEC_VECTOR.mismatchMs,
+-    }),
+-  );
+-  const valid = spawnSync(process.execPath, [CLI, file], { encoding: 'utf8' });
+-  assert.equal(valid.status, ReplayExit.success);
+-  assert.equal(valid.stderr, '');
+-  const actual: unknown = JSON.parse(valid.stdout);
+-  assert.deepEqual(actual, {
+-    version: SNAPSHOT_VERSION,
+-    boardCode: EXAMPLE_CODE,
+-    matched: [0, 11],
+-    selection: { kind: SelectionKind.closed },
+-    moves: 1,
+-    elapsedMs: SPEC_VECTOR.mismatchMs,
+-    started: true,
+-  });
+-  await writeFile(file, '{');
+-  const invalid = spawnSync(process.execPath, [CLI, file], { encoding: 'utf8' });
+-  assert.equal(invalid.status, ReplayExit.failure);
+-  assert.equal(invalid.stdout, '');
+-  assert.ok(invalid.stderr.trim().length > 0);
+-  for (const args of [[], [file, file], [join(directory, 'missing.json')]]) {
+-    const rejected = spawnSync(process.execPath, [CLI, ...args], { encoding: 'utf8' });
+-    assert.equal(rejected.status, ReplayExit.failure);
+-    assert.equal(rejected.stdout, '');
+-    assert.ok(rejected.stderr.trim().length > 0);
+-  }
+-}, CLI_TIMEOUT_MS);
++      matched: [0, 11],
++      selection: { kind: SelectionKind.closed },
++      moves: 1,
++      elapsedMs: SPEC_VECTOR.mismatchMs,
++      started: true,
++    });
++    await writeFile(file, '{');
++    const invalid = spawnSync(process.execPath, [CLI, file], { encoding: 'utf8' });
++    assert.equal(invalid.status, ReplayExit.failure);
++    assert.equal(invalid.stdout, '');
++    assert.ok(invalid.stderr.trim().length > 0);
++    for (const args of [[], [file, file], [join(directory, 'missing.json')]]) {
++      const rejected = spawnSync(process.execPath, [CLI, ...args], { encoding: 'utf8' });
++      assert.equal(rejected.status, ReplayExit.failure);
++      assert.equal(rejected.stdout, '');
++      assert.ok(rejected.stderr.trim().length > 0);
++    }
++  },
++  CLI_TIMEOUT_MS,
++);
+ 
+ // A fresh shell has no INIT_CWD, so npm records the folder it starts in.
+ const CALLER_ENV = { ...process.env, INIT_CWD: undefined };
+ 
+-test('the replay command reads a relative path from the caller folder and names what failed', async () => {
+-  await mkdir(TEST_ROOT, { recursive: true });
+-  const directory = await mkdtemp(join(TEST_ROOT, 'replay-'));
+-  onTestFinished(() => rm(directory, { recursive: true, force: true }));
+-  const replay = { version: REPLAY_VERSION, boardCode: EXAMPLE_CODE, actions: [], endMs: 0 };
+-  await writeFile(join(directory, 'replay.json'), JSON.stringify(replay));
+-  await writeFile(join(directory, 'broken.json'), '{');
+-  const outside = { ...replay, actions: [{ atMs: 0, index: SPEC_VECTOR.sizes[0] ** 2 }] };
+-  await writeFile(join(directory, 'rule.json'), JSON.stringify(outside));
+-  // npm runs once, for the caller folder. The rejected files call the same CLI directly from that folder.
+-  const npm = process.env.npm_execpath ?? join(dirname(process.execPath), NPM_CLI);
+-  const valid = spawnSync(process.execPath, [npm, 'run', '--silent', 'replay', '--', 'replay.json'], {
+-    cwd: directory,
+-    env: CALLER_ENV,
+-    encoding: 'utf8',
+-  });
+-  assert.equal(
+-    valid.status,
+-    ReplayExit.success,
+-    `C14 relative path follows the caller folder: ${valid.stderr}`,
+-  );
+-  assert.equal(valid.stderr, '');
+-  assert.equal(JSON.parse(valid.stdout).boardCode, EXAMPLE_CODE);
+-  const messages: Record<string, string> = {};
+-  for (const file of ['missing.json', 'broken.json', 'rule.json']) {
+-    const rejected = spawnSync(process.execPath, [CLI, file], { cwd: directory, env: CALLER_ENV, encoding: 'utf8' });
+-    assert.equal(rejected.status, ReplayExit.failure);
+-    assert.equal(rejected.stdout, '');
+-    messages[file] = rejected.stderr;
+-  }
+-  const expected: unknown = JSON.parse(
+-    await readFile(new URL('./replay-messages.fixture.json', import.meta.url), 'utf8'),
+-  );
+-  assert.deepEqual(messages, expected);
+-}, CLI_TIMEOUT_MS);
++test(
++  'the replay command reads a relative path from the caller folder and names what failed',
++  async () => {
++    await mkdir(TEST_ROOT, { recursive: true });
++    const directory = await mkdtemp(join(TEST_ROOT, 'replay-'));
++    onTestFinished(() => rm(directory, { recursive: true, force: true }));
++    const replay = { version: REPLAY_VERSION, boardCode: EXAMPLE_CODE, actions: [], endMs: 0 };
++    await writeFile(join(directory, 'replay.json'), JSON.stringify(replay));
++    await writeFile(join(directory, 'broken.json'), '{');
++    const outside = { ...replay, actions: [{ atMs: 0, index: SPEC_VECTOR.sizes[0] ** 2 }] };
++    await writeFile(join(directory, 'rule.json'), JSON.stringify(outside));
++    // npm runs once, for the caller folder. The rejected files call the same CLI directly from that folder.
++    const npm = process.env.npm_execpath ?? join(dirname(process.execPath), NPM_CLI);
++    const valid = spawnSync(
++      process.execPath,
++      [npm, 'run', '--silent', 'replay', '--', 'replay.json'],
++      {
++        cwd: directory,
++        env: CALLER_ENV,
++        encoding: 'utf8',
++      },
++    );
++    assert.equal(
++      valid.status,
++      ReplayExit.success,
++      `C14 relative path follows the caller folder: ${valid.stderr}`,
++    );
++    assert.equal(valid.stderr, '');
++    assert.equal(JSON.parse(valid.stdout).boardCode, EXAMPLE_CODE);
++    const messages: Record<string, string> = {};
++    for (const file of ['missing.json', 'broken.json', 'rule.json']) {
++      const rejected = spawnSync(process.execPath, [CLI, file], {
++        cwd: directory,
++        env: CALLER_ENV,
++        encoding: 'utf8',
++      });
++      assert.equal(rejected.status, ReplayExit.failure);
++      assert.equal(rejected.stdout, '');
++      messages[file] = rejected.stderr;
++    }
++    const expected: unknown = JSON.parse(
++      await readFile(new URL('./replay-messages.fixture.json', import.meta.url), 'utf8'),
++    );
++    assert.deepEqual(messages, expected);
++  },
++  CLI_TIMEOUT_MS,
++);
+diff --git a/tests/accessibility.e2e.test.ts b/tests/accessibility.e2e.test.ts
+index e5e1a0520..f1083f871 100644
+--- a/tests/accessibility.e2e.test.ts
++++ b/tests/accessibility.e2e.test.ts
+@@ -5,159 +5,161 @@ import { accessibilityTree, accessibilityNode, moveKeyboardTo } from './accessib
+ import { accessibilityFixture, playwrightVersion } from './accessibility-fixture.ts';
+ import { loadTimedBoard } from './game-fixture.ts';
+ 
+-test('a complete keyboard journey exposes names, states and each result in Chromium accessibility trees', async ({
+-  page,
+-  context,
+-  browser,
+-}, artifacts) => {
+-  const expected = await accessibilityFixture();
+-  await loadTimedBoard(page);
+-  const session = await context.newCDPSession(page);
+-  await session.send('Accessibility.enable');
+-  const captures: { stage: string; tree: Awaited<ReturnType<typeof accessibilityTree>> }[] = [];
+-  async function capture(stage: string) {
+-    const tree = await accessibilityTree(session);
+-    captures.push({ stage, tree });
+-    return tree;
+-  }
+-  await page.getByRole('combobox', { name: expected.controls.size, exact: true }).focus();
+-  const controls = await capture('controls');
+-  expect(accessibilityNode(controls, 'combobox', expected.controls.size).properties.focused).toBe(
+-    true,
+-  );
+-  accessibilityNode(controls, 'button', expected.controls.newGame);
+-  await page.keyboard.press('Tab');
+-  expect(
+-    accessibilityNode(await capture('new-game-control'), 'button', expected.controls.newGame)
+-      .properties.focused,
+-  ).toBe(true);
+-  await page.keyboard.press('Tab');
+-  await page.keyboard.press('Tab');
+-  const closed = await capture('board-entry');
+-  for (const name of expected.closed) accessibilityNode(closed, 'button', name);
+-  expect(accessibilityNode(closed, 'button', expected.closed[0]).properties.focused).toBe(true);
+-  await page.getByRole('status').evaluate((element) => {
+-    const results: string[] = [];
+-    element.setAttribute('data-result-history', '[]');
+-    new MutationObserver(() => {
+-      results.push(element.textContent ?? '');
+-      element.setAttribute('data-result-history', JSON.stringify(results));
+-    }).observe(element, { childList: true, subtree: true, characterData: true });
+-  });
+-  for (const [turn, pair] of EXAMPLE_PAIRS.entries()) {
+-    await moveKeyboardTo(page, pair[0], expected.size);
+-    await page.keyboard.press('Enter');
+-    const revealed = await capture(`revealed-${turn + 1}`);
++test(
++  'a complete keyboard journey exposes names, states and each result in Chromium accessibility trees',
++  async ({ page, context, browser }, artifacts) => {
++    const expected = await accessibilityFixture();
++    await loadTimedBoard(page);
++    const session = await context.newCDPSession(page);
++    await session.send('Accessibility.enable');
++    const captures: { stage: string; tree: Awaited<ReturnType<typeof accessibilityTree>> }[] = [];
++    async function capture(stage: string) {
++      const tree = await accessibilityTree(session);
++      captures.push({ stage, tree });
++      return tree;
++    }
++    await page.getByRole('combobox', { name: expected.controls.size, exact: true }).focus();
++    const controls = await capture('controls');
++    expect(accessibilityNode(controls, 'combobox', expected.controls.size).properties.focused).toBe(
++      true,
++    );
++    accessibilityNode(controls, 'button', expected.controls.newGame);
++    await page.keyboard.press('Tab');
+     expect(
+-      accessibilityNode(revealed, 'button', expected.revealed[pair[0]]).properties.focused,
++      accessibilityNode(await capture('new-game-control'), 'button', expected.controls.newGame)
++        .properties.focused,
+     ).toBe(true);
+-    if (turn === 0) await page.clock.runFor(3000);
+-    await moveKeyboardTo(page, pair[1], expected.size);
+-    await page.keyboard.press('Space');
+-    const matched = await capture(`turn-${turn + 1}`);
+-    for (const index of pair)
++    await page.keyboard.press('Tab');
++    await page.keyboard.press('Tab');
++    const closed = await capture('board-entry');
++    for (const name of expected.closed) accessibilityNode(closed, 'button', name);
++    expect(accessibilityNode(closed, 'button', expected.closed[0]).properties.focused).toBe(true);
++    await page.getByRole('status').evaluate((element) => {
++      const results: string[] = [];
++      element.setAttribute('data-result-history', '[]');
++      new MutationObserver(() => {
++        results.push(element.textContent ?? '');
++        element.setAttribute('data-result-history', JSON.stringify(results));
++      }).observe(element, { childList: true, subtree: true, characterData: true });
++    });
++    for (const [turn, pair] of EXAMPLE_PAIRS.entries()) {
++      await moveKeyboardTo(page, pair[0], expected.size);
++      await page.keyboard.press('Enter');
++      const revealed = await capture(`revealed-${turn + 1}`);
+       expect(
+-        accessibilityNode(matched, 'button', expected.matched[index]).properties.disabled,
++        accessibilityNode(revealed, 'button', expected.revealed[pair[0]]).properties.focused,
+       ).toBe(true);
+-    const result = accessibilityNode(matched, 'status');
+-    expect(result.properties.live).toBe('polite');
+-    expect(result.properties.atomic).toBe(true);
+-    expect(result.text).toBe(expected.turns[turn]);
+-  }
+-  const win = await capture('completed');
+-  expect(win.filter((node) => node.role === 'paragraph').map((node) => node.text)).toContain(
+-    expected.win,
+-  );
+-  const announcements: unknown = JSON.parse(
+-    (await page.getByRole('status').getAttribute('data-result-history')) ?? '[]',
+-  );
+-  expect(announcements).toEqual(expected.turns);
+-  await page.keyboard.press('Tab');
+-  expect(await page.locator('.card:focus').count()).toBe(0);
+-  const exit = await capture('board-exit');
+-  expect(
+-    accessibilityNode(exit, 'DisclosureTriangle', expected.controls.summary).properties.focused,
+-  ).toBe(true);
+-  await page.keyboard.press('Shift+Tab');
+-  await page.keyboard.press('Shift+Tab');
+-  await page.keyboard.press('Shift+Tab');
+-  await page.keyboard.press('Enter');
+-  const reset = await capture('new-game');
+-  expect(accessibilityNode(reset, 'button', expected.controls.newGame).properties.focused).toBe(
+-    true,
+-  );
+-  for (const name of expected.closed) accessibilityNode(reset, 'button', name);
+-  expect(accessibilityNode(reset, 'status').text).toBe(expected.newGame);
+-  await page.locator('summary').click();
+-  await page.getByRole('button', { name: 'Export snapshot', exact: true }).click();
+-  const snapshot = await page.getByLabel('Snapshot JSON', { exact: true }).inputValue();
+-  const loadEvents = [
+-    {
+-      stage: 'invalid-board',
+-      field: 'Board code',
+-      value: 'invalid',
+-      button: 'Load board',
+-      notice: 'Invalid board code.',
+-    },
+-    {
+-      stage: 'invalid-snapshot',
+-      field: 'Snapshot JSON',
+-      value: '{',
+-      button: 'Load snapshot',
+-      notice: 'Invalid snapshot.',
+-    },
+-    {
+-      stage: 'loaded-snapshot',
+-      field: 'Snapshot JSON',
+-      value: snapshot,
+-      button: 'Load snapshot',
+-      notice: 'Loaded snapshot. Select Resume to continue.',
+-    },
+-  ];
+-  for (const event of loadEvents) {
+-    await page.getByLabel(event.field, { exact: true }).fill(event.value);
+-    const button = page.getByRole('button', { name: event.button, exact: true });
+-    for (let repeat = 1; repeat <= 2; repeat += 1) {
+-      await button.click();
+-      await expect(button).toBeFocused();
+-      await expect(page.locator('.load-notice')).toHaveText(event.notice);
+-      const tree = await capture(`${event.stage}-${repeat}`);
+-      const status = accessibilityNode(tree, 'status');
+-      expect(tree.filter((node) => node.role === 'status')).toHaveLength(1);
+-      expect(status.properties.live).toBe('polite');
+-      expect(status.properties.atomic).toBe(true);
+-      expect(status.text).toBe(event.notice);
++      if (turn === 0) await page.clock.runFor(3000);
++      await moveKeyboardTo(page, pair[1], expected.size);
++      await page.keyboard.press('Space');
++      const matched = await capture(`turn-${turn + 1}`);
++      for (const index of pair)
++        expect(
++          accessibilityNode(matched, 'button', expected.matched[index]).properties.disabled,
++        ).toBe(true);
++      const result = accessibilityNode(matched, 'status');
++      expect(result.properties.live).toBe('polite');
++      expect(result.properties.atomic).toBe(true);
++      expect(result.text).toBe(expected.turns[turn]);
+     }
+-  }
+-  await expect(page.getByRole('button', { name: 'Resume', exact: true })).toBeVisible();
+-  // A paused import blocks activation without marking its unmatched cards disabled.
+-  await expect(page.locator('.card[aria-disabled="true"]')).toHaveCount(0);
+-  expect(
+-    JSON.parse((await page.getByRole('status').getAttribute('data-result-history')) ?? '[]'),
+-  ).toEqual([
+-    ...expected.turns,
+-    expected.newGame,
+-    ...loadEvents.flatMap((event) => [event.notice, event.notice]),
+-  ]);
+-  const readme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
+-  expect(readme.split(/\r?\n/)).toContain(expected.readmeRecord);
+-  const record =
+-    JSON.stringify(
++    const win = await capture('completed');
++    expect(win.filter((node) => node.role === 'paragraph').map((node) => node.text)).toContain(
++      expected.win,
++    );
++    const announcements: unknown = JSON.parse(
++      (await page.getByRole('status').getAttribute('data-result-history')) ?? '[]',
++    );
++    expect(announcements).toEqual(expected.turns);
++    await page.keyboard.press('Tab');
++    expect(await page.locator('.card:focus').count()).toBe(0);
++    const exit = await capture('board-exit');
++    expect(
++      accessibilityNode(exit, 'DisclosureTriangle', expected.controls.summary).properties.focused,
++    ).toBe(true);
++    await page.keyboard.press('Shift+Tab');
++    await page.keyboard.press('Shift+Tab');
++    await page.keyboard.press('Shift+Tab');
++    await page.keyboard.press('Enter');
++    const reset = await capture('new-game');
++    expect(accessibilityNode(reset, 'button', expected.controls.newGame).properties.focused).toBe(
++      true,
++    );
++    for (const name of expected.closed) accessibilityNode(reset, 'button', name);
++    expect(accessibilityNode(reset, 'status').text).toBe(expected.newGame);
++    await page.locator('summary').click();
++    await page.getByRole('button', { name: 'Export snapshot', exact: true }).click();
++    const snapshot = await page.getByLabel('Snapshot JSON', { exact: true }).inputValue();
++    const loadEvents = [
+       {
+-        schemaVersion: 1,
+-        status: 'tree-checked',
+-        chromium: browser.version(),
+-        playwright: await playwrightVersion(),
+-        screenReader: null,
+-        spokenReview: 'User acceptance. No spoken output was tested by the developer.',
+-        captures,
++        stage: 'invalid-board',
++        field: 'Board code',
++        value: 'invalid',
++        button: 'Load board',
++        notice: 'Invalid board code.',
+       },
+-      null,
+-      2,
+-    ) + '\n';
+-  expect(record).not.toMatch(
+-    /\b(?:file|https?):\/\/|[A-Za-z]:[\\/]|nodeId|frameId|backendDOMNodeId/,
+-  );
+-  await writeFile(artifacts.outputPath('accessibility-journey.json'), record);
+-  await session.detach();
+-}, {}, Scrollbars.hidden, TestTimeouts.long);
++      {
++        stage: 'invalid-snapshot',
++        field: 'Snapshot JSON',
++        value: '{',
++        button: 'Load snapshot',
++        notice: 'Invalid snapshot.',
++      },
++      {
++        stage: 'loaded-snapshot',
++        field: 'Snapshot JSON',
++        value: snapshot,
++        button: 'Load snapshot',
++        notice: 'Loaded snapshot. Select Resume to continue.',
++      },
++    ];
++    for (const event of loadEvents) {
++      await page.getByLabel(event.field, { exact: true }).fill(event.value);
++      const button = page.getByRole('button', { name: event.button, exact: true });
++      for (let repeat = 1; repeat <= 2; repeat += 1) {
++        await button.click();
++        await expect(button).toBeFocused();
++        await expect(page.locator('.load-notice')).toHaveText(event.notice);
++        const tree = await capture(`${event.stage}-${repeat}`);
++        const status = accessibilityNode(tree, 'status');
++        expect(tree.filter((node) => node.role === 'status')).toHaveLength(1);
++        expect(status.properties.live).toBe('polite');
++        expect(status.properties.atomic).toBe(true);
++        expect(status.text).toBe(event.notice);
++      }
++    }
++    await expect(page.getByRole('button', { name: 'Resume', exact: true })).toBeVisible();
++    // A paused import blocks activation without marking its unmatched cards disabled.
++    await expect(page.locator('.card[aria-disabled="true"]')).toHaveCount(0);
++    expect(
++      JSON.parse((await page.getByRole('status').getAttribute('data-result-history')) ?? '[]'),
++    ).toEqual([
++      ...expected.turns,
++      expected.newGame,
++      ...loadEvents.flatMap((event) => [event.notice, event.notice]),
++    ]);
++    const readme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
++    expect(readme.split(/\r?\n/)).toContain(expected.readmeRecord);
++    const record =
++      JSON.stringify(
++        {
++          schemaVersion: 1,
++          status: 'tree-checked',
++          chromium: browser.version(),
++          playwright: await playwrightVersion(),
++          screenReader: null,
++          spokenReview: 'User acceptance. No spoken output was tested by the developer.',
++          captures,
++        },
++        null,
++        2,
++      ) + '\n';
++    expect(record).not.toMatch(
++      /\b(?:file|https?):\/\/|[A-Za-z]:[\\/]|nodeId|frameId|backendDOMNodeId/,
++    );
++    await writeFile(artifacts.outputPath('accessibility-journey.json'), record);
++    await session.detach();
++  },
++  {},
++  Scrollbars.hidden,
++  TestTimeouts.long,
++);
+diff --git a/tests/layout.e2e.test.ts b/tests/layout.e2e.test.ts
+index c3a839c9b..c11c78e9d 100644
+--- a/tests/layout.e2e.test.ts
++++ b/tests/layout.e2e.test.ts
+@@ -5,34 +5,38 @@ import { expectFocusInside } from './focus-bounds.ts';
+ import { moveKeyboardTo } from './accessibility-tree.ts';
+ 
+ for (const viewport of [PHONE, { width: 1280, height: 800 }, { width: 1280, height: 1400 }]) {
+-  test(`16x16 fits the page and keeps both end focus outlines at ${viewport.width}x${viewport.height}`, async ({
+-    page,
+-  }) => {
+-    await page.setViewportSize(viewport);
+-    await loadFixedBoard(page);
+-    await page.getByLabel(DealControl.size, { exact: true }).selectOption('16');
+-    await expect(page.locator('.card')).toHaveCount(256);
+-    const layout = await page.locator('.board-viewport').evaluate((element) => ({
+-      height: element.clientHeight,
+-      contentHeight: element.scrollHeight,
+-      pageWidth: document.documentElement.scrollWidth,
+-      viewportWidth: window.innerWidth,
+-      padding: getComputedStyle(element).padding,
+-    }));
+-    expect(layout.pageWidth).toBeLessThanOrEqual(layout.viewportWidth);
+-    expect(layout.height).toBeLessThanOrEqual(viewport.height * 0.7);
+-    expect(layout.height).toBeLessThanOrEqual(768);
+-    expect(layout.contentHeight).toBeGreaterThan(layout.height);
+-    expect(parseFloat(layout.padding)).toBe(6);
+-    const card = await page.locator('.card').first().boundingBox();
+-    expect(card?.width).toBeGreaterThanOrEqual(44);
+-    expect(card?.height).toBe(card?.width);
+-    await page.locator('.card').first().focus();
+-    await expectFocusInside(page.locator('.card').first());
+-    await moveKeyboardTo(page, 16 ** 2 - 1, 16);
+-    await expect(page.locator('.card').last()).toBeFocused();
+-    await expectFocusInside(page.locator('.card').last());
+-  }, {}, Scrollbars.hidden, TestTimeouts.long);
++  test(
++    `16x16 fits the page and keeps both end focus outlines at ${viewport.width}x${viewport.height}`,
++    async ({ page }) => {
++      await page.setViewportSize(viewport);
++      await loadFixedBoard(page);
++      await page.getByLabel(DealControl.size, { exact: true }).selectOption('16');
++      await expect(page.locator('.card')).toHaveCount(256);
++      const layout = await page.locator('.board-viewport').evaluate((element) => ({
++        height: element.clientHeight,
++        contentHeight: element.scrollHeight,
++        pageWidth: document.documentElement.scrollWidth,
++        viewportWidth: window.innerWidth,
++        padding: getComputedStyle(element).padding,
++      }));
++      expect(layout.pageWidth).toBeLessThanOrEqual(layout.viewportWidth);
++      expect(layout.height).toBeLessThanOrEqual(viewport.height * 0.7);
++      expect(layout.height).toBeLessThanOrEqual(768);
++      expect(layout.contentHeight).toBeGreaterThan(layout.height);
++      expect(parseFloat(layout.padding)).toBe(6);
++      const card = await page.locator('.card').first().boundingBox();
++      expect(card?.width).toBeGreaterThanOrEqual(44);
++      expect(card?.height).toBe(card?.width);
++      await page.locator('.card').first().focus();
++      await expectFocusInside(page.locator('.card').first());
++      await moveKeyboardTo(page, 16 ** 2 - 1, 16);
++      await expect(page.locator('.card').last()).toBeFocused();
++      await expectFocusInside(page.locator('.card').last());
++    },
++    {},
++    Scrollbars.hidden,
++    TestTimeouts.long,
++  );
+ }
+ 
+ test('the default board fits a narrow phone and controls keep their target sizes', async ({
+diff --git a/tests/art.e2e.test.ts b/tests/art.e2e.test.ts
+index 74d48caf3..8ca6818b0 100644
+--- a/tests/art.e2e.test.ts
++++ b/tests/art.e2e.test.ts
+@@ -1,5 +1,5 @@
+ import { PNG } from 'pngjs';
+-import { expect, test } from './browser-test.ts';
++import { expect, Scrollbars, test, TestTimeouts } from './browser-test.ts';
+ import { FACE_COUNT } from '../src/game/board/face-design.ts';
+ import { ART_URL, loadFixedBoard } from './game-fixture.ts';
+ import type { Page } from '@playwright/test';
+@@ -27,31 +27,38 @@ function silhouette(png: Buffer): string {
+   return pixels.join('');
+ }
+ 
+-test('the actual 44px faces keep distinct geometry without color cues', async ({
+-  page,
+-}, artifacts) => {
+-  await page.setViewportSize({ width: 1200, height: 900 });
+-  await page.goto(ART_URL);
+-  await expect(page.locator('figure .card')).toHaveCount(FACE_COUNT);
+-  await page.screenshot({ path: artifacts.outputPath('face-sheet-color.png'), fullPage: true });
+-  await page.addStyleTag({ content: '.face-sheet { filter: grayscale(1); }' });
+-  await page.screenshot({ path: artifacts.outputPath('face-sheet-grayscale.png'), fullPage: true });
+-  await page.locator('figure svg').evaluateAll((elements) => {
+-    for (const element of elements) {
+-      const shape = element.querySelector('g');
+-      const marker = element.querySelector(':scope > circle');
+-      if (!shape || !marker) throw new Error('Missing face geometry.');
+-      if (shape.getAttribute('fill') !== 'none') shape.setAttribute('fill', '#F4F6FF');
+-      shape.setAttribute('stroke', '#F4F6FF');
+-      marker.setAttribute('fill', '#F4F6FF');
+-    }
+-  });
+-  const masks = [];
+-  for (const card of await page.locator('figure .card').all())
+-    masks.push(silhouette(await card.screenshot()));
+-  expect(new Set(masks).size).toBe(FACE_COUNT);
+-  await page.screenshot({ path: artifacts.outputPath('face-sheet-neutral.png'), fullPage: true });
+-});
++test(
++  'the actual 44px faces keep distinct geometry without color cues',
++  async ({ page }, artifacts) => {
++    await page.setViewportSize({ width: 1200, height: 900 });
++    await page.goto(ART_URL);
++    await expect(page.locator('figure .card')).toHaveCount(FACE_COUNT);
++    await page.screenshot({ path: artifacts.outputPath('face-sheet-color.png'), fullPage: true });
++    await page.addStyleTag({ content: '.face-sheet { filter: grayscale(1); }' });
++    await page.screenshot({
++      path: artifacts.outputPath('face-sheet-grayscale.png'),
++      fullPage: true,
++    });
++    await page.locator('figure svg').evaluateAll((elements) => {
++      for (const element of elements) {
++        const shape = element.querySelector('g');
++        const marker = element.querySelector(':scope > circle');
++        if (!shape || !marker) throw new Error('Missing face geometry.');
++        if (shape.getAttribute('fill') !== 'none') shape.setAttribute('fill', '#F4F6FF');
++        shape.setAttribute('stroke', '#F4F6FF');
++        marker.setAttribute('fill', '#F4F6FF');
++      }
++    });
++    const masks = [];
++    for (const card of await page.locator('figure .card').all())
++      masks.push(silhouette(await card.screenshot()));
++    expect(new Set(masks).size).toBe(FACE_COUNT);
++    await page.screenshot({ path: artifacts.outputPath('face-sheet-neutral.png'), fullPage: true });
++  },
++  {},
++  Scrollbars.hidden,
++  TestTimeouts.long,
++);
+ 
+ test('the face marker keeps the specified surround and geometry', async ({ page }) => {
+   await page.goto(ART_URL);

@@ -1,0 +1,425 @@
+{
+  "schemaVersion": 1,
+  "checks": [
+    {
+      "id": "core-01",
+      "method": "browser",
+      "description": "A Tournament button next to New Game opens a screen with a Players select of 4 and 8 and the matching Player inputs.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "core-02",
+      "method": "browser",
+      "description": "Start tournament names an entered player as \"Now playing: NAME\", and Start turn begins a game on a closed board.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "core-03",
+      "method": "browser",
+      "description": "A game ending offers Next turn, and a match ending offers Next match.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "core-04",
+      "method": "browser",
+      "description": "Four players play 3 matches to \"Champion: NAME\", and Back to game returns to the game.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "core-05",
+      "method": "browser",
+      "description": "Eight players play 7 matches to \"Champion: NAME\".",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "core-06",
+      "method": "browser",
+      "description": "Both players of a match play the same deal, one after the other.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "core-07",
+      "method": "browser",
+      "description": "Fewer moves wins the match, whichever player went first.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "core-08",
+      "method": "browser",
+      "description": "The bracket shows each player, their moves and the matches at the end.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "core-09",
+      "method": "browser",
+      "description": "A finished tournament stays in Past tournaments on the Tournament screen after reload.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "core-10",
+      "method": "browser",
+      "description": "Export tournament puts JSON in the box, and Load tournament reads it back after reload, mid-tournament and when finished.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "core-11",
+      "method": "browser",
+      "description": "Leave tournament stops it early and returns to the game, before a turn and during one.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "core-12",
+      "method": "browser",
+      "description": "The ordinary game still plays after a tournament.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "T01",
+      "method": "browser",
+      "description": "T01: seeds follow entry order. Four meet 1v4 then 2v3, and eight meet 1v8, 4v5, 3v6, then 2v7.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "T02",
+      "method": "browser",
+      "description": "T02: each round shows as \"Round: NAME\", and a bracket of four has no Quarterfinal.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "T03",
+      "method": "browser",
+      "description": "T03: quarterfinals are played on 4x4, semifinals on 6x6 and finals on 8x8.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "T04",
+      "method": "browser",
+      "description": "T04: both players of a match share one board code, and every match in a tournament has a different one.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "T05",
+      "method": "browser",
+      "description": "T05: equal moves go to the lower active time, and if that is equal too, to the higher seed.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "T06",
+      "method": "browser",
+      "description": "T06: tournament games never change best scores or the saved board size.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "N01",
+      "method": "browser",
+      "description": "N01: names are stored and shown trimmed, with inner whitespace collapsed and normalized to NFC.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "N02",
+      "method": "browser",
+      "description": "N02: a name has 2 to 20 code points after normalization, or \"Use 2 to 20 characters.\" blocks the action.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "N03",
+      "method": "browser",
+      "description": "N03: names compare without case after normalization, or \"Each name must be different.\" blocks the action.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "P01",
+      "method": "browser",
+      "description": "P01: new stored data uses a key of the form np3:THING, with THING a lowercase plural noun.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "P02",
+      "method": "browser",
+      "description": "P02: a stored value is a JSON object with exactly the keys \"v\", the number 3, and \"items\", the array of records.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "P03",
+      "method": "browser",
+      "description": "P03: a stored list keeps its newest 10 records and drops older ones when a new record is saved.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "P04",
+      "method": "browser",
+      "description": "P04: with storage blocked the feature works in memory and shows \"Progress won't be saved on this device.\" where its records would appear.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "P05",
+      "method": "browser",
+      "description": "P05: a stored value that fails to parse or validate is treated as empty without any error, and stays untouched until the next save replaces it.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "E01",
+      "method": "browser",
+      "description": "E01: an export has a \"format\" of neon-pairs/KIND and a whole-number \"version\", with its keys in alphabetical order at every level.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "E02",
+      "method": "browser",
+      "description": "E02: an import with a field its format does not define shows \"Unknown field: NAME.\" and leaves the current state unchanged.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "A01",
+      "method": "browser",
+      "description": "A01: the bracket is a table with a caption and th scope=\"col\" header cells.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "A02",
+      "method": "browser",
+      "description": "A02: the page has exactly one live region, and \"Now playing: NAME\" goes through it.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "A03",
+      "method": "browser",
+      "description": "A03: when the feature replaces the main area, focus moves to that screen's h2, which has tabindex=\"-1\".",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "A04",
+      "method": "browser",
+      "description": "A04: leaving unfinished work asks in a native dialog with Keep playing, focused first, and Leave, and Escape keeps playing.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "A05",
+      "method": "browser",
+      "description": "A05: every control is at least 44 by 44 CSS pixels at a 390 pixel wide viewport, on every Tournament screen.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "V01",
+      "method": "browser",
+      "description": "V01: under reduced motion nothing on a Tournament screen animates or transitions.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "V02",
+      "method": "browser",
+      "description": "V02: state is never color alone, so a winner is marked with the text \"(winner)\" after the name.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "C01",
+      "method": "browser",
+      "description": "C01: interface text has no exclamation marks, on any Tournament screen or message.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "C02",
+      "method": "browser",
+      "description": "C02: counts of moves read \"2 moves\", and durations read M:SS, in the bracket.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "K01",
+      "method": "source",
+      "description": "K01: only src/game/session/fresh-board.ts calls a random source.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "K02",
+      "method": "source",
+      "description": "K02: game code never uses Date, and only src/game/session/ calls performance.now.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "K03",
+      "method": "source",
+      "description": "K03: the feature lives in src/game/FEATURE/, with its rules in rules.ts, free of React and browser globals.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "K04",
+      "method": "source",
+      "description": "K04: the feature adds no entries to dependencies or devDependencies.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    },
+    {
+      "id": "K05",
+      "method": "source",
+      "description": "K05: a feature's rules.ts has a rules.test.ts beside it.",
+      "expected": {
+        "starting": "fail",
+        "solution": "pass"
+      },
+      "kind": "feature"
+    }
+  ]
+}

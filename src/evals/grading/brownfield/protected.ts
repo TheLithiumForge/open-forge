@@ -17,8 +17,9 @@ export async function protectedHashes(roots: readonly string[], project: string)
   return hashes;
 }
 
-export async function protectedOutcome(item: BrownfieldCase, project: string, before: readonly string[], after: readonly string[]): Promise<CheckOutcome> {
-  const privateFiles = item.inputs.filter((file) => file.path !== "request.md" && !file.path.startsWith(`${item.specDelta}/`));
+export async function protectedOutcome(item: Pick<BrownfieldCase, "inputs" | "specDelta" | "documents">, project: string, before: readonly string[], after: readonly string[]): Promise<CheckOutcome> {
+  // The request, a spec delta and a case's document pack are what the project is given, so they aren't private.
+  const privateFiles = item.inputs.filter((file) => file.path !== "request.md" && !file.path.startsWith(`${item.specDelta}/`) && !file.path.startsWith(`${item.documents}/`));
   const privateHashes = new Set(privateFiles.map((file) => file.sha256));
   const leaked: string[] = [];
   for (const file of await inventory(project, NeverSource, TransientRootFolders)) {

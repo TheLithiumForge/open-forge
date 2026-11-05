@@ -1,0 +1,1554 @@
+{
+  "README.md": {
+    "description": "Neon Pairs game specification and document map",
+    "tags": [
+      "LoadNow",
+      "Game",
+      "Specification"
+    ]
+  },
+  "acceptance.md": {
+    "description": "Public game acceptance examples",
+    "tags": [
+      "Game",
+      "Acceptance"
+    ]
+  },
+  "accessibility-audit.md": {
+    "description": "Accessibility findings, automated evidence and the remaining spoken and device acceptance boundaries.",
+    "tags": [
+      "Quality",
+      "Accessibility",
+      "Audit"
+    ]
+  },
+  "adr-001-react.md": {
+    "description": "This record explains why React owns the browser view while plain functions own the game rules.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-002-typescript.md": {
+    "description": "This record explains the strict TypeScript model and why parsed data still needs runtime validation.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-003-single-file.md": {
+    "description": "This record explains the single HTML distribution and the distinction between delivery and source organization.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-004-no-backend.md": {
+    "description": "This record explains why the playable game has no backend and what that means for records and sharing.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-005-vite.md": {
+    "description": "This record explains Vite’s role in transforming the source and producing the offline artifact.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-006-native-controls.md": {
+    "description": "This record explains why cards and controls use browser elements rather than custom interaction widgets.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-007-svg-faces.md": {
+    "description": "This record explains the generated SVG artwork and why face identity is expressed through geometry.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-008-seven-sizes.md": {
+    "description": "This record explains the supported board sizes and their effect on rules, artwork and layout.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-009-board-codes.md": {
+    "description": "This record explains why a compact versioned code identifies the initial deck separately from progress.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-010-snapshot-json.md": {
+    "description": "This record explains the JSON snapshot format, its validation boundary and its relationship to a board code.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-011-storage-keys.md": {
+    "description": "This historical record explains the original dotted storage keys and the reasoning behind the preferences key.",
+    "tags": [
+      "Decision",
+      "History",
+      "Persistence"
+    ]
+  },
+  "adr-012-no-sound.md": {
+    "description": "This record explains why Neon Pairs uses visual state and accessible text feedback without game audio.",
+    "tags": [
+      "Decision",
+      "Sound",
+      "Accessibility"
+    ]
+  },
+  "adr-013-monotonic-clock.md": {
+    "description": "This record explains measured browser deltas, fractional milliseconds and the separation from logical game time.",
+    "tags": [
+      "Decision",
+      "Time",
+      "Architecture"
+    ]
+  },
+  "adr-014-pause-on-hidden.md": {
+    "description": "This record explains why hiding the page suspends both elapsed time and a pending mismatch interval.",
+    "tags": [
+      "Decision",
+      "Time",
+      "Gameplay"
+    ]
+  },
+  "adr-015-replay-cli.md": {
+    "description": "This record explains why replay is a command-line diagnostic and how it shares the browser’s rules.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-016-no-state-library.md": {
+    "description": "This record explains why the game uses React state and explicit transitions without a global state library.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-017-colocated-tests.md": {
+    "description": "This record explains the split between neighboring unit tests and application-level browser journeys.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-018-playwright.md": {
+    "description": "This record explains the browser automation choice and the limits of its accessibility and device evidence.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-019-modal-overlays.md": {
+    "description": "This historical record explains the retired div-based confirmation overlay and its original interaction model.",
+    "tags": [
+      "Decision",
+      "History",
+      "Accessibility"
+    ]
+  },
+  "adr-020-vitest.md": {
+    "description": "This record explains the unit runner and the kinds of behavior it verifies without a browser.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-021-seeded-decks.md": {
+    "description": "This record explains the seeded shuffle, exact draw mapping and independent generation evidence.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-022-card-names.md": {
+    "description": "This record explains positional card names, revealed face names and the boundary around hidden identity.",
+    "tags": [
+      "Decision",
+      "Accessibility",
+      "Input"
+    ]
+  },
+  "adr-023-results-as-lists.md": {
+    "description": "This historical record explains the retired ordered-list presentation for rankings and results.",
+    "tags": [
+      "Decision",
+      "History",
+      "Interface"
+    ]
+  },
+  "adr-024-roving-focus.md": {
+    "description": "This record explains roving tabindex, edge-stopping navigation and focus memory independent of play.",
+    "tags": [
+      "Decision",
+      "Input",
+      "Accessibility"
+    ]
+  },
+  "adr-025-reduced-motion.md": {
+    "description": "This record explains the original reduced-motion commitment for card feedback and game completion.",
+    "tags": [
+      "Decision",
+      "Motion",
+      "Accessibility"
+    ]
+  },
+  "adr-026-dark-theme.md": {
+    "description": "This record explains the single dark theme and its relationship to artwork, native controls and review scope.",
+    "tags": [
+      "Decision",
+      "Visuals",
+      "Interface"
+    ]
+  },
+  "adr-027-offline-first.md": {
+    "description": "This record explains offline operation beyond merely caching a previously visited web page.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-028-prettier.md": {
+    "description": "This record explains the formatter’s narrow role and how formatting checks differ from behavioral review.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-029-pinned-versions.md": {
+    "description": "This record explains exact dependency versions, the lockfile and the difference between supported and recorded runtimes.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-030-move-cap.md": {
+    "description": "This record explains the move limit and why reaching it does not stop matching or completion.",
+    "tags": [
+      "Decision",
+      "Gameplay",
+      "Scoring"
+    ]
+  },
+  "adr-031-toast-announcements.md": {
+    "description": "This historical record explains the retired feature-owned live-region and toast announcement design.",
+    "tags": [
+      "Decision",
+      "History",
+      "Accessibility"
+    ]
+  },
+  "adr-032-best-score-scope.md": {
+    "description": "This record explains per-size best move records and why elapsed time is not a competing score.",
+    "tags": [
+      "Decision",
+      "Scoring",
+      "Persistence"
+    ]
+  },
+  "adr-033-mismatch-800ms.md": {
+    "description": "This record explains the mismatch observation interval and why it belongs to logical game time.",
+    "tags": [
+      "Decision",
+      "Gameplay",
+      "Time"
+    ]
+  },
+  "adr-034-face-count.md": {
+    "description": "This record explains how the artwork catalogue covers the largest board without relying on color alone.",
+    "tags": [
+      "Decision",
+      "Visuals",
+      "Gameplay"
+    ]
+  },
+  "adr-035-scroll-large-boards.md": {
+    "description": "This record explains why large boards scroll internally instead of shrinking cards to fit every viewport.",
+    "tags": [
+      "Decision",
+      "Layout",
+      "Input"
+    ]
+  },
+  "adr-036-motion-opt-in.md": {
+    "description": "This historical record explains the retired duration-based exception to reduced-motion handling.",
+    "tags": [
+      "Decision",
+      "History",
+      "Motion"
+    ]
+  },
+  "adr-037-snapshot-pause.md": {
+    "description": "This record explains why an unfinished snapshot waits for Resume before accepting play or active time.",
+    "tags": [
+      "Decision",
+      "Sharing",
+      "Time"
+    ]
+  },
+  "adr-038-no-analytics.md": {
+    "description": "This record explains why the game sends no play telemetry and how engineers investigate problems locally.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-039-contrast-floor.md": {
+    "description": "This record explains the contrast rationale and the limits of the palette and artwork evidence.",
+    "tags": [
+      "Decision",
+      "Visuals",
+      "Accessibility"
+    ]
+  },
+  "adr-040-file-size-aim.md": {
+    "description": "This record explains the compact-artifact aim and its architectural tradeoffs.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-041-name-limits.md": {
+    "description": "This historical record explains the retired one-to-thirty-two-character name limit and literal storage choice.",
+    "tags": [
+      "Decision",
+      "History",
+      "Interface"
+    ]
+  },
+  "adr-042-error-copy.md": {
+    "description": "This record explains the current reproduction errors and why failed validation leaves the game available.",
+    "tags": [
+      "Decision",
+      "Interface",
+      "Sharing"
+    ]
+  },
+  "adr-043-keyboard-parity.md": {
+    "description": "This record explains keyboard parity for revealing cards while keeping navigation separate from play.",
+    "tags": [
+      "Decision",
+      "Input",
+      "Accessibility"
+    ]
+  },
+  "adr-044-no-routing.md": {
+    "description": "This record explains why the current game has no router, route state or navigation layer.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-045-no-i18n-yet.md": {
+    "description": "This record explains the English-only scope and the existing separation between labels, formats and game data.",
+    "tags": [
+      "Decision",
+      "Writing",
+      "Interface"
+    ]
+  },
+  "adr-046-print-styles.md": {
+    "description": "This record explains why the game has no dedicated print presentation and what existing export tools provide instead.",
+    "tags": [
+      "Decision",
+      "Visuals",
+      "Scope"
+    ]
+  },
+  "adr-047-touch-scroll.md": {
+    "description": "This record explains completed-click activation and the focus-scrolling order that preserves pointer and touch input.",
+    "tags": [
+      "Decision",
+      "Input",
+      "Layout"
+    ]
+  },
+  "adr-048-replay-order.md": {
+    "description": "This record explains stable equal-time actions and timeout resolution at an exact replay boundary.",
+    "tags": [
+      "Decision",
+      "Sharing",
+      "Time"
+    ]
+  },
+  "adr-049-zoom-floor.md": {
+    "description": "This record explains the equivalent 200% zoom layout and why scrolling is preferred to shrinking the game.",
+    "tags": [
+      "Decision",
+      "Layout",
+      "Accessibility"
+    ]
+  },
+  "adr-050-completion-banner.md": {
+    "description": "This record explains the persistent completion summary and the distinction between a played win and loaded completion.",
+    "tags": [
+      "Decision",
+      "Gameplay",
+      "Interface"
+    ]
+  },
+  "adr-051-test-artifacts.md": {
+    "description": "This record explains diagnostic builds, screenshots and runtime records without adding debug controls to the distribution.",
+    "tags": [
+      "Decision",
+      "Testing",
+      "Build"
+    ]
+  },
+  "adr-052-release-tags.md": {
+    "description": "This record explains the release-tag rationale and separates product, package and data-format versions.",
+    "tags": [
+      "Decision",
+      "History",
+      "Release"
+    ]
+  },
+  "adr-053-docs-in-repo.md": {
+    "description": "This record explains repository documentation as a reviewable companion to code, tests and reproducible examples.",
+    "tags": [
+      "Decision",
+      "Documentation",
+      "Architecture"
+    ]
+  },
+  "adr-054-acceptance-journeys.md": {
+    "description": "This record explains why acceptance combines rule evidence with complete input, reproduction and delivery journeys.",
+    "tags": [
+      "Decision",
+      "Testing",
+      "Acceptance"
+    ]
+  },
+  "adr-055-review-before-merge.md": {
+    "description": "This record explains the rationale for reviewing behavior and evidence before integration.",
+    "tags": [
+      "Decision",
+      "Review",
+      "Quality"
+    ]
+  },
+  "adr-056-no-feature-flags.md": {
+    "description": "This record explains why the playable game has no feature-flag system and how test switches remain separate.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-057-small-components.md": {
+    "description": "This record explains the component boundaries and the targeted rendering work that keeps large boards responsive.",
+    "tags": [
+      "Decision",
+      "Architecture"
+    ]
+  },
+  "adr-058-storage-namespace.md": {
+    "description": "This record explains the naming rule for new stored data while preserving the existing preferences key.",
+    "tags": [
+      "Decision",
+      "Persistence",
+      "Compatibility"
+    ]
+  },
+  "announcements-policy.md": {
+    "description": "Status publication, repeated event identity, turn results and load feedback.",
+    "tags": [
+      "Input",
+      "Accessibility",
+      "Status"
+    ]
+  },
+  "architecture.md": {
+    "description": "Game code structure and module responsibilities",
+    "tags": [
+      "LoadNow",
+      "Game",
+      "Architecture"
+    ]
+  },
+  "audio-research-notes.md": {
+    "description": "Records the discarded audio exploration and relates its tradeoffs to the current silent design and evidence.",
+    "tags": [
+      "Sound",
+      "Research",
+      "Decisions"
+    ]
+  },
+  "best-score-records.md": {
+    "description": "Per-size best move comparison, preference validation, persistence, and imported-completion behavior.",
+    "tags": [
+      "Game",
+      "Gameplay",
+      "Persistence"
+    ]
+  },
+  "board-code-format.md": {
+    "description": "Version 1 code syntax, exact deal generation, bounded draws and independent vectors.",
+    "tags": [
+      "Sharing",
+      "Generation",
+      "Formats"
+    ]
+  },
+  "board-keyboard-navigation.md": {
+    "description": "Arrow target calculations, remembered board entry, DOM focus and nearest scrolling.",
+    "tags": [
+      "Input",
+      "Keyboard",
+      "Focus"
+    ]
+  },
+  "board-size-catalogue.md": {
+    "description": "The seven board sizes, exact card and pair counts, included faces, and size selection behavior.",
+    "tags": [
+      "Game",
+      "Gameplay",
+      "Boards"
+    ]
+  },
+  "browser-support.md": {
+    "description": "Recorded runtime compatibility and the browser, viewport, origin and input conditions covered by tests.",
+    "tags": [
+      "Quality",
+      "Compatibility",
+      "Browser"
+    ]
+  },
+  "browser-test-guide.md": {
+    "description": "How the Node and Playwright harness builds, drives and observes the game distribution.",
+    "tags": [
+      "Quality",
+      "Browser",
+      "Testing"
+    ]
+  },
+  "build-pipeline.md": {
+    "description": "Manifest commands, compiler checks, Vite entries and production versus diagnostic output.",
+    "tags": [
+      "Technology",
+      "Build",
+      "Delivery"
+    ]
+  },
+  "card-artwork.md": {
+    "description": "Card props, hidden-face rendering, button naming, back decoration, face SVG and matched overlays.",
+    "tags": [
+      "Visuals",
+      "Cards",
+      "React"
+    ]
+  },
+  "changelog-style.md": {
+    "description": "Shows how release notes connect changed behavior with compatibility, source details and verification evidence.",
+    "tags": [
+      "Writing",
+      "Releases",
+      "History"
+    ]
+  },
+  "clock-design.md": {
+    "description": "Clock arithmetic, timeout scheduling, visibility ordering and stale-work cleanup.",
+    "tags": [
+      "Architecture",
+      "Time",
+      "Browser"
+    ]
+  },
+  "code-review-guide.md": {
+    "description": "Behavior-focused review paths and evidence for rules, lifecycle, formats and delivery.",
+    "tags": [
+      "Quality",
+      "Review",
+      "Architecture"
+    ]
+  },
+  "color-policy.md": {
+    "description": "Interface and artwork color roles, redundant state cues, palette indexing and color checks.",
+    "tags": [
+      "Visuals",
+      "Color",
+      "Accessibility"
+    ]
+  },
+  "competition-boards.md": {
+    "description": "Board dimensions by stage, their face sets, and implications for layout and navigation.",
+    "tags": [
+      "Competition",
+      "Boards",
+      "Visuals"
+    ]
+  },
+  "competition-deals.md": {
+    "description": "Match deal identity, board-code reproducibility, and the limits of the current fresh-deal helper.",
+    "tags": [
+      "Competition",
+      "Reproducibility",
+      "Deals"
+    ]
+  },
+  "competition-overview.md": {
+    "description": "Purpose and social context of shared-device competition, with an honest boundary around the solo implementation.",
+    "tags": [
+      "Competition",
+      "Product",
+      "Architecture"
+    ]
+  },
+  "competition-pairing.md": {
+    "description": "Entry-order seeds and opening pairings for four- and eight-person brackets, with named examples.",
+    "tags": [
+      "Competition",
+      "Pairing"
+    ]
+  },
+  "competition-research.md": {
+    "description": "Playtests about face recognition, keyboard travel, device handoff and spectating.",
+    "tags": [
+      "Competition",
+      "Research",
+      "Input"
+    ]
+  },
+  "competition-rounds.md": {
+    "description": "Round names and their displayed text, with distinctions between event stages and browser session generations.",
+    "tags": [
+      "Competition",
+      "Rounds",
+      "Interface"
+    ]
+  },
+  "competition-scores.md": {
+    "description": "Competition isolation from ordinary saved size and best moves, including the current session write paths.",
+    "tags": [
+      "Competition",
+      "Persistence",
+      "Scores"
+    ]
+  },
+  "competition-ties.md": {
+    "description": "Ordered result comparison, active-time precision, and seed priority for equal results.",
+    "tags": [
+      "Competition",
+      "Results",
+      "Time"
+    ]
+  },
+  "contrast-audit.md": {
+    "description": "Reproducible sRGB contrast calculations for surfaces, text, artwork and the pulse midpoint.",
+    "tags": [
+      "Visuals",
+      "Contrast",
+      "Audit"
+    ]
+  },
+  "control-bar.md": {
+    "description": "The deal buttons, size selector, responsive arrangement and session callbacks in Controls.tsx.",
+    "tags": [
+      "Controls",
+      "Layout",
+      "Session"
+    ]
+  },
+  "controls.md": {
+    "description": "Game options and reproduction controls",
+    "tags": [
+      "LoadNow",
+      "Game",
+      "Controls"
+    ]
+  },
+  "corrupt-data-policy.md": {
+    "description": "Preference validation, silent rejection and the timing of read rejection and later replacement.",
+    "tags": [
+      "Persistence",
+      "Validation"
+    ]
+  },
+  "css-organization.md": {
+    "description": "Stylesheet ownership, global cascade, grid geometry and visual-test seams.",
+    "tags": [
+      "Architecture",
+      "CSS",
+      "Visuals"
+    ]
+  },
+  "data-exchange-policy.md": {
+    "description": "How board codes, snapshots and replays cross application boundaries, with policy for future exports.",
+    "tags": [
+      "Sharing",
+      "Formats",
+      "Policy"
+    ]
+  },
+  "deck-generation.md": {
+    "description": "Board-code parsing, paired deck construction, deterministic shuffle arithmetic, and fresh seed selection.",
+    "tags": [
+      "Game",
+      "Gameplay",
+      "Generation"
+    ]
+  },
+  "dependency-policy.md": {
+    "description": "Locked packages, runtime versus tooling roles and dependency evidence.",
+    "tags": [
+      "Architecture",
+      "Dependencies",
+      "Build"
+    ]
+  },
+  "dialog-policy.md": {
+    "description": "The leave-work confirmation policy and its boundary with current direct deal actions.",
+    "tags": [
+      "Controls",
+      "Dialogs",
+      "Policy"
+    ]
+  },
+  "disabled-state-guide.md": {
+    "description": "Matched ARIA state, game eligibility, imported pause and continued focus movement.",
+    "tags": [
+      "Input",
+      "State",
+      "Accessibility"
+    ]
+  },
+  "documentation-style.md": {
+    "description": "Explains source-grounded documentation, scoped examples, ownership links and bounded evidence claims.",
+    "tags": [
+      "Writing",
+      "Documentation",
+      "Review"
+    ]
+  },
+  "duplicate-names-policy.md": {
+    "description": "Group-scoped name comparison, case handling and evidence for repeat detection.",
+    "tags": [
+      "Forms",
+      "Names",
+      "Validation"
+    ]
+  },
+  "elapsed-time-rules.md": {
+    "description": "Active-time accumulation, browser observations, display conversion, caps, and snapshot precision.",
+    "tags": [
+      "Game",
+      "Gameplay",
+      "Timing"
+    ]
+  },
+  "error-display-guide.md": {
+    "description": "Load validation, visible notices, preserved drafts, focus and retry behavior.",
+    "tags": [
+      "Forms",
+      "Errors",
+      "Validation"
+    ]
+  },
+  "error-message-style.md": {
+    "description": "Documents exact browser notices, replay diagnostics, recovery context and internal exception boundaries.",
+    "tags": [
+      "Writing",
+      "Errors",
+      "Diagnostics"
+    ]
+  },
+  "face-catalogue.md": {
+    "description": "All face identity ranges, shape paths, marker coordinates, fill modes and face-sheet evidence.",
+    "tags": [
+      "Visuals",
+      "Artwork",
+      "Geometry"
+    ]
+  },
+  "feedback-without-audio.md": {
+    "description": "Traces silent card, turn, status, completion and load feedback through the current components and checks.",
+    "tags": [
+      "Sound",
+      "Feedback",
+      "Accessibility"
+    ]
+  },
+  "fixtures-guide.md": {
+    "description": "Literal deal data, independent oracles, reviewed JSON expectations, browser helpers and generated artifacts.",
+    "tags": [
+      "Quality",
+      "Fixtures",
+      "Testing"
+    ]
+  },
+  "flaky-test-notes.md": {
+    "description": "How controlled clocks, visibility inputs, scroll settling and local tolerances isolate timing failures.",
+    "tags": [
+      "Quality",
+      "Timing",
+      "Testing"
+    ]
+  },
+  "focus-policy.md": {
+    "description": "Current action focus and board memory, plus the policy for main-screen replacements.",
+    "tags": [
+      "Input",
+      "Focus",
+      "Policy"
+    ]
+  },
+  "form-layout-guide.md": {
+    "description": "Label associations, responsive field rows, text editing surfaces and load-notice layout.",
+    "tags": [
+      "Forms",
+      "Layout",
+      "Controls"
+    ]
+  },
+  "format-versioning-guide.md": {
+    "description": "Format and product versions, exact-key compatibility and changes to artifact meaning.",
+    "tags": [
+      "Formats",
+      "Compatibility",
+      "Engineering"
+    ]
+  },
+  "game-state-model.md": {
+    "description": "GameState fields, invariants, derived values, immutable transitions, and session boundaries.",
+    "tags": [
+      "Game",
+      "Gameplay",
+      "State"
+    ]
+  },
+  "gameplay-faq.md": {
+    "description": "Answers to common play and maintenance questions, with links to detailed behavior pages.",
+    "tags": [
+      "Game",
+      "Gameplay",
+      "FAQ"
+    ]
+  },
+  "glossary.md": {
+    "description": "Defines player and engineering terms for cards, turns, session state, time and reproduction tools.",
+    "tags": [
+      "Writing",
+      "Terminology",
+      "Game"
+    ]
+  },
+  "icon-and-glyph-policy.md": {
+    "description": "Why the current artwork uses SVG paths and CSS decoration, with native control affordances.",
+    "tags": [
+      "Visuals",
+      "SVG",
+      "Icons"
+    ]
+  },
+  "import-safety-policy.md": {
+    "description": "Untrusted-input validation, replacement safety, current diagnostics and the field-error policy.",
+    "tags": [
+      "Sharing",
+      "Validation",
+      "Policy"
+    ]
+  },
+  "incident-16x16-layout.md": {
+    "description": "Layout investigation covering intrinsic width, scrollbars, pointer timing, and clipped focus outlines.",
+    "tags": [
+      "History",
+      "Incidents",
+      "Layout"
+    ]
+  },
+  "incident-clock-drift.md": {
+    "description": "Timing investigation covering observed deltas, visibility pauses, fractional time, and stale callbacks.",
+    "tags": [
+      "History",
+      "Incidents",
+      "Timing"
+    ]
+  },
+  "incident-focus-trap.md": {
+    "description": "Focus investigation covering native Tab exit, Resume handoff, and visible remembered positions.",
+    "tags": [
+      "History",
+      "Incidents",
+      "Accessibility"
+    ]
+  },
+  "incident-lost-best-scores.md": {
+    "description": "Score-loss investigation distinguishing deal replacement, record updates, and storage fallback.",
+    "tags": [
+      "History",
+      "Incidents",
+      "Persistence"
+    ]
+  },
+  "incident-snapshot-rejects.md": {
+    "description": "Parser investigation separating valid state from canonical JSON presentation and transport limits.",
+    "tags": [
+      "History",
+      "Incidents",
+      "Snapshots"
+    ]
+  },
+  "input.md": {
+    "description": "Pointer, touch, keyboard and focus behavior",
+    "tags": [
+      "LoadNow",
+      "Game",
+      "Input"
+    ]
+  },
+  "interface-review-checklist.md": {
+    "description": "Populated interface review journeys and the source or browser evidence for each.",
+    "tags": [
+      "Review",
+      "Testing",
+      "Controls"
+    ]
+  },
+  "known-issues.md": {
+    "description": "Observed missing verification inputs and documented limits on compatibility and acceptance evidence.",
+    "tags": [
+      "Quality",
+      "Issues",
+      "Evidence"
+    ]
+  },
+  "large-board-rendering.md": {
+    "description": "Full 256-card rendering, bounded scrolling, focus clearance, touch input and rendering optimizations.",
+    "tags": [
+      "Visuals",
+      "Boards",
+      "Scrolling"
+    ]
+  },
+  "layout-grid.md": {
+    "description": "Page and board sizing, width calculations, scrollbars, responsive wrapping and layout tests.",
+    "tags": [
+      "Visuals",
+      "Layout",
+      "CSS"
+    ]
+  },
+  "meeting-notes-accessibility.md": {
+    "description": "Access review connecting keyboard journeys, hidden information, result events, visual reach, and evidence.",
+    "tags": [
+      "History",
+      "Reviews",
+      "Accessibility"
+    ]
+  },
+  "meeting-notes-architecture.md": {
+    "description": "Architecture review tracing attempt ownership, session effects, rendering work, validation, and delivery.",
+    "tags": [
+      "History",
+      "Reviews",
+      "Architecture"
+    ]
+  },
+  "mismatch-interval.md": {
+    "description": "The exact 800-millisecond active interval, synchronization, pauses, and stale timer protection.",
+    "tags": [
+      "Game",
+      "Gameplay",
+      "Timing"
+    ]
+  },
+  "module-layout-policy.md": {
+    "description": "Behavior ownership, dependency direction and feature placement in the game source.",
+    "tags": [
+      "Architecture",
+      "Modules",
+      "Code"
+    ]
+  },
+  "motion-policy.md": {
+    "description": "Current card and completion effects, reduced motion, session flags and motion test coverage.",
+    "tags": [
+      "Visuals",
+      "Motion",
+      "Accessibility"
+    ]
+  },
+  "name-length-policy.md": {
+    "description": "Name-length acceptance, Unicode counting units and boundary examples.",
+    "tags": [
+      "Forms",
+      "Names",
+      "Unicode"
+    ]
+  },
+  "native-controls-guide.md": {
+    "description": "Native element choices and the browser behavior retained around React callbacks.",
+    "tags": [
+      "Controls",
+      "Semantics",
+      "Architecture"
+    ]
+  },
+  "new-game-and-restart.md": {
+    "description": "What fresh deals, repeats, size changes, loads, Resume, exports, and reloads preserve or reset.",
+    "tags": [
+      "Game",
+      "Gameplay",
+      "Sessions"
+    ]
+  },
+  "numbers-style.md": {
+    "description": "Distinguishes displayed counts and durations from indices, numeric limits and serialized values.",
+    "tags": [
+      "Writing",
+      "Numbers",
+      "Formats"
+    ]
+  },
+  "offline-delivery.md": {
+    "description": "Single-file distribution, disk and HTTP behavior and self-containment evidence.",
+    "tags": [
+      "Technology",
+      "Offline",
+      "Delivery"
+    ]
+  },
+  "pair-identity.md": {
+    "description": "Position indices versus face numbers, artwork identity dimensions, and hidden-face rendering.",
+    "tags": [
+      "Game",
+      "Gameplay",
+      "Faces"
+    ]
+  },
+  "performance-budget.md": {
+    "description": "Existing performance constraints, render and input work, and the absence of measured latency thresholds.",
+    "tags": [
+      "Quality",
+      "Performance",
+      "Rendering"
+    ]
+  },
+  "persistence-envelope.md": {
+    "description": "The feature JSON envelope and its distinction from the existing versioned preference aggregate.",
+    "tags": [
+      "Persistence",
+      "Formats"
+    ]
+  },
+  "persistence-overview.md": {
+    "description": "What the current game saves, what remains in memory and which persistence page to consult.",
+    "tags": [
+      "Persistence",
+      "Architecture"
+    ]
+  },
+  "pointer-and-touch.md": {
+    "description": "Native click and tap activation, press timing and scrolling through large boards.",
+    "tags": [
+      "Input",
+      "Pointer",
+      "Touch"
+    ]
+  },
+  "preferences-store.md": {
+    "description": "Code-level guide to preference data, best selection, browser-store acquisition and the save effect.",
+    "tags": [
+      "Persistence",
+      "React",
+      "Code"
+    ]
+  },
+  "private-browsing-notes.md": {
+    "description": "Private-session storage lifetime, denied operations and comparisons that distinguish their effects.",
+    "tags": [
+      "Persistence",
+      "Browsers",
+      "Privacy"
+    ]
+  },
+  "purity-guide.md": {
+    "description": "Explicit inputs, immutable transitions, validation and effect separation in the core.",
+    "tags": [
+      "Architecture",
+      "Rules",
+      "Purity"
+    ]
+  },
+  "randomness-policy.md": {
+    "description": "Fresh seed selection, rejection sampling and the boundary with reproducible decks.",
+    "tags": [
+      "Architecture",
+      "Randomness",
+      "Reproducibility"
+    ]
+  },
+  "react-boundaries.md": {
+    "description": "React components, hooks, local state and the data-only rule boundary.",
+    "tags": [
+      "Architecture",
+      "React",
+      "Rendering"
+    ]
+  },
+  "regression-catalogue.md": {
+    "description": "Recognizable failure modes and the current tests protecting clock, focus, formats and delivery.",
+    "tags": [
+      "Quality",
+      "Regressions",
+      "Testing"
+    ]
+  },
+  "release-checklist.md": {
+    "description": "Existing release commands, candidate checks, delivery evidence and acceptance handoff.",
+    "tags": [
+      "Quality",
+      "Release",
+      "Verification"
+    ]
+  },
+  "release-notes-1-0.md": {
+    "description": "First-release history covering turns, move counting, visible progress, and local records.",
+    "tags": [
+      "History",
+      "Releases",
+      "Gameplay"
+    ]
+  },
+  "release-notes-1-1.md": {
+    "description": "Keyboard release history covering spatial movement, card names, focus, and native page traversal.",
+    "tags": [
+      "History",
+      "Releases",
+      "Accessibility"
+    ]
+  },
+  "release-notes-1-2.md": {
+    "description": "Large-board release history covering seven sizes, scroll containment, artwork variety, and focus reachability.",
+    "tags": [
+      "History",
+      "Releases",
+      "Layout"
+    ]
+  },
+  "release-notes-1-3.md": {
+    "description": "Board-code release history explaining deterministic generation, repeatable deals, and load behavior.",
+    "tags": [
+      "History",
+      "Releases",
+      "Reproducibility"
+    ]
+  },
+  "release-notes-1-4.md": {
+    "description": "Snapshot release history covering explicit progress transport, validation, paused restoration, and completed imports.",
+    "tags": [
+      "History",
+      "Releases",
+      "Snapshots"
+    ]
+  },
+  "release-notes-2-0.md": {
+    "description": "Specification consolidation history connecting pure transitions, browser effects, data lifetimes, and acceptance journeys.",
+    "tags": [
+      "History",
+      "Releases",
+      "Architecture"
+    ]
+  },
+  "release-notes-2-1.md": {
+    "description": "Motion review history explaining reduced-motion CSS, completion effects, and unchanged game timing.",
+    "tags": [
+      "History",
+      "Releases",
+      "Motion"
+    ]
+  },
+  "release-notes-2-2.md": {
+    "description": "Current spec 2.2 behavior and recorded evidence for timing, navigation, zoom, builds, and accessibility.",
+    "tags": [
+      "History",
+      "Releases",
+      "Verification"
+    ]
+  },
+  "replay-format.md": {
+    "description": "Replay schema, logical timing, validation results and CLI conversion to a final snapshot.",
+    "tags": [
+      "Sharing",
+      "Replay",
+      "CLI"
+    ]
+  },
+  "reproducibility.md": {
+    "description": "Board codes, snapshots and replay formats",
+    "tags": [
+      "LoadNow",
+      "Game",
+      "Reproducibility"
+    ]
+  },
+  "reproduction-panel.md": {
+    "description": "Board-code drafts, snapshot editing, load outcomes, export and Resume behavior.",
+    "tags": [
+      "Controls",
+      "Forms",
+      "Sharing"
+    ]
+  },
+  "research-memory-games-survey.md": {
+    "description": "Pattern survey comparing miss timing, solved positions, scoring, face identity, and local repeatability.",
+    "tags": [
+      "History",
+      "Research",
+      "Design"
+    ]
+  },
+  "research-phone-usage.md": {
+    "description": "Phone observations about touch travel, board containment, interruptions, and evidence limits.",
+    "tags": [
+      "History",
+      "Research",
+      "Touch"
+    ]
+  },
+  "research-playtest-autumn.md": {
+    "description": "Follow-up observations about large boards, repeated deals, corrected drafts, and restored progress.",
+    "tags": [
+      "History",
+      "Research",
+      "Reproducibility"
+    ]
+  },
+  "research-playtest-spring.md": {
+    "description": "Introductory playtest observations about learning turns, reading counters, and recognizing completion.",
+    "tags": [
+      "History",
+      "Research",
+      "Gameplay"
+    ]
+  },
+  "research-screen-reader-sessions.md": {
+    "description": "Access research paired with the actual limits of automated accessibility-tree evidence.",
+    "tags": [
+      "History",
+      "Research",
+      "Accessibility"
+    ]
+  },
+  "retention-policy.md": {
+    "description": "Saved-list retention, aggregate best-score lifetime and the absence of an attempt history.",
+    "tags": [
+      "Persistence",
+      "Retention"
+    ]
+  },
+  "retired-idea-hints.md": {
+    "description": "Unbuilt hint proposals and their unresolved effects on information history, scores, snapshots, and access.",
+    "tags": [
+      "History",
+      "RetiredIdeas",
+      "Gameplay"
+    ]
+  },
+  "retired-idea-online-play.md": {
+    "description": "Unbuilt connected-play proposals and the service, ordering, trust, and synchronization questions they raised.",
+    "tags": [
+      "History",
+      "RetiredIdeas",
+      "Architecture"
+    ]
+  },
+  "retired-idea-themes.md": {
+    "description": "Unbuilt theme proposals distinguishing surface colors, face replacement, naming, and offline asset delivery.",
+    "tags": [
+      "History",
+      "RetiredIdeas",
+      "Visuals"
+    ]
+  },
+  "retired-idea-timed-mode.md": {
+    "description": "Unbuilt countdown proposals and unresolved questions about deadlines, active time, board difficulty, and records.",
+    "tags": [
+      "History",
+      "RetiredIdeas",
+      "Timing"
+    ]
+  },
+  "roadmap-notes.md": {
+    "description": "Noncommittal planning discussions about evidence, explanations, dense boards, reproduction, and maintenance.",
+    "tags": [
+      "History",
+      "Planning",
+      "Maintenance"
+    ]
+  },
+  "rules.md": {
+    "description": "Card matching, moves, timing and victory rules",
+    "tags": [
+      "LoadNow",
+      "Game",
+      "Rules"
+    ]
+  },
+  "scoring-and-moves.md": {
+    "description": "Pair progress, move accounting, minimum completions, and continued play at the move cap.",
+    "tags": [
+      "Game",
+      "Gameplay",
+      "Scoring"
+    ]
+  },
+  "screen-reader-notes.md": {
+    "description": "A complete game through exposed names and states, with accessibility evidence limits.",
+    "tags": [
+      "Input",
+      "Accessibility",
+      "Testing"
+    ]
+  },
+  "selection-state.md": {
+    "description": "The closed, one-card, and mismatch selection alternatives, visibility, and decoding boundaries.",
+    "tags": [
+      "Game",
+      "Gameplay",
+      "State"
+    ]
+  },
+  "session-module.md": {
+    "description": "Session fields, controller actions, replacement generations and preference effects.",
+    "tags": [
+      "Architecture",
+      "Session",
+      "State"
+    ]
+  },
+  "sharing-faq.md": {
+    "description": "Practical answers for copying deals, loading progress, fixing drafts and reporting sharing bugs.",
+    "tags": [
+      "Sharing",
+      "Help",
+      "Reproduction"
+    ]
+  },
+  "snapshot-format.md": {
+    "description": "Snapshot fields, shared JSON helpers, consistency checks, rounding and import lifecycle.",
+    "tags": [
+      "Sharing",
+      "Snapshots",
+      "Formats"
+    ]
+  },
+  "snapshot-selection-notes.md": {
+    "description": "How matched positions and selection variants are validated against a regenerated deck.",
+    "tags": [
+      "Snapshots",
+      "Validation",
+      "Implementation"
+    ]
+  },
+  "sound.md": {
+    "description": "Game sound behavior",
+    "tags": [
+      "LoadNow",
+      "Game",
+      "Sound"
+    ]
+  },
+  "source-audit-notes.md": {
+    "description": "Source inspection patterns, discovery, package checks and regex coverage limits.",
+    "tags": [
+      "Quality",
+      "Audits",
+      "Source"
+    ]
+  },
+  "source-layout.md": {
+    "description": "A file-by-file map of application code, tooling, diagnostics and test support.",
+    "tags": [
+      "Architecture",
+      "Source",
+      "Navigation"
+    ]
+  },
+  "spacing-scale.md": {
+    "description": "Authored spacing values by component, resets, scroll clearance and the computed spacing audit.",
+    "tags": [
+      "Visuals",
+      "Spacing",
+      "CSS"
+    ]
+  },
+  "status-bar.md": {
+    "description": "The statistics definition list, counter sources, elapsed display and completion output.",
+    "tags": [
+      "Controls",
+      "Status",
+      "Gameplay"
+    ]
+  },
+  "storage-failure-policy.md": {
+    "description": "Unavailable-storage behavior, feature feedback and the current adapter’s catch boundaries.",
+    "tags": [
+      "Persistence",
+      "Failures"
+    ]
+  },
+  "storage-quota-notes.md": {
+    "description": "Measured preference payload sizes, browser capacity guidance and the scope of quota evidence.",
+    "tags": [
+      "Persistence",
+      "Browsers",
+      "Capacity"
+    ]
+  },
+  "storage-testing-guide.md": {
+    "description": "Existing persistence tests and practical checks for decoding, failures, completion and reload.",
+    "tags": [
+      "Persistence",
+      "Testing"
+    ]
+  },
+  "tables-policy.md": {
+    "description": "The result-table markup policy and how it differs from current statistics and cards.",
+    "tags": [
+      "Controls",
+      "Semantics",
+      "Policy"
+    ]
+  },
+  "target-size-policy.md": {
+    "description": "The new-control size policy, existing CSS dimensions and rendered target measurement.",
+    "tags": [
+      "Controls",
+      "Layout",
+      "Policy"
+    ]
+  },
+  "technology.md": {
+    "description": "Language, package versions, build and distribution",
+    "tags": [
+      "LoadNow",
+      "Game",
+      "Technology"
+    ]
+  },
+  "test-policy.md": {
+    "description": "Unit, source and browser verification layers and what their results establish.",
+    "tags": [
+      "Quality",
+      "Testing",
+      "Architecture"
+    ]
+  },
+  "test-strategy.md": {
+    "description": "How pure tests, browser journeys, source checks and acceptance contribute different evidence.",
+    "tags": [
+      "Quality",
+      "Testing",
+      "Architecture"
+    ]
+  },
+  "text-entry-policy.md": {
+    "description": "Accepted name representation and its separation from board-code and JSON input.",
+    "tags": [
+      "Forms",
+      "Names",
+      "Policy"
+    ]
+  },
+  "theme-tokens.md": {
+    "description": "Existing CSS variables, literal values, artwork color tables and their cascade relationships.",
+    "tags": [
+      "Visuals",
+      "CSS",
+      "Theme"
+    ]
+  },
+  "time-policy.md": {
+    "description": "Active-time ownership, pause conditions, synchronization and logical interval handling.",
+    "tags": [
+      "Architecture",
+      "Time",
+      "Session"
+    ]
+  },
+  "turn-resolution.md": {
+    "description": "Activation guards, second-reveal resolution, and the ordering of time, feedback, and turns.",
+    "tags": [
+      "Game",
+      "Gameplay",
+      "Turns"
+    ]
+  },
+  "typescript-settings.md": {
+    "description": "Compiler projects, exact options, strictness and environment coverage.",
+    "tags": [
+      "Technology",
+      "TypeScript",
+      "Tooling"
+    ]
+  },
+  "typography.md": {
+    "description": "System font inheritance, text hierarchy, numeric styling, controls and text readability evidence.",
+    "tags": [
+      "Visuals",
+      "Typography",
+      "Readability"
+    ]
+  },
+  "unit-test-guide.md": {
+    "description": "How direct state, parser, session, storage and CLI tests isolate decisions and boundaries.",
+    "tags": [
+      "Quality",
+      "UnitTests",
+      "Game"
+    ]
+  },
+  "visual-review-checklist.md": {
+    "description": "Existing visual requirements and relevant source tests grouped into a concrete review journey.",
+    "tags": [
+      "Visuals",
+      "Review",
+      "Quality"
+    ]
+  },
+  "visuals.md": {
+    "description": "Layout, card artwork, colors and motion",
+    "tags": [
+      "LoadNow",
+      "Game",
+      "Visuals"
+    ]
+  },
+  "voice-guide.md": {
+    "description": "Explains the game's restrained voice through current labels, help, accessible names and result feedback.",
+    "tags": [
+      "Writing",
+      "Interface",
+      "Voice"
+    ]
+  },
+  "win-conditions.md": {
+    "description": "Full matched coverage, the final transition, stopped time, and played versus imported completion.",
+    "tags": [
+      "Game",
+      "Gameplay",
+      "Completion"
+    ]
+  },
+  "zoom-behaviour.md": {
+    "description": "Equivalent zoom geometry, text reflow, native controls and playable scrolling boards.",
+    "tags": [
+      "Visuals",
+      "Zoom",
+      "Accessibility"
+    ]
+  }
+}
