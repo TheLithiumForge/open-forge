@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { boardCards, CardState } from './board.ts';
 import { settled } from './browser.ts';
-import { begin, button, championOf, Control, Eight, exported, Four, loaded, nowPlaying, offered, playOn, press, sameCards, tournament, visibleText, winnerOf, writtenText } from './tournament.ts';
+import { begin, button, championOf, Control, Eight, exported, Four, loaded, nowPlaying, offered, playOn, press, sameCards, tournament, tournamentStopped, visibleText, winnerOf, writtenText } from './tournament.ts';
 import type { Page } from 'playwright';
 import type { ChangeCheck } from './check.types.ts';
 
@@ -99,12 +99,12 @@ export const coreChecks: readonly ChangeCheck[] = [
     await loaded(page, end);
     assert.equal(await championOf(page), finished.champion, 'The champion comes back.');
   } },
-  { id: 'core-11', description: 'Leave tournament stops it early and returns to the game, before a turn and during one.', action: async (page) => {
+  { id: 'core-11', description: 'Leave tournament stops it early, before a turn and during one.', action: async (page) => {
     await begin(page, Four);
-    await leave(page); await backAtTheGame(page);
+    await leave(page); await tournamentStopped(page);
     await begin(page, Four);
     await press(page, Control.startTurn);
-    await leave(page); await backAtTheGame(page);
+    await leave(page); await tournamentStopped(page);
   } },
   { id: 'core-12', description: 'The ordinary game still plays after a tournament.', action: async (page) => {
     await tournament(page, Four);

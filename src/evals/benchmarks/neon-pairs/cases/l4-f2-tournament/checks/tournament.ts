@@ -49,8 +49,15 @@ export async function setPlayers(page: Page, names: readonly string[]): Promise<
   }
   await settled(page);
 }
+/** Leaving may return to the Tournament screen or to the game, so a new tournament starts from whichever is showing. */
 export async function begin(page: Page, names: readonly string[]): Promise<void> {
-  await press(page, Control.open); await setPlayers(page, names); await press(page, Control.start);
+  if (await offered(page, Control.open)) await press(page, Control.open);
+  await setPlayers(page, names); await press(page, Control.start);
+}
+/** The request says leaving stops a tournament, not where it goes next, so this asks only that nothing of it is still going. */
+export async function tournamentStopped(page: Page): Promise<void> {
+  assert.equal(await offered(page, Control.startTurn), false, 'No turn is offered any more.');
+  assert.equal(await offered(page, Control.leave), false, 'There is nothing left to leave.');
 }
 /** The name after a label, without the full stop a page may end its sentence with. */
 const labelled = (pattern: RegExp, text: string): string | null => pattern.exec(text)?.[1]?.trim().replace(/\.$/, '') ?? null;

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { PhoneViewport } from './browser.ts';
-import { begin, button, Control, Four, nowPlaying, offered, playOn, press, setPlayers, tournament, visibleText, winnerOf } from './tournament.ts';
+import { begin, button, Control, Four, nowPlaying, playOn, press, setPlayers, tournament, tournamentStopped, visibleText, winnerOf } from './tournament.ts';
 import type { Page } from 'playwright';
 import type { ChangeCheck } from './check.types.ts';
 
@@ -73,7 +73,7 @@ export const accessChecks: readonly ChangeCheck[] = [
     await button(page, Control.keepPlaying).click();
     assert.equal(await nowPlaying(page), name, 'Keep playing keeps playing.');
     await press(page, Control.leave); await press(page, Control.confirmLeave);
-    assert.ok(await offered(page, Control.open), 'Leave leaves.');
+    await tournamentStopped(page);
   } },
   { id: 'A05', session: { viewport: PhoneViewport }, description: 'A05: every control is at least 44 by 44 CSS pixels at a 390 pixel wide viewport, on every Tournament screen.', action: async (page) => {
     const small: string[] = [];

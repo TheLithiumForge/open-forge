@@ -104,7 +104,7 @@
     {
       "id": "core-11",
       "method": "browser",
-      "description": "Leave tournament stops it early and returns to the game, before a turn and during one.",
+      "description": "Leave tournament stops it early, before a turn and during one.",
       "expected": {
         "starting": "fail",
         "solution": "pass"
