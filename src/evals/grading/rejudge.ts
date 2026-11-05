@@ -67,7 +67,7 @@ function builtGame(run: RunView, folder: string): string | null {
 
 /** Whether a judge has what this case asks of it. A case that plays its game has nothing to play in a run that never built. */
 function judgeable(suite: Suite, run: RunView): boolean {
-  return !existsSync(casePlaythrough(suite.id)) || builtGame(run, runFolder(run.batchId, run.id)) !== null;
+  return !existsSync(casePlaythrough(suite.id)) || (run.build?.passed !== false && builtGame(run, runFolder(run.batchId, run.id)) !== null);
 }
 
 /** One capture per run beside the batch's runs, so every judge reads the same evidence, and later ballots can too. */
