@@ -154,7 +154,7 @@ npm run evals -- results add <batch>
 | `--judges <preset>` | `run`, `judge`, `reference` | Replace the judges with claude, codex, both |
 | `--user <preset>` | `run` | Replace the simulated user with claude, codex |
 | `--case <id>` | `run`, `validate-case`, `chain-check` | Run or validate one Layer 4 case, so each case can run as its own process, or name the task chain-check plants next in a task-by-task packet |
-| `--setups <ids>` | `run` | Run only these setups of the plan, comma-separated, in the plan's order. The plan's first setup is the control and must stay |
+| `--setups <ids>` | `run`, `judge` | Run or judge only these setups, comma-separated. For a run they keep the plan's order, and the plan's first setup is the control and must stay |
 | `--parent <batch>` | `run`, `chain-check` | Name the previous task's batch. Each run starts from the parent run with the same setup and repeat |
 | `--all` | `validate-case` | Validate every case of the plan |
 | `--layer <n>` | `reference` | Grade the reference against Layer 2 or 3 |

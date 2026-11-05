@@ -45,6 +45,8 @@ const tokenMeasure = { ...base, definition: "tokens", changeKind: ChangeKind.rat
 export const CellMeasures: readonly MeasureSpec[] = [
   { ...base, id: "check-coverage", definition: "check-coverage", title: "Check coverage", changeKind: ChangeKind.points, inSpread: true, value: (cell) => cell.coverage, run: (values) => values.coverage, format: shareText, csv: share },
   { ...base, id: "judge-score", definition: "judge-score", title: "Judge score", changeKind: ChangeKind.points, perJudge: true, inSpread: true, value: (cell) => cell.judgeScore, run: (values) => values.judgeScore, format: shareText, csv: share },
+  { ...base, id: "judge-quality", definition: "judge-quality", title: "Judge quality", changeKind: ChangeKind.points, perJudge: true, inSpread: true, value: (cell) => cell.judgeQuality, run: (values) => values.judgeQuality, format: shareText, csv: share },
+  { ...base, id: "judge-adherence", definition: "judge-adherence", title: "Judge adherence", changeKind: ChangeKind.points, perJudge: true, inSpread: true, value: (cell) => cell.judgeAdherence, run: (values) => values.judgeAdherence, format: shareText, csv: share },
   { ...tokenMeasure, id: "tokens", title: "Tokens", inSpread: true, value: (cell) => cell.tokens, run: (values) => values.tokens },
   { ...base, id: "cost", definition: "cost", title: "Cost", changeKind: ChangeKind.ratio, inSpread: true, value: (cell) => cell.cost, run: (values) => values.cost, format: dollars, csv: money },
   { ...tokenMeasure, id: "new-input", title: "New input", value: (cell) => cell.newInput, run: (values) => values.newInput },

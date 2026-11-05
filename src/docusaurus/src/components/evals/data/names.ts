@@ -60,5 +60,5 @@ export function isCaseId(id: string): id is CaseId {
 export const PacketTasks: Readonly<Partial<Record<CaseId, number>>> = { "l4-p1-four-bugs": 4, "l4-p2-name-and-pasted-saves": 2 };
 
 /** The measures a reader can look up. */
-export const MeasureNames = { "check-coverage": "Check coverage", "judge-score": "Judge score", tokens: "Tokens", cost: "Cost", time: "Time" } as const;
+export const MeasureNames = { "check-coverage": "Check coverage", "judge-score": "Judge score", "judge-quality": "Judge quality", "judge-adherence": "Judge adherence", tokens: "Tokens", cost: "Cost", time: "Time" } as const;
 export type MeasureId = keyof typeof MeasureNames;

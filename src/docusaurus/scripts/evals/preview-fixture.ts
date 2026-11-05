@@ -51,6 +51,11 @@ export function previewBatch(version: number, reference = false): Batch {
         id: area, area, question: `Fixture ${area} question`,
         yes: judgeIndex === 0 ? 3 : 2, no: judgeIndex === 0 ? 0 : 1, unsure: 0, evidence: ["src/game.ts:1. Authored fixture evidence. <b>Plain text</b>"]
       })),
+      scores: [{ group: "play", headline: "quality" }, { group: "code", headline: "quality" }, { group: "spec", headline: "adherence" }].map(({ group, headline }) => ({
+        id: group, headline, group, title: `Fixture ${group} dimension`, ballots: [5, 7 - judgeIndex, 9], evidence: ["src/game.ts:1. Authored fixture evidence."]
+      })),
+      findings: [{ ballot: 1, kind: "concern", area: "play", impact: "annoys", text: "Authored fixture finding.", citations: ["source:src/game.ts:1"] }],
+      summaries: ["Authored fixture summary."],
     }))];
   });
   return {

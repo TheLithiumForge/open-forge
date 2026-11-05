@@ -27,7 +27,7 @@ export const PlotMeasures: readonly PlotMeasure[] = [
   { key: RunsKey, title: "Runs", definition: null, spec: null, mode: PlotMode.value },
 ];
 
-const [Coverage, , Tokens] = CellMeasures;
+const [Coverage, , , , Tokens] = CellMeasures;
 /** Token change across, check coverage change up, and runs as the bubble size. */
 export const PlotDefaults = { x: Tokens === undefined ? RunsKey : changeKey(Tokens), y: Coverage === undefined ? RunsKey : changeKey(Coverage), size: RunsKey } as const;
 

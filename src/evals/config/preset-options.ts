@@ -15,12 +15,12 @@ export function parallelOption(args: readonly string[]): number {
   return value;
 }
 
-export function judgeOptions(args: readonly string[]): { batchId: string; onlyRun: string | undefined; overrides: Partial<EvalConfig>; missingOnly: boolean } {
-  const flags = [Flag.judges, Flag.parallel].map((flag) => args.indexOf(flag)).filter((at) => at >= 0);
+export function judgeOptions(args: readonly string[]): { batchId: string; onlyRun: string | undefined; onlySetups: readonly string[] | undefined; overrides: Partial<EvalConfig>; missingOnly: boolean } {
+  const flags = [Flag.judges, Flag.parallel, Flag.setups].map((flag) => args.indexOf(flag)).filter((at) => at >= 0);
   const overrides = { ...(args.includes(Flag.judges) ? presetChoices({ judges: option(args, Flag.judges) }) : {}), ...(args.includes(Flag.parallel) ? { parallelRuns: parallelOption(args) } : {}) };
   const missing = args.filter((arg) => arg === Flag.missing).length;
   const operands = args.filter((arg, index) => arg !== Flag.missing && !flags.some((at) => index === at || index === at + 1));
   const [batchId, onlyRun] = operands;
-  if (batchId === undefined || operands.length > 2 || missing > 1 || operands.some((value) => value.startsWith("--"))) throw new Error("Use judge <batch> [run] [--judges <preset>] [--parallel <n>] [--missing].");
-  return { batchId, onlyRun, overrides, missingOnly: missing === 1 };
+  if (batchId === undefined || operands.length > 2 || missing > 1 || operands.some((value) => value.startsWith("--"))) throw new Error("Use judge <batch> [run] [--judges <preset>] [--parallel <n>] [--setups <ids>] [--missing].");
+  return { batchId, onlyRun, onlySetups: args.includes(Flag.setups) ? option(args, Flag.setups).split(",") : undefined, overrides, missingOnly: missing === 1 };
 }

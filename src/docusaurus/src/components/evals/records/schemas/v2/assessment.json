@@ -304,6 +304,24 @@
               "type": "null"
             }
           ]
+        },
+        "scores": {
+          "type": "array",
+          "items": {
+            "$ref": "common.json#/$defs/judgeScore"
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "common.json#/$defs/judgeFinding"
+          }
+        },
+        "summaries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": [

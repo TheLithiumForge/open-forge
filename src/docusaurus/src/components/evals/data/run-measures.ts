@@ -1,3 +1,4 @@
+import { headlineShare, JudgeHeadline } from "./judge-scores.ts";
 import type { Assessment, Batch, Choice, Judge, Run } from "../records/records.types.ts";
 import { latestRun, tokenTotal } from "./analysis.ts";
 import { choiceKey, isReference } from "./observations.ts";
@@ -31,9 +32,18 @@ export function coverageOf(run: Run, assessments: readonly Assessment[]): number
   return checkState(run, assessments) === CheckState.checked ? latestRun(run, assessments).result?.coverage.share ?? null : null;
 }
 
+const latestJudgment = (run: Run, choice: Choice, assessments: readonly Assessment[]): Judge | undefined =>
+  assessments.filter((item): item is Judge => item.kind === "judge" && item.runId === run.id && choiceKey(item.requestedModel) === choiceKey(choice)).at(-1);
+
+/** One judge's headline for the run, or null when its latest judgment has none. */
+export function judgeHeadlineOf(run: Run, choice: Choice, assessments: readonly Assessment[], headline: JudgeHeadline): number | null {
+  const judgment = latestJudgment(run, choice, assessments);
+  return judgment === undefined || judgment.error !== null ? null : headlineShare(judgment, headline);
+}
+
 /** The share of yes ballots among all of one judge's ballots on the run's latest judgment. */
 export function judgeScoreOf(run: Run, choice: Choice, assessments: readonly Assessment[]): number | null {
-  const judgment = assessments.filter((item): item is Judge => item.kind === "judge" && item.runId === run.id && choiceKey(item.requestedModel) === choiceKey(choice)).at(-1);
+  const judgment = latestJudgment(run, choice, assessments);
   if (judgment === undefined || judgment.error !== null || judgment.answers.length === 0) return null;
   const yes = judgment.answers.reduce((sum, answer) => sum + answer.yes, 0);
   const all = judgment.answers.reduce((sum, answer) => sum + answer.yes + answer.no + answer.unsure, 0);
@@ -69,6 +79,8 @@ export interface RunValues {
   readonly repeat: number;
   readonly coverage: number | null;
   readonly judgeScore: number | null;
+  readonly judgeQuality: number | null;
+  readonly judgeAdherence: number | null;
   readonly tokens: number | null;
   readonly cost: number | null;
   readonly newInput: number | null;
@@ -82,6 +94,8 @@ export interface RunValues {
 export function runValues(run: Run, assessments: readonly Assessment[], judge: Choice | null): RunValues {
   return {
     runId: run.id, repeat: run.repeat, coverage: coverageOf(run, assessments), judgeScore: judge === null ? null : judgeScoreOf(run, judge, assessments),
+    judgeQuality: judge === null ? null : judgeHeadlineOf(run, judge, assessments, JudgeHeadline.quality),
+    judgeAdherence: judge === null ? null : judgeHeadlineOf(run, judge, assessments, JudgeHeadline.adherence),
     tokens: tokenTotal(run), cost: runCost(run), newInput: tokenClass(run, TokenClass.newInput), cacheWrites: tokenClass(run, TokenClass.cacheWrites),
     cachedInput: tokenClass(run, TokenClass.cachedInput), output: tokenClass(run, TokenClass.output), cacheHitRate: cacheHitRate(run),
     minutes: run.agentSeconds === null ? null : run.agentSeconds / 60,

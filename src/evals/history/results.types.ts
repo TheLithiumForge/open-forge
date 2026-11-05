@@ -57,6 +57,24 @@ export interface PerformanceResult {
   readonly largeBoardTapP95Ms: number | null;
 }
 
+/** One dimension of a judgment, on a scale from 0 to 10, with every ballot's score. */
+export interface JudgeScore {
+  readonly id: string;
+  readonly headline: string;
+  readonly group: string;
+  readonly title: string;
+  readonly ballots: readonly number[];
+  readonly evidence: readonly string[];
+}
+/** Free writing from one ballot. It's there to read, and no score comes from it. */
+export interface JudgeFinding {
+  readonly ballot: number;
+  readonly kind: string;
+  readonly area: string;
+  readonly impact: string | null;
+  readonly text: string;
+  readonly citations: readonly string[];
+}
 export interface JudgeAnswer {
   readonly id: string;
   readonly area: string;

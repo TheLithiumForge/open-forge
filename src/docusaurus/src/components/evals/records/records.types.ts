@@ -58,7 +58,14 @@ export interface Checks extends AssessmentBase {
   readonly build: { readonly passed: boolean; readonly typecheck: boolean | null; readonly seconds: number; readonly packages: number | null; readonly html: string | null; readonly bytes: number | null; readonly log: string } | null;
   readonly performance: { readonly firstRenderMs: number | null; readonly largeBoardTapP95Ms: number | null } | null; readonly shots: readonly string[];
 }
-export interface Judge extends AssessmentBase { readonly ballots?: number; readonly kind: "judge"; readonly runId: string; readonly answers: readonly Ballot[]; readonly requestedModel: Choice | null; readonly reportedModel: string | null }
+/** One dimension of a judgment, out of 10, with every ballot's score. */
+export interface JudgeScore { readonly id: string; readonly headline: string; readonly group: string; readonly title: string; readonly ballots: readonly number[]; readonly evidence: readonly string[] }
+/** Free writing from one ballot. It's there to read, and no score comes from it. */
+export interface JudgeFinding { readonly ballot: number; readonly kind: string; readonly area: string; readonly impact: string | null; readonly text: string; readonly citations: readonly string[] }
+export interface Judge extends AssessmentBase {
+  readonly ballots?: number; readonly kind: "judge"; readonly runId: string; readonly answers: readonly Ballot[]; readonly requestedModel: Choice | null; readonly reportedModel: string | null;
+  readonly scores?: readonly JudgeScore[]; readonly findings?: readonly JudgeFinding[]; readonly summaries?: readonly string[];
+}
 export interface Pick extends AssessmentBase {
   readonly kind: "pick"; readonly left: { readonly runId: string; readonly artifactHash: string | null; readonly side: "left" };
   readonly right: { readonly runId: string; readonly artifactHash: string | null; readonly side: "right" };

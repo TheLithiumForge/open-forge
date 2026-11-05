@@ -3,6 +3,7 @@ import { latestRun, tokenTotal } from "./data/analysis.ts";
 import { modelLabel } from "./data/names.ts";
 import { number, percent } from "./data/format.ts";
 import { Evidence } from "./Evidence.tsx";
+import { JudgeDetails } from "./JudgeDetails.tsx";
 import { RunTokens } from "./RunTokens.tsx";
 export function Attempt({ batch, run }: {
   readonly batch: Batch;
@@ -36,6 +37,8 @@ export function Attempt({ batch, run }: {
         </table></div>
       </> : <>
         <p>Reported judge: {record.reportedModel ?? "Missing"}. Ballots: {record.ballots ?? "Missing"}.</p>
+        <JudgeDetails record={record} />
+        {batch.artifacts.some((item) => item.assessmentId === record.id) ? <Evidence batch={batch} artifacts={batch.artifacts.filter((item) => item.assessmentId === record.id)} /> : null}
         {record.answers.length === 0 ? <p>Judge answers are missing.</p> : null}
         {record.answers.map((answer) => <details key={answer.id}><summary>{answer.area}: {answer.question}. {answer.yes} yes, {answer.no} no, {answer.unsure} unsure.</summary>
           <p>Evidence:</p><ul>{answer.evidence.map((evidence, index) => <li className="eval-evidence" key={index}>{evidence}</li>)}</ul>

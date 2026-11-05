@@ -209,6 +209,9 @@
 .evals .eval-key, .evals code, .evals summary { overflow-wrap: anywhere; }
 .evals pre { max-width: 100%; white-space: pre-wrap; }
 .evals .eval-evidence { min-width: 16rem; white-space: pre-wrap; }
+.evals .eval-judge-headlines { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; margin: .75rem 0; }
+.evals .eval-judge-headlines dt { font-size: .8rem; font-weight: 400; }
+.evals .eval-judge-headlines dd { margin: 0; font-size: 1.25rem; font-weight: 600; }
 .evals .eval-shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr)); gap: .75rem; margin: .75rem 0; }
 .evals .eval-shots a { display: flex; flex-direction: column; gap: .25rem; font-size: .75rem; overflow-wrap: anywhere; }
 .evals .eval-shots img { width: 100%; height: 9rem; object-fit: contain; border: 1px solid var(--eval-border); border-radius: var(--ifm-global-radius); background: var(--ifm-background-surface-color); }

@@ -31,6 +31,8 @@ import MinimalScoped from "@site/docs/evals/_definitions/minimal-scoped.mdx";
 import EssentialsScoped from "@site/docs/evals/_definitions/essentials-scoped.mdx";
 import CheckCoverage from "@site/docs/evals/_definitions/check-coverage.mdx";
 import JudgeScore from "@site/docs/evals/_definitions/judge-score.mdx";
+import JudgeQuality from "@site/docs/evals/_definitions/judge-quality.mdx";
+import JudgeAdherence from "@site/docs/evals/_definitions/judge-adherence.mdx";
 import Tokens from "@site/docs/evals/_definitions/tokens.mdx";
 import Time from "@site/docs/evals/_definitions/time.mdx";
 
@@ -80,6 +82,8 @@ export const Definitions: Readonly<Record<DefinitionId, Definition>> = {
   "essentials-scoped": { title: SetupNames["essentials-scoped"], kind: DefinitionKind.setup, Content: EssentialsScoped },
   "check-coverage": { title: MeasureNames["check-coverage"], kind: DefinitionKind.measure, Content: CheckCoverage },
   "judge-score": { title: MeasureNames["judge-score"], kind: DefinitionKind.measure, Content: JudgeScore },
+  "judge-quality": { title: MeasureNames["judge-quality"], kind: DefinitionKind.measure, Content: JudgeQuality },
+  "judge-adherence": { title: MeasureNames["judge-adherence"], kind: DefinitionKind.measure, Content: JudgeAdherence },
   tokens: { title: MeasureNames.tokens, kind: DefinitionKind.measure, Content: Tokens },
   cost: { title: MeasureNames.cost, kind: DefinitionKind.measure, Content: Cost },
   time: { title: MeasureNames.time, kind: DefinitionKind.measure, Content: Time },

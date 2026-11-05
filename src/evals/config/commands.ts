@@ -59,7 +59,7 @@ export const FlagHelp: readonly FlagDoc[] = [
   { flag: `${Flag.judges} <preset>`, commands: [Command.run, Command.judge, Command.reference], effect: `Replace the judges with ${Object.keys(JudgePresets).join(", ")}` },
   { flag: `${Flag.user} <preset>`, commands: [Command.run], effect: `Replace the simulated user with ${Object.keys(UserPresets).join(", ")}` },
   { flag: `${Flag.case} <id>`, commands: [Command.run, Command.validateCase, Command.chainCheck], effect: "Run or validate one Layer 4 case, so each case can run as its own process, or name the task chain-check plants next in a task-by-task packet" },
-  { flag: `${Flag.setups} <ids>`, commands: [Command.run], effect: "Run only these setups of the plan, comma-separated, in the plan's order. The plan's first setup is the control and must stay" },
+  { flag: `${Flag.setups} <ids>`, commands: [Command.run, Command.judge], effect: "Run or judge only these setups, comma-separated. For a run they keep the plan's order, and the plan's first setup is the control and must stay" },
   { flag: `${Flag.parent} <batch>`, commands: [Command.run, Command.chainCheck], effect: "Name the previous task's batch. Each run starts from the parent run with the same setup and repeat" },
   { flag: Flag.all, commands: [Command.validateCase], effect: "Validate every case of the plan" },
   { flag: `${Flag.layer} <n>`, commands: [Command.reference], effect: "Grade the reference against Layer 2 or 3" },

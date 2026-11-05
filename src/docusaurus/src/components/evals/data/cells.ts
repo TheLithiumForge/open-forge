@@ -57,6 +57,8 @@ export interface Cell {
   readonly judgedLater: boolean;
   readonly coverage: Measure;
   readonly judgeScore: Measure;
+  readonly judgeQuality: Measure;
+  readonly judgeAdherence: Measure;
   readonly tokens: Measure;
   readonly cost: Measure;
   /** Token classes. They add up to the total. */
@@ -154,11 +156,11 @@ export function cells(batches: readonly Batch[]): Cell[] {
         cacheWrites: pick((value) => value.cacheWrites), cachedInput: pick((value) => value.cachedInput), outputTokens: pick((value) => value.output),
         cacheHitRate: pick((value) => value.cacheHitRate), minutes: pick((value) => value.minutes),
       };
-      if (judges.size === 0) return [{ ...base, judge: null, judgeLabel: null, judged: 0, judgeScore: measure([]), runValues: values }];
+      if (judges.size === 0) return [{ ...base, judge: null, judgeLabel: null, judged: 0, judgeScore: measure([]), judgeQuality: measure([]), judgeAdherence: measure([]), runValues: values }];
       return [...judges.values()].map((choice) => {
         const judged = group.map((run) => runValues(run, batch.assessments, choice));
         const scores = judged.map((value) => value.judgeScore);
-        return { ...base, judge: choiceKey(choice), judgeLabel: modelLabel(choice), judged: scores.filter((score) => score !== null).length, judgeScore: measure(scores), runValues: judged };
+        return { ...base, judge: choiceKey(choice), judgeLabel: modelLabel(choice), judged: scores.filter((score) => score !== null).length, judgeScore: measure(scores), judgeQuality: measure(judged.map((value) => value.judgeQuality)), judgeAdherence: measure(judged.map((value) => value.judgeAdherence)), runValues: judged };
       });
     }));
   });

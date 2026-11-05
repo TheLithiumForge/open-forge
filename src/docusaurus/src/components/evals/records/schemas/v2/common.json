@@ -187,6 +187,89 @@
       ],
       "additionalProperties": true
     },
+    "judgeScore": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "headline": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "ballots": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "headline",
+        "group",
+        "title",
+        "ballots",
+        "evidence"
+      ],
+      "additionalProperties": true
+    },
+    "judgeFinding": {
+      "type": "object",
+      "properties": {
+        "ballot": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kind": {
+          "type": "string"
+        },
+        "area": {
+          "type": "string"
+        },
+        "impact": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "ballot",
+        "kind",
+        "area",
+        "impact",
+        "text",
+        "citations"
+      ],
+      "additionalProperties": true
+    },
     "config": {
       "type": "object",
       "properties": {

@@ -5,6 +5,8 @@ description: The numbers the evals compare for every run, check coverage, judge 
 
 import CheckCoverage from "./_definitions/check-coverage.mdx"
 import JudgeScore from "./_definitions/judge-score.mdx"
+import JudgeQuality from "./_definitions/judge-quality.mdx"
+import JudgeAdherence from "./_definitions/judge-adherence.mdx"
 import Tokens from "./_definitions/tokens.mdx"
 import Cost from "./_definitions/cost.mdx"
 import Time from "./_definitions/time.mdx"
@@ -13,7 +15,7 @@ import Time from "./_definitions/time.mdx"
 
 Measures are the numbers the evals record for every run, so you can compare setups on quality and cost.
 
-Check coverage and judge score measure quality. Tokens, cost and time measure what the work took, and the [objective measures](#objective-measures) show where the tokens went. They stay apart, with no combined score. For example, a setup can raise check coverage and use more tokens, and [Results](results.mdx) shows both against the same control. Results also keep each starting point, implementer and judge apart.
+Check coverage, judge score, judge quality and judge adherence measure quality. Tokens, cost and time measure what the work took, and the [objective measures](#objective-measures) show where the tokens went. They stay apart, with no combined score. For example, a setup can raise check coverage and use more tokens, and [Results](results.mdx) shows both against the same control. Results also keep each starting point, implementer and judge apart.
 
 ## Check coverage \{#check-coverage}
 
@@ -22,6 +24,14 @@ Check coverage and judge score measure quality. Tokens, cost and time measure wh
 ## Judge score \{#judge-score}
 
 <JudgeScore />
+
+## Judge quality \{#judge-quality}
+
+<JudgeQuality />
+
+## Judge adherence \{#judge-adherence}
+
+<JudgeAdherence />
 
 ## Tokens \{#tokens}
 
