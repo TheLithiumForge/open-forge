@@ -7182,11 +7182,6 @@
    "directive": "directives/writing/adr-053-docs-in-repo.md"
   },
   {
-   "document": "adr-053-docs-in-repo.md",
-   "sentence": "The product specification belongs in `docs/` alongside the source.",
-   "directive": "directives/writing/adr-053-docs-in-repo.md"
-  },
-  {
    "document": "adr-057-small-components.md",
    "sentence": "The source-size specification aims for 100 lines per TypeScript file and limits authored files to 200 lines.",
    "directive": "directives/architecture/adr-057-small-components.md"

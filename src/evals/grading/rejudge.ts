@@ -13,6 +13,7 @@ import { caseStaleStatements, evidenceFileText, workEvidence, WorkEvidenceFiles,
 import { inventory } from "../materialize/files.ts";
 import { ForgePreset } from "../materialize/forge.ts";
 import { loadPlacement } from "../materialize/placement.ts";
+import { SetupKind } from "../materialize/setup.ts";
 import { evalsRoot } from "../paths.ts";
 import { ResultFiles } from "../paths.ts";
 import { judgeAssessment } from "../history/assessments.ts";
@@ -92,7 +93,9 @@ async function writeWorkEvidence(suite: Suite, run: RunView, filesFolder: string
   if (stale.length === 0 || suite.brownfield === undefined) return undefined;
   const delivery = suite.setups[run.setup]?.delivery;
   const placement = delivery?.placement === undefined ? undefined : await loadPlacement(join(evalsRoot, delivery.placement));
-  const work = workEvidence(await inventory(filesFolder), suite.brownfield.seed, suite.brownfield.specifications.documents, stale, placement, delivery?.preset ?? ForgePreset.minimal);
+  // A code-only project never had the documents, so it can't have changed them or let them go stale.
+  const codeOnly = delivery?.kind === SetupKind.code;
+  const work = workEvidence(await inventory(filesFolder), suite.brownfield.seed, codeOnly ? [] : suite.brownfield.specifications.documents, codeOnly ? [] : stale, placement, delivery?.preset ?? ForgePreset.minimal);
   await mkdir(join(project, WorkEvidenceFiles.folder));
   for (const file of work.files) await writeFile(join(project, WorkEvidenceFiles.folder, file.name), evidenceFileText(file.lines));
   return work.staleDocs;
