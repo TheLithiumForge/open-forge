@@ -21,7 +21,7 @@ export function modelLabel(choice: Choice, reported?: string | null): string {
 /** Setups in reading order: the controls, the other setups without Open Forge, then the Open Forge presets from small to large. */
 export const SetupNames = {
   "no-setup": "No setup", "code-only": "Code only", "plain-docs": "Plain docs", "organized-docs": "Organized docs", "overloaded-docs": "Overloaded docs", "linked-agents": "Linked AGENTS.md", "spec-in-prompt": "Spec in prompt",
-  minimal: "Minimal", "minimal-scoped": "Minimal, scoped", essentials: "Essentials", "essentials-scoped": "Essentials, scoped", "full-core": "Full Core", "full-core-scoped": "Full Core, scoped",
+  minimal: "Minimal", "minimal-scoped": "Minimal, outside route (retired)", "minimal-proper": "Minimal, proper", essentials: "Essentials", "essentials-scoped": "Essentials, outside route (retired)", "essentials-proper": "Essentials, proper", "full-core": "Full Core", "full-core-scoped": "Improper: Full Core, outside route", "full-core-proper": "Full Core, proper",
   "full-core-scoped-memory": "Full Core, scoped, with memory",
 } as const satisfies Readonly<Record<string, string>>;
 export type SetupId = keyof typeof SetupNames;
@@ -60,5 +60,5 @@ export function isCaseId(id: string): id is CaseId {
 export const PacketTasks: Readonly<Partial<Record<CaseId, number>>> = { "l4-p1-four-bugs": 4, "l4-p2-name-and-pasted-saves": 2 };
 
 /** The measures a reader can look up. */
-export const MeasureNames = { "check-coverage": "Check coverage", "judge-score": "Judge score", "judge-quality": "Judge quality", "judge-adherence": "Judge adherence", tokens: "Tokens", cost: "Cost", time: "Time" } as const;
+export const MeasureNames = { "check-coverage": "Check coverage", "judge-score": "Judge score", "judge-quality": "Judge quality", "judge-adherence": "Judge adherence", "judge-upkeep": "Judge docs kept current", "pages-current": "State pages current", tokens: "Tokens", cost: "Cost", time: "Time" } as const;
 export type MeasureId = keyof typeof MeasureNames;

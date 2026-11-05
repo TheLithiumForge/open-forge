@@ -30,10 +30,13 @@ export function createForgeRunner(run: CommandRunner = runCommand): ForgeRunner 
 export interface FrameworkAdditions {
   readonly extensions?: readonly string[];
   readonly place?: () => Promise<void>;
+  /** Set when the setup places its documents in the categories itself, so nothing routes an outside folder. Names the categories the preset lacks, for the loader to list. */
+  readonly customRoots?: readonly string[];
 }
 
-export function frameworkRequests(preset: ForgePreset = ForgePreset.minimal, extensions: readonly string[] = []): readonly (readonly string[])[] {
+export function frameworkRequests(preset: ForgePreset = ForgePreset.minimal, extensions: readonly string[] = [], customRoots?: readonly string[]): readonly (readonly string[])[] {
   const install = ["install", "--preset", preset, "--frontmatter", "scoped", "--automatic"];
+  if (customRoots !== undefined) return [install, ...customRoots.map((root) => ["route", "include", root]), ["index"]];
   if (extensions.length === 0) return [install, ...ForgeRequests.slice(1)];
   // Extension routes exist only after their install, and a full index lists what lands on them.
   return [install, ["extension", "install", ...extensions, "--automatic"], ...ForgeRequests.slice(1), ["index"]];
@@ -44,8 +47,9 @@ export async function installFramework(destination: string, run: ForgeRunner, pr
   const version = await run([ForgeFlags.version], destination);
   if (version.code !== 0 || version.stdout.trim() !== FrameworkVersion) throw new Error(`Expected Open Forge ${FrameworkVersion}.`);
   const receipts: ForgeReceipt[] = [];
-  const requests = frameworkRequests(preset, additions.extensions);
-  const routing = requests.indexOf(requests.find((request) => request[0] === ForgeRequests[1][0]) ?? []);
+  const requests = frameworkRequests(preset, additions.extensions, additions.customRoots);
+  // Placed files need the installed categories, and a custom category must exist before the loader can list it.
+  const routing = additions.customRoots !== undefined ? 1 : requests.indexOf(requests.find((request) => request[0] === ForgeRequests[1][0]) ?? []);
   for (const [index, request] of requests.entries()) {
     if (index === routing) await additions.place?.();
     for (const preview of [true, false]) {

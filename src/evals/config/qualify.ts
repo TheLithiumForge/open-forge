@@ -9,7 +9,7 @@ import { object, text } from "./validation.ts";
 
 // A lock list that may be empty, such as an Extension without dependencies.
 const textList = (value: unknown): string[] => Array.isArray(value) ? value.map(text) : [];
-import { checkDocumentSetup } from "../materialize/qualification.ts";
+import { checkDocumentSetup, checkPlacementReach } from "../materialize/qualification.ts";
 
 export const QualificationFiles = { agents: "AGENTS.md", loader: ".agents/loader.md", lock: ".agents/open-forge.lock.json" } as const;
 export interface QualifiedSetup { readonly setup: string; readonly files: number; readonly frameworkVersion: string | null }
@@ -21,7 +21,10 @@ export async function checkSetup(generated: GeneratedSetup): Promise<QualifiedSe
   const files = await inventory(generated.folder);
   const names = files.map((file) => file.path).filter((path) => !CliStateFiles.has(path)).sort();
   if (JSON.stringify(names) !== JSON.stringify([...generated.expected].sort())) throw new Error("Setup files differ from the fresh CLI plan. Another setup's files may be present.");
-  if (generated.materialized !== undefined) await checkDocumentSetup(generated.folder, generated.materialized);
+  if (generated.materialized !== undefined) {
+    await checkDocumentSetup(generated.folder, generated.materialized);
+    await checkPlacementReach(generated.folder, generated.materialized);
+  }
   if (generated.frameworkVersion !== null) {
     if (generated.frameworkVersion !== ImageVersions.openForge) throw new Error("The setup has the wrong Open Forge version.");
     for (const name of Object.values(QualificationFiles)) if (!names.includes(name)) throw new Error("The setup is missing an entry file.");

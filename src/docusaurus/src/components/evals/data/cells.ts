@@ -16,7 +16,13 @@ export const StartingPoints = [
 ] as const;
 export type StartingPointId = (typeof StartingPoints)[number]["id"];
 /** Setups that install Open Forge, from smallest to largest, then the scoped variant. */
-export const OpenForgeSetups = ["minimal", "minimal-scoped", "essentials", "essentials-scoped", "full-core", "full-core-scoped", "full-core-scoped-memory"] as const;
+export const OpenForgeSetups = ["minimal-proper", "essentials-proper", "full-core-proper", "minimal", "minimal-scoped", "essentials", "essentials-scoped", "full-core", "full-core-scoped", "full-core-scoped-memory"] as const;
+const inputsScope = (batch: Batch): string => {
+  const fingerprints: unknown = Reflect.get(batch.experiment, "fingerprints");
+  return JSON.stringify([typeof fingerprints === "object" && fingerprints !== null ? [Reflect.get(fingerprints, "benchmarkInputs"), Reflect.get(fingerprints, "tooling")] : null, batch.experiment.suite]);
+};
+/** A case whose control ran in an earlier batch, so a batch of only new setups still has something to compare with. */
+export const CaseControls: Readonly<Record<string, string>> = { "l4-f2-tournament": "organized-docs" };
 
 export interface Measure {
   readonly mean: number | null;
@@ -35,6 +41,8 @@ export interface Cell {
   readonly cliVersion: string | null;
   readonly setup: string;
   readonly control: string;
+  /** The benchmark inputs and tooling the batch used. Only cells with the same ones compare across batches. */
+  readonly inputsScope: string;
   /** The milestone this cell's batch belongs to, or null for a standalone batch. */
   readonly chain: { readonly id: string; readonly milestone: number } | null;
   readonly workMode: WorkModeId;
@@ -56,9 +64,11 @@ export interface Cell {
   /** The batch leaves judging for later, so runs without a judgment don't make the view preliminary. */
   readonly judgedLater: boolean;
   readonly coverage: Measure;
+  readonly pagesCurrent: Measure;
   readonly judgeScore: Measure;
   readonly judgeQuality: Measure;
   readonly judgeAdherence: Measure;
+  readonly judgeUpkeep: Measure;
   readonly tokens: Measure;
   readonly cost: Measure;
   /** Token classes. They add up to the total. */
@@ -136,7 +146,7 @@ export function cells(batches: readonly Batch[]): Cell[] {
     if (startingPoint === null) return [];
     const runs = countedRuns(batch);
     const judges = judgeChoices(batch);
-    const control = batch.experiment.config.setups[0] ?? "";
+    const control = CaseControls[batch.experiment.suite] ?? batch.experiment.config.setups[0] ?? "";
     const agents = batch.experiment.config.agents;
     return agents.flatMap((agent) => batch.experiment.config.setups.flatMap((setup): Cell[] => {
       const group = runs.filter((run) => run.setup === setup && choiceKey(run.agent) === choiceKey(agent));
@@ -145,22 +155,22 @@ export function cells(batches: readonly Batch[]): Cell[] {
       const values = group.map((run) => runValues(run, batch.assessments, null));
       const pick = (read: (value: RunValues) => number | null) => measure(values.map(read));
       const base = {
-        startingPoint, caseId: batch.experiment.suite, batchId: batch.experiment.id, createdAt: batch.experiment.createdAt, cliVersion: batch.experiment.cliVersion, setup, control,
+        startingPoint, caseId: batch.experiment.suite, inputsScope: inputsScope(batch), batchId: batch.experiment.id, createdAt: batch.experiment.createdAt, cliVersion: batch.experiment.cliVersion, setup, control,
         // A task-by-task packet's first task starts fresh, so only its plan names the chain.
         chain: chainOf(batch),
         workMode: workModeOf(batch.experiment.config, agent),
         judgedLater: batch.experiment.config.judging === Judging.later,
         model: choiceKey(agent), modelLabel: modelLabel(agent, reported), agentVersion: agentVersion(batch, agent.tool), runs: group.length, runIds: group.map((run) => run.id),
         checked: states.filter((state) => state === CheckState.checked).length, recheck: states.filter((state) => state === CheckState.recheck).length,
-        coverage: pick((value) => value.coverage), tokens: pick((value) => value.tokens), cost: pick((value) => value.cost), newInput: pick((value) => value.newInput),
+        coverage: pick((value) => value.coverage), pagesCurrent: pick((value) => value.pagesCurrent), tokens: pick((value) => value.tokens), cost: pick((value) => value.cost), newInput: pick((value) => value.newInput),
         cacheWrites: pick((value) => value.cacheWrites), cachedInput: pick((value) => value.cachedInput), outputTokens: pick((value) => value.output),
         cacheHitRate: pick((value) => value.cacheHitRate), minutes: pick((value) => value.minutes),
       };
-      if (judges.size === 0) return [{ ...base, judge: null, judgeLabel: null, judged: 0, judgeScore: measure([]), judgeQuality: measure([]), judgeAdherence: measure([]), runValues: values }];
+      if (judges.size === 0) return [{ ...base, judge: null, judgeLabel: null, judged: 0, judgeScore: measure([]), judgeQuality: measure([]), judgeAdherence: measure([]), judgeUpkeep: measure([]), runValues: values }];
       return [...judges.values()].map((choice) => {
         const judged = group.map((run) => runValues(run, batch.assessments, choice));
         const scores = judged.map((value) => value.judgeScore);
-        return { ...base, judge: choiceKey(choice), judgeLabel: modelLabel(choice), judged: scores.filter((score) => score !== null).length, judgeScore: measure(scores), judgeQuality: measure(judged.map((value) => value.judgeQuality)), judgeAdherence: measure(judged.map((value) => value.judgeAdherence)), runValues: judged };
+        return { ...base, judge: choiceKey(choice), judgeLabel: modelLabel(choice), judged: scores.filter((score) => score !== null).length, judgeScore: measure(scores), judgeQuality: measure(judged.map((value) => value.judgeQuality)), judgeAdherence: measure(judged.map((value) => value.judgeAdherence)), judgeUpkeep: measure(judged.map((value) => value.judgeUpkeep)), runValues: judged };
       });
     }));
   });

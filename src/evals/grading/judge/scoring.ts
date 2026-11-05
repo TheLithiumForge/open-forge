@@ -3,10 +3,10 @@ import { record } from "../../benchmarks/neon-pairs/checks/layer.ts";
 import { boundCitations } from "./ballots.ts";
 import type { JudgeEvidence } from "./evidence.ts";
 
-export const ScoreHeadline = { quality: "quality", adherence: "adherence" } as const;
+export const ScoreHeadline = { quality: "quality", adherence: "adherence", upkeep: "upkeep" } as const;
 export type ScoreHeadline = (typeof ScoreHeadline)[keyof typeof ScoreHeadline];
 export const FindingKind = { concern: "concern", strength: "strength" } as const;
-export const FindingArea = { play: "play", code: "code", spec: "spec" } as const;
+export const FindingArea = { play: "play", code: "code", spec: "spec", docs: "docs" } as const;
 export const FindingImpact = { blocks: "blocks", annoys: "annoys", polish: "polish" } as const;
 export const ScoreRange = { lowest: 0, highest: 10 } as const;
 export const FindingLimits = { [FindingKind.concern]: 5, [FindingKind.strength]: 2 } as const;

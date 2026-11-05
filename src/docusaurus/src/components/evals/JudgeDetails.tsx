@@ -4,8 +4,8 @@ import { dimensionScore, groupShare, headlineShare, JudgeHeadline, ScoreScale } 
 import { NoValue, percent } from "./data/format.ts";
 
 const ConcernKind = "concern";
-const GroupNames: Readonly<Record<string, string>> = { play: "How it plays", code: "The code", spec: "The spec" };
-const HeadlineNames: Readonly<Record<JudgeHeadline, string>> = { [JudgeHeadline.quality]: "Quality", [JudgeHeadline.adherence]: "Adherence to the spec" };
+const GroupNames: Readonly<Record<string, string>> = { play: "How it plays", code: "The code", spec: "The spec", docs: "The documents" };
+const HeadlineNames: Readonly<Record<JudgeHeadline, string>> = { [JudgeHeadline.quality]: "Quality", [JudgeHeadline.adherence]: "Adherence to the spec", [JudgeHeadline.upkeep]: "Documents kept current" };
 
 function FindingList({ title, findings }: { readonly title: string; readonly findings: readonly JudgeFinding[] }) {
   if (findings.length === 0) return null;
@@ -32,6 +32,10 @@ export function JudgeDetails({ record }: { readonly record: Judge }) {
     {(record.summaries ?? []).length === 0 ? null : <>
       <h4>What each ballot concluded</h4>
       <ul>{record.summaries?.map((summary, index) => <li key={index}>{summary}</li>)}</ul>
+    </>}
+    {(record.staleDocs ?? []).length === 0 ? null : <>
+      <h4>Pages that describe the game</h4>
+      <ul>{record.staleDocs?.map((page) => <li key={page.document}><code>{page.document}</code>: {page.current ? "kept current" : page.remaining > 0 ? `${page.remaining} of ${page.statements} old statements remain` : "old statements gone, but the feature isn't mentioned"}.</li>)}</ul>
     </>}
     <FindingList title="Concerns" findings={findings.filter((finding) => finding.kind === ConcernKind)} />
     <FindingList title="Strengths" findings={findings.filter((finding) => finding.kind !== ConcernKind)} />

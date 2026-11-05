@@ -1,6 +1,6 @@
 import type { Judge, JudgeScore } from "../records/records.types.ts";
 
-export const JudgeHeadline = { quality: "quality", adherence: "adherence" } as const;
+export const JudgeHeadline = { quality: "quality", adherence: "adherence", upkeep: "upkeep" } as const;
 export type JudgeHeadline = (typeof JudgeHeadline)[keyof typeof JudgeHeadline];
 /** Judges score each dimension out of this. Headlines read as a share of it, like the page's other shares. */
 export const ScoreScale = 10;
@@ -27,6 +27,12 @@ export function headlineShare(judgment: Judge, headline: JudgeHeadline): number 
   }
   const groupMean = mean([...groups.values()].flatMap((values) => mean(values) ?? []));
   return groupMean === null ? null : groupMean / ScoreScale;
+}
+
+/** The share of pages that described the game before the work and still do after, read from the files. */
+export function currentPagesShare(judgment: Judge): number | null {
+  const pages = judgment.staleDocs ?? [];
+  return pages.length === 0 ? null : pages.filter((page) => page.current).length / pages.length;
 }
 
 /** One group's share, such as play alone, to read beside the headline it feeds. */

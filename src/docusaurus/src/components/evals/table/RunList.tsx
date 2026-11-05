@@ -5,7 +5,7 @@ import { compact, dollars, NoValue, percent } from "../data/format.ts";
 import { choiceKey, isReference } from "../data/observations.ts";
 import { runCost } from "../data/prices.ts";
 import { JudgeHeadline } from "../data/judge-scores.ts";
-import { checkState, CheckState, coverageOf, judgeChoices, judgeHeadlineOf, judgeScoreOf } from "../data/run-measures.ts";
+import { checkState, CheckState, coverageOf, judgeChoices, judgeHeadlineOf, judgeScoreOf, pagesCurrentOf } from "../data/run-measures.ts";
 import { Term } from "../info/Term.tsx";
 
 const CheckText: Readonly<Record<CheckState, string | null>> = {
@@ -16,6 +16,7 @@ function RunRow({ run, batch, cell, open }: { readonly run: Run; readonly batch:
   const judge = cell.judge === null ? undefined : judgeChoices(batch).get(cell.judge);
   const state = checkState(run, batch.assessments);
   const score = judge === undefined ? null : judgeScoreOf(run, judge, batch.assessments);
+  const pages = pagesCurrentOf(run, batch.assessments);
   const headline = (name: JudgeHeadline) => { const value = judge === undefined ? null : judgeHeadlineOf(run, judge, batch.assessments, name); return value === null ? NoValue : percent(value); };
   return <tr>
     <th scope="row"><button type="button" className="eval-link-button" onClick={() => open(run.id)}>Run {run.repeat}</button></th>
@@ -23,6 +24,8 @@ function RunRow({ run, batch, cell, open }: { readonly run: Run; readonly batch:
     <td>{score === null ? NoValue : percent(score)}</td>
     <td>{headline(JudgeHeadline.quality)}</td>
     <td>{headline(JudgeHeadline.adherence)}</td>
+    <td>{headline(JudgeHeadline.upkeep)}</td>
+    <td>{pages === null ? NoValue : percent(pages)}</td>
     <td>{compact(tokenTotal(run))}</td>
     <td>{dollars(runCost(run))}</td>
     <td>{run.agentSeconds === null ? NoValue : (run.agentSeconds / 60).toFixed(1)}</td>
@@ -39,10 +42,10 @@ export function RunList({ cell, batch, open }: { readonly cell: Cell; readonly b
       <table className="eval-table">
         <thead><tr>
           <th scope="col">Run</th><th scope="col"><Term id="check-coverage" /></th><th scope="col"><Term id="judge-score" /></th>
-          <th scope="col"><Term id="judge-quality" /></th><th scope="col"><Term id="judge-adherence" /></th>
+          <th scope="col"><Term id="judge-quality" /></th><th scope="col"><Term id="judge-adherence" /></th><th scope="col"><Term id="judge-upkeep" /></th><th scope="col"><Term id="pages-current" /></th>
           <th scope="col"><Term id="tokens" /></th><th scope="col"><Term id="cost" /></th><th scope="col"><Term id="time">Minutes</Term></th>
         </tr></thead>
-        <tbody>{counted.length === 0 ? <tr><td colSpan={8}>No finished runs yet.</td></tr>
+        <tbody>{counted.length === 0 ? <tr><td colSpan={10}>No finished runs yet.</td></tr>
           : counted.map((run) => <RunRow key={run.id} run={run} batch={batch} cell={cell} open={open} />)}</tbody>
       </table>
     </div>

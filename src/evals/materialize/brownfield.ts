@@ -25,25 +25,30 @@ export const BrownfieldSetups: Readonly<Record<string, SetupDefinition>> = {
 };
 
 /** The install ladder's scoped rungs, which only a case with its own pack offers. */
-export const PackSetups = { minimalScoped: "minimal-scoped", essentialsScoped: "essentials-scoped" } as const;
-/** Setups that read the same on a case with its own pack. Flat Full Core is the one deliberately improper use of Open Forge. */
-const PackSetupsAsTheyAre: ReadonlySet<string> = new Set([CodeOnlySetup, DocumentSetups.plain, DocumentSetups.fullCore]);
+export const PackSetups = { minimalProper: "minimal-proper", essentialsProper: "essentials-proper", fullCoreProper: "full-core-proper" } as const;
+/** The one deliberately improper use of Open Forge: every document in topic folders under an outside route, with its categories empty. */
+export const ImproperSetupLabel = "Improper: Full Core, outside route";
+/** Setups that read the same on a case with its own pack. */
+const PackSetupsAsTheyAre: ReadonlySet<string> = new Set([CodeOnlySetup, DocumentSetups.plain]);
+/** Where a pack case's placement lives. It's outside the case folder, so the case's fingerprint and its published controls stay as they are. */
+export const placementFile = (item: Pick<BrownfieldCase, "id">): string => `benchmarks/neon-pairs/placements/${item.id}.json`;
 
 /**
- * The setups of one case. A case with its own scopes puts Organized docs in the same folders as Open Forge, as a careful
- * team would with that many documents, so the framework's routing is all that separates them. Every other Open Forge
- * setup uses those folders too, so the install ladder changes only how much is installed, and flat Full Core differs
- * from Full Core, scoped only in its organization.
+ * The setups of one case. On a case with its own pack, proper setups place every document in Open Forge's categories, with
+ * its rules in Directives and its decisions in Crystallized memory, and the install ladder changes only how much is
+ * installed. Organized docs use the pack's topic folders with no framework, and the improper setup uses those same folders
+ * as an outside route, so placement is all that separates it from Full Core, proper.
  */
 function caseSetups(item: BrownfieldCase): Readonly<Record<string, SetupDefinition>> {
   if (item.scopes === undefined) return BrownfieldSetups;
   const scopes = relative(evalsRoot, join(item.root, item.scopes)).replaceAll("\\", "/");
-  const scoped = (label: string, preset: ForgePreset): SetupDefinition => ({ label, commands: [], delivery: { kind: SetupKind.forge, preset, scopes } });
+  const proper = (label: string, preset: ForgePreset): SetupDefinition => ({ label, commands: [], delivery: { kind: SetupKind.forge, preset, placement: placementFile(item) } });
   return { ...Object.fromEntries(Object.entries(BrownfieldSetups).filter(([id]) => PackSetupsAsTheyAre.has(id))),
     [DocumentSetups.organized]: { label: "Organized docs", commands: [], delivery: { kind: SetupKind.plain, scopes } },
-    [PackSetups.minimalScoped]: scoped("Minimal, scoped", ForgePreset.minimal),
-    [PackSetups.essentialsScoped]: scoped("Essentials, scoped", ForgePreset.essentials),
-    [DocumentSetups.fullCoreScoped]: scoped("Full Core, scoped", ForgePreset.fullCore) };
+    [DocumentSetups.fullCoreScoped]: { label: ImproperSetupLabel, commands: [], delivery: { kind: SetupKind.forge, preset: ForgePreset.fullCore, scopes } },
+    [PackSetups.minimalProper]: proper("Minimal, proper", ForgePreset.minimal),
+    [PackSetups.essentialsProper]: proper("Essentials, proper", ForgePreset.essentials),
+    [PackSetups.fullCoreProper]: proper("Full Core, proper", ForgePreset.fullCore) };
 }
 
 export function brownfieldSuite(inputs: BrownfieldInputs): Suite {
@@ -54,7 +59,7 @@ export function brownfieldSuite(inputs: BrownfieldInputs): Suite {
     documents: orderedDocuments(inputs.specifications.manifest, inputs.specifications.documents).map((file) => file.bytes.toString()),
     fingerprint: sha256(JSON.stringify({ inputs: item.inputs, seed: inputs.seed.map((file) => ({ path: file.path, sha256: sha256(file.bytes) })), specs: inputs.specifications.manifest })),
     comparisons: { routing: Object.keys(setups).filter((setup) => setup !== CodeOnlySetup), information: [DocumentSetups.organized, CodeOnlySetup],
-      scopes: [DocumentSetups.organized, DocumentSetups.fullCore, DocumentSetups.fullCoreScoped] }, brownfield: inputs };
+      scopes: item.scopes === undefined ? [DocumentSetups.organized, DocumentSetups.fullCore, DocumentSetups.fullCoreScoped] : [DocumentSetups.organized, DocumentSetups.fullCoreScoped, PackSetups.fullCoreProper] }, brownfield: inputs };
 }
 
 export async function loadBrownfieldSuite(root: string, expectedId?: string, reference?: string, specs?: string): Promise<Suite> {

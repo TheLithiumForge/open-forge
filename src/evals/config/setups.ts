@@ -9,6 +9,8 @@ import { ImageVersions } from "../execution/containers/docker-image.ts";
 import { object, text } from "./validation.ts";
 import { documentPath, materializeSetup, scopeEntrypoints, SetupFiles, SetupKind, type SetupManifest } from "../materialize/setup.ts";
 import { loadScopeLayout } from "../materialize/scopes.ts";
+import { loadPlacement, placedPaths } from "../materialize/placement.ts";
+import { ForgePreset } from "../materialize/forge.ts";
 import { loadOverload, noteHashes } from "../materialize/overload.ts";
 import { evalsRoot } from "../paths.ts";
 
@@ -45,15 +47,17 @@ export async function generateSetup(suite: Suite, setup: string, run: ForgeRunne
         return result;
       };
       const scopes = definition.delivery.scopes === undefined ? undefined : await loadScopeLayout(join(evalsRoot, safeRelative(definition.delivery.scopes)));
+      const placement = definition.delivery.placement === undefined ? undefined : await loadPlacement(join(evalsRoot, safeRelative(definition.delivery.placement)));
       const overload = definition.delivery.overload === undefined ? undefined : await loadOverload(join(evalsRoot, safeRelative(definition.delivery.overload)));
       const result = await materializeSetup({ kind: definition.delivery.kind, destination: folder, ...(suite.specs === undefined ? {} : { specs: join(evalsRoot, safeRelative(suite.specs)) }),
         ...(suite.brownfield === undefined ? {} : { frozen: suite.brownfield.specifications, projectFiles: suite.brownfield.reference, seedFiles: suite.brownfield.seed }),
-        ...(definition.delivery.preset === undefined ? {} : { preset: definition.delivery.preset }), ...(scopes === undefined ? {} : { scopes }),
+        ...(definition.delivery.preset === undefined ? {} : { preset: definition.delivery.preset }), ...(scopes === undefined ? {} : { scopes }), ...(placement === undefined ? {} : { placement }),
         ...(definition.delivery.links === false ? { links: false } : {}), ...(overload === undefined ? {} : { overload }), runForge: tracked });
       for (const note of overload === undefined ? [] : noteHashes(overload, definition.delivery.kind === SetupKind.forge, SetupFiles.docs)) expected.add(note.path);
       expected.add(SetupFiles.readme);
       if (definition.delivery.kind !== SetupKind.inline && definition.delivery.kind !== SetupKind.code) {
-        for (const file of result.manifest.specifications.files) expected.add(`${SetupFiles.docs}/${documentPath(result.manifest, file.path)}`);
+        for (const path of placement === undefined ? [] : placedPaths(placement, definition.delivery.preset ?? ForgePreset.minimal)) expected.add(path);
+        for (const file of placement === undefined ? result.manifest.specifications.files : []) expected.add(`${SetupFiles.docs}/${documentPath(result.manifest, file.path)}`);
         for (const path of scopeEntrypoints(result.manifest)) expected.add(`${SetupFiles.docs}/${path}`);
       }
       for (const file of suite.brownfield?.seed ?? []) expected.add(file.path);

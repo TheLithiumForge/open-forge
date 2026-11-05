@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { cp, mkdir, mkdtemp, rm } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { judgeRun } from "./judge/judge.ts";
@@ -9,6 +9,11 @@ import { prepareJudgeFolder } from "./judge/judge-folder.ts";
 import { JudgeLimited } from "./judge/reply.ts";
 import { judgeImagePaths } from "./judge/shot-paths.ts";
 import { capturePlaythrough, casePlaythrough, PlaythroughFiles, savedPlaythrough, type Playthrough } from "./judge/playthrough.ts";
+import { caseStaleStatements, evidenceFileText, workEvidence, WorkEvidenceFiles, type StalePage } from "./judge/work-evidence.ts";
+import { inventory } from "../materialize/files.ts";
+import { ForgePreset } from "../materialize/forge.ts";
+import { loadPlacement } from "../materialize/placement.ts";
+import { evalsRoot } from "../paths.ts";
 import { ResultFiles } from "../paths.ts";
 import { judgeAssessment } from "../history/assessments.ts";
 import { gradingVersions } from "../history/capture.ts";
@@ -81,6 +86,18 @@ async function playthroughOf(suite: Suite, run: RunView, folder: string, service
   return (services.capture ?? capturePlaythrough)(suite, game, target, services.options?.stage ?? {});
 }
 
+/** Writes what the run left beside its code into the judge's folder, for a case that planted pages to keep current. */
+async function writeWorkEvidence(suite: Suite, run: RunView, filesFolder: string, project: string): Promise<readonly StalePage[] | undefined> {
+  const stale = await caseStaleStatements(suite);
+  if (stale.length === 0 || suite.brownfield === undefined) return undefined;
+  const delivery = suite.setups[run.setup]?.delivery;
+  const placement = delivery?.placement === undefined ? undefined : await loadPlacement(join(evalsRoot, delivery.placement));
+  const work = workEvidence(await inventory(filesFolder), suite.brownfield.seed, suite.brownfield.specifications.documents, stale, placement, delivery?.preset ?? ForgePreset.minimal);
+  await mkdir(join(project, WorkEvidenceFiles.folder));
+  for (const file of work.files) await writeFile(join(project, WorkEvidenceFiles.folder, file.name), evidenceFileText(file.lines));
+  return work.staleDocs;
+}
+
 export async function judgeSavedRun(suite: Suite, run: RunView, choice: JudgeChoice, versions: AssessmentVersions, services: SavedJudgeServices = {}, missingOnly = false, legacyChoice?: JudgeChoice): Promise<JudgeAssessment> {
   const store = services.store ?? { runFolder, readAssessments, appendAssessment };
   const previous = latestJudgeFor(run.id, await store.readAssessments(run.batchId), choice, legacyChoice);
@@ -107,8 +124,9 @@ export async function judgeSavedRun(suite: Suite, run: RunView, choice: JudgeCho
           await mkdir(join(project, PlaythroughFiles.folder));
           await cp(play.trace, join(project, PlaythroughFiles.folder, PlaythroughFiles.trace));
         }
+        const staleDocs = await writeWorkEvidence(suite, run, join(store.runFolder(run.batchId, run.id), ResultFiles.files), project);
         return (services.judge ?? judgeRun)(suite, choice, project, join(scratch, "home"), JudgeTimeoutMs,
-          { ...services.options, images: play?.images ?? judgeImagePaths(run), onReport: (report) => { onReport(report); services.options?.onReport?.(report); } });
+          { ...services.options, images: play?.images ?? judgeImagePaths(run), onReport: (report) => { const full = staleDocs === undefined ? report : { ...report, staleDocs }; onReport(full); services.options?.onReport?.(full); } });
       },
     });
   } finally { await rm(scratch, { recursive: true, force: true }); }

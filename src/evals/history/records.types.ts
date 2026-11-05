@@ -3,7 +3,7 @@ import type { ScopePolicy } from "../materialize/scope.types.ts";
 import type { BallotFailure } from "../grading/judge/report.ts";
 import type { ReferenceImplementer, ReferenceVersion } from "./reference.ts";
 import type { CheckOutcome, CheckSelection, FunctionalResult } from "../grading/grading.types.ts";
-import type { BuildResult, JudgeAnswer, JudgeFinding, JudgeScore, LegacyBatchRecord, LegacyRunRecord, PerformanceResult } from "./results.types.ts";
+import type { BuildResult, JudgeAnswer, JudgeFinding, JudgeScore, JudgeStalePage, LegacyBatchRecord, LegacyRunRecord, PerformanceResult } from "./results.types.ts";
 import type { AssessmentKind, FailureKind, PreferenceWinner, RecordSchemaVersion, RunStatus } from "./statuses.ts";
 
 export interface Fingerprints {
@@ -130,6 +130,7 @@ export interface JudgeAssessment extends AssessmentBase {
   readonly scores?: readonly JudgeScore[];
   readonly findings?: readonly JudgeFinding[];
   readonly summaries?: readonly string[];
+  readonly staleDocs?: readonly JudgeStalePage[];
 }
 
 export interface PickAssessment extends AssessmentBase {

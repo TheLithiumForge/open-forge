@@ -2,7 +2,7 @@ import { lstat, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { contained, emptyDestination, hashes, inventory, jsonBytes, ordinaryPath, sha256, writeNew, type FileBytes, type FileHash } from "./files.ts";
 import { addMetadata } from "./frontmatter.ts";
-import { createForgeRunner, FrameworkVersion, installFramework, type ForgePreset, type ForgeReceipt, type ForgeRunner } from "./forge.ts";
+import { createForgeRunner, ForgePreset, FrameworkVersion, installFramework, type ForgeReceipt, type ForgeRunner } from "./forge.ts";
 import { readFrozenSpecs } from "./frozen.ts";
 import { initialCommit } from "./git.ts";
 import { MaterializePaths } from "./paths.ts";
@@ -17,6 +17,7 @@ import { captureScope } from "./scope-policy.ts";
 import type { ScopePolicy } from "./scope.types.ts";
 import { entrypointText, relink, scopedMetadata, scopedPath, scopeEntrypoint, unlink, type ScopeLayout } from "./scopes.ts";
 import { validateLinks } from "./markdown.ts";
+import { misplacedSentences, PlacementRoot, placedFiles, restoreDocuments, type Placement } from "./placement.ts";
 
 export const SetupKind = { plain: "plain-docs", linked: "linked-agents", forge: "open-forge", inline: "spec-in-prompt", code: "code-only" } as const;
 export type SetupKind = (typeof SetupKind)[keyof typeof SetupKind];
@@ -24,6 +25,8 @@ export const SetupFiles = { docs: "docs", readme: "README.md", agents: "AGENTS.m
 // Open Forge's own CLAUDE.md imports AGENTS.md the same way, so both tools start from the linked instructions in every setup.
 export const LinkedClaudeInstructions = "@AGENTS.md\n";
 export const AcceptanceLine = "Follow the requirements in docs/ for this project.";
+// Open Forge says tags and placement don't make something accepted, and a source the project names does.
+export const ProperAcceptanceLine = "The rules in .agents/directives and the knowledge in .agents/memory/crystallized are this project's accepted requirements. Follow them.";
 
 export interface SetupOptions {
   readonly kind: SetupKind;
@@ -42,6 +45,8 @@ export interface SetupOptions {
   readonly overload?: Overload;
   /** Routes the spec by scope folders, with only the up-front documents loading at the start. Open Forge setups only. */
   readonly scopes?: ScopeLayout;
+  /** Places the spec in Open Forge's own categories, on the rung the preset names. Open Forge setups only. */
+  readonly placement?: Placement;
 }
 
 export interface SetupManifest {
@@ -57,6 +62,7 @@ export interface SetupManifest {
   readonly projectFiles?: readonly FileHash[];
   readonly scope?: ScopePolicy;
   readonly scopes?: ScopeLayout;
+  readonly placement?: Placement;
   /** Each document body's hash with its links removed, which a setup without links writes in place of the frozen body. */
   readonly linkFree?: readonly FileHash[];
   /** Where each note landed and its body hash, for setups that carry the overload notes. */
@@ -122,6 +128,8 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   const layout = options.scopes;
   if (layout !== undefined && kind !== SetupKind.forge && (kind !== SetupKind.plain || options.links === false)) throw new Error("Only Open Forge and linked plain setups place the spec in scope folders.");
   if (options.links === false && kind !== SetupKind.plain) throw new Error("Only plain document setups drop the links between documents.");
+  const placement = options.placement, rung = options.preset ?? ForgePreset.minimal;
+  if (placement !== undefined && (kind !== SetupKind.forge || layout !== undefined || options.overload !== undefined || options.links === false)) throw new Error("A placement replaces scopes, notes and link changes, and needs Open Forge.");
   const placed = layout === undefined ? {} : { scopes: layout };
   const target = await emptyDestination(destination, [specs, MaterializePaths.source]);
   if (options.projectFiles) await writeStartingFiles(target, options.projectFiles);
@@ -136,13 +144,19 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
     const metadata = layout === undefined ? record.metadata : scopedMetadata(layout, file.path, record.metadata);
     return { path: `${SetupFiles.docs}/${documentPath(placed, file.path)}`, bytes: kind === SetupKind.forge ? addMetadata(bytes, metadata) : bytes };
   };
-  for (const file of documentFiles.map(placedDocument)) await writeNew(target, file.path, file.bytes);
+  if (placement === undefined) for (const file of documentFiles.map(placedDocument)) await writeNew(target, file.path, file.bytes);
   if (layout !== undefined) {
     validateLinks(documentFiles.map((file) => ({ path: scopedPath(layout, file.path), bytes: relink(layout, file.path, file.bytes) })));
     // Index gives a new entrypoint a placeholder description for its author to replace, so each scope's real one goes in first.
     if (kind === SetupKind.forge) for (const scope of layout.scopes) await writeNew(target, `${SetupFiles.docs}/${scopeEntrypoint(scope)}`, entrypointText(scope));
   }
-  const readme = startingReadme(options.projectFiles, kind === SetupKind.code ? null : AcceptanceLine)
+  const acceptance = placement === undefined ? AcceptanceLine : ProperAcceptanceLine;
+  // The seed's README says the spec is in docs/, which a placed setup doesn't have.
+  const seedReadme = (project: readonly FileBytes[] | undefined): string | undefined => {
+    const text = startingReadme(project, kind === SetupKind.code ? null : acceptance);
+    return placement === undefined ? text : text?.split("\n").filter((line) => !line.includes(`\`${SetupFiles.docs}/\``)).join("\n");
+  };
+  const readme = seedReadme(options.projectFiles)
     ?? (kind === SetupKind.inline ? InlineReadme : projectReadme(frozen.manifest));
   await writeNew(target, SetupFiles.readme, readme);
   if (kind === SetupKind.linked) {
@@ -152,10 +166,19 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   const overload = options.overload, forge = kind === SetupKind.forge;
   const writeNotes = async (): Promise<void> => { for (const note of overload?.notes ?? []) await writeNew(target, notePath(note, forge, SetupFiles.docs), noteBytes(note, forge)); };
   if (overload !== undefined && !forge) await writeNotes();
+  const writePlaced = async (rules: Placement): Promise<void> => { for (const file of placedFiles(rules, rung, documentFiles)) await writeNew(target, file.path, file.bytes); };
   const frameworkCommands = forge ? await installFramework(target, options.runForge ?? createForgeRunner(), options.preset,
-    overload === undefined ? {} : { extensions: NoteExtensions, place: writeNotes }) : [];
+    placement !== undefined ? { place: () => writePlaced(placement), customRoots: (placement.customRoots[rung] ?? []).map((root) => `${PlacementRoot}/${root}`) }
+      : overload === undefined ? {} : { extensions: NoteExtensions, place: writeNotes }) : [];
   let files = await inventory(target);
-  for (const record of documentFiles.length ? frozen.manifest.files : []) {
+  if (placement !== undefined) {
+    const byPath = new Map(files.map((file) => [file.path, file.bytes]));
+    const restored = restoreDocuments(placement, rung, byPath);
+    for (const record of frozen.manifest.files) if (sha256(restored.get(record.path) ?? "") !== record.sha256) throw new Error(`Specification body changed: ${record.path}`);
+    const misplaced = misplacedSentences(placement, rung, byPath);
+    if (misplaced.length > 0) throw new Error(`A moved sentence isn't in its rule file alone: ${misplaced.join("; ")}`);
+  }
+  for (const record of documentFiles.length && placement === undefined ? frozen.manifest.files : []) {
     const actual = files.find((file) => file.path === `${SetupFiles.docs}/${documentPath(placed, record.path)}`);
     if (!actual || sha256(frozenBody(placed, record.path, actual.bytes)) !== expectedBody(record.path, record.sha256)) throw new Error(`Specification body changed: ${record.path}`);
   }
@@ -166,19 +189,19 @@ export async function materializeSetup(options: SetupOptions): Promise<{ manifes
   if (files.find((file) => file.path === SetupFiles.readme)?.bytes.toString() !== readme) throw new Error("Project acceptance README changed.");
   for (const file of options.projectFiles ?? []) if (!SetupProjectMetadata.has(file.path) && sha256(files.find((actual) => actual.path === file.path)?.bytes ?? "") !== sha256(file.bytes)) throw new Error("Setup installation changed the reference code.");
   const replaceDocuments = async (documents: readonly FileBytes[]): Promise<void> => {
-    if (!documentFiles.length) return;
+    if (!documentFiles.length || placement !== undefined) return;
     for (const file of documents.map(placedDocument)) await writeFile(resolve(target, file.path), file.bytes);
   };
   let finalReadme = readme;
   if (options.seedFiles && options.projectFiles) {
-    finalReadme = startingReadme(options.seedFiles, kind === SetupKind.code ? null : AcceptanceLine) ?? readme;
+    finalReadme = seedReadme(options.seedFiles) ?? readme;
     await replaceSeedFiles(target, options.projectFiles, options.seedFiles, finalReadme);
     await replaceDocuments(frozen.documents);
     files = await inventory(target);
   }
   await initialCommit(target, options.runGit);
   const manifest: SetupManifest = { schemaVersion: ManifestVersion, kind, sourceHash: frozen.manifest.sourceHash, specifications: frozen.manifest,
-    frameworkVersion: kind === SetupKind.forge ? FrameworkVersion : null, frameworkCommands, files: hashes(files), ...(options.preset === undefined ? {} : { preset: options.preset }), ...placed, ...(linkFree === undefined ? {} : { linkFree }), ...(overload === undefined ? {} : { notes: noteHashes(overload, forge, SetupFiles.docs), ...(forge ? { extensions: [...NoteExtensions] } : {}) }),
+    frameworkVersion: kind === SetupKind.forge ? FrameworkVersion : null, frameworkCommands, files: hashes(files), ...(options.preset === undefined ? {} : { preset: options.preset }), ...placed, ...(placement === undefined ? {} : { placement }), ...(linkFree === undefined ? {} : { linkFree }), ...(overload === undefined ? {} : { notes: noteHashes(overload, forge, SetupFiles.docs), ...(forge ? { extensions: [...NoteExtensions] } : {}) }),
     ...(options.projectFiles === undefined ? {} : { readmeHash: sha256(finalReadme), projectFiles: hashes(options.seedFiles ?? options.projectFiles),
       scope: captureScope(files, kind === SetupKind.forge, [...options.seedFiles ?? options.projectFiles, ...documentFiles.map((file) => ({ ...file, path: `${SetupFiles.docs}/${documentPath(placed, file.path)}` }))]) }) };
   await ordinaryPath(dirname(manifestPath));

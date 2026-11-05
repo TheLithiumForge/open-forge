@@ -66,7 +66,7 @@ export function scopedMetadata(layout: ScopeLayout, path: string, metadata: Meta
   return { description: metadata.description, tags: layout.upFront.includes(path) ? [UpFrontTag, ...tags] : tags };
 }
 
-function rewriteLinks(bytes: Uint8Array, target: (link: string) => string | null): Buffer {
+export function rewriteLinks(bytes: Uint8Array, target: (link: string) => string | null): Buffer {
   return Buffer.from(Buffer.from(bytes).toString("utf8").replace(SpecLink, (link, path: string, anchor: string | undefined) => {
     const moved = target(path);
     return moved === null ? link : `](${moved}${anchor ?? ""})`;

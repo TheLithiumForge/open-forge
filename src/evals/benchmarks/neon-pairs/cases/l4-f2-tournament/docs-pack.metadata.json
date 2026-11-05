@@ -470,6 +470,13 @@
       "Status"
     ]
   },
+  "architecture-overview.md": {
+    "description": "The parts of the game as built today, what each holds and the decisions behind it.",
+    "tags": [
+      "Architecture",
+      "Decision"
+    ]
+  },
   "architecture.md": {
     "description": "Game code structure and module responsibilities",
     "tags": [
@@ -764,12 +771,26 @@
       "Diagnostics"
     ]
   },
+  "export-inventory.md": {
+    "description": "Every piece of JSON a person can copy out of the game and load back in today.",
+    "tags": [
+      "Sharing",
+      "Formats"
+    ]
+  },
   "face-catalogue.md": {
     "description": "All face identity ranges, shape paths, marker coordinates, fill modes and face-sheet evidence.",
     "tags": [
       "Visuals",
       "Artwork",
       "Geometry"
+    ]
+  },
+  "feature-status.md": {
+    "description": "What the game can do today and what has only been discussed.",
+    "tags": [
+      "Product",
+      "Architecture"
     ]
   },
   "feedback-without-audio.md": {
@@ -1398,6 +1419,13 @@
     "tags": [
       "Persistence",
       "Failures"
+    ]
+  },
+  "storage-inventory.md": {
+    "description": "Everything the game writes to browser storage today.",
+    "tags": [
+      "Persistence",
+      "Storage"
     ]
   },
   "storage-quota-notes.md": {

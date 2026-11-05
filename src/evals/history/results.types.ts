@@ -75,6 +75,14 @@ export interface JudgeFinding {
   readonly text: string;
   readonly citations: readonly string[];
 }
+/** A page that described the game before the work, and whether it still does. */
+export interface JudgeStalePage {
+  readonly document: string;
+  readonly statements: number;
+  readonly remaining: number;
+  readonly mentionsWork: boolean;
+  readonly current: boolean;
+}
 export interface JudgeAnswer {
   readonly id: string;
   readonly area: string;

@@ -270,6 +270,36 @@
       ],
       "additionalProperties": true
     },
+    "judgeStalePage": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "string"
+        },
+        "statements": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "remaining": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mentionsWork": {
+          "type": "boolean"
+        },
+        "current": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document",
+        "statements",
+        "remaining",
+        "mentionsWork",
+        "current"
+      ],
+      "additionalProperties": true
+    },
     "config": {
       "type": "object",
       "properties": {

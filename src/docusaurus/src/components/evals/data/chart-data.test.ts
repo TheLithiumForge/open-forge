@@ -46,7 +46,7 @@ test("token classes add up to the total for every setup", () => {
 
 test("each measure's change from the control matches the comparison's own change", () => {
   const items = comparisons(cells([previewBatch(1)]));
-  const [coverage, judge, , , tokens] = CellMeasures;
+  const [coverage, judge, , , , , tokens] = CellMeasures;
   assert.ok(coverage && judge && tokens);
   for (const item of items) {
     assert.equal(measureChange(coverage, item), item.coverageDelta);

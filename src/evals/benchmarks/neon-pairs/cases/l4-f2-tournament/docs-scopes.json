@@ -119,7 +119,8 @@
         "replay-format.md",
         "snapshot-selection-notes.md",
         "format-versioning-guide.md",
-        "sharing-faq.md"
+        "sharing-faq.md",
+        "export-inventory.md"
       ]
     },
     {
@@ -139,7 +140,8 @@
         "preferences-store.md",
         "storage-quota-notes.md",
         "private-browsing-notes.md",
-        "storage-testing-guide.md"
+        "storage-testing-guide.md",
+        "storage-inventory.md"
       ]
     },
     {
@@ -158,7 +160,8 @@
         "competition-deals.md",
         "competition-ties.md",
         "competition-scores.md",
-        "competition-research.md"
+        "competition-research.md",
+        "feature-status.md"
       ]
     },
     {
@@ -188,7 +191,8 @@
         "typescript-settings.md",
         "css-organization.md",
         "source-audit-notes.md",
-        "code-review-guide.md"
+        "code-review-guide.md",
+        "architecture-overview.md"
       ]
     },
     {

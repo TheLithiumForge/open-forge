@@ -35,7 +35,7 @@ export function judgeAssessment(run: RunView, answers: readonly JudgeAnswer[], v
   return {
     ...assessmentBase(run.batchId, versions, run.judgeAssessmentId), kind: AssessmentKind.judge, runId: run.id,
     answers, requestedModel: null, reportedModel: null,
-    formatRetries: report?.formatRetries ?? 0, ballotFailures: report?.failures ?? [], ...report?.scoring,
+    formatRetries: report?.formatRetries ?? 0, ballotFailures: report?.failures ?? [], ...report?.scoring, ...(report?.staleDocs === undefined ? {} : { staleDocs: report.staleDocs }),
   };
 }
 

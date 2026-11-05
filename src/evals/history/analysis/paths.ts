@@ -5,9 +5,10 @@ import { ContextClass } from "./classes.ts";
 export const WorkRoot = "/work";
 const Home = "~";
 
-// Open Forge's own files: the .agents folder, its state, the root instruction files and scope entrypoints such as _gameplay.md.
-const Framework = /(^|\/)(\.agents|\.open-forge-state)(\/|$)|^(AGENTS|CLAUDE)\.md$|(^|\/)_[^/]+\.md$/;
-const Spec = /^docs\//;
+// Open Forge's own files: its state, the root instruction files, the loader and guide with their settings, its skills and templates, and catalogues such as _gameplay.md.
+const Framework = /(^|\/)\.open-forge-state(\/|$)|^(AGENTS|CLAUDE)\.md$|^\.agents\/([^/]+\.(md|json)|skills\/|templates\/)|(^|\/)_[^/]+\.md$/;
+// The project's own material: its docs folder, or whatever a placed setup keeps in Open Forge's categories.
+const Spec = /^(docs|\.agents)\//;
 const Tests = /(^|\/)(tests?|e2e|__tests__)\/|\.(test|spec|e2e|fixture)\.[^/]+$/;
 
 /**

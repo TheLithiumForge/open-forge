@@ -117,10 +117,12 @@ Every project document, by area. Project-wide policies apply to all new work, in
 - [replay-format.md](replay-format.md): Replay schema, logical timing, validation results and CLI conversion to a final snapshot.
 - [snapshot-selection-notes.md](snapshot-selection-notes.md): How matched positions and selection variants are validated against a regenerated deck.
 - [format-versioning-guide.md](format-versioning-guide.md): Format and product versions, exact-key compatibility and changes to artifact meaning.
+- [export-inventory.md](export-inventory.md): Every piece of JSON a person can copy out of the game and load back in today.
 - [sharing-faq.md](sharing-faq.md): Practical answers for copying deals, loading progress, fixing drafts and reporting sharing bugs.
 
 ### Persistence
 
+- [storage-inventory.md](storage-inventory.md): Everything the game writes to browser storage today.
 - [persistence-overview.md](persistence-overview.md): What the current game saves, what remains in memory and which persistence page to consult.
 - [persistence-envelope.md](persistence-envelope.md): The feature JSON envelope and its distinction from the existing versioned preference aggregate.
 - [retention-policy.md](retention-policy.md): Saved-list retention, aggregate best-score lifetime and the absence of an attempt history.
@@ -133,6 +135,7 @@ Every project document, by area. Project-wide policies apply to all new work, in
 
 ### Competition
 
+- [feature-status.md](feature-status.md): What the game can do today and what has only been discussed.
 - [competition-overview.md](competition-overview.md): Purpose and social context of shared-device competition, with an honest boundary around the solo implementation.
 - [competition-pairing.md](competition-pairing.md): Entry-order seeds and opening pairings for four- and eight-person brackets, with named examples.
 - [competition-rounds.md](competition-rounds.md): Round names and their displayed text, with distinctions between event stages and browser session generations.
@@ -144,6 +147,7 @@ Every project document, by area. Project-wide policies apply to all new work, in
 
 ### Architecture and technology
 
+- [architecture-overview.md](architecture-overview.md): The parts of the game as built today, what each holds and the decisions behind it.
 - [architecture.md](architecture.md): Game code structure and module responsibilities
 - [technology.md](technology.md): Language, package versions, build and distribution
 - [module-layout-policy.md](module-layout-policy.md): Behavior ownership, dependency direction and feature placement in the game source.

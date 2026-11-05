@@ -53,10 +53,12 @@ export interface FilterOption {
 const ratio = (value: number | null, control: number | null) => value === null || control === null || control === 0 ? null : value / control;
 const delta = (value: number | null, control: number | null) => value === null || control === null ? null : value - control;
 
-/** Each cell beside the control cell of the same batch, model and judge. */
+/** Each cell beside the control cell of the same batch, model and judge, or the newest one from a batch with the same inputs. */
 export function comparisons(all: readonly Cell[]): Comparison[] {
   return all.map((cell) => {
-    const controlCell = all.find((other) => other.batchId === cell.batchId && other.setup === cell.control && other.model === cell.model && other.judge === cell.judge);
+    const candidates = all.filter((other) => other.setup === cell.control && other.model === cell.model && other.judge === cell.judge);
+    const controlCell = candidates.find((other) => other.batchId === cell.batchId)
+      ?? candidates.filter((other) => other.inputsScope === cell.inputsScope).sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
     return { cell, controlCell,
       coverageDelta: delta(cell.coverage.mean, controlCell?.coverage.mean ?? null), judgeDelta: delta(cell.judgeScore.mean, controlCell?.judgeScore.mean ?? null),
       tokenRatio: ratio(cell.tokens.mean, controlCell?.tokens.mean ?? null), minuteRatio: ratio(cell.minutes.mean, controlCell?.minutes.mean ?? null) };

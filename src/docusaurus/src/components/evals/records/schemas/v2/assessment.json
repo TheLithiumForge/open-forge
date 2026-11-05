@@ -322,6 +322,12 @@
           "items": {
             "type": "string"
           }
+        },
+        "staleDocs": {
+          "type": "array",
+          "items": {
+            "$ref": "common.json#/$defs/judgeStalePage"
+          }
         }
       },
       "required": [

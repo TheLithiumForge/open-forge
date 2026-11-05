@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "fixture": "neon-pairs",
-  "sourceHash": "e2e141913e17e7999b2eda2ccb8b4891e34011ddf496dc3704f6e0dd03506553",
+  "sourceHash": "7839e74e1b106fd14a869a4ea69b56dd73a0461ff089646da4d5967f91151111",
   "sourceFiles": [
     {
       "path": "README.md",
-      "sha256": "33d1b631d3a3059c76956c90b3a3de7bd974d3b012fc47e3cfd1341602d7ba3d"
+      "sha256": "cd02f101a86d20c92f8edf25e01edea558001d59e3298ca13ba8ad2a14daa51d"
     },
     {
       "path": "acceptance.md",
@@ -252,6 +252,10 @@
       "sha256": "269593b1c5fb67f12d86ba0206adcd9438ff0d44be5d3b14b3bcec964b3a4aca"
     },
     {
+      "path": "architecture-overview.md",
+      "sha256": "57a34927f8ce97f971ffac1a726a6b661556b46f6e7c38b4a75c814737b20d14"
+    },
+    {
       "path": "architecture.md",
       "sha256": "8707282e3b30a5e5a771cfa8651a481e683d8d0f9bc48e68be8de37d89a34f52"
     },
@@ -400,8 +404,16 @@
       "sha256": "d6f2ec8484c70e6091b28a63d2633539f45601e10c95ff05ae05124e3609208d"
     },
     {
+      "path": "export-inventory.md",
+      "sha256": "192f66af9785c3e9e6969261a89a4cfcfd76037a6bacd3a35db34afd44a873db"
+    },
+    {
       "path": "face-catalogue.md",
       "sha256": "1a34651049adccb8dd842cf7e7a66c68fd9db377942b3853207752240a597ee6"
+    },
+    {
+      "path": "feature-status.md",
+      "sha256": "a7f5ea705d585cf623c2ec2117b7820ac0da8910b35c3af9f4eb84aa8780a294"
     },
     {
       "path": "feedback-without-audio.md",
@@ -720,6 +732,10 @@
       "sha256": "0119a8f404d42440283af51c6676d664d1513ff20d00f5711289f4d892863334"
     },
     {
+      "path": "storage-inventory.md",
+      "sha256": "eeb6da3d45a04d39c61c43cc3c0e41b1bc71022e31f22545095b38df8a563bbb"
+    },
+    {
       "path": "storage-quota-notes.md",
       "sha256": "bbc817b326bac04ead880a83d873c6a3cfff4bac7342843fba25d063b159483e"
     },
@@ -799,8 +815,8 @@
   "files": [
     {
       "path": "README.md",
-      "sha256": "33d1b631d3a3059c76956c90b3a3de7bd974d3b012fc47e3cfd1341602d7ba3d",
-      "sourceSha256": "33d1b631d3a3059c76956c90b3a3de7bd974d3b012fc47e3cfd1341602d7ba3d",
+      "sha256": "cd02f101a86d20c92f8edf25e01edea558001d59e3298ca13ba8ad2a14daa51d",
+      "sourceSha256": "cd02f101a86d20c92f8edf25e01edea558001d59e3298ca13ba8ad2a14daa51d",
       "metadata": {
         "description": "Neon Pairs game specification and document map",
         "tags": [
@@ -1579,6 +1595,18 @@
       }
     },
     {
+      "path": "architecture-overview.md",
+      "sha256": "57a34927f8ce97f971ffac1a726a6b661556b46f6e7c38b4a75c814737b20d14",
+      "sourceSha256": "57a34927f8ce97f971ffac1a726a6b661556b46f6e7c38b4a75c814737b20d14",
+      "metadata": {
+        "description": "The parts of the game as built today, what each holds and the decisions behind it.",
+        "tags": [
+          "Architecture",
+          "Decision"
+        ]
+      }
+    },
+    {
       "path": "architecture.md",
       "sha256": "8707282e3b30a5e5a771cfa8651a481e683d8d0f9bc48e68be8de37d89a34f52",
       "sourceSha256": "8707282e3b30a5e5a771cfa8651a481e683d8d0f9bc48e68be8de37d89a34f52",
@@ -2058,6 +2086,18 @@
       }
     },
     {
+      "path": "export-inventory.md",
+      "sha256": "192f66af9785c3e9e6969261a89a4cfcfd76037a6bacd3a35db34afd44a873db",
+      "sourceSha256": "192f66af9785c3e9e6969261a89a4cfcfd76037a6bacd3a35db34afd44a873db",
+      "metadata": {
+        "description": "Every piece of JSON a person can copy out of the game and load back in today.",
+        "tags": [
+          "Sharing",
+          "Formats"
+        ]
+      }
+    },
+    {
       "path": "face-catalogue.md",
       "sha256": "1a34651049adccb8dd842cf7e7a66c68fd9db377942b3853207752240a597ee6",
       "sourceSha256": "1a34651049adccb8dd842cf7e7a66c68fd9db377942b3853207752240a597ee6",
@@ -2067,6 +2107,18 @@
           "Visuals",
           "Artwork",
           "Geometry"
+        ]
+      }
+    },
+    {
+      "path": "feature-status.md",
+      "sha256": "a7f5ea705d585cf623c2ec2117b7820ac0da8910b35c3af9f4eb84aa8780a294",
+      "sourceSha256": "a7f5ea705d585cf623c2ec2117b7820ac0da8910b35c3af9f4eb84aa8780a294",
+      "metadata": {
+        "description": "What the game can do today and what has only been discussed.",
+        "tags": [
+          "Product",
+          "Architecture"
         ]
       }
     },
@@ -3090,6 +3142,18 @@
         "tags": [
           "Persistence",
           "Failures"
+        ]
+      }
+    },
+    {
+      "path": "storage-inventory.md",
+      "sha256": "eeb6da3d45a04d39c61c43cc3c0e41b1bc71022e31f22545095b38df8a563bbb",
+      "sourceSha256": "eeb6da3d45a04d39c61c43cc3c0e41b1bc71022e31f22545095b38df8a563bbb",
+      "metadata": {
+        "description": "Everything the game writes to browser storage today.",
+        "tags": [
+          "Persistence",
+          "Storage"
         ]
       }
     },

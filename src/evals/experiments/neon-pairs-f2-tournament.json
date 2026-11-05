@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "layer": 4,
   "cases": ["l4-f2-tournament"],
-  "setups": ["organized-docs", "code-only", "plain-docs", "full-core-scoped"],
+  "setups": ["organized-docs", "code-only", "plain-docs"],
   "runsPerSetup": 3,
   "parallelRuns": 6,
   "agents": "codex",

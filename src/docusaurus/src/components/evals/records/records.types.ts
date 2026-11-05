@@ -62,9 +62,11 @@ export interface Checks extends AssessmentBase {
 export interface JudgeScore { readonly id: string; readonly headline: string; readonly group: string; readonly title: string; readonly ballots: readonly number[]; readonly evidence: readonly string[] }
 /** Free writing from one ballot. It's there to read, and no score comes from it. */
 export interface JudgeFinding { readonly ballot: number; readonly kind: string; readonly area: string; readonly impact: string | null; readonly text: string; readonly citations: readonly string[] }
+/** A page that described the game before the work, and whether it still does. */
+export interface JudgeStalePage { readonly document: string; readonly statements: number; readonly remaining: number; readonly mentionsWork: boolean; readonly current: boolean }
 export interface Judge extends AssessmentBase {
   readonly ballots?: number; readonly kind: "judge"; readonly runId: string; readonly answers: readonly Ballot[]; readonly requestedModel: Choice | null; readonly reportedModel: string | null;
-  readonly scores?: readonly JudgeScore[]; readonly findings?: readonly JudgeFinding[]; readonly summaries?: readonly string[];
+  readonly scores?: readonly JudgeScore[]; readonly findings?: readonly JudgeFinding[]; readonly summaries?: readonly string[]; readonly staleDocs?: readonly JudgeStalePage[];
 }
 export interface Pick extends AssessmentBase {
   readonly kind: "pick"; readonly left: { readonly runId: string; readonly artifactHash: string | null; readonly side: "left" };

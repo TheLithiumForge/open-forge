@@ -304,5 +304,45 @@
       "by": "name-length-policy.md",
       "statement": "Names may have 1 to 32 characters and are stored exactly as typed."
     }
+  ],
+  "stale": [
+    {
+      "document": "architecture-overview.md",
+      "statements": [
+        "Solo play is the only mode.",
+        "These are all the modules the game has.",
+        "Preferences are the only data written to the browser.",
+        "Progress snapshots are the only JSON the game exports."
+      ],
+      "current": "tournament|knockout|competition"
+    },
+    {
+      "document": "feature-status.md",
+      "statements": [
+        "| Tournament mode | Not built | None |"
+      ],
+      "current": "tournament"
+    },
+    {
+      "document": "storage-inventory.md",
+      "statements": [
+        "The game writes one key to browser storage: `neon-pairs.preferences.v1`."
+      ],
+      "current": "tournament|knockout|competition"
+    },
+    {
+      "document": "export-inventory.md",
+      "statements": [
+        "The game exports one kind of JSON, the progress snapshot."
+      ],
+      "current": "tournament|knockout|competition"
+    },
+    {
+      "document": "competition-overview.md",
+      "statements": [
+        "There is no competition entry form, bracket view, participant model or tournament controller in `src/game/Game.tsx`."
+      ],
+      "current": "tournament"
+    }
   ]
 }

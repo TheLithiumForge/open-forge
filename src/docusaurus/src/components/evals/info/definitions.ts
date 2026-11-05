@@ -29,10 +29,15 @@ import FullCore from "@site/docs/evals/_definitions/full-core.mdx";
 import FullCoreScoped from "@site/docs/evals/_definitions/full-core-scoped.mdx";
 import MinimalScoped from "@site/docs/evals/_definitions/minimal-scoped.mdx";
 import EssentialsScoped from "@site/docs/evals/_definitions/essentials-scoped.mdx";
+import FullCoreProper from "@site/docs/evals/_definitions/full-core-proper.mdx";
+import MinimalProper from "@site/docs/evals/_definitions/minimal-proper.mdx";
+import EssentialsProper from "@site/docs/evals/_definitions/essentials-proper.mdx";
 import CheckCoverage from "@site/docs/evals/_definitions/check-coverage.mdx";
 import JudgeScore from "@site/docs/evals/_definitions/judge-score.mdx";
 import JudgeQuality from "@site/docs/evals/_definitions/judge-quality.mdx";
 import JudgeAdherence from "@site/docs/evals/_definitions/judge-adherence.mdx";
+import JudgeUpkeep from "@site/docs/evals/_definitions/judge-upkeep.mdx";
+import PagesCurrent from "@site/docs/evals/_definitions/pages-current.mdx";
 import Tokens from "@site/docs/evals/_definitions/tokens.mdx";
 import Time from "@site/docs/evals/_definitions/time.mdx";
 
@@ -80,10 +85,15 @@ export const Definitions: Readonly<Record<DefinitionId, Definition>> = {
   "full-core-scoped": { title: SetupNames["full-core-scoped"], kind: DefinitionKind.setup, Content: FullCoreScoped },
   "minimal-scoped": { title: SetupNames["minimal-scoped"], kind: DefinitionKind.setup, Content: MinimalScoped },
   "essentials-scoped": { title: SetupNames["essentials-scoped"], kind: DefinitionKind.setup, Content: EssentialsScoped },
+  "full-core-proper": { title: SetupNames["full-core-proper"], kind: DefinitionKind.setup, Content: FullCoreProper },
+  "minimal-proper": { title: SetupNames["minimal-proper"], kind: DefinitionKind.setup, Content: MinimalProper },
+  "essentials-proper": { title: SetupNames["essentials-proper"], kind: DefinitionKind.setup, Content: EssentialsProper },
   "check-coverage": { title: MeasureNames["check-coverage"], kind: DefinitionKind.measure, Content: CheckCoverage },
   "judge-score": { title: MeasureNames["judge-score"], kind: DefinitionKind.measure, Content: JudgeScore },
   "judge-quality": { title: MeasureNames["judge-quality"], kind: DefinitionKind.measure, Content: JudgeQuality },
   "judge-adherence": { title: MeasureNames["judge-adherence"], kind: DefinitionKind.measure, Content: JudgeAdherence },
+  "judge-upkeep": { title: MeasureNames["judge-upkeep"], kind: DefinitionKind.measure, Content: JudgeUpkeep },
+  "pages-current": { title: MeasureNames["pages-current"], kind: DefinitionKind.measure, Content: PagesCurrent },
   tokens: { title: MeasureNames.tokens, kind: DefinitionKind.measure, Content: Tokens },
   cost: { title: MeasureNames.cost, kind: DefinitionKind.measure, Content: Cost },
   time: { title: MeasureNames.time, kind: DefinitionKind.measure, Content: Time },

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "layer": 4,
   "cases": ["l4-f2-tournament"],
-  "setups": ["minimal-scoped"],
+  "setups": ["essentials-proper"],
   "runsPerSetup": 3,
   "parallelRuns": 6,
   "agents": "codex",
