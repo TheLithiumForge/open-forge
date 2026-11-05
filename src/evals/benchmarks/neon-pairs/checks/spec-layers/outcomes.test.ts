@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { CheckStatus } from "../../../../history/statuses.ts";
-import { aggregate, Evidence, EvidenceLimit } from "./outcomes.ts";
+import { aggregate, Evidence, EvidenceLimit, BehaviorFailure, stoppedClauses } from "./outcomes.ts";
 import { assertionId, type Declaration } from "./catalog.ts";
 import { Method } from "./requirements.ts";
 
@@ -42,4 +42,12 @@ test("failure samples survive merges, capture errors and report limits", async (
   broken.record(Clauses[0]!, CheckStatus.error, "Expected a completed probe. Observed browser failure.");
   await broken.flush();
   assert.match(broken.outcomes[0]?.evidence ?? "", /Observed page:.*captureError.*page closed/);
+});
+
+test("a journey stopped by the game's behavior fails its first open clause and blocks the rest, and only a checker fault is an error", () => {
+  const clauses = ["A.1", "A.2", "A.3"], seen = new Set(["A.1"]), Detail = "stopped";
+  const statuses = (error: unknown, earlier?: string) => [...stoppedClauses(clauses, seen, error, earlier, Detail).values()].map((outcome) => outcome.status);
+  assert.deepEqual(statuses(new BehaviorFailure(Detail)).slice(1), ["fail", "blocked"]);
+  assert.deepEqual(statuses(new Error(Detail)), ["error", "error", "error"]);
+  assert.deepEqual(statuses(new BehaviorFailure(Detail), "A.1"), ["blocked", "blocked", "blocked"]);
 });

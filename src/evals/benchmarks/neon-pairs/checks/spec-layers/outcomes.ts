@@ -4,6 +4,16 @@ import type { Declaration, Definition } from "./catalog.ts";
 
 export class BehaviorFailure extends Error {}
 export const EvidenceLimit = 24_000;
+export interface StoppedClause { readonly status: "error" | "blocked" | "fail"; readonly detail: string }
+/**
+ * What a journey that stopped early means for its clauses. A game that didn't behave fails the first clause still open, and the
+ * rest wait on it, as they do after an earlier failure. Anything else is a checker fault, and only that is an error.
+ */
+export function stoppedClauses(clauses: readonly string[], seen: ReadonlySet<string>, error: unknown, earlier: string | undefined, detail: string): Map<string, StoppedClause> {
+  const failing = earlier === undefined && error instanceof BehaviorFailure ? clauses.find((clause) => !seen.has(clause)) : undefined;
+  const after = earlier ?? failing;
+  return new Map(clauses.map((clause) => [clause, clause === failing ? { status: "fail", detail } : after !== undefined ? { status: "blocked", detail: `Stopped after ${after}. ${detail}` } : { status: "error", detail }]));
+}
 function bounded(text: string): string {
   if (text.length <= EvidenceLimit) return text;
   const omitted = "\n[Evidence shortened. First and last samples kept.]\n", half = Math.floor((EvidenceLimit - omitted.length) / 2);

@@ -61,6 +61,11 @@ export function planBatchRuns(config: EvalConfig, batchId: string): RunRecord[] 
   return shuffled(config.agents.flatMap((agent) => config.setups.flatMap((setup) => Array.from({ length: config.runsPerSetup }, (_, repeat) => plannedRun(opaqueId(), batchId, setup, agent, repeat + 1)))));
 }
 
+/** What the simulated user reads to tell a real question from a settled one. A case's own document pack is far larger than a model can read, so it reads the request alone. */
+export function userDocuments(suite: Pick<Suite, "prompt" | "documents" | "brownfield">): readonly string[] {
+  return suite.brownfield?.case.documents === undefined ? [suite.prompt, ...suite.documents ?? []] : [suite.prompt];
+}
+
 /** Plans every run of the config, in random order so no setup always runs first, and starts them. */
 export async function startBatch(selected?: EvalConfig): Promise<BatchRecord> {
   if (activeBatch !== null) throw new Error("A batch is already running.");
@@ -68,7 +73,7 @@ export async function startBatch(selected?: EvalConfig): Promise<BatchRecord> {
   requireSignIns(batchTools(requested));
   const suite = await loadSuite(requested.suite);
   const config = { ...requested, limits: { ...requested.limits, runMinutes: suite.runMinutes ?? requested.limits.runMinutes },
-    protocol: suite.documents === undefined ? requested.protocol ?? suiteProtocol(suite) : freezeProtocol(answerBank(suite.intent), [suite.prompt, ...suite.documents]) };
+    protocol: suite.documents === undefined ? requested.protocol ?? suiteProtocol(suite) : freezeProtocol(answerBank(suite.intent), userDocuments(suite)) };
   const id = `${new Date().toISOString().replaceAll(/[:.]/g, "-")}-${opaqueId()}`;
   // A chain's first step starts from the case's own starting code, as any batch does.
   const chained = config.chain?.parentBatchId === undefined ? null : await planChain(config, id, suite);

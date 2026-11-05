@@ -1,5 +1,5 @@
 import { chromium, type Browser, type Page } from "playwright";
-import { Evidence } from "./outcomes.ts";
+import { Evidence, stoppedClauses, type StoppedClause } from "./outcomes.ts";
 import type { Definition } from "./catalog.ts";
 import { Method, LayerId as Layer } from "./requirements.ts";
 import { session, type Session, type SessionOptions } from "./browser-session.ts";
@@ -41,7 +41,7 @@ export async function browserChecks(html: string, definition: Definition, eviden
   evidence.inherited.set(CheckId.facesDistinct, { id: CheckId.facesDistinct, area: CheckArea.faces, status: CheckStatus.error, evidence: "The later-layer checker did not finish its individual face captures." });
   const browser = await launch();
   const failures: string[] = [], audio: number[] = [];
-  const stopped = new Map<string, { status: "error" | "blocked"; detail: string }>();
+  const stopped = new Map<string, StoppedClause>();
   try {
     for (const journey of journeys) {
       const clauses = definition.checks.filter((check) => journey.groups.some((group) => check.id === `l2-${group}`)).flatMap((check) => check.clauses);
@@ -68,7 +68,7 @@ export async function browserChecks(html: string, definition: Definition, eviden
         const detail = `${journey.action.name}: expected probe to finish. Observed error: ${error instanceof Error ? error.message : String(error)}\nObserved page: ${JSON.stringify(observed)}`;
         failures.push(detail);
         const earlier = evidence.outcomes.slice(start).find((item) => item.status !== "pass");
-        for (const clause of clauses) stopped.set(clause, { status: earlier ? "blocked" : "error", detail: earlier ? `Stopped after ${earlier.clause}. ${detail}` : detail });
+        for (const [clause, outcome] of stoppedClauses(clauses, evidence.seen, error, earlier?.clause, detail)) stopped.set(clause, outcome);
       } finally { await evidence.flush(); evidence.observation = undefined; await open?.close(); }
     }
     const file = await session(browser, html, { file: true });

@@ -4,11 +4,13 @@ import * as ts from "typescript";
 import { object } from "./requirements.ts";
 
 export const SourceExcluded = new Set(["node_modules", ".git", ".agents", ".codex", ".claude", "dist", "test-results", "playwright-report", "docs", "art", ".eval-command-results", ".npm-cache", ".playwright-browsers", ".browser-work", ".test-tmp"]);
+/** A game may name its own folder like these, so only the project's top-level ones are left out. */
+const TopLevelOnly = new Set(["docs", "art"]);
 export interface SourceFile { readonly path: string; readonly text: string }
 export async function sourceFiles(root: string, folder = root): Promise<SourceFile[]> {
   const result: SourceFile[] = [];
   for (const entry of await readdir(folder, { withFileTypes: true })) {
-    if (SourceExcluded.has(entry.name) || entry.name.startsWith(".env")) continue;
+    if ((SourceExcluded.has(entry.name) && (folder === root || !TopLevelOnly.has(entry.name))) || entry.name.startsWith(".env")) continue;
     const path = join(folder, entry.name), info = await lstat(path);
     if (info.isSymbolicLink()) continue;
     if (info.isDirectory()) result.push(...await sourceFiles(root, path));

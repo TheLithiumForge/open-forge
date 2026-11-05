@@ -61,6 +61,15 @@ test("source collection skips excluded folders without loading their code", asyn
   assert.deepEqual((await sourceFiles(root)).map((file) => file.path), ["package.json"]);
 });
 
+test("a game's own folder named like a top-level excluded one still counts as source", async (t) => {
+  const root = await mkdtemp(join(tmpdir(), "eval-source-reader-"));
+  t.after(() => removeTemporary(root, "eval-source-reader-"));
+  const own = join(root, "src", "art");
+  await mkdir(own, { recursive: true });
+  await writeFile(join(own, "Face.tsx"), "export {};");
+  assert.deepEqual((await sourceFiles(root)).map((file) => file.path), ["src/art/Face.tsx"]);
+});
+
 test("reviewed production imports exclude development fixtures without running reference code", async () => {
   const files = await sourceFiles(fileURLToPath(SpecLayerReference));
   assert.ok(files.some((file) => file.path.endsWith(".fixture.ts")));
