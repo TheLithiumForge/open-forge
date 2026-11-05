@@ -111,7 +111,11 @@ The case's seed patch removes the distractors the first run found. It drops the 
 
 ### Run
 
-`neon-pairs-f2-tournament`: Sol at xhigh, one agent, Code only, Plain docs, Organized docs and Full Core scoped, 3 runs each, 3 hours per run. Checks in CI. No AI judges, since they don't separate runs yet.
+`neon-pairs-f2-tournament`: Sol at xhigh, one agent, Code only, Plain docs, Organized docs and Full Core scoped, 3 runs each, 3 hours per run. Checks in CI.
+
+The maintainer added AI judges on 2026-11-05, because the checks might not catch everything. A rubric of its own quotes the project rules and adds questions on code quality. Judges run on the PC, Sol at xhigh with 3 ballots.
+
+`neon-pairs-f2-minimal-scoped` adds the smallest proper install, on Sol, Luna and Terra. Open Forge should be used properly in every scenario, with at most one deliberately improper setup, so Minimal and Essentials are scoped on this case and only the amount installed changes. Flat Full Core stays available as the one improper control, since it differs from Full Core scoped only in its organization.
 
 ### How to read the result
 

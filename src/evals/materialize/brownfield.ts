@@ -24,16 +24,26 @@ export const BrownfieldSetups: Readonly<Record<string, SetupDefinition>> = {
   [OverloadSetups.memory]: { label: "Full Core, scoped, with memory", commands: [], delivery: { kind: SetupKind.forge, preset: ForgePreset.fullCore, scopes: NeonPairsScopes, overload: NeonPairsOverload } },
 };
 
+/** The install ladder's scoped rungs, which only a case with its own pack offers. */
+export const PackSetups = { minimalScoped: "minimal-scoped", essentialsScoped: "essentials-scoped" } as const;
+/** Setups that read the same on a case with its own pack. Flat Full Core is the one deliberately improper use of Open Forge. */
+const PackSetupsAsTheyAre: ReadonlySet<string> = new Set([CodeOnlySetup, DocumentSetups.plain, DocumentSetups.fullCore]);
+
 /**
  * The setups of one case. A case with its own scopes puts Organized docs in the same folders as Open Forge, as a careful
- * team would with that many documents, so the framework's routing is all that separates them.
+ * team would with that many documents, so the framework's routing is all that separates them. Every other Open Forge
+ * setup uses those folders too, so the install ladder changes only how much is installed, and flat Full Core differs
+ * from Full Core, scoped only in its organization.
  */
 function caseSetups(item: BrownfieldCase): Readonly<Record<string, SetupDefinition>> {
   if (item.scopes === undefined) return BrownfieldSetups;
   const scopes = relative(evalsRoot, join(item.root, item.scopes)).replaceAll("\\", "/");
-  return { ...BrownfieldSetups,
+  const scoped = (label: string, preset: ForgePreset): SetupDefinition => ({ label, commands: [], delivery: { kind: SetupKind.forge, preset, scopes } });
+  return { ...Object.fromEntries(Object.entries(BrownfieldSetups).filter(([id]) => PackSetupsAsTheyAre.has(id))),
     [DocumentSetups.organized]: { label: "Organized docs", commands: [], delivery: { kind: SetupKind.plain, scopes } },
-    [DocumentSetups.fullCoreScoped]: { label: "Full Core, scoped", commands: [], delivery: { kind: SetupKind.forge, preset: ForgePreset.fullCore, scopes } } };
+    [PackSetups.minimalScoped]: scoped("Minimal, scoped", ForgePreset.minimal),
+    [PackSetups.essentialsScoped]: scoped("Essentials, scoped", ForgePreset.essentials),
+    [DocumentSetups.fullCoreScoped]: scoped("Full Core, scoped", ForgePreset.fullCore) };
 }
 
 export function brownfieldSuite(inputs: BrownfieldInputs): Suite {
@@ -43,7 +53,7 @@ export function brownfieldSuite(inputs: BrownfieldInputs): Suite {
     prompt: item.request, intent: item.answers, rubric: [], intentEdited: false, runMinutes: item.runMinutes ?? CaseTimeLimitMinutes,
     documents: orderedDocuments(inputs.specifications.manifest, inputs.specifications.documents).map((file) => file.bytes.toString()),
     fingerprint: sha256(JSON.stringify({ inputs: item.inputs, seed: inputs.seed.map((file) => ({ path: file.path, sha256: sha256(file.bytes) })), specs: inputs.specifications.manifest })),
-    comparisons: { routing: Object.keys(BrownfieldSetups).filter((setup) => setup !== CodeOnlySetup), information: [DocumentSetups.organized, CodeOnlySetup],
+    comparisons: { routing: Object.keys(setups).filter((setup) => setup !== CodeOnlySetup), information: [DocumentSetups.organized, CodeOnlySetup],
       scopes: [DocumentSetups.organized, DocumentSetups.fullCore, DocumentSetups.fullCoreScoped] }, brownfield: inputs };
 }
 

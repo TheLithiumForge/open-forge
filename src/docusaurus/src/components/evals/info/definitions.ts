@@ -27,6 +27,8 @@ import Minimal from "@site/docs/evals/_definitions/minimal.mdx";
 import Essentials from "@site/docs/evals/_definitions/essentials.mdx";
 import FullCore from "@site/docs/evals/_definitions/full-core.mdx";
 import FullCoreScoped from "@site/docs/evals/_definitions/full-core-scoped.mdx";
+import MinimalScoped from "@site/docs/evals/_definitions/minimal-scoped.mdx";
+import EssentialsScoped from "@site/docs/evals/_definitions/essentials-scoped.mdx";
 import CheckCoverage from "@site/docs/evals/_definitions/check-coverage.mdx";
 import JudgeScore from "@site/docs/evals/_definitions/judge-score.mdx";
 import Tokens from "@site/docs/evals/_definitions/tokens.mdx";
@@ -74,6 +76,8 @@ export const Definitions: Readonly<Record<DefinitionId, Definition>> = {
   essentials: { title: SetupNames.essentials, kind: DefinitionKind.setup, Content: Essentials },
   "full-core": { title: SetupNames["full-core"], kind: DefinitionKind.setup, Content: FullCore },
   "full-core-scoped": { title: SetupNames["full-core-scoped"], kind: DefinitionKind.setup, Content: FullCoreScoped },
+  "minimal-scoped": { title: SetupNames["minimal-scoped"], kind: DefinitionKind.setup, Content: MinimalScoped },
+  "essentials-scoped": { title: SetupNames["essentials-scoped"], kind: DefinitionKind.setup, Content: EssentialsScoped },
   "check-coverage": { title: MeasureNames["check-coverage"], kind: DefinitionKind.measure, Content: CheckCoverage },
   "judge-score": { title: MeasureNames["judge-score"], kind: DefinitionKind.measure, Content: JudgeScore },
   tokens: { title: MeasureNames.tokens, kind: DefinitionKind.measure, Content: Tokens },
