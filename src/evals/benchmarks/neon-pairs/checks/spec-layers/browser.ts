@@ -1,5 +1,5 @@
 import { chromium, type Browser, type Page } from "playwright";
-import { Evidence, stoppedClauses, type StoppedClause } from "./outcomes.ts";
+import { BehaviorFailure, Evidence, stoppedClauses, type StoppedClause } from "./outcomes.ts";
 import type { Definition } from "./catalog.ts";
 import { Method, LayerId as Layer } from "./requirements.ts";
 import { session, type Session, type SessionOptions } from "./browser-session.ts";
@@ -41,6 +41,7 @@ export async function browserChecks(html: string, definition: Definition, eviden
   evidence.inherited.set(CheckId.facesDistinct, { id: CheckId.facesDistinct, area: CheckArea.faces, status: CheckStatus.error, evidence: "The later-layer checker did not finish its individual face captures." });
   const browser = await launch();
   const failures: string[] = [], audio: number[] = [];
+  let checkerFaulted = false;
   const stopped = new Map<string, StoppedClause>();
   try {
     for (const journey of journeys) {
@@ -67,6 +68,7 @@ export async function browserChecks(html: string, definition: Definition, eviden
         const observed = open ? await pageObservation(open.page).catch((error: unknown) => ({ captureError: String(error) })) : "Session did not open";
         const detail = `${journey.action.name}: expected probe to finish. Observed error: ${error instanceof Error ? error.message : String(error)}\nObserved page: ${JSON.stringify(observed)}`;
         failures.push(detail);
+        checkerFaulted ||= !(error instanceof BehaviorFailure);
         const earlier = evidence.outcomes.slice(start).find((item) => item.status !== "pass");
         for (const [clause, outcome] of stoppedClauses(clauses, evidence.seen, error, earlier?.clause, detail)) stopped.set(clause, outcome);
       } finally { await evidence.flush(); evidence.observation = undefined; await open?.close(); }
@@ -84,7 +86,7 @@ export async function browserChecks(html: string, definition: Definition, eviden
         await journey(open.page, evidence);
         if (open.errors.length > 0) for (const [index, outcome] of evidence.outcomes.entries()) if (index >= start && outcome.status === "pass") evidence.outcomes[index] = { ...outcome, status: "fail", evidence: `${outcome.evidence}\nExpected no uncaught game errors. Observed: ${open.errors.join(". ")}` };
       }
-      catch (error) { failures.push(`${journey.name}: expected probe to finish. Observed error: ${error instanceof Error ? error.message : String(error)}\nObserved page: ${JSON.stringify(await pageObservation(open.page).catch((error: unknown) => ({ captureError: String(error) })))}`); }
+      catch (error) { checkerFaulted ||= !(error instanceof BehaviorFailure); failures.push(`${journey.name}: expected probe to finish. Observed error: ${error instanceof Error ? error.message : String(error)}\nObserved page: ${JSON.stringify(await pageObservation(open.page).catch((error: unknown) => ({ captureError: String(error) })))}`); }
       finally { await evidence.flush(); evidence.observation = undefined; await open.close(); }
     }
   } finally { await browser.close(); }
@@ -94,6 +96,7 @@ export async function browserChecks(html: string, definition: Definition, eviden
     if (outcome) evidence.merge("R06.6", outcome.status, `${clause}: ${outcome.evidence}`);
   }
   const browserClauses = definition.checks.filter((check) => check.method === Method.browser).flatMap((check) => check.clauses);
-  for (const clause of browserClauses.filter((id) => !evidence.seen.has(id))) evidence.record(clause, stopped.get(clause)?.status ?? "error", stopped.get(clause)?.detail ?? (failures.join(". ").slice(0, 48000) || "Expected a collected browser assertion. Observed no result."));
+  // A clause no journey reached waits on the journey the game stopped, unless the checker itself faulted.
+  for (const clause of browserClauses.filter((id) => !evidence.seen.has(id))) evidence.record(clause, stopped.get(clause)?.status ?? (failures.length > 0 && !checkerFaulted ? "blocked" : "error"), stopped.get(clause)?.detail ?? (failures.join(". ").slice(0, 48000) || "Expected a collected browser assertion. Observed no result."));
   if (definition.layer === Layer.three) for (const outcome of evidence.outcomes.filter((item) => /^(?:D05|D06)\.|^D07\.[1-5]$/.test(item.clause) || item.clause === CapClause.snapshotElapsed || item.clause === CapClause.snapshotMoves)) evidence.merge("C09.2", outcome.status, `${outcome.clause}: ${outcome.evidence}`);
 }
