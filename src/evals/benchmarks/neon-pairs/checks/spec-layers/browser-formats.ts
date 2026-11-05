@@ -4,7 +4,7 @@ import { markVisibleCards as markCards } from "./browser-cards.ts";
 import { expectedDeck, parseBoardCode } from "./board-code.ts";
 import { body, changeSize, click, Labels, names, reset, step } from "./browser-session.ts";
 import { reporter } from "./browser-play.ts";
-import { Evidence } from "./outcomes.ts";
+import { BehaviorFailure, Evidence } from "./outcomes.ts";
 import { freshSnapshot } from "./replay.ts";
 import { decodeSnapshot, snapshotsEqual } from "./snapshot.ts";
 import { faceName, Rules, SelectionKind, type Snapshot } from "./rules.ts";
@@ -33,19 +33,25 @@ export async function importText(page: Page, text: string): Promise<void> {
     if (!setter) throw new Error("Native textarea setter missing.");
     setter.call(element, value); element.dispatchEvent(new Event("input", { bubbles: true }));
   }, text);
-  if (await field.inputValue() !== text) throw new Error("The snapshot draft was not delivered unchanged.");
+  if (await field.inputValue() !== text) throw new BehaviorFailure("The snapshot draft was not delivered unchanged.");
   await page.getByRole("button", { name: Labels.loadSnapshot, exact: true }).click(); await markCards(page);
 }
 
 export async function snapshotCases(page: Page, evidence: Evidence): Promise<void> {
   const results = new Map<string, { pass: boolean; details: string[] }>();
   for (const vector of snapshotVectors()) {
-    await importText(page, JSON.stringify({ ...freshSnapshot(KnownCode), started: true, moves: 4, elapsedMs: 2000, selection: { kind: SelectionKind.one, index: 0 } }));
-    const before = await exported(page), expected = decodeSnapshot(vector.text);
-    await importText(page, vector.text);
-    const rejected = (await body(page)).includes("Invalid snapshot.");
-    const actual = await exported(page);
-    const pass = actual !== null && (expected ? !rejected && snapshotsEqual(actual, expected) : rejected && before !== null && snapshotsEqual(actual, before));
+    let pass = false;
+    try {
+      await importText(page, JSON.stringify({ ...freshSnapshot(KnownCode), started: true, moves: 4, elapsedMs: 2000, selection: { kind: SelectionKind.one, index: 0 } }));
+      const before = await exported(page), expected = decodeSnapshot(vector.text);
+      await importText(page, vector.text);
+      const rejected = (await body(page)).includes("Invalid snapshot.");
+      const actual = await exported(page);
+      pass = actual !== null && (expected ? !rejected && snapshotsEqual(actual, expected) : rejected && before !== null && snapshotsEqual(actual, before));
+    } catch (error) {
+      // A box that changes the text it's given can't load this vector, so the vector fails and the rest still run.
+      if (!(error instanceof BehaviorFailure)) throw error;
+    }
     for (const id of vector.clauses) {
       const prior = results.get(id) ?? { pass: true, details: [] };
       prior.pass &&= pass; prior.details.push(`${vector.name}: ${pass ? "pass" : "fail"}`); results.set(id, prior);
