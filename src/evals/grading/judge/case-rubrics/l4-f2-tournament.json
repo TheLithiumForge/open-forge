@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "ballots": 3,
+  "questions": [
+    {
+      "id": "bracket",
+      "area": "competition",
+      "evidence": "source",
+      "rules": [
+        "T01",
+        "T02",
+        "T03"
+      ],
+      "question": "Do the tournament's seeding, pairing, round names and board sizes follow the project's rules? The project's written rules say: \"Seeds follow entry order, so the first player entered is seed 1. A bracket of four meets as 1 against 4, then 2 against 3. A bracket of eight meets as 1 against 8, 4 against 5, 3 against 6, then 2 against 7.\" \"Name each round Quarterfinal, Semifinal or Final, and show it as \"Round: NAME\" while that round is played. A bracket of four has no Quarterfinal.\" \"Quarterfinals are played on 4x4, semifinals on 6x6 and finals on 8x8.\" Answer yes only if the source follows every part on the paths a person can reach. Answer no if any part differs or is missing, even if the feature works some other way, and cite the lines. Don't count exotic inputs the rule doesn't name, such as empty field names or rare Unicode case pairs. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "match-outcome",
+      "area": "competition",
+      "evidence": "source",
+      "rules": [
+        "T04",
+        "T05"
+      ],
+      "question": "Do the tournament's deals and its way of deciding a match follow the project's rules, for every branch of a tie? The project's written rules say: \"Both players of a match play one board code, and every match in a tournament has a different board code.\" \"When both players of a match finish in the same number of moves, the lower active time wins, and if that is also equal the higher seed wins.\" Answer yes only if the source follows every part on the paths a person can reach. Answer no if any part differs or is missing, even if the feature works some other way, and cite the lines. Don't count exotic inputs the rule doesn't name, such as empty field names or rare Unicode case pairs. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "score-isolation",
+      "area": "competition",
+      "evidence": "source",
+      "rules": [
+        "T06"
+      ],
+      "question": "Is the tournament kept from the code that saves best scores and the board size, on every path through a game? The project's written rules say: \"Tournament games never change best scores or the saved board size.\" Answer yes only if the source follows every part on the paths a person can reach. Answer no if any part differs or is missing, even if the feature works some other way, and cite the lines. Don't count exotic inputs the rule doesn't name, such as empty field names or rare Unicode case pairs. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "names",
+      "area": "names",
+      "evidence": "source",
+      "rules": [
+        "N01",
+        "N02",
+        "N03"
+      ],
+      "question": "Are typed names handled as the project's rules say, with one normalization used for storing, showing, measuring and comparing them? The project's written rules say: \"Every name a person types is stored and shown after trimming both ends, collapsing each run of inner whitespace to one space and normalizing to NFC.\" \"A name has 2 to 20 Unicode code points after normalization. Anything else blocks the action and shows \"Use 2 to 20 characters.\"\" \"Names in one group compare without regard to case, after normalization. A repeat blocks the action and shows \"Each name must be different.\"\" Answer yes only if the source follows every part on the paths a person can reach. Answer no if any part differs or is missing, even if the feature works some other way, and cite the lines. Don't count exotic inputs the rule doesn't name, such as empty field names or rare Unicode case pairs. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "stored-shape",
+      "area": "persistence",
+      "evidence": "source",
+      "rules": [
+        "P01",
+        "P02",
+        "P03"
+      ],
+      "question": "Does the feature's browser storage have the key, shape and retention the project's rules set? The project's written rules say: \"New stored data uses a key of the form np3:THING, where THING is a lowercase plural noun for what is stored. Keys that already exist keep their names.\" \"Every value a feature adds to browser storage is a JSON object with exactly two keys: \"v\", the number 3, and \"items\", the array of records.\" \"A stored list keeps its newest 10 records and drops older ones when a new record is saved.\" Answer yes only if the source follows every part on the paths a person can reach. Answer no if any part differs or is missing, even if the feature works some other way, and cite the lines. Don't count exotic inputs the rule doesn't name, such as empty field names or rare Unicode case pairs. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "stored-failure",
+      "area": "persistence",
+      "evidence": "source",
+      "rules": [
+        "P04",
+        "P05"
+      ],
+      "question": "Does the feature handle blocked storage and bad stored values as the project's rules say? The project's written rules say: \"When browser storage is blocked, a feature keeps working in memory and shows \"Progress won't be saved on this device.\" where its saved records would appear.\" \"A stored value that fails to parse or validate is treated as empty, without any error, and stays untouched until the next save replaces it.\" Answer yes only if the source follows every part on the paths a person can reach. Answer no if any part differs or is missing, even if the feature works some other way, and cite the lines. Don't count exotic inputs the rule doesn't name, such as empty field names or rare Unicode case pairs. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "exchange",
+      "area": "formats",
+      "evidence": "source",
+      "rules": [
+        "E01",
+        "E02"
+      ],
+      "question": "Do the feature's export and import follow the project's rules, with the whole document checked before any state changes? The project's written rules say: \"Every new exported JSON object has a \"format\" of \"neon-pairs/KIND\", naming what it holds, and a whole-number \"version\", with its keys in alphabetical order at every level. Formats that already exist stay as they are.\" \"An import with a field its format doesn't define shows \"Unknown field: NAME.\" for the first such field and leaves the current state unchanged.\" Answer yes only if the source follows every part on the paths a person can reach. Answer no if any part differs or is missing, even if the feature works some other way, and cite the lines. Don't count exotic inputs the rule doesn't name, such as empty field names or rare Unicode case pairs. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "live-and-focus",
+      "area": "accessibility",
+      "evidence": "source",
+      "rules": [
+        "A02",
+        "A03"
+      ],
+      "question": "Do the feature's announcements and focus changes follow the project's rules, on every screen change? The project's written rules say: \"The page has exactly one live region, the status paragraph in Game.tsx. New status text, such as whose turn it is, goes through that region.\" \"When a feature replaces what the main area shows, focus moves to that screen's h2, which has tabindex=\"-1\".\" Answer yes only if the source follows every part on the paths a person can reach. Answer no if any part differs or is missing, even if the feature works some other way, and cite the lines. Don't count exotic inputs the rule doesn't name, such as empty field names or rare Unicode case pairs. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "dialog-and-tables",
+      "area": "accessibility",
+      "evidence": "source",
+      "rules": [
+        "A01",
+        "A04"
+      ],
+      "question": "Do the feature's bracket markup and its way of leaving unfinished work follow the project's rules? The project's written rules say: \"Ranked or bracket data is a table element with a caption and th scope=\"col\" header cells.\" \"Leaving unfinished work asks first in a native dialog element with two buttons, Keep playing and Leave. Keep playing takes focus when it opens, and Escape keeps playing.\" Answer yes only if the source follows every part on the paths a person can reach. Answer no if any part differs or is missing, even if the feature works some other way, and cite the lines. Don't count exotic inputs the rule doesn't name, such as empty field names or rare Unicode case pairs. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "phone-motion-state",
+      "area": "visuals",
+      "evidence": "source",
+      "rules": [
+        "A05",
+        "V01",
+        "V02"
+      ],
+      "question": "Do the feature's styles and markup follow the project's rules on target size, motion and state shown by more than color? The project's written rules say: \"Every new control is at least 44 by 44 CSS pixels at a 390 pixel wide viewport.\" \"Under prefers-reduced-motion: reduce, new elements run no animation and no transition.\" \"State is never shown by color alone, so a winner is marked with the text \"(winner)\" after the name.\" Answer yes only if the source follows every part on the paths a person can reach. Answer no if any part differs or is missing, even if the feature works some other way, and cite the lines. Don't count exotic inputs the rule doesn't name, such as empty field names or rare Unicode case pairs. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "interface-text",
+      "area": "writing",
+      "evidence": "source",
+      "rules": [
+        "C01",
+        "C02"
+      ],
+      "question": "Does all of the feature's interface text follow the project's rules? The project's written rules say: \"Interface text has no exclamation marks.\" \"Counts of moves read \"1 move\" and \"2 moves\", and durations read M:SS, such as 0:07 and 12:30.\" Answer yes only if the source follows every part on the paths a person can reach. Answer no if any part differs or is missing, even if the feature works some other way, and cite the lines. Don't count exotic inputs the rule doesn't name, such as empty field names or rare Unicode case pairs. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "randomness-time",
+      "area": "architecture",
+      "evidence": "source",
+      "rules": [
+        "K01",
+        "K02"
+      ],
+      "question": "Does the feature get randomness and time only the way the project's rules allow? The project's written rules say: \"Only src/game/session/fresh-board.ts may call a random source. Everything else that needs randomness imports it from there.\" \"Game code reads time only through the session clock. Only files in src/game/session/ may call performance.now, and no game code may use Date.\" Answer yes only if the source follows every part on the paths a person can reach. Answer no if any part differs or is missing, even if the feature works some other way, and cite the lines. Don't count exotic inputs the rule doesn't name, such as empty field names or rare Unicode case pairs. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "layout",
+      "area": "architecture",
+      "evidence": "source",
+      "rules": [
+        "K03"
+      ],
+      "question": "Does the feature's place in the code follow the project's rules? The project's written rules say: \"A feature lives in src/game/FEATURE/, and its rules live in src/game/FEATURE/rules.ts, which imports neither React nor any browser global.\" Answer yes only if the source follows every part on the paths a person can reach. Answer no if any part differs or is missing, even if the feature works some other way, and cite the lines. Don't count exotic inputs the rule doesn't name, such as empty field names or rare Unicode case pairs. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "reuse",
+      "area": "quality",
+      "evidence": "source",
+      "rules": [],
+      "question": "Does the feature reuse the game's existing board code generation, game transitions, session clock, time formatting and Board component, and not write its own copy of any of them? Answer yes, no or unsure and cite the lines. Answer no if you can point at a case a person could reach that breaks this. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "rules-separated",
+      "area": "quality",
+      "evidence": "source",
+      "rules": [],
+      "question": "Are the tournament's decisions (pairing, advancing, winners and ties) made in pure functions outside components and hooks, with components only showing state and sending actions? Answer yes, no or unsure and cite the lines. Answer no if you can point at a case a person could reach that breaks this. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "state-model",
+      "area": "quality",
+      "evidence": "source",
+      "rules": [],
+      "question": "Does the tournament's state make impossible states hard to reach, with its stage as one value and not several booleans that can disagree? Answer yes, no or unsure and cite the lines. Answer no if you can point at a case a person could reach that breaks this. Use unsure only when the source cannot show it."
+    },
+    {
+      "id": "load-safety",
+      "area": "quality",
+      "evidence": "source",
+      "rules": [],
+      "question": "Is a loaded tournament validated in full, covering types, ranges and consistency between players, matches and winners, so a hand-edited file can't crash a screen or reach an impossible state? Answer yes, no or unsure and cite the lines. Answer no if you can point at a case a person could reach that breaks this. Use unsure only when the source cannot show it."
+    }
+  ]
+}
