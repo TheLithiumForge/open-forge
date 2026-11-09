@@ -231,6 +231,23 @@ public sealed class DoctorOutsideIntegrationTests
         }
     }
 
+    [Theory, InlineData(WorkspaceLayout.DefaultMainRoot), InlineData("knowledge/main")]
+    public async Task IgnoredLinkPathsBesideAnOutsideRouteReportOnlyTheMissingPath(string root)
+    {
+        using var files = Create(root, "listed");
+        files.ReplaceText(WorkspaceSettingsDefinitions.RelativePath, $$"""
+            {"{{WorkspaceSettingsDefinitions.SchemaVersionProperty}}":{{WorkspaceSettingsDefinitions.SchemaVersion}},"{{WorkspaceSettingsDefinitions.MainRootProperty}}":"{{root}}","{{WorkspaceSettingsDefinitions.OutsideRoutesProperty}}":["{{Directory}}"],"{{WorkspaceSettingsDefinitions.IgnoreLinksFromProperty}}":["docs","{{Directory}}"],"{{WorkspaceSettingsDefinitions.IgnoreLinksToProperty}}":["docs/gone"]}
+            """);
+        var before = files.SnapshotHashes();
+        var workspace = new CliWorkspace(files.Path, files.Path, CliWorkspaceSelectionMethod.CurrentDirectory);
+        var read = await new DoctorDiagnosisReader(RepairOperationalContributorFactory.Create(new PhysicalPathResolver()))
+            .ReadAsync(new DoctorRequest(workspace), TestContext.Current.CancellationToken);
+        var finding = Assert.Single(read.Result.Diagnosis.Domains.SelectMany(domain => domain.Findings),
+            finding => finding.Kind == DoctorFindingKind.WorkspaceLinkIgnorePathMissing);
+        Assert.Equal("docs/gone", finding.Subject.Path);
+        Assert.Equal(before, files.SnapshotHashes());
+    }
+
     [Fact]
     public async Task MissingAnchorAdviceRequiresCurrentExclusionAndOwnershipEvidence()
     {

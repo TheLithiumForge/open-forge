@@ -243,11 +243,11 @@ internal sealed class LocalReferenceOperationalContributor(
         foreach (var source in catalogue.Candidates)
         {
             var path = source.CanonicalPath;
-            while (path.Length > 0 && known.Add(PortableWorkspacePath.CreatePortableKey(path)))
-            {
-                if (catalogue.Layout.SourceRoots.Contains(path, StringComparer.Ordinal)) break;
+            // Sources in outside routes have no source root above them, so the walk also ends at a top-level folder.
+            while (known.Add(PortableWorkspacePath.CreatePortableKey(path))
+                && !catalogue.Layout.SourceRoots.Contains(path, StringComparer.Ordinal)
+                && path.Contains('/'))
                 path = SourceLogicalPath.ReadParent(path);
-            }
         }
         var entries = settings.IgnoreLinksFrom.Select(path => (Key: WorkspaceSettingsDefinitions.IgnoreLinksFromProperty, Path: path))
             .Concat(settings.IgnoreLinksTo.Select(path => (Key: WorkspaceSettingsDefinitions.IgnoreLinksToProperty, Path: path)));
