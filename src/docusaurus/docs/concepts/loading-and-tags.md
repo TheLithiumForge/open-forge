@@ -105,19 +105,19 @@ The table shows Full Core. Essentials and Custom use the same loading rules for 
 | -------------------------------------- | ------------- | ------------------------------------------------- |
 | `loader.md`                            | none          | In full, at startup                               |
 | `directives/_directives.md`            | `#LoadNow`    | Entrypoint at startup                             |
-| `guidance/_guidance.md`                | `#LoadNow`    | Entrypoint at startup                             |
-| `maps/_maps.md`                        | `#LoadNow`    | Entrypoint at startup                             |
+| `guidance/_guidance.md`                | none          | Entrypoint on demand                              |
+| `maps/_maps.md`                        | none          | Entrypoint on demand                              |
 | `memory/_memory.md`                    | `#LoadNow`    | Entrypoint at startup                             |
 | `memory/working/_working.md`           | `#LoadNow`    | Entrypoint at startup                             |
 | `memory/crystallized/_crystallized.md` | `#LoadNow`    | Entrypoint at startup                             |
 | `memory/emerging/_emerging.md`         | `#KeepInMind` | Entrypoint at startup, and at every refresh point |
-| `patterns/_patterns.md`                | `#LoadNow`    | Entrypoint at startup                             |
-| `skills/_skills.md`                    | `#LoadNow`    | Entrypoint at startup                             |
-| `skills/open-forge-cli/SKILL.md`       | none          | At startup: required by the Skills entrypoint     |
+| `patterns/_patterns.md`                | none          | Entrypoint on demand                              |
+| `skills/_skills.md`                    | none          | Entrypoint on demand                              |
+| `skills/open-forge-cli/SKILL.md`       | none          | Before CLI commands other than `context`          |
 | `templates/_templates.md`              | none          | Entrypoint on demand                              |
 | `memory/archived/_archived.md`         | none          | Entrypoint on demand                              |
 
-Loading an entrypoint doesn't load everything it lists. The agent reads its purpose, rules, and one line per item under `Entries`. Linked files stay closed until selected, tagged to load, or explicitly required by a loaded rule. The Skills entrypoint has one such rule: read `open-forge-cli/SKILL.md` when present, so the agent has CLI usage advice from startup. If that Skill was deliberately omitted, use the loader's CLI summary. Other Skills stay on demand.
+Loading an entrypoint doesn't load everything it lists. The agent reads its purpose, rules, and one line per item under `Entries`. Linked files stay closed until selected, tagged to load, or explicitly required by a loaded rule. The Skills entrypoint has one such rule: read `open-forge-cli/SKILL.md`, when present, before running `open-forge` commands other than `context`. If that Skill was left out on purpose, use the loader's CLI steps. Other Skills stay on demand.
 
 The Memory rows show that exception. `memory/_memory.md` lists Working and Crystallized with `#LoadNow` and Emerging with `#KeepInMind`, so those three entrypoints load too. Archived has no loading tag, so it stays closed. Directives work the same way: each Directive file directly in `directives/` must carry `#LoadNow`, so it loads at startup once you add one. A fresh install has none.
 

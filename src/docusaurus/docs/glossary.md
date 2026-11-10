@@ -431,7 +431,7 @@ Example: Include Guidance and keep Working records out of Git.
 
 Read before the task begins. Linked items open when selected, tagged to load, or explicitly required by a loaded rule.
 
-Example: Full Core reads the Patterns entrypoint at startup, but its linked Patterns stay on demand.
+Example: Full Core reads the Directives entrypoint at startup, but its scoped Directives stay on demand until a task selects their scope.
 
 ### Entrypoint on demand
 

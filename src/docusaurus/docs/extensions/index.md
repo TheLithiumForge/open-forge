@@ -76,7 +76,7 @@ Package content follows the Framework’s selected main root, with native Skills
 | Workflow recipe | `.agents/skills/use-workflow/references/<package>/` | A step-by-step method, reached through the `use-workflow` Skill.                                                       |
 | Native Skill    | `.agents/skills/<name>/SKILL.md`                    | A capability in your harness's native Skill format.                                                                    |
 
-No first-party Extension file carries a loading tag (`LoadNow` or `KeepInMind`). At startup, an agent sees at most a one-line entry for a package file in an entrypoint that's already loaded, such as Guidance, Patterns, or a Memory state. The file itself opens on demand, when a task selects it.
+No first-party Extension file carries a loading tag (`LoadNow` or `KeepInMind`). At startup, an agent sees at most a one-line entry for a package file in an entrypoint that's already loaded, such as a Memory state. Entries in Guidance, Patterns or Skills show up when a task opens that entrypoint. The file itself opens on demand, when a task selects it.
 
 [Reading installed files](reading-installed-files.md) explains the conventions you'll see inside them, such as `{prompts}` in Templates and the `none` placeholder in empty categories.
 
