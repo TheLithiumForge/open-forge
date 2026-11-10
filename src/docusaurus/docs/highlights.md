@@ -5,7 +5,7 @@ description: The features that do the most work for particular kinds of users, s
 
 # Highlights
 
-Open Forge is small, but a few of its features do most of the work for particular kinds of users. Not everyone needs all of them. Find the row that matches your situation.
+A few Open Forge features do most of the work, and which ones matter depends on how you work. E.g. on a shared codebase, Decisions keep the reason behind a change after the person who made it has moved on. Find the row that matches your situation.
 
 | If you...                                              | Look at                                                                          | Because                                                               |
 | ------------------------------------------------------ | -------------------------------------------------------------------------------- | --------------------------------------------------------------------- |

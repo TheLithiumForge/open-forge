@@ -8,7 +8,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 
 # Grow your own framework
 
-The base Framework is deliberately small. The selected categories start empty apart from Memory state entrypoints and the CLI Skill. It becomes useful as you add what your project keeps teaching you.
+A correction you write down once becomes a rule your agent reads from then on, instead of a reminder you repeat. The base Framework is small on purpose: the selected categories start empty apart from the Memory state entrypoints and the CLI Skill. It grows from what your project keeps teaching you.
 
 Context can also grow in a folder your team keeps itself, such as `docs`. [Your own docs](your-own-docs.md) covers registering it. Keep the folder's loading tags and conditions on its Loader row, and each file's own tags and `applyTo` in its frontmatter, because Index rebuilds the folder's catalogue rows from that metadata.
 

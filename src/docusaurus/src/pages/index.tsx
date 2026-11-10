@@ -12,7 +12,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title="Adaptive Context Engineering for AI agents"
-      description="Open Forge is a Markdown framework that tells coding agents which of your project's rules, docs and decisions to read for each task, and keeps what they learn for the next one."
+      description="Open Forge gives your coding agent the rules, docs and decisions each task needs, and a place to keep what it learns for the next session."
     >
       <Hero />
       <main>

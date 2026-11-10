@@ -1,7 +1,7 @@
 ---
 title: What is Open Forge?
 sidebar_label: Introduction
-description: A Markdown framework that tells coding agents which of your project's rules, docs and decisions to read for each task, and keeps what they learn for the next one.
+description: Give your coding agent the rules, docs and decisions each task needs, and a place to keep what it learns for the next session.
 slug: /
 ---
 
@@ -9,13 +9,15 @@ import FrameworkMap from "@site/src/components/framework-map/FrameworkMap";
 
 # What is Open Forge?
 
-Open Forge is a Markdown framework that tells coding agents which of your project's rules, docs and decisions to read for each task, and keeps what they learn for the next one.
+Open Forge gives your coding agent the rules, docs and decisions each task needs, and a place to keep what it learns for the next session.
 
-One long `AGENTS.md` gives every task every rule. Open Forge gives an agent a map instead: a loader and one short catalogue per folder, so each task reads only the routes it needs. E.g. a rule tagged `LoadNow` with `applyTo: ["src/export/**"]` applies only to tasks that change export code.
+One long `AGENTS.md` hands every task every rule, and every new session starts by relearning the project. Open Forge gives the agent a map instead. It has three parts: agent documents with the routes that link them, a CLI that installs and maintains them, and optional workflows from Extensions. It's all built on Markdown files in your repository, so you read, diff and review it like the rest of your code.
 
-Your own documents can stay where they are. The framework and the agents' notes live in one context folder, `.agents` by default, and a folder your team writes in, such as `docs`, can be registered as a route. Agents find its documents through the loader, and you tell them which ones are accepted sources. [Your own docs](getting-started/your-own-docs.md) shows how.
+E.g. a rule tagged `LoadNow` with `applyTo: ["src/export/**"]` loads only for tasks that change export code. A fact your team accepted, such as "CSV exports use UTF-8", sits in Crystallized Memory, so the next export task starts from it instead of guessing.
 
-At its core, it's Markdown, rules, and links. Install it, ask your agent to work as usual, and add only what makes the next task easier. Path examples on this site use the default `.agents` folder, as [Installation](getting-started/installation.md#choose-the-context-folder) explains. Skills, settings and ownership stay in `.agents`.
+Your own documents can stay where they are. The loader, the rules and the agents' notes live in one context folder, `.agents` by default, and a folder your team writes in, such as `docs`, can be registered as a route. Agents find its documents through the loader, and you tell them which ones are accepted sources. [Your own docs](getting-started/your-own-docs.md) shows how.
+
+Install it, ask your agent to work as usual, and add only what makes the next task easier. Path examples on this site use the default `.agents` folder, as [Installation](getting-started/installation.md#choose-the-context-folder) explains. Skills, settings and the ownership record stay in `.agents`.
 
 ## Start using it
 
@@ -53,13 +55,13 @@ Startup rules + relevant links
 Work, keep useful outcomes
 ```
 
-An agent doesn't need to know everything, but it does need to know where everything is. Each context folder has a short `entrypoint`, a Markdown file named `_{folder-name}.md` that lists what's inside. The rules load startup context, then guide the agent to the branches the task needs. Other content opens when selected, tagged to load, or explicitly required by a loaded rule.
+An agent doesn't need to know everything, but it does need to know where everything is. Each context folder has a short `entrypoint`, a Markdown file named `_{folder-name}.md` that lists what's inside. The rules load startup context, then guide the agent to the branches the task needs. Other content opens when selected, tagged to load, or required by a loaded rule.
 
 This is **Adaptive Context Engineering (ACE)**: start from the task, bring in context as the work unfolds, and keep what's useful next time. [Loading and tags](concepts/loading-and-tags.md) explains the exact rules.
 
 Open Forge works with any agent tool that reads `AGENTS.md` or `CLAUDE.md`. Keep your hooks, custom agents, and tools. A translator such as [APM](https://github.com/microsoft/apm) can help install harness-specific definitions in several tools.
 
-## Three parts, one of them required
+## Three parts
 
 | Part           | What it is                                                                                                     | Required?                                            |
 | -------------- | -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
@@ -83,15 +85,15 @@ The [Concepts](concepts/index.md) section covers each part in depth.
 
 </details>
 
-## Your docs and your team
+## Docs and teams
 
 Open Forge shares context at three levels. A workspace keeps agent context in its main root and your team's documents in outside routes. A [Library](getting-started/share-with-your-team.md#library) links one shared folder into place, such as a Git submodule that several repos include. An [Extension](extensions/index.md) packages files that any project, team or organization can install. [Your own docs](getting-started/your-own-docs.md) covers the first level, and [Share with your team](getting-started/share-with-your-team.md) covers all three.
 
-## What you actually install
+## What you install
 
-Full Core supplies 20 Markdown files, including a guide for people and four supporting CLI guides that are opened when needed. Minimal includes Directives and Crystallized Memory. Essentials adds Patterns, Skills, Emerging and Working Memory. Custom follows your selection.
+Full Core gives you 20 Markdown files, including a guide for people and four supporting CLI guides that are opened when needed. Minimal includes Directives and Crystallized Memory. Essentials adds Patterns, Skills, Emerging and Working Memory. Custom follows your selection.
 
-Essentials keeps new Working records out of ordinary Git commits and leaves `_working.md` eligible for sharing. Already tracked files stay tracked. Generated `Entries` omit private contents. You can find and read local records with the CLI or your normal file tools. [Installation](getting-started/installation.md#choose-the-installed-routes) covers the exact choices.
+Essentials keeps new Working records out of normal Git commits and leaves `_working.md` eligible for sharing. Already tracked files stay tracked. Generated `Entries` omit private contents. You can find and read local records with the CLI or your normal file tools. [Installation](getting-started/installation.md#choose-the-installed-routes) covers the exact choices.
 
 <details>
 <summary>See the Full Core files and startup details</summary>
@@ -124,7 +126,7 @@ CLAUDE.md                         <- the same entry for tools that read CLAUDE.m
 
 Apart from Memory state entrypoints and one Skill that teaches agents the CLI, every selected category starts empty. The content comes from your work, such as a correction you keep repeating or a decision you don't want to explain again, and from any Extensions you install. Decisions, Checkpoints, workflow recipes, and starter Templates all come from Extensions, not from the base.
 
-In Full Core, startup reads `AGENTS.md`, the loader, nine entrypoints, and the CLI usage Skill required by Skills. Essentials and Custom use the same loading rules for the routes present. Reading an entrypoint doesn't load everything it lists. Other items open when selected, tagged to load, or required by a loaded rule. [Loading and tags](concepts/loading-and-tags.md) has the full table.
+In Full Core, startup reads `AGENTS.md`, the loader and five entrypoints: Directives, Memory, Crystallized, Emerging and Working. The Skills entrypoint asks agents to read the CLI usage Skill before they run CLI commands other than `context`. Essentials and Custom use the same loading rules for the routes present. Reading an entrypoint doesn't load everything it lists. Other items open when selected, tagged to load, or required by a loaded rule. [Loading and tags](concepts/loading-and-tags.md) has the full table.
 
 </details>
 

@@ -5,7 +5,7 @@ description: Add one rule, one report shape, and one saved fact, then check that
 
 # Ten-minute guide
 
-Use Open Forge to give your agent one testing rule, a reusable report shape, and a useful fact for the next task.
+In ten minutes, you give your agent one testing rule, a reusable report shape and a useful fact for the next task, then check that it uses them.
 
 This test example needs a project with tests and an agent tool that reads `AGENTS.md` or `CLAUDE.md`. Starting from an empty folder? Try the [greenfield demo](../demos/greenfield.md) first, or use the [brownfield demo](../demos/brownfield.md) for an app with tests. Your harness still supplies the agent's tools and decides how Skills run.
 

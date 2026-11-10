@@ -1,10 +1,13 @@
 # Open Forge CLI
 
-The Open Forge CLI helps you find context, inspect routes, keep generated
-navigation correct, and manage Framework files. It's an accelerant, not a
-requirement: the Framework is complete in plain files, and you can read, edit,
-and follow its rules without the CLI. The commands automate the work around
-those files. The files still define what the Framework means.
+The `open-forge` CLI keeps your agent's context in shape. It installs and
+updates the Framework, shows what a task will load, keeps every catalogue in
+step with its files, and finds broken links before they mislead an agent. Every
+command that changes files can preview its plan with `--dry-run`.
+
+You don't need it to use Open Forge. The Framework is complete in plain files,
+and you can read, edit and follow its rules by hand. The commands automate the
+work around those files, and the files still define what the Framework means.
 
 This is the complete command reference, with one section per operation. For which command
 helps with which job, and the everyday flows that tie them together, start with

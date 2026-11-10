@@ -1,10 +1,12 @@
 # Open Forge
 
-Open Forge is a Markdown framework that tells coding agents which of your project's rules, docs and decisions to read for each task, and keeps what they learn for the next one.
+Open Forge gives your coding agent the rules, docs and decisions each task needs, and a place to keep what it learns for the next session.
 
-One long `AGENTS.md` gives every task every rule. Open Forge replaces it with a loader and one short catalogue per folder, so each task reads only the routes it needs. E.g. a rule tagged `LoadNow` with `applyTo: ["src/export/**"]` applies only to tasks that change export code.
+I built it because one long `AGENTS.md` hands every task every rule, and every new session starts by relearning the project. Open Forge has three parts: agent documents with the routes that link them, a CLI that installs and maintains them, and optional workflows from Extensions. It's all built on Markdown files in your repository, so you read, diff and review it like the rest of your code.
 
-Your own documents can stay where they are. The framework and the agents' notes live in one context folder, `.agents` by default. A folder your team writes in, such as `docs`, can be registered as a route: agents find its documents through the loader, and the CLI keeps its catalogue current. [Your own docs](#your-own-docs) shows how, and how to tell agents which documents they can rely on.
+E.g. a rule tagged `LoadNow` with `applyTo: ["src/export/**"]` loads only for tasks that change export code. A fact your team accepted last month, such as "CSV exports use UTF-8", sits in Crystallized Memory, so the next export task starts from it instead of guessing.
+
+Your own documents can stay where they are. The loader, the rules and the agents' notes live in one context folder, `.agents` by default. A folder your team writes in, such as `docs`, can be registered as a route: agents find its documents through the loader, and the CLI keeps its catalogue current. [Your own docs](#your-own-docs) shows how, and how to tell agents which documents they can rely on.
 
 The design comes from an idea I call **Adaptive Context Engineering (ACE)**. An agent doesn't need to know everything, but it does need to know where everything is.
 
@@ -59,7 +61,7 @@ If your agent tool reads `CLAUDE.md`, append `open-forge/src/open-forge/CLAUDE.m
 
 ## Quick start
 
-The examples use the default context folder, `.agents`. You can choose another one at first installation, as [Context folder](#context-folder) describes.
+The examples use the default context folder, `.agents`. You can choose another one at first installation, as [Context folder](#context-folder) describes. Set it up in five steps:
 
 1. Preview the smallest setup from your project:
 
@@ -76,7 +78,7 @@ The examples use the default context folder, `.agents`. You can choose another o
    open-forge install --preset minimal --automatic
    ```
 
-3. Review the result with `git status` and `git diff`, then commit it. A fresh install adds new files, which `git status` lists and `git diff` alone doesn't show. Both folders start empty, so agents read only the loader and two short catalogues until you add something.
+3. Review the result with `git status` and `git diff`, then commit it. A fresh install adds new files, which `git status` lists and `git diff` alone doesn't show. Both folders start empty, so agents read only the loader and three short catalogues, for Directives, Memory and Crystallized Memory, until you add something.
 
 4. Point agents at a document you already have:
 
@@ -98,7 +100,7 @@ The examples use the default context folder, `.agents`. You can choose another o
 
    Check the answer against your contribution guide. You can stop here.
 
-That's the whole setup. Start with one document you already have, and add rules, Memory or reusable methods when they solve a problem you have. Installing and updating are things you do when you maintain the workspace. Agents don't repeat them at startup. If your agent tool doesn't read `AGENTS.md` on its own, ask it to read that file first.
+That's the whole setup. Start with one document you already have, and add rules, Memory or reusable methods when they solve a problem you have. Every part is optional, and so is the CLI. Installing and updating are things you do when you maintain the workspace. Agents don't repeat them at startup. If your agent tool doesn't read `AGENTS.md` on its own, ask it to read that file first.
 
 To try it without touching your checkout, [use a separate clone](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation#try-it-and-undo-a-trial). The [ten-minute guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/ten-minute-guide) walks through adding a rule, keeping a useful fact and finding the context for your next task. Starting something new? The [greenfield demo](https://thelithiumforge.github.io/open-forge/docs/demos/greenfield) gives you a first build request. You don't need to choose a workflow, install Extensions or write a specification first.
 
@@ -127,7 +129,7 @@ This is ACE. It takes progressive disclosure and spec-driven development and app
 
 A task starts from what you want to achieve. As the work unfolds, the agent pulls in what it needs, such as the relevant architecture, your local conventions or the decision you made last month, and unrelated history stays out. What you learn along the way can become part of the framework, so the next task starts from a better place. Context isn't every file in the repository. It's the knowledge, rules and current state a task needs.
 
-Open Forge works beside your agent tool. Any tool that reads `AGENTS.md` or `CLAUDE.md` can use it. Keep your hooks, custom agents and tools. If you want to define them once for several tools, a translator such as [APM](https://github.com/microsoft/apm) can install them where each tool looks for them.
+I built Open Forge to work beside your agent tool, the harness that runs your agent. Any tool that reads `AGENTS.md` or `CLAUDE.md` can use it. Keep your hooks, custom agents and tools. If you want to define them once for several tools, a translator such as [APM](https://github.com/microsoft/apm) can install them where each tool looks for them.
 
 The [loading guide](https://thelithiumforge.github.io/open-forge/docs/concepts/loading-and-tags) explains the loading tags and file conditions step by step.
 
@@ -184,7 +186,7 @@ At first installation, `install --main-root <folder>` puts the context files in 
 open-forge install --main-root docs --preset minimal --dry-run
 ```
 
-The wizard asks "Where should Open Forge keep its context files?" before the route choices, and defaults to `.agents`. Skills, settings and ownership stay in `.agents`. `AGENTS.md` and `CLAUDE.md` stay at the workspace root and point to the selected loader. Files already in the folder stay as they are. If it already has a `README.md`, Install keeps it and leaves the Framework guide out. Older CLIs don't support custom roots, and relocating an established installation isn't available yet. See the [context folder reference](docs/cli.md#context-folder).
+The wizard asks "Where should Open Forge keep its context files?" before the route choices, and defaults to `.agents`. Skills, settings and the ownership record stay in `.agents`. `AGENTS.md` and `CLAUDE.md` stay at the workspace root and point to the selected loader. Files already in the folder stay as they are. If it already has a `README.md`, Install keeps it and leaves the Framework guide out. Older CLIs don't support custom roots, and moving an installed context folder isn't available yet. See the [context folder reference](docs/cli.md#context-folder).
 
 ## Share with your team
 
@@ -390,7 +392,7 @@ The Framework has two parts. Core defines routing, loading and a few reusable co
 | [Guidance](src/open-forge/.agents/guidance/_guidance.md)       | What approach is recommended, and when does it fit?                         |
 | [Patterns](src/open-forge/.agents/patterns/_patterns.md)       | What reusable shape makes related work easy to create and inspect?          |
 | [Skills](src/open-forge/.agents/skills/_skills.md)             | Which specialized capability would help with this work?                     |
-| [Templates](src/open-forge/.agents/templates/_templates.md)    | What starting content can be copied, adapted, and maintained independently? |
+| [Templates](src/open-forge/.agents/templates/_templates.md)    | What starting content can be copied, adapted and maintained independently? |
 | [Maps](src/open-forge/.agents/maps/_maps.md)                   | Where is a useful local or external source, and when should it be used?     |
 
 A Pattern shows what related work should look like: a concrete example, tree, table, diagram or annotated outline you can hold against real code or files. Its notes say when it applies, which parts are required, optional or repeatable, and which names, values and orders are fixed or illustrative. The [Patterns entrypoint](src/open-forge/.agents/patterns/_patterns.md) has the full rules, including how a review reports justified adaptations.
@@ -403,7 +405,7 @@ A Skill provides a specialized capability through its native `SKILL.md` package.
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="src/docusaurus/static/img/framework-map-dark.svg">
-    <img alt="Core holds six categories for how work gets done. Memory holds four states for useful context. The map distinguishes startup from on-demand reading. Skills requires its CLI usage guide at startup. Other linked files open when selected, tagged to load, or required by a loaded rule. Dashed examples come from optional Extensions." src="src/docusaurus/static/img/framework-map-light.svg" width="900">
+    <img alt="Core holds six categories for how work gets done. Memory holds four states for useful context. The map distinguishes startup from on-demand reading. The Skills index asks for its CLI usage guide before CLI commands. Other linked files open when selected, tagged to load, or required by a loaded rule. Dashed examples come from optional Extensions." src="src/docusaurus/static/img/framework-map-light.svg" width="900">
   </picture>
 </p>
 
@@ -421,7 +423,18 @@ applyTo: ["**/*.cs"]
 ---
 ```
 
-That's the root form. The scoped form nests the same fields under an `open-forge:` mapping. Both are readable in every workspace, and new files follow the setting in `.agents/open-forge.json`. To switch forms later, preview `open-forge install --configure --frontmatter scoped --dry-run`, then run it without `--dry-run`. [Frontmatter and metadata](docs/cli.md#frontmatter-and-metadata) covers both forms, the choice at install and what conversion changes.
+That's the root form. The scoped form nests the same fields under an `open-forge:` mapping, which keeps them apart from another tool's root fields:
+
+```yaml
+---
+open-forge:
+  description: C# rules
+  tags: [Directive, LoadNow]
+  applyTo: ["**/*.cs"]
+---
+```
+
+Both forms are readable in every workspace. New files follow the `frontmatter` setting in `.agents/open-forge.json`, and a missing setting means scoped. A fresh unattended Install writes root unless settings already declare a form, and `install --frontmatter root` or `--frontmatter scoped` picks one without the question. To switch forms later, preview `open-forge install --configure --frontmatter scoped --dry-run`, then run it without `--dry-run`. Configure converts the files Open Forge manages that you haven't edited, and reports the ones it keeps. [Frontmatter and metadata](docs/cli.md#frontmatter-and-metadata) covers both forms, how they combine in one file and what conversion changes.
 
 The fields do different jobs:
 
@@ -435,13 +448,13 @@ These tags have defined behavior:
 | Tag                           | Meaning                                                                                                                      |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | `LoadNow`                     | Read the linked file when its loaded parent lists it                                                                         |
-| `KeepInMind`                  | Read it when its parent loads, then again at task start or resume, after context restoration, and before handoff or closeout |
-| `Contextual`                  | Treat useful context as unaccepted unless applicable authority establishes acceptance                                        |
+| `KeepInMind`                  | Read it when its parent loads, then again at task start or resume, after context restoration and before handoff or closeout  |
+| `Contextual`                  | Treat the content as useful context, not accepted truth, unless an applicable source accepts it                              |
 | `CurrentTruth`                | Identify accepted current state within its stated scope                                                                      |
 | `Evergreen`                   | Keep the content aligned with the current state it represents                                                                |
 | `Core`, `Memory`, `Extension` | Identify the part of the Framework or package the content relates to                                                         |
 
-Tags don't grant authority. Loading tags act only through a parent that is already loaded, so they can't pull in a scope nobody selected. Any other tag is yours to describe your own subjects, and it adds no loading behavior.
+Tags don't make content a source of truth. Loading tags act only through a parent that is already loaded, so they can't pull in a scope nobody selected. Any other tag is yours to describe your own subjects, and it adds no loading behavior.
 
 Each routed folder has an entrypoint, normally `_{folder-name}.md`. Under its title it states the one question its folder answers, then lists short links under `Entries`. Those links are the next choices an agent can make. The [loader](src/open-forge/.agents/loader.md) has the complete routing and tag rules, and the [Markdown reference](.agents/memory/crystallized/documents/framework/markdown/syntax.md#frontmatter) covers the format.
 
@@ -475,7 +488,7 @@ Commands that change files offer `--dry-run`, so you see the plan before anythin
 
 `--automatic` adds no permission to overwrite or delete files. The [CLI overview](https://thelithiumforge.github.io/open-forge/docs/cli#which-command-for-which-job) lists every command's flags in one place. `open-forge help concepts` explains the whole framework in one place: what agents use, how reading works, tags, content kinds, reuse and the file formats.
 
-Your agent can use the CLI too. The Skills entrypoint requires the `open-forge-cli` usage guide at startup. It links to command details and common options, including batching initial reads with `open-forge context skills/open-forge-cli`. The loader and Skill are plain instructions an agent can read with its usual file tools.
+Your agent can use the CLI too. The Skills entrypoint asks agents to read the `open-forge-cli` usage guide before they run CLI commands other than `context`. It links to command details and common options, including batching initial reads with `open-forge context skills/open-forge-cli`. The loader and Skill are plain instructions an agent can read with its usual file tools.
 
 [Working with the CLI](https://thelithiumforge.github.io/open-forge/docs/cli) walks through these flows and when each one helps. The [CLI reference](docs/cli.md) covers every command and option.
 
@@ -489,14 +502,14 @@ Extensions are optional packages of content you can install and then adapt. The 
 
 | Package                   | What it's for                                                                                           |
 | ------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Core Templates            | Starting files for your own Directives, Guidance, Patterns, Skills, Templates, Maps, and Memory records |
-| Collaboration             | Exploring ideas, comparing alternatives, and clarifying decisions through discussion                    |
-| Project Documents         | Vision, architecture, principles, and other current project documentation                               |
-| Planning                  | Ideas, analysis, decisions, tasks, plans, backlogs, and checkpoints                                     |
-| Flows and Scenarios       | User journeys, expected outcomes, and records of what happened when they were tried                     |
+| Core Templates            | Starting files for your own Directives, Guidance, Patterns, Skills, Templates, Maps and Memory records  |
+| Collaboration             | Exploring ideas, comparing alternatives and clarifying decisions through discussion                     |
+| Project Documents         | Vision, architecture, principles and other current project documentation                                |
+| Planning                  | Ideas, analysis, decisions, tasks, plans, backlogs and checkpoints                                      |
+| Flows and Scenarios       | User journeys, expected outcomes and records of what happened when they were tried                      |
 | Observations and Handoffs | Saving observations and leaving a clear snapshot for whoever resumes the work                           |
-| Development               | Implementing, debugging, and reviewing with the project's existing tools                                |
-| Task Coordination         | Coordinating related tasks, their dependencies, and the combined result                                 |
+| Development               | Implementing, debugging and reviewing with the project's existing tools                                 |
+| Task Coordination         | Coordinating related tasks, their dependencies and the combined result                                  |
 | Workflow Support          | Finding and following installed workflows through the `use-workflow` Skill                              |
 | Development Toolkit       | Installing Project Documents, Planning, Flows and Scenarios, and Development together                   |
 
@@ -508,11 +521,24 @@ Where to start depends on your project:
 - To write your own rules, start with Core Templates.
 - For the full set, Development Toolkit installs Project Documents, Planning, Flows and Scenarios, and Development together. Task Coordination stays outside the Toolkit. Choose it when you coordinate several related tasks and need to verify their combined result.
 
-An Extension is a way to ship files. Routed files take on the meaning of the route they're installed into. Native files, such as a `SKILL.md`, follow the tool that uses them. Packaging adds no authority. The [Extensions section of the site](https://thelithiumforge.github.io/open-forge/docs/extensions) explains what every package installs and why. The [Extension guide](docs/extensions.md) covers installing a package, copying its files by hand and creating your own. The [new or existing project guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/greenfield-and-brownfield) covers both starting points, and the [demos](demos/) let you try each one.
+An Extension is a way to ship files. Routed files take on the meaning of the route they're installed into. Native files, such as a `SKILL.md`, follow the tool that uses them. Packaging doesn't make content a source of truth. The [Extensions section of the site](https://thelithiumforge.github.io/open-forge/docs/extensions) explains what every package installs and why. The [Extension guide](docs/extensions.md) covers installing a package, copying its files by hand and creating your own. The [new or existing project guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/greenfield-and-brownfield) covers both starting points, and the [demos](demos/) let you try each one.
 
 ### Document flow
 
-Project Documents and Planning together add an opinionated flow for project knowledge. A Decision records a change: what was chosen, and why. When you accept it, the rules ask for the documents it affects to be updated to say what's true now, and the two link to each other. Documents are kept top-down, from a Vision through the Architecture to component docs and scenarios. When a change lands in the detail, the rules ask for the summaries above it to be updated too. The current answer is one read away, and the reason behind it is one link away.
+Project Documents and Planning together add an opinionated flow for project knowledge. A Decision records a change: what was chosen, and why. When you accept it, the rules ask for the documents it affects to be updated to say what's true now. The document links to the Decision for the reason, and the Decision links to the document for the result.
+
+Documents are kept top-down:
+
+```text
+Vision                        why it exists, for whom, what the first version does
+└─ Architecture               the parts, what each covers, the rules they all keep
+   └─ component docs, scenarios   exact behavior and expected results
+      └─ code and tests
+
+Decisions sit beside the stack and link to the level that holds their result.
+```
+
+Top-level documents give an overview of the whole and summarize the narrower documents they link to. Each narrower document explains its part in more detail and links back up. When a change lands in the detail, the rules ask for the summaries above it to be updated too, so the top keeps giving the current picture. The current answer is one read away, and the reason behind it is one link away.
 
 This flow is the Extensions' opinion, not Core's. Core only asks that detail live in the narrowest source that defines it, and Memory's states work the same without it. [The document flow](https://thelithiumforge.github.io/open-forge/docs/extensions/document-flow) walks through an example.
 
@@ -520,8 +546,8 @@ This flow is the Extensions' opinion, not Core's. Core only asks that detail liv
 
 Open Forge makes a few choices on purpose:
 
-- Plain Markdown. AI made code cheap to write, and review became the bottleneck. The framework you work in should be easy to read, diff and version with the rest of your project. There's no hidden database, no agent runtime and nothing specific to one vendor.
-- A small base. Big predefined methodologies assume everyone works the same way, and your use cases differ from the next person's. Open Forge gives you a handful of rules and a structure that scales, then leaves the rest to you.
+- Files in your repository. AI made code cheap to write, and review became the bottleneck. The context your agents work from should be easy to read, diff and version with the rest of your project. There's no hidden database, no agent runtime and nothing specific to one vendor.
+- A small base. Big predefined methodologies assume everyone works the same way, and nobody does. My use cases differ from yours, and yours differ from the next person's. Open Forge gives you a handful of rules and a structure that scales, then leaves the rest to you.
 - Methods in Extensions. Core and Memory cover what every workspace needs: routing, loading, a few content roles and a place to remember things. Methods for planning, development, project documents or coordinating several agents are optional packages. Once installed, an Extension is more files in your workspace that you can adapt.
 - Any mix of agents and tools. Each tool keeps its own interface, and the Framework gives their shared context a place to live.
 - Beyond development. Development is its proving ground, not its limit. The same structure can support research, design, operations, a personal knowledge vault or several projects managed together.
@@ -540,6 +566,10 @@ Know these before you adopt it:
 The [development guide](docs/development.md) covers local setup, contributions and verification. The [CLI reference](docs/cli.md) lists every command, option, status and exit code, and the [documentation site](https://thelithiumforge.github.io/open-forge/) has getting started, concepts and a file-by-file tour of every Extension.
 
 This repository uses Open Forge to build Open Forge, so its own documents double as a working example: [Vision](.agents/memory/crystallized/documents/vision.md), [Principles](.agents/memory/crystallized/documents/principles.md), [Framework Architecture](.agents/memory/crystallized/documents/framework/architecture.md), [Memory](.agents/memory/crystallized/documents/framework/memory/model.md) and the [writing guides](.agents/memory/crystallized/documents/maintenance/writing.md#choose-the-voice).
+
+## Roadmap
+
+Markdown and the CLI are where Open Forge starts. Directions for later include vector search and plugins such as code search.
 
 ## Changelog
 

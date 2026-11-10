@@ -8,7 +8,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 
 # Share with your team
 
-Open Forge shares context at three levels: one workspace, a Library across several repos, and Extensions for any project. Each level reaches further than the one inside it, and you can stop at any of them.
+Your team's agents can read the same rules your people do. Open Forge shares context at three levels: one workspace, a Library across several repos, and Extensions for any project. Each level reaches further than the one inside it, and you can stop at any of them.
 
 <ThemedImage
 alt="Three levels of sharing, drawn as rings. The inner ring is one repo, your workspace: the .agents context folder for agent context and outside routes such as docs for your own documents. The middle ring covers several repos through Libraries: a shared folder in the workspace, such as a Git submodule, linked into place. The outer ring covers people, teams, projects and organizations through Extensions: packages you install in any project."

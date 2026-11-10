@@ -6,7 +6,7 @@ import { themeConfig } from "./src/config/theme";
 
 const config: Config = {
   title: "Open Forge",
-  tagline: "A Markdown framework that tells coding agents which of your project's rules, docs and decisions to read for each task, and keeps what they learn for the next one.",
+  tagline: "Give your coding agent the rules, docs and decisions each task needs, and a place to keep what it learns for the next session.",
   favicon: "img/favicon.svg",
 
   // Opt into the v4 defaults, but keep the standard webpack bundler rather than
