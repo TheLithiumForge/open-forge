@@ -16,11 +16,11 @@ Open Forge maintainers write for technically literate readers who may be new to 
 
 Rules and technical reference text use a calm, direct, conversational voice. READMEs and public introductions use a more personal voice: the maintainer, as an engineer, explaining ideas they are excited about. This distinction was accepted after a technically clear README felt too much like a lesson. A later friendlier version drifted into slogans, cute headings, and polished filler that read as machine-written, so the introduction voice was refined toward plain, concrete prose, first person for the maintainer's own opinions, and an honest account of limits. A personal account of the project's origins and varied sentence structures support a more natural flow. Passive phrasing is useful where it reads well. Dense comma-separated feature lists should give way to connected explanations. These choices preserve technical meaning. Predictable structure and clear flow make the text easy to navigate and enjoyable to read. Open Forge uses the same term for the same concept and does not change words only for variety. It assumes basic software knowledge but does not require engineering or prior Open Forge experience.
 
-On 2026-10-29 the maintainer replaced the earlier introduction voice with their own voice guide, now recorded in [Project Voice](../../documents/maintenance/project-voice.md). It covers READMEs, the documentation site's pages and other public introductions, and it wins where it differs from the Writing Standard on public documentation. Public docs now open with an overview sentence that says what the thing is and does, follow a fixed progression from main to supporting concepts, address the reader as "you", keep headings to 1-4 words, and replace a set list of words with plain ones. The earlier voice used first person for the maintainer's opinions, argued for the ideas in the introduction and allowed short closing lines such as "That's the whole setup." The maintainer found that it read too much like a pitch for developers, so the new guide puts facts and working steps first.
+On 2026-10-29 the maintainer replaced the earlier introduction voice with their own voice guide. It covers READMEs, the documentation site's pages and other public introductions, and it wins where it differs from the Writing Standard on public documentation. On 2026-11-10 the maintainer moved that guide out of the repository into a personal guide they keep themselves, so Open Forge holds no copy of it.
 
 Memory keeps the descriptor `self-growing` because growth through useful records and routed scopes is part of its identity. Clear prose explains that deliberate growth while retaining the term.
 
-The repository-only [Writing Directive](../../../../directives/public-facing-writing.md) makes this behavior mandatory. The [Writing Standard](../../documents/maintenance/writing.md) defines shared requirements and the voice of rules and reference text. [Project Voice](../../documents/maintenance/project-voice.md) defines public introductions. This Decision records why these choices were made.
+The repository-only [Writing Directive](../../../../directives/public-facing-writing.md) makes this behavior mandatory. The [Writing Standard](../../documents/maintenance/writing.md) defines shared requirements and the voice of rules and reference text. The maintainer's personal voice guide, kept outside the repository, defines public introductions. This Decision records why these choices were made.
 
 Current installed and public files describe the accepted contract. Historical alternatives and rejected prototypes remain in Decisions or archives.
 
@@ -58,7 +58,6 @@ Concise prose still requires judgment. The shortest wording is not always the cl
 
 - [Repository Writing Directive](../../../../directives/public-facing-writing.md)
 - [Open Forge Writing Standard](../../documents/maintenance/writing.md)
-- [Open Forge Project Voice](../../documents/maintenance/project-voice.md)
 - [Open Forge Dictionary](../../documents/maintenance/helpers/dictionary.md)
 - [Open Forge Markdown scope](../../documents/framework/markdown/_markdown.md)
 - [Current routing model](../../documents/framework/routing/model.md)
