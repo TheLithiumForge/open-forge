@@ -100,9 +100,9 @@
       "startup": {
         "shipped": {
           "files": 7,
-          "characters": 15907,
-          "bytes": 15907,
-          "tokens": 3977
+          "characters": 16147,
+          "bytes": 16147,
+          "tokens": 4037
         },
         "current": {
           "files": 3,
@@ -112,9 +112,9 @@
         },
         "difference": {
           "files": -4,
-          "characters": -15518,
-          "bytes": -15518,
-          "tokens": -3879
+          "characters": -15758,
+          "bytes": -15758,
+          "tokens": -3939
         },
         "mayLoadAgain": {
           "files": 0,

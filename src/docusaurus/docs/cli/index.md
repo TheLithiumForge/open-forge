@@ -15,6 +15,8 @@ Commands follow the [context folder chosen at installation](../getting-started/i
 
 ## Start with these commands
 
+The planned [external tool commands](tools.md) install reviewed programs and configure their workspace roles. The current work defines the core before concrete adapters. Check installed help for availability.
+
 | When you want to                               | Run                                                   |
 | ---------------------------------------------- | ----------------------------------------------------- |
 | Read startup context                           | [`open-forge context`](/guides/cli#context)           |

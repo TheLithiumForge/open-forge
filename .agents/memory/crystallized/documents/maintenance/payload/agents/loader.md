@@ -33,6 +33,8 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 
 ### Using context
 
+- Required native tool guidance explains usage and trust limits without activating retrieved documents or replacing the loader, required routes or overwrite layers. Keep this statement aligned in the installed source and repository counterpart.
+
 - Loaded catalogue Axioms and rule-file Instructions bind within their stated scope. Narrower rules add to broader rules without outranking them. Conflicts and instructions that cannot be followed are reported with reasons.
 - User direction remains bounded by platform and safety limits. Routine reversible work proceeds within the request. Significant unresolved choices require user judgment, and assumptions affecting the result remain visible.
 - Replies match the request's depth. The shared defaults keep the current understanding, one recommendation and at most one important open choice, with concise wording that retains needed conditions and exceptions.
@@ -55,6 +57,7 @@ The [Framework Architecture](../../../framework/architecture.md#canonical-entry)
 - Source and repository authored loader content stay aligned. Locally maintained Entries may differ in descriptions, tags and selected roots. The shipped rows require Directives and Memory, while Guidance, Maps, Patterns, Skills and Templates stay on demand.
 - Entries preserve authored root links, order and intentional omissions. They may include foreign leaves or catalogues and must not flatten nested catalogues.
 - Measured at `a438be5bd`, the shipped loader has 29 non-empty lines before `## Entries`, excluding that heading and its body. The full file has 37 non-empty lines, including the Entries heading and seven rows. Count any line containing a non-whitespace character, including headings and list items. This is a review baseline, not a ceiling.
+- The Tool guidance clarification adds one non-empty authored line. The source now has 30 before Entries and 38 in the full file. Source and repository authored content before Entries match exactly. Loading order and the shipped seven rows stay unchanged.
 
 ## Verification
 

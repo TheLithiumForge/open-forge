@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Sources.Sharing;
+using OpenForge.Cli.Core.Framework.Tools.Shared.Validation;
 
 namespace OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 
@@ -34,6 +35,7 @@ internal static class WorkspaceOwnershipCodec
                 return Invalid($"{WorkspaceOwnershipDefinitions.FileName} must contain a JSON object.");
             }
 
+            ToolReceiptValidator.ValidateJson(bytes);
             var envelope = JsonSerializer.Deserialize(
                 bytes.Span,
                 WorkspaceOwnershipJsonContext.Default.WorkspaceOwnershipEnvelope);
@@ -43,12 +45,19 @@ internal static class WorkspaceOwnershipCodec
                 return Invalid($"{WorkspaceOwnershipDefinitions.FileName} must contain a JSON object.");
             }
 
+            ToolReceiptValidator.Validate(envelope.Tools ?? []);
+            ToolReceiptValidator.ValidateRecovery(envelope.Recovery ?? []);
+
             return new WorkspaceOwnershipDecode(
                 new WorkspaceOwnershipDocument(
                     envelope.SchemaVersion,
                     ReadFramework(envelope.Framework),
                     ReadExtensions(envelope.Extensions),
-                    ReadLibraries(envelope.Libraries)),
+                    ReadLibraries(envelope.Libraries))
+                {
+                    Tools = (envelope.Tools ?? []).ToImmutableDictionary(StringComparer.Ordinal),
+                    Recovery = [.. envelope.Recovery ?? []],
+                },
                 Cause: null);
         }
         catch (JsonException exception)
@@ -73,6 +82,8 @@ internal static class WorkspaceOwnershipCodec
         {
             Schema = WorkspaceOwnershipDefinitions.SchemaUrl,
             SchemaVersion = document.SchemaVersion,
+            Tools = document.Tools.Count == 0 ? null : document.Tools.OrderBy(pair => pair.Key, StringComparer.Ordinal).ToDictionary(),
+            Recovery = document.Recovery.IsEmpty ? null : document.Recovery.ToArray(),
             Framework = document.Framework is { } framework
                 ? new FrameworkOwnershipEntry
                 {

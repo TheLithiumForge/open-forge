@@ -13,59 +13,9 @@ Status: V1 core contract decided.
 
 ## Manifest
 
-JSON and YAML decode to the same strict type. Reject duplicate keys, unknown fields, YAML aliases, tags and object construction. Every field below is required. Arrays are ordered and distinct. `map<T>` has string keys. A union with null permits null.
+JSON and YAML decode to the same strict type. Reject duplicate keys, unknown fields, YAML aliases, tags and object construction. Arrays keep their declared order and contain distinct values. The schema states which fields are required or nullable.
 
-Proposed:
-
-```text
-ToolManifestV1 {
-  schema: 1, id: ToolId, name: string, version: ExactVersion, license: string,
-  source: {repository: HttpsUrl, tag: string, commit: GitSha | null},
-  adapter: {id: AdapterId, revision: positiveInteger},
-  admission: "candidate" | "enabled" | "blocked", admissionReason: string | null,
-  capabilities: CapabilityId[], downloadBase: HttpsUrl,
-  artifacts: map<Artifact>, targets: map<Target>,
-  runtime: {kind: "native" | "bundled" | "locked-package", version: string | null,
-    notes: string, extraDownloads: ArtifactId[], installScripts: "forbidden"},
-  configuration: {template: TemplateId, codeRoot: "workspace-relative" | "none",
-    documents: "none" | "open-forge-source-inventory", settings: map<Scalar>,
-    files: ConfigFile[], actions: ActionId[]},
-  processes: {telemetry: "off" | "absent" | "unverified",
-    updateChecks: "off" | "absent" | "unverified",
-    daemon: "off" | "session-required" | "unverified", watcher: "off",
-    autoIndex: "off", hooks: "blocked", consent: "none" | "session-daemon",
-    coordination: "worktree" | "account-build-cache", environment: map<string>},
-  index: {location: "project-directory" | "native-account-cache" | "external",
-    path: TemplateString, perWorktree: true,
-    sharedContentCache: "none" | "native-content-keyed",
-    freshness: "manual-sync" | "full-rebuild-after-delete" | "manual-update",
-    rebuildOnVersionChange: boolean},
-  mcp: {transport: "stdio", command: "target-entry", args: TemplateString[],
-    cwd: "worktree", environment: map<string>, hosts: HostTemplates},
-  skill: {template: SkillId, optional: boolean, defaultEnabled: boolean} | null,
-  checks: CheckId[],
-  qualification: {attestation: "release-evidence-required" | "required-at-install" | "unavailable",
-    workflow: string | null, targets: TargetId[],
-    accuracy: "three-languages-2026-11-12" | "pending"}
-}
-Artifact {
-  file: RelativeUrlPath, bytes: positiveInteger | null,
-  integrity: "sha256:" + 64LowerHex | "sha512-" + Base64,
-  archive: "zip" | "tar.gz" | "tgz" | "file", stripComponents: nonnegativeInteger
-}
-Target {
-  state: "available" | "unsupported" | "blocked", artifacts: ArtifactId[],
-  entry: RelativeInstallPath | null,
-  lock: {artifacts: ArtifactId[], closureComplete: true} | null, reason: string | null
-}
-ConfigFile {
-  path: TemplateString,
-  format: "json-members" | "native-settings" | "native-collections" | "adapter-helper",
-  members: string[]
-}
-HostTemplates {"claude-code": HostTemplate, "codex": HostTemplate}
-HostTemplate {path: RelativeWorkspacePath, selector: string}
-```
+The [manifest schema](../../../../../../../../schemas/tools/v1/manifest.schema.json) defines the exact fields. The typed models in Framework Tools implement that authoring contract. Every field is required unless the schema allows omission.
 
 Tool, role and artifact IDs use the group ID grammar. `none` can't be a tool ID. Versions are full SemVer 2.0 without a `v` prefix. Commits contain 40 lowercase hex characters. Every manifest lists exactly `win-x64`, `win-arm64`, `osx-x64`, `osx-arm64`, `linux-x64` and `linux-arm64`. Unsupported and blocked targets need reasons. No cross-architecture fallback occurs.
 
@@ -101,15 +51,7 @@ V1 graph definitions require a non-null Skill with `optional:false` and `default
 
 Omitted `--source` selects the embedded catalogue only. A supplied source selects one exact manifest or catalogue file. Don't scan a directory, merge sources or fall back after failure. A single manifest gives its sole version and default pin.
 
-Proposed:
-
-```text
-ToolCatalogueV1 {
-  schema: 1,
-  tools: [{id: ToolId, defaultVersion: ExactVersion,
-    versions: [{version: ExactVersion, path: RelativeManifestPath, sha256: 64LowerHex}]}]
-}
-```
+The [catalogue schema](../../../../../../../../schemas/tools/v1/catalogue.schema.json) defines exact catalogue fields and version entries.
 
 Require distinct tool IDs, distinct versions within each tool and distinct manifest paths. Version lists are nonempty. The default names exactly one listed version. Resolve paths from the catalogue's parent without links, absolute paths or escapes. Verify exact manifest bytes against SHA-256 before decoding. Manifest ID and version match the catalogue entry. Reject duplicate keys and unknown fields at every level.
 
@@ -121,15 +63,7 @@ The release allow-list contains exact `(id, version, manifest SHA-256, adapter r
 
 The fixed `.agents/open-forge.json` adds a direct `tools` map. An omitted map means no recorded tools. Each tool requires `version` and `roles`. Optional hosts default to both supported hosts. Optional code root defaults to `.`.
 
-Proposed:
-
-```text
-tools?: map<WorkspaceToolSetting>
-WorkspaceToolSetting {
-  version: ExactVersion, roles: RoleId[],
-  hosts?: ("claude-code" | "codex")[], codeRoot?: RelativeWorkspacePath
-}
-```
+The [settings v6 schema](../../../../../../../../schemas/v6/open-forge.schema.json) defines the exact tool-ID map and entry fields.
 
 An installed inactive tool has `roles:[]`. At most one tool lists a given role. `code-navigation` requires `code-graph`. Reserved roles can't activate in V1. Reject unknown fields inside tool entries, duplicate keys, duplicate array values and incompatible role assignments. Keep unrelated settings keys under the shared tolerant settings contract. CBM permits only `.` in V1.
 
@@ -137,7 +71,7 @@ Hand edits don't install bytes, approve downloads or update host entries. Instal
 
 ## Lock records
 
-The fixed `.agents/open-forge.lock.json` keeps generated tool receipts separately from settings. Receipts record artifact and installed-file hashes, exact manifest digest and snapshot, adapter revision, generated file paths, host member selectors and last generated semantic values, runtime-directory coverage, native project mappings and recovery records. Existing receipt kinds keep their meanings.
+The fixed `.agents/open-forge.lock.json` keeps generated tool receipts separately from settings. The [lock v2 schema](../../../../../../../../schemas/v2/open-forge.lock.schema.json) defines its exact authoring shape. Receipts record artifact and installed-file hashes, exact manifest digest and snapshot, adapter revision, generated file paths, host member selectors and last generated semantic values, runtime-directory coverage, native project mappings and recovery records. Existing receipt kinds keep their meanings.
 
 Recovery records identify bundle identity, location, digest and state. Exact prior-byte payloads stay in recovery v2 bundles. Account-local records keep physical store bindings, shared-install references and local process consent outside Git. They supplement the workspace lock and don't replace settings entries.
 

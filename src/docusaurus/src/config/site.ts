@@ -30,4 +30,4 @@ export const releasesUrl = `${repositoryUrl}/releases`;
 export const siteDirectory = "src/docusaurus";
 export const guidesDirectory = "docs";
 export const guidesRouteBasePath = "guides";
-export const publishedGuides = ["cli.md", "extensions.md", "development.md"] as const;
+export const publishedGuides = ["cli.md", "extensions.md", "development.md", "tools.md"] as const;

@@ -27,6 +27,8 @@ The primary content locations are the selected context folder and native Skills 
 
 ## Command index
 
+The planned external Tool family is being built separately. The [external tool reference](tools.md) describes its contracted commands, consent and workspace records. Use installed help to check availability.
+
 Choose a task, then follow its command link. Each operation has the same shape:
 purpose, common examples, options, behavior notes, and next step. Read-only
 examples need no preview. Mutation examples show a preview before application.

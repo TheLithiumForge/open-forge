@@ -22,9 +22,15 @@ Concrete CodeGraph and Codebase Memory definitions and adapters belong to the ne
 
 ## Current state
 
-The contracts-only increment contains the [Tool contracts](../../crystallized/documents/cli/contracts/tool/_tool.md), shared manifest contracts, cross-command contract changes, technical designs and the workspace-state decision. It changes no shipped payload, production code, test source, snapshot or site file. Recovery v2 is a separate proposal pending confirmation, as required by the source specification.
+Evening continuation, 2026-11-12. The overseer rebased this branch onto PR #25, with contracts commit `96db76ca1`, and pushed draft PR #26. Keep source-reference and link code outside this work. CI now runs full suites. Locally run only builds and focused Unit and Integration tests. Don't run full suites or Native AOT. The overseer authorizes `NuGetAudit=false` if NU1903 prevents restore. Make one local commit per stage and don't push.
 
-Read-only prose and contract review is complete. R1 clarified Inspect's blocked result for unsupported tuples. R2 added the required V1 graph Skill constraints. R3 centralized coexistence policy and replaced copied leaf rules with summaries and links. All three passed the focused correction recheck. No command implementation, production tool definition, schema or parser package has been added.
+The saved increment is restored except for paths changed upstream. Those overlapping docs and snapshots keep the rebased versions until their Tool additions are merged or regenerated. The existing source-reference implementation is untouched. Stage 2 now has typed manifest and catalogue models, strict JSON and YAML decoding, release admission, exact source selection, settings and lock additions, an empty production catalogue and test-only local artifacts. The stage 2 focused checks are complete. Record its commit, then implement the three readers before the five writers.
+
+The overseer directs implementation to use the specification's recommended recovery v2 and TOML choices behind separate seams while maintainer confirmation is pending. These choices no longer block models or readers. Record the exact recovery digest publication rule before writer work. The current recommendation is Tomlyn 2.10.2. No concrete tool or production adapter is admitted.
+
+The earlier contracts-only increment contained the [Tool contracts](../../crystallized/documents/cli/contracts/tool/_tool.md), shared manifest contracts, cross-command contract changes, technical designs and the workspace-state decision. It changed no shipped payload, production code, test source, snapshot or site file. Recovery v2 is a separate proposal pending confirmation, as required by the source specification.
+
+Read-only prose and contract review is complete. R1 clarified Inspect's blocked result for unsupported tuples. R2 added the required V1 graph Skill constraints. R3 centralized coexistence policy and replaced copied leaf rules with summaries and links. All three passed the focused correction recheck. That earlier increment added no command implementation, production tool definition, schema or parser package.
 
 ## Saved increment
 
@@ -48,7 +54,7 @@ This is a local development CLI. It can change authored workspace files and boun
 
 Reuse the accepted shell pipeline, source-generated serializers, standard YAML parser, physical path checks, settings grants, verified lifecycle receipts, workspace lease and recovery v1 reader. Keep tool policy in Operations and neutral store, record and effect facts in Framework. Root composition provides bounded network and finite process capabilities. New records stay in local Models folders. Exceptional machinery: none accepted. A standard TOML parser dependency needs a decision before Codex editing.
 
-Unit covers pure validation, selection, plans and result graphs. Integration covers real owned filesystems, host preservation, stores, leases, recovery and paired writes. EndToEnd covers small published-command journeys. Complete unfiltered managed Unit and Integration gates precede every commit. Add complete EndToEnd for public output or journeys. Composition, schema and mutation changes also trigger the supported host Native AOT gate. This contracts-only increment requires Unit and Integration. The saved payload and public documentation increment also requires the complete managed EndToEnd suite and site checks.
+Unit covers pure validation, selection, plans and result graphs. Integration covers real owned filesystems, host preservation, stores, leases, recovery and paired writes. EndToEnd covers small published-command journeys. The evening lane policy makes CI the full-suite gate. Local changes need a build and focused Unit and Integration checks only. Do not run full suites or Native AOT locally. The daytime full-suite receipts below describe earlier work, not the current gate.
 
 ## Earlier evidence
 
@@ -171,3 +177,25 @@ The complete unfiltered managed Unit and Integration suites passed on the contra
 | integration | 4900 | 0 | 60 |
 
 This commit completes the contracts portion of boundary 1. Restore the named stash and gate its guidance and fixture changes before models or command implementation. Reports are under `artifacts/tool-command/contracts-only-gate`.
+
+
+## Stage 2 evidence
+
+The stage 2 increment adds typed manifest and catalogue records, strict standard-parser JSON and YAML decoding, exact source hashes and selection, release admission, an empty embedded production catalogue, settings v6 and lock v2 with tool receipts. Synthetic definitions and hashed artifacts are test-only. Production admits no tool. It also restores the saved guidance, site and fixture work while keeping the rebased source-reference code unchanged.
+
+Local results are:
+
+- Final Unit build passed with 0 warnings and 0 errors. The 300 focused Tool, Settings serialization and Ownership serialization tests passed with no skips.
+- Integration build passed with 0 warnings and 0 errors. The 191 focused catalogue, payload, install, update, status and Markdown checks passed with no skips. A final catalogue-only rerun refreshes evidence after the last two pure validation guards.
+- The four new schemas compile under the existing documentation workspace's Ajv 2020 validator. The synthetic manifest validates, and optional graph guidance fails validation.
+- Site production build passed. Node emitted its existing localStorage experimental warning.
+- Index preview checked 199 files and planned no changes.
+- Writing review R4 replaced copied implemented type declarations with schema links. The focused recheck passed.
+
+The first affected-capture pass had 175 passes and five expected snapshot failures. Review found only the new Tool guidance row and resulting file, byte, token and ratio measurements. Accepted 57 unique rebased captures. An acceptance script briefly read one Unicode guidance capture through the Windows default encoding. The rerun caught that mistake. All 57 files were reapplied from received bytes with explicit UTF-8, and the focused rerun passed. Earlier reviewed captures and the 57-file rebase refresh overlap and aren't additive counts.
+
+The default-layout byte fixture keeps upstream changes and adds the exact current loader, Skill and Tool reference bytes, plus settings v6 and lock v2 controls. Published execution of that fixture is left to CI under the evening policy. No local EndToEnd or native suite ran in this continuation. No real tool downloads occurred.
+
+Current gate reports are in `artifacts/tool-command/stage2-final-unit`, `stage2-accept-integration` and `stage2-commit-catalogue`. Their commands use the built Release assemblies with explicit class filters. Builds use `PublishAot=false` and the authorized local `NuGetAudit=false` override. Integration keeps JSON reflection disabled. Unit keeps its normal fixture-construction setting.
+
+Stage 3 next: add Tool group composition and the List, Inspect and Status leaves through the existing typed binding/report pipeline. Root examples are `Composition/CliExtensionComposer.cs`, `CliCompositionRoot.cs`, `Commands/Extension/List/ExtensionListBinding.cs` and the corresponding Presentation selector. Keep concrete results per leaf and OutputText wording. Source operands resolve from the invocation's process directory. Readers must preserve independently readable settings rows and create no state, leases, transfers or child processes.
