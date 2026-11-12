@@ -193,7 +193,7 @@ internal static class ReferencesText
 
     // @OpenForgeText references.help.examples
     internal static string HelpExamples()
-        => "open-forge references memory\nopen-forge references skills/open-forge-cli --direction out\nopen-forge references memory --direction in";
+        => "open-forge references memory\nopen-forge references skills/open-forge-cli --direction out\nopen-forge references ./src/Order.cs --direction out";
 
     // @OpenForgeText references.help.related-commands
     internal static IReadOnlyList<(string Label, string? Description)> HelpRelatedCommands()
@@ -210,14 +210,14 @@ internal static class ReferencesText
 
     // @OpenForgeText references.references.help.behavior
     internal static string HelpBehavior()
-        => "Supply one source ID or exact .agents path. The default direction is both.\nGenerated Entries links are excluded. Incoming filters select which sources are inspected.\nThis command changes no files and asks no questions.";
+        => "Supply one source ID or exact ./path, including a code file. The default direction is both.\nMarkdown links and @open-forge or @rune comment links count. Generated Entries links are excluded. Incoming filters select which sources are inspected.\nThis command changes no files and asks no questions.";
     // @OpenForgeText references.help.details-1
     internal static string HelpDirectionAndFiltersDetails()
         => "Direction values in, out, and both are exact and case-sensitive. Each --include or --exclude consumes one source reference. Includes combine and exclusions take priority. Filters affect only incoming references and cannot accompany --direction out.";
 
     // @OpenForgeText references.help.details-2
     internal static string HelpBoundaryDetails()
-        => "Markdown fragments select headings. Other files accept existing line ranges such as #L1-L3 or lexical symbols such as #Type.Member. This report does not fetch URLs, expand target bodies into context, build an index or repair destinations.";
+        => "Comments use @open-forge <path> <text> or @rune <path> <text>. A plain path starts at the repository root. ./ and ../ start next to the comment's file. Markdown uses HTML comments. Markdown fragments select headings. Other files accept existing line ranges such as #L1-L3 or lexical symbols such as #Type.Member. This report does not fetch URLs, expand target bodies into context, build an index or repair destinations.";
     // @OpenForgeText references.fragment.label-line-range-out-of-range
     internal static string LabelLineRangeOutOfRange() => "line range out of range";
 
@@ -229,4 +229,6 @@ internal static class ReferencesText
 
     // @OpenForgeText references.fragment.title-symbol-was-not-found
     internal static string TitleSymbolWasNotFound() => "Symbol was not found";
+    // @OpenForgeText references.comment.legacy-anchor
+    internal static string LegacyAnchor() => "This comment uses a legacy source ID. Choose a file path.";
 }

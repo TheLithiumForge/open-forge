@@ -36,8 +36,10 @@ internal static class DoctorReferenceProtectionFindingFactory
 
     private static string? ProtectedPath(LocalReferenceObservation reference, RoutedMetadataPolicyContext policy)
     {
-        if (!ReferenceProtectionReader.Allows(reference.SourcePath, policy)) return reference.SourcePath;
-        if (!reference.Facts.IsFolder && reference.Facts.Target.Path is { } target && !ReferenceProtectionReader.Allows(target, policy)) return target;
+        var sourceAllowed = reference.IsComment ? ReferenceProtectionReader.AllowsAuthoredFile(reference.SourcePath, policy)
+            : ReferenceProtectionReader.Allows(reference.SourcePath, policy);
+        if (!sourceAllowed) return reference.SourcePath;
+        if (!reference.Facts.IsFolder && reference.Facts.Target.Path is { } target && !ReferenceProtectionReader.AllowsAuthoredFile(target, policy)) return target;
         return null;
     }
 }

@@ -27,6 +27,7 @@ internal enum ReferencesFindingCode
     FragmentMissing,
     LineOutOfRange,
     SymbolMissing,
+    LegacyAnchor,
     TargetUnsafe,
     TargetAmbiguous,
     TargetUnreadable,

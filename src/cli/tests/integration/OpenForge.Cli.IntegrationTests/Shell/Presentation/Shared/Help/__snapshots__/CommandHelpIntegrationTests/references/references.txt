@@ -6,12 +6,13 @@ Usage:
 Examples:
   open-forge references memory
   open-forge references skills/open-forge-cli --direction out
-  open-forge references memory --direction in
+  open-forge references ./src/Order.cs --direction out
 
 Behavior:
-  Supply one source ID or exact .agents path. The default direction is both.
-  Generated Entries links are excluded. Incoming filters select which sources
-  are inspected.
+  Supply one source ID or exact ./path, including a code file. The default
+  direction is both.
+  Markdown links and @open-forge or @rune comment links count. Generated Entries
+  links are excluded. Incoming filters select which sources are inspected.
   This command changes no files and asks no questions.
 
 Arguments:
@@ -33,10 +34,12 @@ Details:
   case-sensitive. Each --include or --exclude consumes one source reference.
   Includes combine and exclusions take priority. Filters affect only incoming
   references and cannot accompany --direction out.
-  Boundary: Markdown fragments select headings. Other files accept existing line
-  ranges such as #L1-L3 or lexical symbols such as #Type.Member. This report
-  does not fetch URLs, expand target bodies into context, build an index or
-  repair destinations.
+  Boundary: Comments use @open-forge <path> <text> or @rune <path> <text>. A
+  plain path starts at the repository root. ./ and ../ start next to the
+  comment's file. Markdown uses HTML comments. Markdown fragments select
+  headings. Other files accept existing line ranges such as #L1-L3 or lexical
+  symbols such as #Type.Member. This report does not fetch URLs, expand target
+  bodies into context, build an index or repair destinations.
 
 Automation:
   --format json: one minified schema-3 JSON result on stdout for every status.

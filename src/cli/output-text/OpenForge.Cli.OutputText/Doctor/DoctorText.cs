@@ -4,6 +4,18 @@ namespace OpenForge.Cli.OutputText.Doctor;
 
 internal static class DoctorText
 {
+    // @OpenForgeText doctor.candidate.fragment
+    internal static string CandidateFragment(string fragment) => $"target fragment #{fragment}";
+
+    // @OpenForgeText doctor.candidate.git-rename
+    internal static string CandidateGitRename() => "Git file move";
+    // @OpenForgeText doctor.candidate.git-heading-change
+    internal static string CandidateGitHeadingChange() => "Git heading change";
+    // @OpenForgeText doctor.candidate.section-content
+    internal static string CandidateSectionContent() => "matching old section content";
+    // @OpenForgeText doctor.candidate.unique-slug
+    internal static string CandidateUniqueSlug() => "unique heading slug (weak)";
+
     internal static string ContextFolderMissing(string path) => $"The {path} folder is missing";
     internal static string ContextFolderUnreadable(string path) => $"The {path} folder cannot be read";
     internal static string LoaderMissing(string path) => $"{path} is missing.";
@@ -725,4 +737,6 @@ internal static class DoctorText
 
     // @OpenForgeText doctor.fragment.symbol-missing
     internal static string SymbolMissing(string destination) => $"A dotted symbol part in {destination} was not found as an identifier token in the file.";
+    // @OpenForgeText doctor.comment.legacy-anchor
+    internal static string LegacyAnchor() => "This comment uses a legacy source ID. Choose a file path.";
 }

@@ -67,7 +67,7 @@ internal sealed class ReferencesOperation
         {
             cancellationToken.ThrowIfCancellationRequested();
             sourceSession = await _sourceResolver
-                .ReadAsync(request.Workspace, cancellationToken)
+                .ReadAsync(request.Workspace, cancellationToken, request.RequestsIncoming)
                 .ConfigureAwait(false);
             operation = new ReferencesOperation(_sourceResolver,
                 _layerInspector.CreateReadSession(sourceSession.DocumentReader.Documents),
@@ -78,6 +78,10 @@ internal sealed class ReferencesOperation
                 interrupted = true;
             }
             ReferencesSourceFindingMapper.AddRootIssues(findings, sourceSession.Catalogue.SelectAll().RootIssues);
+            if (request.RequestsIncoming && request.SelectorOccurrences.Count == 0 && !sourceSession.CommentScanComplete)
+                AddFinding(findings, new ReferencesFindingInput(ReferencesFindingCode.InspectionUnavailable,
+                    "The comment-source scan could not read every eligible file.")
+                { Direction = ReferencesDirection.In });
         }
         catch (OperationCanceledException)
         {
@@ -189,7 +193,8 @@ internal sealed class ReferencesOperation
             var effectiveSelection = filterResolution.Selection;
             var attemptedPhysicalPaths = new HashSet<string>(PhysicalIdentityTracker.PathComparer);
             var inspectedSources = new List<ReferencesSourceLayerEvidence>();
-            var coverage = ReferencesCoverage.Complete;
+            var coverage = request.SelectorOccurrences.Count == 0 && !sourceSession.CommentScanComplete
+                ? ReferencesCoverage.Incomplete : ReferencesCoverage.Complete;
             var mode = request.SelectorOccurrences.Count == 0
                 ? ReferencesSelectionMode.Default
                 : ReferencesSelectionMode.Filtered;
@@ -473,7 +478,8 @@ internal sealed class ReferencesOperation
                 catalogue,
                 source,
                 layer,
-                authored.RawDestination),
+                authored.RawDestination)
+            { IsComment = authored.IsComment },
             cancellationToken).ConfigureAwait(false);
 
         if (target.Finding is { } finding)

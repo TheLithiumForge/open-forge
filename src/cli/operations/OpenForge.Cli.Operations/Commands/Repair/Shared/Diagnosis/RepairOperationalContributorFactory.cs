@@ -14,12 +14,13 @@ using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Workspace.Operational;
+using OpenForge.Cli.Core.Framework.Sources.Models.References;
 
 namespace OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 
 internal static class RepairOperationalContributorFactory
 {
-    internal static OperationalContributorCatalogue Create(PhysicalPathResolver physicalPathResolver)
+    internal static OperationalContributorCatalogue Create(PhysicalPathResolver physicalPathResolver, SourceLinkHistoryRead? historyRead = null)
     {
         var sourceSessionReader = new SourceReadSessionReader(physicalPathResolver);
         var routeSourceInspector = new RouteSourceInspector(sourceSessionReader, physicalPathResolver);
@@ -39,7 +40,7 @@ internal static class RepairOperationalContributorFactory
                     physicalPathResolver,
                     StrictUtf8FileReader.ReadAsync,
                     new MarkdownDocumentParser().Parse),
-                new LocalReferenceCandidateReader()),
+                new LocalReferenceCandidateReader(), historyRead),
             new FrameworkLifecycleOperationalContributor(
                 physicalPathResolver,
                 new FrameworkLifecycleTargetReader(physicalPathResolver)),

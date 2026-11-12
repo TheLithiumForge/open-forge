@@ -104,7 +104,7 @@ internal sealed record RepairEffect
         IEnumerable<RepairChange> changes,
         RecoveryBundleAttribution recoveryAttribution)
     {
-        SourceCanonicalPath = RepairPathValidation.ValidateMarkdown(
+        SourceCanonicalPath = RepairPathValidation.ValidateSourcePath(
             sourceCanonicalPath,
             nameof(sourceCanonicalPath));
         ArgumentNullException.ThrowIfNull(expectedState);
@@ -239,7 +239,7 @@ internal sealed record RepairNoOp
         FileStateSnapshot currentState,
         IEnumerable<RepairSelectionOrigin> origins)
     {
-        SourceCanonicalPath = RepairPathValidation.ValidateMarkdown(
+        SourceCanonicalPath = RepairPathValidation.ValidateSourcePath(
             sourceCanonicalPath,
             nameof(sourceCanonicalPath));
         ArgumentNullException.ThrowIfNull(occurrence);

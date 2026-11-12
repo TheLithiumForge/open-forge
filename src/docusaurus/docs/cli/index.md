@@ -86,6 +86,12 @@ interactive way to change several setup choices.
 
 Index and Repair preserve protected sources, including managed files. Doctor names the managing Update or required edit. If Git times out, follow the retry command before deciding that a missing file was deleted. See [manual edits](/guides/cli#after-you-edit-files-by-hand).
 
+## Comment links
+
+Code and docs can connect through `@open-forge <path> <text>` or `@rune <path> <text>` at the start of a comment. Markdown uses an HTML comment. Plain paths start at the repository root, while `./` and `../` start next to the file holding the comment.
+
+References lists these links, Context checks them during requested link expansion and Doctor reports broken targets. Repair suggests moved targets and edits the chosen target word. The [comment-link reference](/guides/cli#comment-links) gives the grammar, examples and repair rules.
+
 ## Everyday habits
 
 Preview each mutation with `--dry-run`, review its complete plan, then apply the

@@ -232,6 +232,8 @@ internal sealed record RepairProposalResolution
 
 internal sealed record RepairProposal
 {
+    internal bool IsComment { get; init; }
+
     internal RepairProposal(
         RepairCatalogueMember member,
         string sourceCanonicalPath,
@@ -248,7 +250,7 @@ internal sealed record RepairProposal
                 "The Repair catalogue member is not defined.");
         }
 
-        SourceCanonicalPath = RepairPathValidation.ValidateMarkdown(
+        SourceCanonicalPath = RepairPathValidation.ValidateSourcePath(
             sourceCanonicalPath,
             nameof(sourceCanonicalPath));
         ArgumentNullException.ThrowIfNull(occurrence);

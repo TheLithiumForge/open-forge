@@ -68,6 +68,7 @@ public sealed class ReferencesDomainModelTests
                 "references.fragment-missing",
                 ReferencesDefinitions.ReadMachineName(ReferencesFindingCode.LineOutOfRange),
                 ReferencesDefinitions.ReadMachineName(ReferencesFindingCode.SymbolMissing),
+                ReferencesDefinitions.ReadMachineName(ReferencesFindingCode.LegacyAnchor),
                 "references.target-unsafe",
                 "references.target-ambiguous",
                 "references.target-unreadable",
@@ -170,7 +171,8 @@ public sealed class ReferencesDomainModelTests
                         or ReferencesFindingCode.TargetMissing
                         or ReferencesFindingCode.FragmentMissing
                         or ReferencesFindingCode.LineOutOfRange
-                        or ReferencesFindingCode.SymbolMissing => CliSemanticStatus.Attention,
+                        or ReferencesFindingCode.SymbolMissing
+                        or ReferencesFindingCode.LegacyAnchor => CliSemanticStatus.Attention,
                     ReferencesFindingCode.IdentityUnavailable
                         or ReferencesFindingCode.CandidateUnsafe
                         or ReferencesFindingCode.LayerUnresolved

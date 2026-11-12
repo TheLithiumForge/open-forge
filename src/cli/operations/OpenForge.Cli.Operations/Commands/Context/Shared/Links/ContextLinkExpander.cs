@@ -125,7 +125,7 @@ internal sealed class ContextLinkExpander
                 }
 
                 var map = new Utf8SourceMap(document.Source);
-                foreach (var authored in ReadAuthoredLinks(document))
+                foreach (var authored in ReadAuthoredLinks(layer.CanonicalPath, document))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     var location = map.Map(authored.Span.Start, authored.Span.Length);
@@ -138,6 +138,7 @@ internal sealed class ContextLinkExpander
                         Catalogue = graph.Catalogue,
                         SourceCanonicalPath = layer.CanonicalPath,
                         RawDestination = authored.RawDestination,
+                        IsComment = authored.IsComment,
                     };
                     var evidence = new ContextAuthoredLinkEvidence
                     {
@@ -408,12 +409,12 @@ internal sealed class ContextLinkExpander
             : ContextLinkDisposition.AlreadySelected;
     }
 
-    private static IReadOnlyList<MarkdownLinkFact> ReadAuthoredLinks(MarkdownDocumentFacts document)
+    private static IReadOnlyList<SourceAuthoredLink> ReadAuthoredLinks(string path, MarkdownDocumentFacts document)
     {
         var content = document.GeneratedRegion.State == MarkdownGeneratedRegionState.Complete
             ? document.GeneratedRegion.EntriesBlock?.Span
             : null;
-        return document.Links
+        return SourceAuthoredLinkReader.Read(path, document)
             .Where(link => content is null
                 || link.Span.Start < content.Start
                 || link.Span.End > content.End)

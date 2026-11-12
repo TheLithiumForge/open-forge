@@ -1,9 +1,9 @@
 No errors. 2 warnings and 3 info findings were recorded.
   Warning  .agents/docs/guide.md:11:1  Linked symbol was not found
          A dotted symbol part in ../../Code.cs#Type.Missing was not found as an identifier token in the file.
-         Correct this link in .agents/docs/guide.md at line 11, column 1 through the owner of Code.cs.
+         Fix the link by hand.
   Warning  .agents/docs/guide.md:12:1  Linked line range is out of range
          The line range in ../../Code.cs#L4-L5 is outside the file or is reversed.
-         Correct this link in .agents/docs/guide.md at line 12, column 1 through the owner of Code.cs.
+         Fix the link by hand.
   To list the info findings: open-forge doctor --detail full
-Next: Correct this link in .agents/docs/guide.md at line 12, column 1 through the owner of Code.cs.
+Next: Fix the link by hand.

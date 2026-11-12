@@ -118,6 +118,7 @@ internal static class RepairCoverageMapper
                 or DoctorFindingKind.ReferenceFragmentMissing
                 or DoctorFindingKind.ReferenceLineOutOfRange
                 or DoctorFindingKind.ReferenceSymbolMissing
+                or DoctorFindingKind.ReferenceLegacyAnchor
                 or DoctorFindingKind.ReferenceFragmentUnverified
                 or DoctorFindingKind.ReferenceDestinationMalformed
                 or DoctorFindingKind.ReferenceDestinationAbsolute

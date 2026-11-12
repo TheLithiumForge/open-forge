@@ -183,6 +183,7 @@ public sealed class ContextBindingContractTests
             ("context.fragment-missing", CliSemanticStatus.Incomplete),
             (ContextDefinitions.Read(ContextFindingCode.LineOutOfRange).Code, CliSemanticStatus.Incomplete),
             (ContextDefinitions.Read(ContextFindingCode.SymbolMissing).Code, CliSemanticStatus.Incomplete),
+            (ContextDefinitions.Read(ContextFindingCode.LegacyAnchor).Code, CliSemanticStatus.Incomplete),
             ("context.link-encoding-invalid", CliSemanticStatus.Incomplete),
             ("context.target-unreadable", CliSemanticStatus.Incomplete),
             ("context.section-ambiguous", CliSemanticStatus.Incomplete),

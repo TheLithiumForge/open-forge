@@ -105,6 +105,38 @@ internal sealed class SourceLinkDestinationResolver
         ArgumentNullException.ThrowIfNull(input);
         cancellationToken.ThrowIfCancellationRequested();
         var raw = input.RawDestination;
+        if (input.IsComment)
+        {
+            var path = raw.Split('#', 2)[0];
+            if (path.Length == 0 || path.StartsWith('/') || path.Contains('\\') || IsDriveRooted(path)
+                || TryReadAbsoluteUri(path, out _))
+                return Malformed(ReadFragment(raw), SourceLinkTargetResolution.Malformed, "A comment target needs a local file path.");
+            var legacy = input.Catalogue.FindAllById(path);
+            if (legacy.Count > 0 && !path.StartsWith("./", StringComparison.Ordinal)
+                && !path.StartsWith("../", StringComparison.Ordinal) && !path.StartsWith(".agents/", StringComparison.Ordinal))
+            {
+                return Malformed(ReadFragment(raw), SourceLinkTargetResolution.Malformed,
+                    "This comment uses a legacy source ID. Choose a file path from the suggested targets.") with
+                {
+                    Finding = new SourceLinkDestinationFinding
+                    {
+                        Code = SourceLinkDestinationFindingCode.LegacyAnchor,
+                        Cause = "This comment uses a legacy source ID. Replace it with a repository-root file path.",
+                        Candidates = legacy.Select(source => new SourceLinkIdentity
+                        {
+                            Id = source.Identity.AutomaticId,
+                            Path = source.Base.CanonicalPath,
+                        }).ToArray(),
+                    },
+                };
+            }
+            if (!raw.StartsWith("./", StringComparison.Ordinal) && !raw.StartsWith("../", StringComparison.Ordinal))
+            {
+                var directory = Path.GetDirectoryName(input.SourceCanonicalPath.Replace('/', Path.DirectorySeparatorChar)) ?? string.Empty;
+                var depth = directory.Length == 0 ? 0 : directory.Split(Path.DirectorySeparatorChar).Length;
+                raw = string.Concat(Enumerable.Repeat("../", depth)) + raw;
+            }
+        }
         if (TryReadAbsoluteUri(raw, out var uri))
         {
             return uri.Scheme is "http" or "https"
