@@ -9,17 +9,17 @@ External tool support is a CLI capability that installs reviewed program bytes a
 
 The core handles contracts, catalogue selection, records, host members and bounded lifecycle effects. Concrete CodeGraph and Codebase Memory definitions and adapters belong to the next stacked branch. This core ships an empty production catalogue.
 
-Status: V1 core design decided. Recovery v2 confirmation and the TOML dependency decision are pending.
+Status: V1 core design decided.
 
 ## Composition
 
 Root composition directly registers the eight Tool leaves in contract order. Compiled adapters are selected by finite typed IDs and revisions. There is no reflective discovery, imported adapter code, service locator or runtime plugin registry. Local sources select exact reviewed tuples through data only.
 
-Framework Tools handles definition facts, catalogue and allow-list checks, template values, store identity, reference records and member observations. Framework Settings handles the visible tool settings map. Framework Lifecycle handles verified tool receipts. Framework Recovery handles versioned bundle mechanics. Operations Tool keeps command requests, policy, plans, findings, effects and results. Rendering Tool projects command models. OutputText contains human wording. Namespaces mirror physical paths and local support stays under `Shared/<Capability>/`.
+Framework Tools handles definition facts, catalogue and allow-list checks, template values, store identity, reference records and member observations. Framework Settings handles the visible tool settings map. Framework Lifecycle handles verified tool receipts. Framework Tools handles sibling backup mechanics. Framework Recovery keeps existing v1 bundle mechanics. Operations Tool keeps command requests, policy, plans, findings, effects and results. Rendering Tool projects command models. OutputText contains human wording. Namespaces mirror physical paths and local support stays under `Shared/<Capability>/`.
 
 The host provides bounded network and process capabilities through typed requests. Download requests name exact HTTPS descriptors and approved redirect hosts. Process requests name reviewed finite actions, verified executable, separate arguments, complete declared environment, physical CWD, timeout and cancellation. No general shell or arbitrary process execution enters a manifest. Capabilities return typed facts and don't render or decide domain status.
 
-All JSON graphs use static source generation. YAML uses the existing standard parser and static model context. Native AOT evidence covers every added graph and embedded resource. TOML needs a standard full-file syntax parser with source spans so unrelated bytes and comments survive member edits. The current accepted dependencies provide no TOML parser. Resolve that dependency before implementing Codex member editing. A partial custom TOML parser isn't an accepted substitute.
+All JSON graphs use static source generation. YAML uses the existing standard parser and static model context. Native AOT evidence covers every added graph and embedded resource. The provisional Tomlyn 2.10.2 reader stays behind the Codex host seam. Codex writes are on hold. Do no further TOML implementation until the maintainer decides.
 
 ## Stores
 
@@ -71,7 +71,6 @@ The core uses minimal synthetic test-only definitions and local hashed artifacts
 
 ## Not decided yet
 
-- Confirm recovery v2 coordinates, native-settings coverage and dual-reader rollout before tool writer implementation.
-- Choose and pin a standard TOML parser before Codex member editing. Validate its syntax-span and Native AOT behavior.
+- Decide whether Open Forge writes Codex configuration. Keep its seam and provisional Tomlyn dependency until then.
 
 The [CLI Architecture](../architecture.md) defines the parent layer and dependency rules.

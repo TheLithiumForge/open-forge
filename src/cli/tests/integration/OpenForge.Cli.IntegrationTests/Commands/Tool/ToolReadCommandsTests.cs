@@ -107,19 +107,6 @@ public sealed class ToolReadCommandsTests
         Assert.Empty(workspace.SnapshotHashes());
     }
 
-    [Fact(DisplayName = "Tool readers keep v2 recovery coverage unavailable until safe bundle verification exists")]
-    public async Task RecoveryNeedsSafeReader()
-    {
-        using var workspace = TemporaryWorkspace.Create("tool-recovery-coverage");
-        workspace.WriteBytes(WorkspaceOwnershipDefinitions.RelativePath, WorkspaceOwnershipCodec.Write(WorkspaceOwnershipDocument.Empty with
-        { Recovery = [new("fixture-recovery", "recovery/fixture.zip", new string('1', 64), "prepared")] }));
-        var before = workspace.SnapshotHashes();
-        var result = await new ToolStatusOperation().ExecuteAsync(new(Selected(workspace), null), TestContext.Current.CancellationToken);
-        Assert.Equal(CliSemanticStatus.Incomplete, result.Status);
-        Assert.Contains(result.Coverage, coverage => coverage.Store == ToolWorkspaceReader.RecoveryStore && coverage.State == ToolEvidenceState.Unavailable);
-        Assert.Equal(before, workspace.SnapshotHashes());
-    }
-
     [Theory(DisplayName = "Tool Inspect explains reviewed candidates and blocks unreviewed tuples without losing definition facts")]
     [InlineData(true, (int)CliSemanticStatus.Complete)]
     [InlineData(false, (int)CliSemanticStatus.Blocked)]

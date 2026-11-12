@@ -9,7 +9,7 @@ open-forge:
 
 Installation verifies immutable bytes and prepares compatible settings. Indexing is an external step. A matching verified install can be reused offline. Matching foreign binaries aren't adopted.
 
-Status: V1 core contract decided. Writer implementation requires recovery v2 confirmation.
+Status: V1 core contract decided.
 
 ## Syntax
 

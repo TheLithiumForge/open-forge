@@ -46,7 +46,6 @@ internal static class WorkspaceOwnershipCodec
             }
 
             ToolReceiptValidator.Validate(envelope.Tools ?? []);
-            ToolReceiptValidator.ValidateRecovery(envelope.Recovery ?? []);
 
             return new WorkspaceOwnershipDecode(
                 new WorkspaceOwnershipDocument(
@@ -56,7 +55,6 @@ internal static class WorkspaceOwnershipCodec
                     ReadLibraries(envelope.Libraries))
                 {
                     Tools = (envelope.Tools ?? []).ToImmutableDictionary(StringComparer.Ordinal),
-                    Recovery = [.. envelope.Recovery ?? []],
                 },
                 Cause: null);
         }
@@ -83,7 +81,6 @@ internal static class WorkspaceOwnershipCodec
             Schema = WorkspaceOwnershipDefinitions.SchemaUrl,
             SchemaVersion = document.SchemaVersion,
             Tools = document.Tools.Count == 0 ? null : document.Tools.OrderBy(pair => pair.Key, StringComparer.Ordinal).ToDictionary(),
-            Recovery = document.Recovery.IsEmpty ? null : document.Recovery.ToArray(),
             Framework = document.Framework is { } framework
                 ? new FrameworkOwnershipEntry
                 {

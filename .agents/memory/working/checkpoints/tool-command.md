@@ -18,7 +18,7 @@ The requested review boundaries are:
 3. Read-only List, Inspect and Status.
 4. Install, Configure, Choose, Update and Remove.
 
-Concrete CodeGraph and Codebase Memory definitions and adapters belong to the next stacked branch. Production admission stays empty. Tests use minimal synthetic definitions and local hashed artifacts. Settings v6 shows installed pins and active roles. Lock v2 holds detailed receipts and recovery records. Host members, ignore editing, root-removal exclusions and recovery remain required core work.
+Concrete CodeGraph and Codebase Memory definitions and adapters belong to the next stacked branch. Production admission stays empty. Tests use minimal synthetic definitions and local hashed artifacts. Settings v6 shows installed pins and active roles. Lock v2 holds detailed receipts. Tool prior bytes use sibling backups. Host members, ignore editing, root-removal exclusions and recovery remain required core work.
 
 ## Current direction
 
@@ -30,7 +30,11 @@ The branch is rebased onto `feature/comment-links` at `6304c4046`. The three ori
 
 Rebase evidence uses a warning-free Integration build and focused Status snapshot tests. The first run has 53 cases, with 48 passes and five expected snapshot failures. Review accepts 63 unique captures. Changes contain the Tool guidance row, combined payload measurements and the inherited Comment Links missing-target wording. The wording producers match the new base and are unchanged by this lane. Repeated captures agree. The verify rerun passes all 53 cases with zero skips. Evidence is recorded under `artifacts/tool-command/nov13-rebase-status-gate`.
 
-Next: replace the recovery proposal and dependent contracts, then implement the five writers and plain backup support. No push or PR mutation is authorized.
+The rebase refresh is committed as `5f2198e31`. The next increment replaces `technical-designs/recovery-v2.md` with the decided Tool backups design, aligns dependent contracts and public references, defines Repair backup-group selection and removes the unused v2 recovery records and placeholder coverage from the lock model, schema and readers. Codex writes stay on hold. No Tomlyn implementation or dependency removal is included.
+
+The decision increment has warning-free Integration and Unit builds. Focused Unit receipt tests pass 7/7. Focused Integration catalogue, Tool readers, host status, Status and repository Markdown tests pass 106/106 with zero skips. The first run has four expected snapshot failures. Review accepts 49 unique regenerated Status captures containing only Skill payload measurements. Final evidence is under `artifacts/tool-command/nov13-backup-contracts-gate` and `nov13-backup-contracts-unit`. Lock schema compilation and example validation pass. Index preview has no changes. Writing review R6 and R7 are corrected and rechecked. The documentation site build passes with its existing Node localStorage warning.
+
+Next: implement sibling backup mechanics and discovery/restoration, then the five writers, consent, Claude members, managed ignore entries and root-removal receipt release. These behaviors are contracted but still unbuilt. No push or PR mutation is authorized.
 
 ## Earlier state
 

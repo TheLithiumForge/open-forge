@@ -742,4 +742,4 @@ Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and
 
 Read Tool settings independently from lock details and project only passive facts. Keep configured roles separate from verified installation. Report unavailable stores and counts with causes. Never create an index journal, launch a version probe or repair required guidance during observation. The [Tool Status behavior](../tool/status/behavior.md) defines passive checks.
 
-Add a separate explicit recovery v2 reader beside v1 and legacy observation before tool writers are enabled. Validate bounded metadata and prior-byte hashes without extracting payloads or following external coordinates. Unknown schemas stay unsupported and untouched.
+Report leftover Tool sibling `.bak` paths through passive findings, even when the current settings or lock is invalid. Keep saved contents out of output and keep unavailable coverage with its cause. The [Tool backups design](../../technical-designs/tool-backups.md#read-backups) defines discovery. Existing v1 and legacy recovery observation stays unchanged.

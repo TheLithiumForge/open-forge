@@ -15,7 +15,7 @@ Commands follow the [context folder chosen at installation](../getting-started/i
 
 ## Start with these commands
 
-The [external tool commands](tools.md) read definitions and recorded installs through `tool list`, `tool inspect` and `tool status`. Writers and concrete adapters are pending.
+The [external tool commands](tools.md) read definitions and recorded installs through `tool list`, `tool inspect` and `tool status`. Writers and concrete adapters are pending. Claude Code writes come first. Codex writes are on hold.
 
 | When you want to                               | Run                                                   |
 | ---------------------------------------------- | ----------------------------------------------------- |

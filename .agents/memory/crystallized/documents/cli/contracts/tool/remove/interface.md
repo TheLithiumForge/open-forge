@@ -9,7 +9,7 @@ open-forge:
 
 The final reference also releases recognized shared install and archive bytes. Other registrations stay usable. Removal needs neither its original catalogue nor an available code root.
 
-Status: V1 core contract decided. Writer implementation requires recovery v2 confirmation.
+Status: V1 core contract decided.
 
 ## Syntax
 
@@ -39,7 +39,7 @@ Required cases are:
 - Nonfinal and final shared-reference removal.
 - Missing guidance and host content after root path Remove.
 - Changed members, unknown output, links, busy processes and unavailable references.
-- Exact prior-byte recovery for deleted files and complete directory membership.
+- Sibling backup restoration for deleted files and checked directory membership.
 - Unrelated authored files and other worktrees kept usable.
 - Repeated verified removal without new effects.
 

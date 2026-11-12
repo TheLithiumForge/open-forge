@@ -24,7 +24,7 @@ Write commands preview the same plan with `--dry-run`. `--automatic` gives final
 
 ## Workspace records
 
-`.agents/open-forge.json` records installed pins and active roles. `.agents/open-forge.lock.json` keeps verified receipts, hashes and generated member values. Required usage guidance verifies before active MCP members are published. Unrelated host entries stay unchanged.
+`.agents/open-forge.json` records installed pins and active roles. `.agents/open-forge.lock.json` keeps verified receipts, hashes and generated member values. Required usage guidance verifies before active Claude Code members are published. Unrelated host entries stay unchanged. Codex writes are on hold. Tool writers keep sibling `.bak` files until changed content validates. Status and Doctor report leftovers and Repair can restore them.
 
 ## Keep removals
 

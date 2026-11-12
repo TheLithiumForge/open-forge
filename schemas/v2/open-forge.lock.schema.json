@@ -37,32 +37,6 @@
       "additionalProperties": {
         "$ref": "#/$defs/toolReceipt"
       }
-    },
-    "recovery": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": [
-          "id",
-          "location",
-          "digest",
-          "state"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "location": {
-            "type": "string"
-          },
-          "digest": {
-            "type": "string"
-          },
-          "state": {
-            "type": "string"
-          }
-        }
-      }
     }
   },
   "$defs": {

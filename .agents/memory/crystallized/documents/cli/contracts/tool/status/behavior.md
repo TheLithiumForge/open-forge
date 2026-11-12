@@ -25,6 +25,6 @@ The operation follows these steps:
 
 ## Limits
 
-No probe, repair, extraction, journal, cache, runtime folder or lease can be created. If a safe read isn't available, report that check unavailable. Recovery observation validates metadata and prior-byte hashes without following external target coordinates.
+No probe, repair, extraction, journal, cache, runtime folder or lease can be created. If a safe read isn't available, report that check unavailable. Backup observation reports sibling `.bak` paths without disclosing saved contents or following links.
 
 The [interface](interface.md) defines syntax and evidence states.

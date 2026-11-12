@@ -27,7 +27,7 @@ The primary content locations are the selected context folder and native Skills 
 
 ## Command index
 
-The external Tool family provides `tool list`, `tool inspect` and `tool status`. The [external tool reference](tools.md) describes these read commands, the pending writers, consent and workspace records.
+The external Tool family provides `tool list`, `tool inspect` and `tool status`. The [external tool reference](tools.md) describes these read commands, the pending writers, consent, sibling backups and workspace records. Codex writes are on hold.
 
 Choose a task, then follow its command link. Each operation has the same shape:
 purpose, common examples, options, behavior notes, and next step. Read-only

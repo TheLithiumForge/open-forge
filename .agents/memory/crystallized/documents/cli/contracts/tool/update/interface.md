@@ -9,7 +9,7 @@ open-forge:
 
 It doesn't poll for releases. A newer program or pin outside this CLI release's allow-list requires an Open Forge release. Downgrades use the same checks.
 
-Status: V1 core contract decided. Writer implementation requires recovery v2 confirmation.
+Status: V1 core contract decided.
 
 ## Syntax
 

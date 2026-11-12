@@ -444,6 +444,6 @@ and schema; this Behavior Contract does not select another implementation.
 
 At full and debug detail, `data.stores` reports ordered store records with kind, path, coverage, candidates, cause and `safety`, `revalidation` and `verification`. Candidate rows carry their integrity and outcome. Existing aggregate fields remain. Each store has a frozen plan and deletion session. Local deletion can complete when legacy coverage or matching legacy lock authority is unavailable. The result reports completed effects and retained or unknown items even when its aggregate status is incomplete or blocked. Store kinds are `workspace` and `legacy`. Text reports planned or completed deletions, retained items and findings. The separate store records are JSON data.
 
-## Recovery v2
+## Tool backups
 
-Before enabling tool writers, add an explicit v2 validator beside the unchanged v1 reader. Validate exact attribution, coordinates, metadata and payload hashes without following external targets. Apply existing workspace lease and guarded bundle-deletion checks to recognized artifacts only. Don't require the original external unit to exist. Unknown schemas stay unsupported and untouched. The [recovery v2 proposal](../../technical-designs/recovery-v2.md#readers) defines compatibility.
+Cleanup leaves Tool sibling `.bak` files unchanged. Status and Doctor report them and Repair can restore them. Existing v1 and legacy recovery cleanup keeps its behavior.

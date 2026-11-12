@@ -9,7 +9,7 @@ open-forge:
 
 Choice and installation are separate facts. The complete plan keeps installed binaries and indexes while changing only role-dependent configuration and guidance.
 
-Status: V1 core contract decided. Writer implementation requires recovery v2 confirmation.
+Status: V1 core contract decided.
 
 ## Flow
 
@@ -22,7 +22,7 @@ The operation follows these steps:
 5. Form one plan for the old and new managed members, guidance, role settings and lock values.
 6. Resolve process consent, grants and final confirmation.
 7. Acquire user-store then workspace leases and revalidate the plan's facts.
-8. Prepare and verify recovery v2 before covered changes.
+8. Prepare and verify sibling backups before changing existing files.
 9. Prepare and verify required guidance, then publish launchable members and matching role records. Release old role-dependent members only through the checked plan.
 10. Verify the single-provider mapping, kept installs and index bytes, then report host restarts and recovery disposition.
 

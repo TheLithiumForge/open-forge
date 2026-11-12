@@ -61,7 +61,7 @@ The release allow-list contains exact `(id, version, manifest SHA-256, adapter r
 
 ## Workspace settings
 
-The fixed `.agents/open-forge.json` adds a direct `tools` map. An omitted map means no recorded tools. Each tool requires `version` and `roles`. Optional hosts default to both supported hosts. Optional code root defaults to `.`.
+The fixed `.agents/open-forge.json` adds a direct `tools` map. An omitted map means no recorded tools. Each tool requires `version` and `roles`. Optional hosts default to Claude Code while Codex writes are on hold. Optional code root defaults to `.`.
 
 The [settings v6 schema](../../../../../../../../schemas/v6/open-forge.schema.json) defines the exact tool-ID map and entry fields.
 
@@ -71,11 +71,11 @@ Hand edits don't install bytes, approve downloads or update host entries. Instal
 
 ## Lock records
 
-The fixed `.agents/open-forge.lock.json` keeps generated tool receipts separately from settings. The [lock v2 schema](../../../../../../../../schemas/v2/open-forge.lock.schema.json) defines its exact authoring shape. Receipts record artifact and installed-file hashes, exact manifest digest and snapshot, adapter revision, generated file paths, host member selectors and last generated semantic values, runtime-directory coverage, native project mappings and recovery records. Existing receipt kinds keep their meanings.
+The fixed `.agents/open-forge.lock.json` keeps generated tool receipts separately from settings. The [lock v2 schema](../../../../../../../../schemas/v2/open-forge.lock.schema.json) defines its exact authoring shape. Receipts record artifact and installed-file hashes, exact manifest digest and snapshot, adapter revision, generated file paths, host member selectors and last generated semantic values, runtime-directory coverage and native project mappings. Existing receipt kinds keep their meanings.
 
-Recovery records identify bundle identity, location, digest and state. Exact prior-byte payloads stay in recovery v2 bundles. Account-local records keep physical store bindings, shared-install references and local process consent outside Git. They supplement the workspace lock and don't replace settings entries.
+The lock records no backup data. Exact prior bytes stay in sibling `.bak` files until new content validates. Account-local records keep physical store bindings, shared-install references and local process consent outside Git. They supplement the workspace lock and don't replace settings entries.
 
-Settings and lock changes share operation recovery coverage. Missing or mismatched detailed records mean incomplete configuration. They never establish a verified install or permit a silent role switch. Removal uses stored definitions and receipts without requiring the original catalogue. These records add no document fingerprints or workspace integrity gate.
+Settings and lock changes keep their sibling backups until both records validate. Missing or mismatched detailed records mean incomplete configuration. They never establish a verified install or permit a silent role switch. Removal uses stored definitions and receipts without requiring the original catalogue. These records add no document fingerprints or workspace integrity gate.
 
 ## Outcomes
 

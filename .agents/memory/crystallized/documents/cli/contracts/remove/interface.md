@@ -202,4 +202,4 @@ Preserve `.open-forge-state/` and its recovery evidence. Explicit removal target
 
 Root path Remove releases Tool path or member receipts within its exact target and records the normal file or directory exclusion. It leaves the external install, registration and host members outside the selected target alone. Removing required usage guidance leaves the provider registered but incomplete. Status warns. Tool Configure and Choose block until every covering exclusion is cleared. Tool Remove can still release the remaining registration without restoring missing content. The [shared Tool rules](../../shared-operation-contract.md#exclusions) define restoration.
 
-Root Remove involving Tool content requires the proposed recovery v2 reader and writer gate. Its attribution is workspace Remove with the selected physical workspace key. Existing v1-only removals keep their format and behavior.
+Root Remove keeps its existing recovery v1 format and behavior when selected paths include Tool content. It releases only the Tool receipts within the selected target.

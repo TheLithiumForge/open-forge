@@ -28,7 +28,6 @@ internal sealed class WorkspaceOwnershipEnvelope
 
     public LibraryOwnershipEntry[]? Libraries { get; init; }
     public Dictionary<string, ToolReceipt>? Tools { get; init; }
-    public ToolRecoveryRecord[]? Recovery { get; init; }
 }
 
 internal sealed class OwnedSourceEntry

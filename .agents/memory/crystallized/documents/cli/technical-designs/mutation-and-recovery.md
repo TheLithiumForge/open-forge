@@ -515,6 +515,6 @@ operation; existing single-candidate callers retain their guard policy.
 - [Workspace Libraries Technical Design](workspace-libraries.md)
 - [Cleanup Contract](../contracts/cleanup/_cleanup.md)
 
-## Tool recovery v2
+## Tool backups
 
-The decided Tool receipt kinds don't accept a recovery format. Tool effects require typed external coordinates, complete directory coverage, native-settings snapshots, workspace lock recovery records and dual readers. The [recovery v2 proposal](recovery-v2.md) must be confirmed before implementing Tool writers. Keep current v1 shapes and readers unchanged. The tools release adds Status, Doctor and Cleanup readers together before any Tool effect can occur.
+Tool writers save existing files in sibling `.bak` files before changes. They validate the new content and delete backups after success. On failure, they restore saved bytes. Status and Doctor report leftovers and Repair can restore them. The [Tool backups design](tool-backups.md) defines the checks. Existing recovery v1 shapes and readers stay unchanged.

@@ -680,4 +680,4 @@ The V1 core adds the contracted Tool family with compiled adapters and an exact 
 
 Tool facts, settings, receipts and recovery remain in their existing Framework responsibilities. Tool commands keep plans and policy in Operations. Static serialization and Native AOT rules apply to every new model. Shared member and ignore editing mechanisms keep each family's policy separate.
 
-Tool writers require recovery v2 for external coordinates, directory effects and native settings snapshots. The current v1 runtime path above continues to describe existing writers. The [recovery v2 proposal](technical-designs/recovery-v2.md) must be confirmed with simultaneous Status, Doctor and Cleanup reader rollout before tool writer implementation.
+Tool writers use sibling backups for existing files. Status and Doctor report leftovers and Repair can restore them. The [Tool backups design](technical-designs/tool-backups.md) defines their lifecycle. The current v1 runtime path above continues to describe existing writers. Codex writes are on hold behind the existing host seam.

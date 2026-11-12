@@ -296,7 +296,7 @@ external URL, an image, a repeated or cyclic fact, generated drift, route intent
 recovery bundle or draft, Framework finding, Extension finding, authored decision, or
 ownership conflict remains information, a targeted action, a manual decision, or
 a blocked boundary, except for the explicitly typed
-`library.recovery-safe-exact` residual lane above.
+`library.recovery-safe-exact` residual lane above and the bounded Tool backup group.
 
 ## Exact Relink Resolution
 
@@ -493,8 +493,8 @@ reference relationship. After all effects, it verifies the complete selected
 operation and its semantic postconditions. Before post-verification deletion
 begins, a handled application, verification, or cancellation outcome stops new
 effects and reports the actual residual draft or final path; a valid final
-remains when preparation completed. Outside the selected typed Library residual
-exception, Repair never restores, rolls back, or compensates for an effect, and
+remains when preparation completed. Outside the selected typed Library residual and Tool backup
+exceptions, Repair never restores, rolls back, or compensates for an effect, and
 it never derives current target state from recovery provenance.
 
 A closed final ZIP may remain after abrupt process termination, without an
@@ -627,11 +627,12 @@ A Git timeout keeps links visible without advice to remove them and retries the 
 
 The diagnosis, candidate, and planning stages have no persistent effects. The
 application stage has authority only for selected admitted local-reference
-literal effects or the typed Workspace Library residual effects above, after the
+literal effects, typed Workspace Library residual effects and the bounded
+[Tool backup group](#tool-backups). Reference and Library effects keep the
 complete gate, preflight, confirmation where required, verified recovery-bundle
-preparation, and revalidation.
+preparation and revalidation. Tool backup restoration follows its separate checks.
 
-Outside its affected-closure Forgiving Maintenance plan, Repair never mutates generated navigation, route topology, route metadata,
+Outside its affected-closure Forgiving Maintenance plan and selected Tool backup group, Repair never mutates generated navigation, route topology, route metadata,
 overwrites, recovery bundles or drafts, Framework files, Extension files, receipts,
 manifests, ownership, or authored labels and prose. It never accepts a force,
 apply, yes, preview, suggestions, or all flag as an authority shortcut.
@@ -741,3 +742,7 @@ no permission prompt or broad grant. Original residual bytes remain unchanged.
 ## Workspace Runtime Boundary
 
 Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the [mutation and recovery design](../../technical-designs/mutation-and-recovery.md) for the bridge gap and typed failures.
+
+## Tool backups
+
+Read the bounded Tool backup group independently of current settings and lock validity. Offer it in the wizard and select it with `--automatic`. Include only known Tool paths and independently verified account bindings. Group related settings and lock restorations together. Reject conflicts with selected reference, maintenance or Library effects. Repair restores each selected ordinary sibling `.bak` to its exact target. Preview shows the proposed restoration without writes. Apply follows destination permissions, final confirmation, the workspace lease and expected-byte revalidation. Validate restored bytes before deleting the backup. The [Tool backups design](../../technical-designs/tool-backups.md#restore-files) defines the checks. Existing recovery v1 restoration stays unchanged.
