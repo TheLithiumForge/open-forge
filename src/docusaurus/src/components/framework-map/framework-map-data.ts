@@ -16,9 +16,9 @@ export const loadingLabels: Record<Loading, string> = {
 
 // The pitch above the diagram, and what a fresh install reads.
 export const pitch =
-  "At startup your agent reads its instructions, most main folder indexes, and the files their tags or rules require. Everything else opens when a task needs it.";
+  "At startup your agent reads its instructions, the Directives and Memory indexes, and the files their tags require. Everything else opens when a task needs it.";
 export const startupFootprint =
-  "Startup reads your agent instructions, the loader, installed entrypoints tagged to load, and required files such as the CLI usage Skill. Your setup determines the footprint.";
+  "Startup reads your agent instructions, the loader, installed entrypoints tagged to load, and the files their tags require. Your setup determines the footprint.";
 
 // Shown between the loader and the panels, before the first card.
 export const entrypointNote =
@@ -58,24 +58,24 @@ export const coreRoles: readonly CoreRole[] = [
     name: "Guidance",
     role: "Advice for choices that keep coming up",
     example: "For example: when to split a module.",
-    loading: "startup",
+    loading: "demand",
     contents: "Extensions add Adaptive Collaboration.",
   },
   {
     name: "Patterns",
     role: "Reusable shapes that make work easy to create and check",
     example: "For example: the shape of an API error.",
-    loading: "startup",
+    loading: "demand",
     contents: "Extensions add Work Records.",
   },
   {
     name: "Skills",
     role: "Capabilities packaged as SKILL.md",
     example: "For example: a code review Skill.",
-    loading: "startup",
+    loading: "demand",
     contents: "Starts with open-forge-cli. Extensions add use-workflow.",
     files: [
-      { text: "CLI usage Skill: required at startup", loading: "startup" },
+      { text: "CLI usage Skill: before CLI commands", loading: "demand" },
       { text: "Other Skills: when selected", loading: "demand" },
     ],
   },
@@ -86,7 +86,7 @@ export const coreRoles: readonly CoreRole[] = [
     loading: "demand",
     contents: "Most Extensions add starters.",
   },
-  { name: "Maps", role: "Pointers to important sources", example: "For example: your ADRs, wiki, or API docs.", loading: "startup" },
+  { name: "Maps", role: "Pointers to important sources", example: "For example: your ADRs, wiki, or API docs.", loading: "demand" },
 ];
 
 // The Memory entrypoint itself, shown under the panel title.
@@ -163,11 +163,11 @@ export const loadingGuide = {
 } as const;
 
 export const captions: readonly string[] = [
-  "Linked files open when selected or required. `#LoadNow` reads a file when its parent index loads. `#KeepInMind` also re-reads it at task start or resume, after a context restore, and before handoff or closeout while its scope is active. Both tags act through a loaded parent. The Skills rules explicitly require the CLI usage guide at startup.",
+  "Linked files open when selected or required. `#LoadNow` reads a file when its parent index loads. `#KeepInMind` also re-reads it at task start or resume, after a context restore, and before handoff or closeout while its scope is active. Both tags act through a loaded parent. The Skills rules ask for the CLI usage guide before any CLI command other than `context`.",
   "A file with `applyTo` patterns applies only while the task works on a matching file.",
   "`open-forge context skills/open-forge-cli` batches the default loading-tag closure and the required CLI guide. Extensions are optional packages you add.",
 ];
 
 // The README image's alt text and the SVG title. Keep them identical.
 export const diagramDescription =
-  "How Open Forge fits together. At startup the agent reads AGENTS.md or CLAUDE.md, the loader, the indexes of Directives, Guidance, Patterns, Skills, Maps, Memory, Working, Emerging, and Crystallized, and the CLI usage Skill explicitly required by the Skills index. Other linked files open when selected, tagged to load, or required by a loaded rule. Templates and Archived open on demand. A file with applyTo patterns applies only while the task works on a matching file. Core holds six categories for how work gets done. Memory holds four states for what's worth remembering. Cards include examples of optional Extension content, such as Checkpoints and Decisions.";
+  "How Open Forge fits together. At startup the agent reads AGENTS.md or CLAUDE.md, the loader, and the indexes of Directives, Memory, Working, Emerging, and Crystallized. Guidance, Patterns, Skills, Maps, Templates, and Archived open on demand, and the Skills index asks for the CLI usage Skill before CLI commands. Other linked files open when selected, tagged to load, or required by a loaded rule. A file with applyTo patterns applies only while the task works on a matching file. Core holds six categories for how work gets done. Memory holds four states for what's worth remembering. Cards include examples of optional Extension content, such as Checkpoints and Decisions.";

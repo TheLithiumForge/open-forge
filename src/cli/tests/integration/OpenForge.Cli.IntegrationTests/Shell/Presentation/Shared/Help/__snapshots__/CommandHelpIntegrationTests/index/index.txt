@@ -12,8 +12,8 @@ Behavior:
   With no source, rebuild the Loader and every reachable entrypoint.
   --dry-run shows the complete checked plan and writes nothing.
   Fill absent metadata and create missing navigation files below existing routed
-  roots. Keep supplied fields and authored content. This command asks no
-  questions.
+  roots. Rebuild each routed file's Entries line from its current metadata. Keep
+  supplied fields and authored content. This command asks no questions.
   Repeating it makes no further changes. Use Git or a backup to restore saved
   content.
 

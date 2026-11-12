@@ -281,7 +281,7 @@ public sealed class RouteUpdateOutsideSafetyIntegrationTests
         Assert.Equal(before, workspace.Files.SnapshotHashes(includeRuntime: true));
     }
 
-    [Theory(DisplayName = "Outside field changes preserve independently authored parent loading policy even in a readonly Library input")]
+    [Theory(DisplayName = "A hand-written target row cannot shield a readonly Library parent whose generated row must change")]
     [InlineData(WorkspaceLayout.DefaultMainRoot), InlineData(RouteUpdateOutsideWorkspace.CustomRoot)]
     public async Task AuthoredParentPolicyStaysReadonly(string root)
     {
@@ -289,13 +289,11 @@ public sealed class RouteUpdateOutsideSafetyIntegrationTests
         workspace.Files.ReplaceText(workspace.Parent, RouteUpdateOutsideWorkspace.Entrypoint(
             $"- [Independent row metadata](note.md) - #{SourceLoadingClosureResolver.LoadNowTag} #Fixture - applies to `policy/**`"));
         WriteOwnership(workspace, workspace.Parent, library: true);
-        var parent = workspace.Bytes(workspace.Parent);
-        var before = workspace.Files.SnapshotHashes();
+        var before = workspace.Files.SnapshotHashes(includeRuntime: true);
         var result = await workspace.Execute(workspace.Request());
-        Assert.Equal(CliSemanticStatus.Complete, result.Status);
-        Assert.Equal(workspace.Target, Assert.Single(result.Effects).Path);
-        Assert.Equal(parent, workspace.Bytes(workspace.Parent));
-        Assert.Equal(RouteUpdateOutsideWorkspace.ChangedDocument(), workspace.Bytes(workspace.Target));
-        workspace.AssertPreserved(before);
+        Assert.Equal(CliSemanticStatus.Blocked, result.Status);
+        Assert.Contains(result.Findings, finding => finding.Code == RouteUpdateFindingCode.TargetUnsafe);
+        Assert.Empty(result.Effects);
+        Assert.Equal(before, workspace.Files.SnapshotHashes(includeRuntime: true));
     }
 }

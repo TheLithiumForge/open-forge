@@ -75,7 +75,7 @@ public sealed class InstallCompositionIntegrationTests
         var applied = await RunAsync(
             ["install"],
             workspace.PhysicalPath,
-            $"{Environment.NewLine}3{Environment.NewLine}2{Environment.NewLine}y{Environment.NewLine}remaining{Environment.NewLine}",
+            $"{Environment.NewLine}{Environment.NewLine}3{Environment.NewLine}2{Environment.NewLine}y{Environment.NewLine}remaining{Environment.NewLine}",
             standardInputRedirected: false,
             promptOutputRedirected: false);
 
@@ -118,7 +118,7 @@ public sealed class InstallCompositionIntegrationTests
         var run = await RunAsync(
             ["install"],
             workspace.PhysicalPath,
-            $"{Environment.NewLine}2{Environment.NewLine}2{Environment.NewLine}n{Environment.NewLine}remaining{Environment.NewLine}",
+            $"{Environment.NewLine}{Environment.NewLine}2{Environment.NewLine}2{Environment.NewLine}n{Environment.NewLine}remaining{Environment.NewLine}",
             standardInputRedirected: false,
             promptOutputRedirected: false);
 
@@ -142,7 +142,7 @@ public sealed class InstallCompositionIntegrationTests
         var run = await RunAsync(
             ["install"],
             workspace.PhysicalPath,
-            $"{Environment.NewLine}2{Environment.NewLine}2{Environment.NewLine}",
+            $"{Environment.NewLine}{Environment.NewLine}2{Environment.NewLine}2{Environment.NewLine}",
             standardInputRedirected: false,
             promptOutputRedirected: false);
 

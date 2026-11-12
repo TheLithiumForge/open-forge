@@ -124,7 +124,7 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
                     .BuildAsync(input, cancellationToken).ConfigureAwait(false);
             try
             {
-                var settingsChange = InstallConfigurationSettings.Plan(layout, settingsRead, configuration, request.Frontmatter);
+                var settingsChange = InstallConfigurationSettings.Plan(layout, settingsRead, configuration, request.Frontmatter, request.KeptGuide);
                 if (settingsChange is { } change)
                     settings = WorkspaceSettingsCodec.Read(change.IntendedBytes.ToArray()).Document
                         ?? throw new InvalidDataException("The configured settings must decode.");
@@ -141,7 +141,10 @@ internal sealed class InstallIntendedStateBuilder(PhysicalPathResolver physicalP
         }
         else
         {
-            var change = InstallConfigurationSettings.Plan(layout, settingsRead, configuration: null, request.Frontmatter);
+            var change = InstallConfigurationSettings.Plan(layout, settingsRead, configuration: null, request.Frontmatter, request.KeptGuide);
+            if (request.KeptGuide is not null && change is not null)
+                settings = WorkspaceSettingsCodec.Read(change.IntendedBytes.ToArray()).Document
+                    ?? throw new InvalidDataException("The planned settings must decode.");
             if (change is not null || request.Frontmatter is not null)
                 configurationPlan = new(settingsRead, Ignore: null, change, IgnoreChange: null)
                 { Layout = layout, Frontmatter = request.Frontmatter, GitIgnoredRoutes = ownership.Document.Framework?.GitIgnoredRoutes ?? [] };

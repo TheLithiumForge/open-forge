@@ -7,8 +7,6 @@ description: The six content roles in Core, the question each one answers, and h
 
 Core gives content six roles, called categories. Each category answers one question. To place something, pick the category whose question it answers. The table shows the loading rules when a category is present. [Installation](../getting-started/installation.md#choose-the-installed-routes) lets you select the built-in routes you need.
 
-Category examples use the default `.agents` context folder. Ordinary categories follow a custom main root, while native Skills stay at `.agents/skills`. See [Choose the context folder](../getting-started/installation.md#choose-the-context-folder).
-
 This illustrative Directive requires behavior. It is not a shipped testing policy. Use your workspace's selected [frontmatter](../glossary.md#frontmatter) form when copying:
 
 ```md title=".agents/directives/testing.md (illustrative)"
@@ -29,13 +27,13 @@ This is a Directive because it requires behavior. A [Pattern](../glossary.md#pat
 | Category                  | Question it answers                                                         | At startup                                      |
 | ------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------- |
 | [Directives](#directives) | What behavior is required in this scope?                                    | Entrypoint at startup, plus its Directive files |
-| [Guidance](#guidance)     | What approach is recommended, and when does it fit?                         | Entrypoint at startup                           |
-| [Patterns](#patterns)     | What reusable shape makes related work easy to create and inspect?          | Entrypoint at startup                           |
-| [Skills](#skills)         | Which specialized capability would help with this work?                     | Entrypoint and CLI usage Skill at startup       |
+| [Guidance](#guidance)     | What approach is recommended, and when does it fit?                         | Entrypoint on demand                            |
+| [Patterns](#patterns)     | What reusable shape makes related work easy to create and inspect?          | Entrypoint on demand                            |
+| [Skills](#skills)         | Which specialized capability would help with this work?                     | Entrypoint on demand                            |
 | [Templates](#templates)   | What starting content can be copied, adapted, and maintained independently? | Entrypoint on demand                            |
-| [Maps](#maps)             | Where is a useful local or external source, and when should it be used?     | Entrypoint at startup                           |
+| [Maps](#maps)             | Where is a useful local or external source, and when should it be used?     | Entrypoint on demand                            |
 
-["Entrypoint at startup"](../glossary.md#entrypoint-at-startup) means the agent reads the category's purpose, rules, and one line per item. Linked items open when selected, tagged to load, or required by a loaded rule. Directives directly in `directives/` must carry `#LoadNow`, and the Skills rules require the CLI usage guide. "Entrypoint on demand" means the entrypoint itself waits until selected. [Loading and tags](loading-and-tags.md#what-loads-at-startup-in-a-fresh-install) lists every startup file.
+["Entrypoint at startup"](../glossary.md#entrypoint-at-startup) means the agent reads the category's purpose, rules, and one line per item. Linked items open when selected, tagged to load, or required by a loaded rule. Directives directly in `directives/` must carry `#LoadNow`. "Entrypoint on demand" means the entrypoint itself waits until a task fits its description. The Skills rules ask for the CLI usage guide before any CLI command other than `context`. [Loading and tags](loading-and-tags.md#what-loads-at-startup-in-a-fresh-install) lists every startup file.
 
 In a fresh install, each selected category entrypoint lists no items except Skills, which lists `open-forge-cli`. You or an [Extension](../extensions/index.md) add the rest.
 
@@ -71,7 +69,7 @@ A Pattern is the default shape in its scope. A justified departure is allowed, a
 
 **Specialized capabilities.** A Skill is a native capability package entered through a `SKILL.md` file. The `SKILL.md` defines how to use the Skill and its resources. Your agent runtime controls how Skills are installed, activated, invoked, and executed.
 
-Open Forge routes to Skills so agents can find them. It doesn't replace your harness's own Skill mechanism. The base ships one Skill, `open-forge-cli`, which teaches an agent when and how to use the [CLI](../cli/index.md). The Skills entrypoint explicitly requires reading that usage guide at startup. Other Skills stay on demand. Repeatable methods live behind `use-workflow`, supplied by the [Workflow Support](../extensions/workflows.md) Extension.
+Open Forge routes to Skills so agents can find them. It doesn't replace your harness's own Skill mechanism. The base ships one Skill, `open-forge-cli`, which teaches an agent when and how to use the [CLI](../cli/index.md). The Skills entrypoint asks agents to read that usage guide before any CLI command other than `context`. Other Skills stay on demand. Repeatable methods live behind `use-workflow`, supplied by the [Workflow Support](../extensions/workflows.md) Extension.
 
 ## Templates
 

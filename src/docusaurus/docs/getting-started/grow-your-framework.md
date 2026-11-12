@@ -8,11 +8,9 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 
 # Grow your own framework
 
-The base Framework is deliberately small. The selected categories start empty apart from Memory state entrypoints and the CLI Skill. It becomes useful as you add what your project keeps teaching you.
+A correction you write down once becomes a rule your agent reads from then on, instead of a reminder you repeat. The base Framework is small on purpose: the selected categories start empty apart from the Memory state entrypoints and the CLI Skill. It grows from what your project keeps teaching you.
 
-The folder examples use the default `.agents` context folder. Route IDs work the same with a [custom folder](installation.md#choose-the-context-folder). Growing or configuring your routes does not relocate an established installation.
-
-Context can also grow in an existing workspace folder through [outside-route registration](/guides/cli#outside-routes). Folder Include grants bounded maintenance, while file Include stays read-only by itself. Use exact outside source paths with filenames, and keep loading tags and conditions on the authored rows. Registration never makes a branch load merely because it is inventoried.
+Context can also grow in a folder your team keeps itself, such as `docs`. [Your own docs](your-own-docs.md) covers registering it. Keep the folder's loading tags and conditions on its Loader row, and each file's own tags and `applyTo` in its frontmatter, because Index rebuilds the folder's catalogue rows from that metadata.
 
 The [ten-minute guide](ten-minute-guide.md) covers the first rule, Pattern, and saved fact together. This page explains how to place later additions and keep them relevant as the workspace grows.
 

@@ -8,8 +8,6 @@ description: What happens when an agent starts work in an Open Forge workspace, 
 
 An agent starts with your instructions and folder indexes, then opens the branches its task needs.
 
-The path examples use the default `.agents` context folder. With a [custom folder](installation.md#choose-the-context-folder), follow the loader path in the installed host instructions.
-
 For one walkthrough from installation to a saved useful fact, follow the [ten-minute guide](ten-minute-guide.md). This page explains what the agent loads and how to check it.
 
 For a first look at what the agent reads, try a small task in an existing project:

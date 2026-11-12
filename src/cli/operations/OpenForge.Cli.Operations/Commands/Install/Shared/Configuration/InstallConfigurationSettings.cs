@@ -18,10 +18,10 @@ namespace OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
 internal static class InstallConfigurationSettings
 {
     internal static PlannedFileChange? Plan(WorkspaceLayout layout, WorkspaceSettingsRead settings,
-        InstallConfiguration? configuration, InstallFrontmatterSelection? frontmatter)
+        InstallConfiguration? configuration, InstallFrontmatterSelection? frontmatter, string? keptGuide = null)
     {
         var snapshot = settings.Snapshot ?? throw new InvalidOperationException("Install settings require their observed snapshot.");
-        var change = PlanChoices(layout, settings, configuration, frontmatter);
+        var change = PlanChoices(layout, settings, configuration, frontmatter, keptGuide);
         ReadOnlyMemory<byte> bytes = change?.IntendedBytes.ToArray() ?? snapshot.Bytes.ToArray();
         bytes = WorkspaceSettingsCodec.SetMainRoot(bytes, layout.MainRoot) ?? bytes;
         var intended = bytes.IsEmpty ? WorkspaceSettingsDocument.Empty : WorkspaceSettingsCodec.Read(bytes).Document
@@ -36,10 +36,12 @@ internal static class InstallConfigurationSettings
             : PlannedFileChange.Replace(snapshot.Expectation, bytes.ToArray());
     }
 
-    private static PlannedFileChange? PlanChoices(WorkspaceLayout layout, WorkspaceSettingsRead settings, InstallConfiguration? configuration, InstallFrontmatterSelection? frontmatter)
+    private static PlannedFileChange? PlanChoices(WorkspaceLayout layout, WorkspaceSettingsRead settings, InstallConfiguration? configuration, InstallFrontmatterSelection? frontmatter, string? keptGuide)
     {
+        // A kept guide is recorded as an exclusion, so later Updates leave the user's file and the missing guide alone.
+        ImmutableArray<string> keptFiles = keptGuide is null ? [] : [keptGuide];
         if (configuration is null)
-            return WorkspaceSettingsChangePlanner.PlanConfiguration(settings, new(), new(), frontmatter?.Persist == true ? frontmatter.Form : null);
+            return WorkspaceSettingsChangePlanner.PlanConfiguration(settings, new() { Files = keptFiles }, new(), frontmatter?.Persist == true ? frontmatter.Form : null);
         var included = configuration.Routes.Where(row => row.Action != InstallRouteAction.Remove).ToArray();
         var removed = configuration.Routes.Where(row => row.Action == InstallRouteAction.Remove).ToArray();
         var includesMemory = included.Any(row => row.Id.StartsWith(WorkspaceCategoryNames.Memory + "/", StringComparison.Ordinal));
@@ -62,6 +64,7 @@ internal static class InstallConfigurationSettings
         {
             Categories = removedCategories.ToImmutableArray(),
             Directories = removed.Where(row => row.Id.Contains('/')).Select(row => InstallConfigurationChoices.Directory(layout, row.Id)).ToImmutableArray(),
+            Files = keptFiles,
         };
         var clear = new WorkspaceRemovalSelection
         {

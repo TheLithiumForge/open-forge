@@ -231,6 +231,23 @@ public sealed class DoctorOutsideIntegrationTests
         }
     }
 
+    [Theory, InlineData(WorkspaceLayout.DefaultMainRoot), InlineData("knowledge/main")]
+    public async Task IgnoredLinkPathsBesideAnOutsideRouteReportOnlyTheMissingPath(string root)
+    {
+        using var files = Create(root, "listed");
+        files.ReplaceText(WorkspaceSettingsDefinitions.RelativePath, $$"""
+            {"{{WorkspaceSettingsDefinitions.SchemaVersionProperty}}":{{WorkspaceSettingsDefinitions.SchemaVersion}},"{{WorkspaceSettingsDefinitions.MainRootProperty}}":"{{root}}","{{WorkspaceSettingsDefinitions.OutsideRoutesProperty}}":["{{Directory}}"],"{{WorkspaceSettingsDefinitions.IgnoreLinksFromProperty}}":["docs","{{Directory}}"],"{{WorkspaceSettingsDefinitions.IgnoreLinksToProperty}}":["docs/gone"]}
+            """);
+        var before = files.SnapshotHashes();
+        var workspace = new CliWorkspace(files.Path, files.Path, CliWorkspaceSelectionMethod.CurrentDirectory);
+        var read = await new DoctorDiagnosisReader(RepairOperationalContributorFactory.Create(new PhysicalPathResolver()))
+            .ReadAsync(new DoctorRequest(workspace), TestContext.Current.CancellationToken);
+        var finding = Assert.Single(read.Result.Diagnosis.Domains.SelectMany(domain => domain.Findings),
+            finding => finding.Kind == DoctorFindingKind.WorkspaceLinkIgnorePathMissing);
+        Assert.Equal("docs/gone", finding.Subject.Path);
+        Assert.Equal(before, files.SnapshotHashes());
+    }
+
     [Fact]
     public async Task MissingAnchorAdviceRequiresCurrentExclusionAndOwnershipEvidence()
     {
@@ -278,6 +295,8 @@ public sealed class DoctorOutsideIntegrationTests
 
     private const string Directory = "docs/team";
     private const string Anchor = Directory + "/_team.md";
+    private const string LeafDescription = "Independent leaf";
+    private const string LeafTag = "Body";
 
     private static TemporaryWorkspace Create(string root, string situation)
     {
@@ -292,10 +311,10 @@ public sealed class DoctorOutsideIntegrationTests
         if (situation != "missing-directory")
         {
             var contentDirectory = situation == "unsafe" ? "docs/real" : Directory;
-            files.WriteText(contentDirectory + "/ordinary.md", OpenForgeDocumentSeed.Metadata("Independent leaf", ["Body"], "# Leaf\n\nUntouched bytes.\n"));
+            files.WriteText(contentDirectory + "/ordinary.md", OpenForgeDocumentSeed.Metadata(LeafDescription, [LeafTag], "# Leaf\n\nUntouched bytes.\n"));
             if (situation != "missing-anchor") files.WriteText(situation is "compatibility" or "stale-compatibility" or "unlisted-compatibility" ? contentDirectory + "/index.md" : contentDirectory + "/_team.md",
                 OpenForgeDocumentSeed.Metadata("Independent anchor", ["Body"], OpenForgeDocumentSeed.GeneratedEntries(new GeneratedEntriesSeed
-                { Prefix = "# Team", Entries = "- [Leaf](ordinary.md) - #Body\n", LineEnding = "\n" })));
+                { Prefix = "# Team", Entries = $"- [{LeafDescription}](ordinary.md) - #{LeafTag}\n", LineEnding = "\n" })));
             if (situation == "ambiguous") files.WriteText(Directory + "/index.md", "# Independent competing anchor\n");
             if (situation == "unsafe") files.CreateDirectorySymbolicLink(Directory, files.Combine(contentDirectory));
         }

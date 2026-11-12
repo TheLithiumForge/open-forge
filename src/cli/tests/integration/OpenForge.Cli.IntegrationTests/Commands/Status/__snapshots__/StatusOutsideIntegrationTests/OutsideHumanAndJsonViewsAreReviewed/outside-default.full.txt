@@ -1,4 +1,4 @@
-Open Forge is installed, but 12 files need attention.
+Open Forge is installed, but 13 files need attention.
 Workspace: <workspace>
   Warning  .agents/directives/_directives.md  Entries section is missing [status.generated-navigation-missing]
          .agents/directives/_directives.md has no Entries section.
@@ -72,6 +72,12 @@ Workspace: <workspace>
          open-forge index
          Rebuild the Entries section.
          cause: The generated navigation target is not current.
+  Warning  docs/team/_team.md  Entries section is stale [status.generated-navigation-changed]
+         The Entries section of docs/team/_team.md is stale.
+         use open-forge index
+         open-forge index
+         Rebuild the Entries section.
+         cause: The generated navigation target is not current.
   Info  .agents/open-forge.lock.json  Extension ownership is unavailable [status.extension-ownership-observation]
          No ownership record exists, so installed Extensions cannot be listed from it.
          cause: The ownership lock is absent; no Extension ownership claims are recorded.
@@ -86,7 +92,7 @@ Startup context
   This workspace:       2 files, about 0.0k tokens
 Compared with shipped: 5 fewer files, about 4.0k fewer tokens
 All routed files: 5 files, about 0.1k tokens (startup is 21%)
-Routes: 0 root categories, 1 Entries section current, removed: directives, guidance, maps, memory, patterns, skills, templates
+Routes: 0 root categories, 0 Entries sections current, removed: directives, guidance, maps, memory, patterns, skills, templates
 Framework files: unavailable
 Entries sections
   .agents/directives/_directives.md             missing
@@ -101,12 +107,12 @@ Entries sections
   .agents/patterns/_patterns.md                 missing
   .agents/skills/_skills.md                     missing
   .agents/templates/_templates.md               missing
-  docs/team/_team.md                            current
+  docs/team/_team.md                            changed
 Recovery data: none
 Included files: 0 listed, 1 unlisted, 0 missing, 0 hand-written loader rows.
 Startup outside .agents/: 0 files, about 0.0k tokens
 Outside routes
 docs/team: available, unlisted
-5 routed files, 2 startup files, 19 startup tokens, 88 all routed tokens, 20.903954802259887005649717514 startup share, 1 current Entries sections, 1 stale Entries sections, 11 missing Entries sections, 12 warnings, 3 infos.
+5 routed files, 2 startup files, 19 startup tokens, 88 all routed tokens, 20.903954802259887005649717514 startup share, 2 stale Entries sections, 11 missing Entries sections, 13 warnings, 3 infos.
   Rebuild the Entries section.
 Next: open-forge index

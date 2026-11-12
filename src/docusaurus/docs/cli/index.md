@@ -11,9 +11,7 @@ defines every operation and option, and [Everyday flows](flows.md) gives complet
 procedures. For a first walkthrough, use the
 [ten-minute guide](../getting-started/ten-minute-guide.md).
 
-Commands follow the [context folder chosen at installation](../getting-started/installation.md#choose-the-context-folder). Path examples here use the default `.agents` layout.
-
-To maintain an existing folder elsewhere in the workspace, register an [outside route](/guides/cli#outside-routes) with folder Include. This is separate from choosing the main root. File Include stays read-only by itself. Registration supplies inventory and bounded maintenance, while authored Loader rows still decide loading. Status reports directory availability and direct listing separately. Doctor diagnoses structure without granting restoration authority. Install, configure and Update preserve registrations and authored row policy.
+Commands follow the [context folder chosen at installation](../getting-started/installation.md#choose-the-context-folder). To maintain an existing folder elsewhere in the workspace, register it as an outside route with folder Include, as [Your own docs](../getting-started/your-own-docs.md) describes.
 
 ## Start with these commands
 

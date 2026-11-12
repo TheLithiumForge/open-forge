@@ -246,8 +246,7 @@ did not count votes.
 
 - Both members proposed replacing the README's opening sentence with a more
   mechanical one. The current opening is the model example in the accepted
-  [Project Voice](../../../crystallized/documents/maintenance/project-voice.md)
-  guide, so it stays unless the maintainer changes that guide.
+  Project Voice guide of that time, so it stays unless the maintainer changes that guide.
 - One member proposed moving the diagram below setup. The maintainer asked for
   it near the top of the README.
 - One member proposed cutting "early feedback named Decisions". The maintainer

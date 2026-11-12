@@ -52,7 +52,7 @@ internal static class InstallDefinitions
 
     internal static readonly CliOptionDefinition<string[]> MainRoot = new(
         "--main-root",
-        $"Choose an absent or empty context folder at first installation. Settings and Skills stay in {WorkspaceSettingsDefinitions.DirectoryName}. An established installation keeps its context folder.",
+        $"Choose a new or existing context folder at first installation. Settings and Skills stay in {WorkspaceSettingsDefinitions.DirectoryName}. An established installation keeps its context folder.",
         CliOptionArity.ExactlyOne,
         [],
         "folder");

@@ -11,8 +11,6 @@ has every option, and the [glossary](../glossary.md) defines the terms. Shell
 blocks use `\` for line continuation. In PowerShell, put a wrapped command on
 one line or use a backtick.
 
-These flows use the default `.agents` context folder. With a [custom folder](../getting-started/installation.md#choose-the-context-folder), keep short IDs and use the actual context paths. Native Skills, settings and ownership stay in `.agents`.
-
 Start with the base Framework. Later flows use Documents from Project Documents,
 and Decisions and their Template from Planning. `development-toolkit` installs
 both. Essentials leaves Templates out, so restore that category before installing
@@ -92,21 +90,21 @@ Use this when the project already keeps rules or knowledge in its own files.
 
 ## Maintain a folder where it lives
 
-Start with an existing ordinary `docs/team` directory inside this workspace. Preview folder registration:
+Start with an existing ordinary `docs` directory inside this workspace. Preview folder registration:
 
 ```sh
-open-forge route include docs/team --dry-run
+open-forge route include docs --dry-run
 ```
 
 Review the settings registration, Loader row and any missing canonical catalogue create, then apply:
 
 ```sh
-open-forge route include docs/team
+open-forge route include docs
 ```
 
-The catalogue is `docs/team/_team.md`. An existing catalogue keeps its bytes. Use exact source references with filenames, such as `./docs/team/_team.md`, when previewing Index or another supported route command. A file Include instead lists one document without granting folder maintenance.
+The catalogue is `docs/_docs.md`. An existing catalogue keeps its bytes. Use exact source references with filenames, such as `./docs/_docs.md`, when previewing Index or another supported route command. A file Include instead lists one document without granting folder maintenance.
 
-Deleting the Loader row leaves a maintained but unlisted registration. Bare Index leaves that tree alone, while `open-forge index ./docs/team/_team.md --dry-run` previews explicit maintenance without relisting it. Folder Exclude removes the registration and matching rows without deleting content. Move stays within one registration, and required foreign rewrites block Move or Remove. Registration adds no package ownership or implicit destination permission. The [outside-route reference](/guides/cli#outside-routes) covers compatibility anchors, exclusions and recovery.
+Deleting the Loader row leaves a maintained but unlisted registration. Bare Index leaves that tree alone, while `open-forge index ./docs/_docs.md --dry-run` previews explicit maintenance without relisting it. Folder Exclude removes the registration and matching rows without deleting content. Move stays within one registration, and required foreign rewrites block Move or Remove. Registration adds no package ownership or implicit destination permission. The [outside-route reference](/guides/cli#outside-routes) covers compatibility anchors, exclusions and recovery.
 
 ## Change the installed routes
 

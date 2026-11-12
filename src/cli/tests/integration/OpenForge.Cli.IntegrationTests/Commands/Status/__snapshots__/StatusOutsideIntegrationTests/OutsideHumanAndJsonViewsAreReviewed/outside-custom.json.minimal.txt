@@ -9,7 +9,7 @@
     "selectedBy": "current-directory"
   },
   "summary": {
-    "headline": "Open Forge is installed, but 12 files need attention.",
+    "headline": "Open Forge is installed, but 13 files need attention.",
     "kind": "warnings"
   },
   "findings": [
@@ -21,6 +21,26 @@
       "subject": {
         "kind": "file",
         "path": ".agents/skills/_skills.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge index",
+          "reason": "Rebuild the Entries section."
+        }
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "status.generated-navigation-changed",
+      "title": "Entries section is stale",
+      "message": "The Entries section of docs/team/_team.md is stale.",
+      "subject": {
+        "kind": "file",
+        "path": "docs/team/_team.md",
         "id": null,
         "location": null
       },
@@ -264,8 +284,8 @@
     "allTokens": 88,
     "startupShare": 20.903954802259887005649717514,
     "rootCategories": 0,
-    "entriesSectionsCurrent": 1,
-    "entriesSectionsStale": 1,
+    "entriesSectionsCurrent": 0,
+    "entriesSectionsStale": 2,
     "entriesSectionsMissing": 11,
     "frameworkFilesCurrent": null,
     "frameworkFilesChanged": null,
@@ -277,7 +297,7 @@
     "libraryLinksChanged": 0,
     "recoveryBundles": 0,
     "recoveryDrafts": 0,
-    "warnings": 12,
+    "warnings": 13,
     "infos": 3
   },
   "limitations": [],

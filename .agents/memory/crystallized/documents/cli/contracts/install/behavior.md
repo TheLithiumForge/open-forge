@@ -708,6 +708,12 @@ deletion under its separate lease-bound contract. A later
 invocation forms a fresh plan and never replays a saved plan, receipt, journal,
 history, or progress record.
 
+## Docs Folder Registration
+
+The docs-folder answer is resolved with the other setup choices, before planning. Validation reuses the outside-route path rules and requires an existing directory, so a refused answer stops before any plan.
+
+Registration runs only after Install's application returns a complete result. It is composed in the root host from the folder Include operation and runs that operation's own plan, workspace lease, expected-state checks, application and recovery. Install never imports Route's private support. A non-complete Install skips registration and reports it as not attempted. A registration failure, interruption or unexpected exception is reported with its cause and the retry command. It never rolls back the installed files and never changes Install's status, findings or exit.
+
 ## Result Formation And Streams
 
 The operation forms one typed result after invalid input, classification,

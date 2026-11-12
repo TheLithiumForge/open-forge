@@ -7,9 +7,7 @@ description: How to start Open Forge on a greenfield project, how to adopt it in
 
 Open Forge works the same way in a brand-new project and in a ten-year-old codebase. What differs is where the truth lives when you start, and so what you should write down first.
 
-At first installation, either kind of project can [choose a context folder](installation.md#choose-the-context-folder). The examples below use the default `.agents` layout. Existing documents can still be included where they live.
-
-Choose file Include for a document that should remain read-only input. Choose [folder Include](/guides/cli#outside-routes) when Open Forge should maintain a safe existing folder where it lives. Folder registration is separate from the main-root choice and does not move files or grant package ownership. Loader rows still decide loading.
+Either kind of project can include existing documents where they live. Use file Include for a document that should stay read-only input, or folder Include when Open Forge should maintain the folder, as [Your own docs](your-own-docs.md) describes.
 
 The base Framework gives you routing, loading, and your selected Core categories and Memory states. [Installation](installation.md#choose-the-installed-routes) explains Essentials, Full Core, and Custom. Several things on this page come from optional Extensions: Decisions from [Planning](../extensions/planning.md), and Vision and Architecture documents from [Project Documents](../extensions/project-documents.md). The [Development Toolkit](../extensions/development-toolkit.md) installs both, plus the Development and Flows and Scenarios packages.
 

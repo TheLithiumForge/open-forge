@@ -5,17 +5,22 @@ import styles from "./home.module.css";
 
 interface Feature {
   readonly title: string;
-  readonly body: string;
+  readonly body: ReactNode;
   readonly link: string;
   readonly linkLabel: string;
 }
 
 const features: readonly Feature[] = [
   {
-    title: "Routes, not bulk context",
-    body: "A loader and one short entrypoint per folder. The entrypoints point the agent to the routes a task needs, and the rest stays closed.",
-    link: "/docs/concepts/routing",
-    linkLabel: "How routing works",
+    title: "A context folder you choose",
+    body: (
+      <>
+        Keep the Framework in <code>.agents</code>, or pick another folder, such as <code>docs</code>, at first installation. Skills, settings and ownership stay in{" "}
+        <code>.agents</code>.
+      </>
+    ),
+    link: "/docs/getting-started/installation#choose-the-context-folder",
+    linkLabel: "Choose the context folder",
   },
   {
     title: "Plain Markdown you own",
@@ -43,7 +48,11 @@ const features: readonly Feature[] = [
   },
   {
     title: "An optional CLI",
-    body: "It finds context, keeps navigation correct, and previews every change with --dry-run. Everything it does, you can do by editing files.",
+    body: (
+      <>
+        It finds context, keeps navigation correct, and previews every change with <code>--dry-run</code>. Everything it does, you can do by editing files.
+      </>
+    ),
     link: "/docs/cli",
     linkLabel: "Working with the CLI",
   },

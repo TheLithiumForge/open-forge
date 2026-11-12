@@ -15,7 +15,7 @@ Establish or configure the Framework bundled in the running CLI. Install does no
 | Flag                                                | Meaning                                                                                                                                             |
 | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--configure`                                       | Revisit an installed setup, restore eligible missing selected defaults, or convert unedited owned files to the selected frontmatter form            |
-| `--main-root <folder>`                               | Choose the context folder at first installation. Default: `--main-root .agents`. A custom folder must be absent or empty                             |
+| `--main-root <folder>`                               | Choose the context folder at first installation. Default: `--main-root .agents`. A custom folder can already hold files                              |
 | `--preset <minimal\|essentials\|full-core\|custom>` | Select built-in routes. On an installed workspace, an explicit preset also requires `--configure`                                                   |
 | `--frontmatter <root\|scoped>`                      | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
 | `--route <id>=<add\|remove\|git-ignore>`            | Override a Custom or Minimal row. Requires `--preset custom` or `--preset minimal`. Repeat for more rows                                            |

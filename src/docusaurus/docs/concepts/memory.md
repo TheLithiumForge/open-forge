@@ -7,8 +7,6 @@ description: The four Memory states, what belongs in each, and how records move 
 
 Memory asks one question: **what is worth remembering for current or future work?** It's self-growing Markdown state: people and agents add useful [records](../glossary.md#record) and routed scopes as the work produces them. Unselected branches don't enter active context.
 
-Memory paths below use the default `.agents` context folder. With a custom main root, Memory lives under that folder and keeps the same states and loading rules. See [Choose the context folder](../getting-started/installation.md#choose-the-context-folder).
-
 This illustrative record is an example after you accept the requirement. Use your workspace's selected [frontmatter](../glossary.md#frontmatter) form when copying:
 
 ```md title=".agents/memory/crystallized/export-limit.md (illustrative)"

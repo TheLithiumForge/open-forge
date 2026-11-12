@@ -106,6 +106,6 @@ Shared maintenance carries the exact selected logical coordinates separately fro
 
 ## Delivery Boundary
 
-Delivery 1 supports choosing an absent or empty custom destination at first installation and using it through every command family. Default-root adoption remains supported. An omitted or unchanged root preserves ordinary Install behavior. Changing an established installation's root is refused before effects, including with `--configure`.
+Delivery 1 supports choosing a new or existing custom destination at first installation and using it through every command family. Default-root adoption remains supported. An omitted or unchanged root preserves ordinary Install behavior. Changing an established installation's root is refused before effects, including with `--configure`.
 
 Delivery 2 adds moving an established installation. It must inventory ignored and untracked files, protect both locations with ignore rules throughout the move, define preserved metadata, verify destination bytes before deleting originals, preserve later edits during restoration, and refuse Library source intersections or mappings that cannot retain one destination root and unchanged suffixes. These are future move requirements, not available behavior.

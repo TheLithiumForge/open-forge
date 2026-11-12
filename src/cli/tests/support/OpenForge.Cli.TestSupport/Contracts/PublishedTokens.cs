@@ -116,6 +116,7 @@ public static class PublishedTokens
     public static class Install
     {
         public const string MainRootQuestion = "Where should Open Forge keep its context files?";
+        public const string OutsideRouteQuestion = "Do you also want Open Forge to maintain a folder of your own docs?";
         public const string MinimalPreset = "minimal";
         public const string FullCorePreset = "full-core";
         public const string Force = "--force";

@@ -1,0 +1,28 @@
+Installed the Open Forge Framework.
+Workspace: <workspace>
+Setup: Minimal
+Add: directives, memory/crystallized
+Git-ignored contents: none
+Leave out: guidance, maps, patterns, skills, templates, memory/working,
+memory/emerging, memory/archived
+Frontmatter: root
+  .agents/README.md                             created
+  .agents/directives/_directives.md             created
+  .agents/loader.md                             created
+  .agents/memory/_memory.md                     created
+  .agents/memory/crystallized/_crystallized.md  created
+  AGENTS.md
+    created with an Open Forge section
+  CLAUDE.md
+    created with an Open Forge section
+  .agents/open-forge.json                       created
+  .agents/open-forge.lock.json                  created; records the files above
+  Created 5 files and 3 directories under .agents (listed in
+  .agents/open-forge.lock.json).
+  Created AGENTS.md and CLAUDE.md with an Open Forge section.
+Install finished, but docs/team wasn't registered: Registration failed
+unexpectedly. Run open-forge route include docs/team to try again.
+If your agent tool does not read AGENTS.md on its own, ask it to read AGENTS.md
+first.
+Next: review the new files with git status and git diff, commit them, then
+      give your agent a normal task.

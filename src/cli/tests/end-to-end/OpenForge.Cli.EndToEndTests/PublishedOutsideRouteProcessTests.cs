@@ -5,6 +5,7 @@ using System.Text.Json.Nodes;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
 using OpenForge.Cli.TestSupport;
 using OpenForge.Cli.TestSupport.Contracts;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.EndToEndTests;
 
@@ -100,7 +101,7 @@ public sealed class PublishedOutsideRouteProcessTests
         string[] index = [PublishedTokens.Index.Command, Reference(Anchor)];
         await fixture.Preview(index, PublishedTokens.Index.DryRun);
         await fixture.Apply(index);
-        Assert.Contains(rows, Encoding.UTF8.GetString(fixture.Bytes(Anchor)), StringComparison.Ordinal);
+        CommandOutputSnapshot.MatchSnapshot(Encoding.UTF8.GetString(fixture.Bytes(Anchor)), "explicit-index-catalogue");
         Assert.NotEqual(Encoding.UTF8.GetBytes(anchor), fixture.Bytes(Anchor));
         Assert.Equal(Encoding.UTF8.GetBytes(fresh), fixture.Bytes(Team + "/fresh.md"));
         Assert.Equal(loader, fixture.Bytes(Loader));
@@ -161,7 +162,7 @@ public sealed class PublishedOutsideRouteProcessTests
         Assert.False(File.Exists(fixture.PathFor(oldLeaf)));
         Assert.Equal(Encoding.UTF8.GetBytes(original), fixture.Bytes(newLeaf));
         Assert.Equal(Encoding.UTF8.GetBytes(reader.Replace("(old.md)", "(renamed.md)", StringComparison.Ordinal)), fixture.Bytes(category + "/reader.md"));
-        Assert.Equal(Encoding.UTF8.GetBytes(entries.Replace("(old.md)", "(renamed.md)", StringComparison.Ordinal)), fixture.Bytes(categoryAnchor));
+        CommandOutputSnapshot.MatchSnapshot(Encoding.UTF8.GetString(fixture.Bytes(categoryAnchor)), "moved-catalogue");
         Assert.Empty(fixture.RecoveryFiles());
         await fixture.Refuse([PublishedTokens.Route.Command, PublishedTokens.RouteMove.Command, Reference(newLeaf), Reference(other + "/renamed.md")]);
         foreach (var protectedPath in new[] { Team, Anchor })

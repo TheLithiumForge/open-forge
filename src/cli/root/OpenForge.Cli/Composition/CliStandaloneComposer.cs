@@ -1,4 +1,5 @@
 using OpenForge.Cli.Composition.Models;
+using OpenForge.Cli.Composition.Shared.InstallOutsideRoute;
 using OpenForge.Cli.Core.Commands.Help;
 using OpenForge.Cli.Core.Presentation.Help;
 using OpenForge.Cli.Core.Presentation.Help.Shared.Help;
@@ -213,7 +214,11 @@ internal static class CliStandaloneComposer
                     (initial, policy, token) => interaction.Prompts.SelectAsync(InstallSetupQuestions.Preset(initial), policy, token),
                     (question, policy, token) => InstallSetupQuestions.RoutesAsync(interaction.Prompts, question, policy, token),
                     (question, policy, token) => interaction.Prompts.SelectAsync(InstallSetupQuestions.Frontmatter(question), policy, token),
-                    (initial, policy, token) => interaction.Prompts.TextAsync(InstallSetupQuestions.MainRoot(initial), policy, token))).ExecuteAsync), InstallPresentation.Rendering);
+                    (initial, policy, token) => interaction.Prompts.TextAsync(InstallSetupQuestions.MainRoot(initial), policy, token))
+                {
+                    OutsideRoute = (question, policy, token) => interaction.Prompts.TextAsync(InstallSetupQuestions.OutsideRoute(question), policy, token),
+                },
+                InstallOutsideRouteComposer.Create(lockStoreRoot)).ExecuteAsync), InstallPresentation.Rendering);
 
     private static ICliCommandBinding BuildUpdate(
         UpdateSymbols symbols,

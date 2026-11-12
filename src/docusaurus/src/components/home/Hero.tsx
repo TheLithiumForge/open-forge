@@ -18,7 +18,9 @@ export default function Hero(): ReactNode {
           Open <span className={styles.titleAccent}>Forge</span>
         </Heading>
         <p className={styles.lead}>An agent doesn't need to know everything. It needs to know where everything is.</p>
-        <p className={styles.sublead}>A small Markdown framework for working with AI agents, built around your projects, your tools, and the way you like to work.</p>
+        <p className={styles.sublead}>
+          Give your coding agent the rules, docs and decisions each task needs, and a place to keep what it learns for the next session.
+        </p>
         <div className={styles.actions}>
           <Link className="button button--primary button--lg" to="/docs/getting-started/installation">
             Get started

@@ -24,15 +24,15 @@ ACE applies both to the workspace itself. A task starts from what you want to ac
 
 ## The pieces
 
-| Concept             | In one sentence                                                                                                                       | Read more                               |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| **Routing**         | Every routed folder has one short entrypoint that lists its direct children, so an agent navigates instead of scanning.               | [Routing](routing.md)                   |
-| **Scopes**          | A folder in a route can narrow where the content below it applies, so specialized rules load only for work that needs them.           | [Scopes](scopes.md)                     |
-| **Loading tags**    | `#LoadNow` and `#KeepInMind` mark what is read as soon as its parent entrypoint loads. Everything else waits until a task selects it. | [Loading and tags](loading-and-tags.md) |
-| **Core categories** | Six roles for content: Directives, Guidance, Patterns, Skills, Templates, and Maps.                                                   | [Core categories](core-categories.md)   |
-| **Memory**          | Four states for what's worth remembering: Working, Emerging, Crystallized, and Archived.                                              | [Memory](memory.md)                     |
-| **Customizing**     | Every installed file is yours. Edit it, replace it, remove it, or add an overwrite companion that updates leave alone.                | [Customizing](customizing.md)           |
-| **Reuse**           | Include a document already in the project, attach a Library from this workspace, or install an Extension in any project.             | [Routing](routing.md#documents-outside-the-context-folder) |
+| Concept             | In one sentence                                                                                                                       | Read more                                                          |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| **Routing**         | Every routed folder has one short entrypoint that lists its direct children, so an agent navigates instead of scanning.               | [Routing](routing.md)                                              |
+| **Scopes**          | A folder in a route can narrow where the content below it applies, so specialized rules load only for work that needs them.           | [Scopes](scopes.md)                                                |
+| **Loading tags**    | `#LoadNow` and `#KeepInMind` mark what is read as soon as its parent entrypoint loads. Everything else waits until a task selects it. | [Loading and tags](loading-and-tags.md)                            |
+| **Core categories** | Six roles for content: Directives, Guidance, Patterns, Skills, Templates, and Maps.                                                   | [Core categories](core-categories.md)                              |
+| **Memory**          | Four states for what's worth remembering: Working, Emerging, Crystallized, and Archived.                                              | [Memory](memory.md)                                                |
+| **Customizing**     | Every installed file is yours. Edit it, replace it, remove it, or add an overwrite companion that updates leave alone.                | [Customizing](customizing.md)                                      |
+| **Reuse**           | Include a document already in the project, attach a Library from this workspace, or install an Extension in any project.              | [Share with your team](../getting-started/share-with-your-team.md) |
 
 ## Two parts of the Framework
 

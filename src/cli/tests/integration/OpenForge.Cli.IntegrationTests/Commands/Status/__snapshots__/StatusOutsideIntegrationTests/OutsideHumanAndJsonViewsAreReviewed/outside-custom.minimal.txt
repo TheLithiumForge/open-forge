@@ -1,6 +1,9 @@
-Open Forge is installed, but 12 files need attention.
+Open Forge is installed, but 13 files need attention.
   Warning  .agents/skills/_skills.md  Entries section is missing
          .agents/skills/_skills.md has no Entries section.
+         open-forge index
+  Warning  docs/team/_team.md  Entries section is stale
+         The Entries section of docs/team/_team.md is stale.
          open-forge index
   Warning  knowledge/main/directives/_directives.md  Entries section is missing
          knowledge/main/directives/_directives.md has no Entries section.
