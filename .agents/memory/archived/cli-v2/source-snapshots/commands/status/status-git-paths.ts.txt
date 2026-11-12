@@ -1,0 +1,15 @@
+import { FrameworkAnchorPath } from "./framework-anchors.ts";
+import { ManagedRecordPath, type CanonicalManagedPath } from "./managed-record.ts";
+
+export const StatusFixedGitPath = {
+  canonicalEntry: FrameworkAnchorPath.canonicalEntry,
+  loader: FrameworkAnchorPath.loader,
+  managedRecord: ManagedRecordPath,
+} as const;
+
+export type StatusFixedGitPath = (typeof StatusFixedGitPath)[keyof typeof StatusFixedGitPath];
+
+export interface StatusRelevantGitPaths {
+  readonly fixed: typeof StatusFixedGitPath;
+  readonly managedTargets: readonly CanonicalManagedPath[];
+}

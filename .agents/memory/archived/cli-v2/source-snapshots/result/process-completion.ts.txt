@@ -1,0 +1,12 @@
+import { ResultStatus, type ResultStatus as ResultStatusValue } from "./result.ts";
+
+export const ExitCode = {
+  [ResultStatus.success]: 0,
+  [ResultStatus.attention]: 1,
+  [ResultStatus.invalid]: 2,
+  [ResultStatus.blocked]: 3,
+  [ResultStatus.failed]: 4,
+  [ResultStatus.cancelled]: 130,
+} as const satisfies Record<ResultStatusValue, number>;
+
+export type ExitCode = (typeof ExitCode)[keyof typeof ExitCode];

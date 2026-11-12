@@ -24,7 +24,7 @@ it — and chooses strictness anyway.
 
 ## 1. `## Axioms` is mandatory, with non-empty content
 
-[`RouteSourceStructureReader.ReadAxioms`](../../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Sources/Operational/RouteSourceStructureReader.cs#L97-L128):
+[`RouteSourceStructureReader.ReadAxioms`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Framework/Sources/Operational/RouteSourceStructureReader.cs#L97-L129):
 
 ```csharp
 // line 102 — applies to the Loader and every entrypoint
@@ -69,7 +69,7 @@ and drives exactly the wrong behaviour.
 ### The proof that the rule is wrong
 
 `route init` cannot satisfy its own requirement without writing a placeholder.
-[`RouteInitScaffoldComposer.cs:27-29`](../../../../../../src/cli/core/OpenForge.Cli.Core/Commands/Route/Init/Shared/Planning/RouteInitScaffoldComposer.cs#L27-L29):
+[`RouteInitScaffoldComposer.cs:27-29`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Commands/Route/Init/Shared/Planning/RouteInitScaffoldComposer.cs#L27-L29):
 
 ```
 ## Axioms
@@ -101,7 +101,7 @@ The project depends on **Markdig**, a full CommonMark parser
 
 The same file that requires markers already knows the heading:
 
-[`MarkdownGeneratedRegionSyntax.cs`](../../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Documents/Markdown/MarkdownGeneratedRegionSyntax.cs):
+[`MarkdownGeneratedRegionSyntax.cs`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Framework/Documents/Markdown/MarkdownGeneratedRegionSyntax.cs):
 
 ```csharp
 internal const string EntriesHeadingText = "Entries";

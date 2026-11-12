@@ -372,7 +372,7 @@ mutating `install`. If required semantic input is unknown, status explains the
 missing choice instead of fabricating a runnable command.
 
 Framework presence uses one shallow named classification.
-[`status-values.ts`](../../../../../src/cli/commands/status/status-values.ts) is
+[`status-values.ts`](../source-snapshots/commands/status/status-values.ts.txt) is
 authoritative for the exact `FrameworkPresenceState` values, derived type, and
 import path.
 
@@ -1131,7 +1131,7 @@ Handlers return typed values. They do not call `console`, write streams, choose 
 
 Protocol-significant strings and numbers are defined once through enums or readonly `as const` objects. Application code never repeats raw schema versions, operation identifiers, statuses, message levels, diagnostic codes, or exit values.
 
-[`result.ts`](../../../../../src/cli/result/result.ts) is authoritative for the
+[`result.ts`](../source-snapshots/result/result.ts.txt) is authoritative for the
 exact implemented result schema version, statuses, message levels, operation
 identifiers, message shape, common result envelope, and import paths. The public
 envelope currently uses schema version `1`. Message levels are `info`,
@@ -1161,7 +1161,7 @@ Domain operation identifiers mirror the command tree with dot-separated family p
 | Extension family         | `extension.list`, `extension.inspect`, `extension.add`, `extension.update`, `extension.remove` |
 | Completion family        | `completion.install`, `completion.remove`, `completion.script`                                 |
 
-[`result.ts`](../../../../../src/cli/result/result.ts) is authoritative for
+[`result.ts`](../source-snapshots/result/result.ts.txt) is authoritative for
 their exact const object, derived types, and import path. This table is the
 public semantic reference for identifiers emitted in structured results.
 
@@ -1199,7 +1199,7 @@ it never claims that the original result was emitted completely.
 
 Every human and structured presentation consumes this small common result:
 
-[`result.ts`](../../../../../src/cli/result/result.ts) is authoritative for the
+[`result.ts`](../source-snapshots/result/result.ts.txt) is authoritative for the
 exact implemented message and result interfaces, their generic constraints,
 and their import paths.
 
@@ -1221,7 +1221,7 @@ The envelope does not contain a derived `ok` boolean, numeric `exitCode`, timest
 
 Every workspace-aware operation includes one shared workspace reference in its operation-specific `data`:
 
-[`workspace-reference.ts`](../../../../../src/cli/result/workspace-reference.ts)
+[`workspace-reference.ts`](../source-snapshots/result/workspace-reference.ts.txt)
 is authoritative for the exact implemented workspace-selection values,
 reference interface, derived type, and import path.
 
@@ -1284,7 +1284,7 @@ Increment the schema version only when an existing top-level field or accepted m
 
 The executable boundary maps the complete semantic status through one readonly object:
 
-[`process-completion.ts`](../../../../../src/cli/result/process-completion.ts)
+[`process-completion.ts`](../source-snapshots/result/process-completion.ts.txt)
 is authoritative for the exact implemented mapping, derived exit-code type,
 and import path.
 

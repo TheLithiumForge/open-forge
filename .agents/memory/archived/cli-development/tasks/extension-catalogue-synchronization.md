@@ -115,7 +115,7 @@ At the original preparation baseline, the CLI stored a compressed asset snapshot
 Revalidate these paths against the implementation baseline selected after user review:
 
 - [First-party catalogue](../../../../../src/extensions/README.md)
-- [Embedded assets](../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Extensions/Embedded/EmbeddedExtensionCatalogueAssets.cs)
+- [Embedded assets](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Framework/Extensions/Embedded/EmbeddedExtensionCatalogueAssets.cs)
 - [Core resource inclusion](../../../../../src/cli/core/OpenForge.Cli.Core/OpenForge.Cli.Core.csproj)
 - [Catalogue integration tests](../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Framework/Extensions/EmbeddedExtensionCatalogueIntegrationTests.cs)
 - [Extension package contract](../../../crystallized/documents/cli/contracts/extension/_extension.md)

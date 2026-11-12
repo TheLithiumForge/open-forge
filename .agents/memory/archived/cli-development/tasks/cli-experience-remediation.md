@@ -992,28 +992,28 @@ Backing: [structural-requirements-and-markers.md](../analysis/cli-experience-aud
 [taxonomy-and-adoption.md](../analysis/cli-experience-audit/taxonomy-and-adoption.md).
 
 - **Treat absent or empty `## Axioms` as inherited.**
-  [`RouteSourceStructureReader.cs:111-125`](../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Sources/Operational/RouteSourceStructureReader.cs#L111-L125)
+  [`RouteSourceStructureReader.cs:111-125`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Framework/Sources/Operational/RouteSourceStructureReader.cs#L97-L129)
   requires exactly one heading _and_ non-whitespace content. Return `Valid` with an
   `Inherited` state instead, produce no finding, and stop `route init` emitting its
   placeholder bullet
-  ([`RouteInitScaffoldComposer.cs:27-29`](../../../../../src/cli/core/OpenForge.Cli.Core/Commands/Route/Init/Shared/Planning/RouteInitScaffoldComposer.cs#L27-L29)).
+  ([`RouteInitScaffoldComposer.cs:27-29`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Commands/Route/Init/Shared/Planning/RouteInitScaffoldComposer.cs#L27-L29)).
   Measured: it does not block commands, but is a permanent `doctor` warning on
   every custom scope. Proof the rule is wrong — the scaffolder must emit
   boilerplate to pass its own check, and none of the 19 shipped entrypoints uses
   it. **S · judgment**
 - **Locate generated regions by heading, not HTML comment markers.** The project
   already depends on Markdig
-  ([`MarkdownDocumentParser.cs:1-3`](../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Documents/Markdown/MarkdownDocumentParser.cs#L1-L3))
+  ([`MarkdownDocumentParser.cs:1-3`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Framework/Documents/Markdown/MarkdownDocumentParser.cs#L1-L3))
   and already finds `## Axioms` by heading
-  ([`RouteSourceStructureReader.cs:111`](../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Sources/Operational/RouteSourceStructureReader.cs#L111)),
+  ([`RouteSourceStructureReader.cs:111`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Framework/Sources/Operational/RouteSourceStructureReader.cs#L97-L129)),
   while `## Entries` needs a marker pair
-  ([`MarkdownGeneratedRegionSyntax.cs`](../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Documents/Markdown/MarkdownGeneratedRegionSyntax.cs),
+  ([`MarkdownGeneratedRegionSyntax.cs`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Framework/Documents/Markdown/MarkdownGeneratedRegionSyntax.cs),
   which already declares `EntriesHeadingText` and `EntriesHeadingLine`). Two
   mechanisms for one job; the marker one is what breaks. Removes an entire failure
   class. Accept and strip existing markers on read for one release. **M · judgment**
 - **Replace the AGENTS.md comment markers with a visible `## Open Forge` heading**
   plus one human sentence, instead of
-  [`FrameworkContentIdentity.cs:12`](../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Lifecycle/FrameworkContentIdentity.cs#L12). **S**
+  [`FrameworkContentIdentity.cs:12`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Framework/Lifecycle/FrameworkContentIdentity.cs#L12-L13). **S**
 - **Do not police frontmatter at all. `ParseSkill` is the anomaly — make it match.**
   Measured: ordinary Markdown frontmatter is already unpoliced — arbitrary foreign keys,
   nested objects, `license`, `allowed-tools` all parse to `Coverage: complete`. Only
@@ -1021,13 +1021,13 @@ Backing: [structural-requirements-and-markers.md](../analysis/cli-experience-aud
   `name`/`description`. The correct policy already exists for every other file type.
   Open Forge cares about exactly three attributes under the `open-forge:` key —
   `description`, `tags`, `responsibility`
-  ([`FrameworkMetadataYamlModels.cs:5-18`](../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Documents/Metadata/Models/FrameworkMetadataYamlModels.cs#L5-L18))
+  ([`FrameworkMetadataYamlModels.cs:5-18`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Framework/Documents/Metadata/Models/FrameworkMetadataYamlModels.cs#L5-L18))
   — plus root `name`/`description` for interop. Everything else is read past and left
   untouched: not validated, not rewritten, not round-tripped. The YAML reader already
   handles unknown keys; the serializer context never needs to know them because foreign
   keys are never written back. **S**
 - **Accept unknown keys in `SKILL.md` frontmatter.**
-  [`SourceAuthoredMetadataParser.cs:120`](../../../../../src/cli/core/OpenForge.Cli.Core/Framework/Sources/Metadata/SourceAuthoredMetadataParser.cs#L120)
+  [`SourceAuthoredMetadataParser.cs:120`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Framework/Sources/Metadata/SourceAuthoredMetadataParser.cs#L98-L134)
   returns `false` on any key but `name`/`description`; `license` and
   `allowed-tools` are standard, so essentially every published skill hard-blocks
   the workspace. **S**
@@ -1037,7 +1037,7 @@ Backing: [structural-requirements-and-markers.md](../analysis/cli-experience-aud
 - **`index` fixes what it can, in place, with no new flag.** It already rewrites
   these files and already computes the facts that identify the problem, yet is
   explicitly forbidden from repairing any of it
-  ([`IndexHelpSections.cs:41`](../../../../../src/cli/core/OpenForge.Cli.Core/Commands/Index/Shared/Rendering/IndexHelpSections.cs#L41)).
+  ([`IndexHelpSections.cs:41`](https://github.com/TheLithiumForge/open-forge/blob/62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f/src/cli/core/OpenForge.Cli.Core/Commands/Index/Shared/Rendering/IndexHelpSections.cs#L41)).
   Safe derivable fixes: insert a missing `## Axioms` or `## Entries`, move a
   non-final Entries region, quote an unquoted `": "`, stub missing frontmatter as
   `#NeedsAuthoring`. `--dry-run` previews them. Anything not safely derivable stays

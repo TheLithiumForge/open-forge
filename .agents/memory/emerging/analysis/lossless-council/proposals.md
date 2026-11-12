@@ -6090,7 +6090,7 @@ Before release, cheaply pin these behaviors through focused fixtures:
 - Overwrites preserve their base’s scope and affect only corresponding content.
 - Existing host prefixes, suffixes and documentation bytes survive installation.
 
-The [source](src/cli/framework/OpenForge.Cli.Framework/Framework/GeneratedNavigation/GeneratedNavigationRegionPlanner.cs:147) confirms that an empty parsed destination list currently returns structural roots. That must be fixed before Minimal ships. Startup estimates also omit linked documents outside `.agents/`, as the change map acknowledges, so advertised costs must state that limit.
+The [source](https://github.com/TheLithiumForge/open-forge/blob/43c684e4d2e1129610d580f6f2eb86a979751e1a/src/cli/framework/OpenForge.Cli.Framework/Framework/GeneratedNavigation/GeneratedNavigationRegionPlanner.cs#L141-L146) confirms that an empty parsed destination list currently returns structural roots. That must be fixed before Minimal ships. Startup estimates also omit linked documents outside `.agents/`, as the change map acknowledges, so advertised costs must state that limit.
 
 For comprehension, recruit three unfamiliar developers for twenty minutes each. Without coaching, have them link an existing rule, explain what loads, add one capability and disable it. Require at least two to finish, with no mistaken authority promotion or disabled behavior returning. Compare against plain `AGENTS.md` on equivalent tasks. If the extra machinery does not help, keep the smaller approach recommended.
 
