@@ -52,6 +52,15 @@ punctuation, including `%23`, is part of the decoded path, not a fragment or que
   authority. The interactive collision boundary in
   [Interactive Use](interface.md#interactive-use) is part of this invariant.
 
+## Local Fragment Checks
+
+Resolve the contained target and classify its kind before parsing. Use the
+[local fragment rules](interface.md#local-fragments) for Markdown headings,
+file line ranges and lexical symbols. Read file bytes only when a fragment needs
+them. Keep unreadable bytes and invalid UTF-8 separate from failed fragment checks.
+A failed file fragment keeps the target path and has no heading correction or
+automatic repair proposal.
+
 ## Reference Classification
 
 At request resolution, a value beginning with `.agents/` or `./` is an

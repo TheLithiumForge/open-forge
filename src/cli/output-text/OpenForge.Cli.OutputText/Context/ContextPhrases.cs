@@ -75,4 +75,11 @@ internal static class ContextPhrases
     // @OpenForgeText context.phrase.has-no-frontmatter
     internal static string FormatHasNoFrontmatter(string pathText)
         => $"{pathText} has no frontmatter.";
+    // @OpenForgeText context.fragment.format-link-line-range-out-of-range
+    internal static string FormatLinkLineRangeOutOfRange(string location, string path, string destination)
+        => $"The link at {location} selects an invalid line range in {path}: {destination}. It was not followed.";
+
+    // @OpenForgeText context.fragment.format-link-symbol-missing
+    internal static string FormatLinkSymbolMissing(string location, string path, string destination)
+        => $"The link at {location} selects a missing symbol in {path}: {destination}. It was not followed.";
 }

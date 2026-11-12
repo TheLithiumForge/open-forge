@@ -118,6 +118,8 @@ internal sealed class ReferencesDestinationResolver
             SourceLinkTargetResolution.Complete => ReferencesTargetResolution.Complete,
             SourceLinkTargetResolution.Missing => ReferencesTargetResolution.Missing,
             SourceLinkTargetResolution.FragmentMissing => ReferencesTargetResolution.FragmentMissing,
+            SourceLinkTargetResolution.LineOutOfRange => ReferencesTargetResolution.LineOutOfRange,
+            SourceLinkTargetResolution.SymbolMissing => ReferencesTargetResolution.SymbolMissing,
             SourceLinkTargetResolution.Malformed => ReferencesTargetResolution.Malformed,
             SourceLinkTargetResolution.Absolute => ReferencesTargetResolution.Absolute,
             SourceLinkTargetResolution.Query => ReferencesTargetResolution.Query,
@@ -143,6 +145,8 @@ internal sealed class ReferencesDestinationResolver
             SourceLinkDestinationFindingCode.TargetAmbiguous => ReferencesFindingCode.TargetAmbiguous,
             SourceLinkDestinationFindingCode.IdentityCollision => ReferencesFindingCode.IdentityCollision,
             SourceLinkDestinationFindingCode.FragmentMissing => ReferencesFindingCode.FragmentMissing,
+            SourceLinkDestinationFindingCode.LineOutOfRange => ReferencesFindingCode.LineOutOfRange,
+            SourceLinkDestinationFindingCode.SymbolMissing => ReferencesFindingCode.SymbolMissing,
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The shared link finding code is not defined."),
         };
 }

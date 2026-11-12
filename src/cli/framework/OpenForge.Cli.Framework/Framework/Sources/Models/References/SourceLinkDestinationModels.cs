@@ -16,6 +16,8 @@ internal enum SourceLinkTargetResolution
     Complete,
     Missing,
     FragmentMissing,
+    LineOutOfRange,
+    SymbolMissing,
     Malformed,
     Absolute,
     Query,
@@ -44,6 +46,8 @@ internal enum SourceLinkDestinationFindingCode
     TargetAmbiguous,
     IdentityCollision,
     FragmentMissing,
+    LineOutOfRange,
+    SymbolMissing,
 }
 
 internal sealed record SourceLinkIdentity

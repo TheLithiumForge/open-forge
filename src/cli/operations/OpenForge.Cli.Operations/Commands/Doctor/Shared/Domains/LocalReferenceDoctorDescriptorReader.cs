@@ -34,6 +34,14 @@ internal static class LocalReferenceDoctorDescriptorReader
                 observation.Facts.Finding?.Cause ?? "The local target fragment is missing.",
                 observation.Kind == LocalReferenceKind.Image || observation.DestinationLocation is null
                     ? DoctorResolutionLane.ManualDecision : DoctorResolutionLane.GuidedChoice),
+            SourceLinkTargetResolution.LineOutOfRange => DoctorDomainSupport.Warning(
+                DoctorFindingKind.ReferenceLineOutOfRange,
+                observation.Facts.Finding?.Cause ?? "The linked line range is out of range.",
+                DoctorResolutionLane.ManualDecision),
+            SourceLinkTargetResolution.SymbolMissing => DoctorDomainSupport.Warning(
+                DoctorFindingKind.ReferenceSymbolMissing,
+                observation.Facts.Finding?.Cause ?? "The linked symbol was not found.",
+                DoctorResolutionLane.ManualDecision),
             SourceLinkTargetResolution.Malformed => DoctorDomainSupport.Warning(DoctorFindingKind.ReferenceDestinationMalformed, "The destination is malformed.", DoctorResolutionLane.ManualDecision),
             SourceLinkTargetResolution.Absolute => DoctorDomainSupport.Warning(
                 DoctorFindingKind.ReferenceDestinationAbsolute,

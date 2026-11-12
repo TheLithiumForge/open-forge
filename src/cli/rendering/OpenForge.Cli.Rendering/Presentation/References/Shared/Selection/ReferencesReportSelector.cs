@@ -270,6 +270,8 @@ internal static class ReferencesReportSelector
             ReferencesFindingCode.DestinationUnsupported => RowStateMessage(location, global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNotFollowed()),
             ReferencesFindingCode.TargetMissing => RowStateMessage(location, global::OpenForge.Cli.OutputText.Shared.SharedText.LabelMissing()),
             ReferencesFindingCode.FragmentMissing => RowStateMessage(location, global::OpenForge.Cli.OutputText.References.ReferencesText.LabelHeadingNotFound()),
+            ReferencesFindingCode.LineOutOfRange => RowStateMessage(location, global::OpenForge.Cli.OutputText.References.ReferencesText.LabelLineRangeOutOfRange()),
+            ReferencesFindingCode.SymbolMissing => RowStateMessage(location, global::OpenForge.Cli.OutputText.References.ReferencesText.LabelSymbolNotFound()),
             ReferencesFindingCode.TargetUnsafe => ReferencesWording.TargetUnsafe(location),
             ReferencesFindingCode.TargetAmbiguous => ReferencesWording.TargetAmbiguous(location),
             ReferencesFindingCode.TargetUnreadable => RowStateMessage(location, global::OpenForge.Cli.OutputText.References.ReferencesText.LabelTargetCouldNotBeRead()),

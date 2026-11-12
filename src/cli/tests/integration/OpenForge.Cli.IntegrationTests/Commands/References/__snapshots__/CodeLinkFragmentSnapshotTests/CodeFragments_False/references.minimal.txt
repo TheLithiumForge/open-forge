@@ -1,0 +1,8 @@
+.agents/docs/guide.md
+  out  :8:1   ../../Code.cs
+  out  :9:1   ../../Code.cs#L2-L4
+  out  :10:1   ../../Code.cs#Type.Member
+  out  :11:1   ../../Code.cs#Type.Missing   symbol not found
+  out  :12:1   ../../Code.cs#L4-L5   line range out of range
+  out  :13:1   reference.md#details
+Next: open-forge doctor

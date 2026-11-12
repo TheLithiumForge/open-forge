@@ -81,6 +81,8 @@ internal static class ReferencesDefinitions
             ReferencesFindingCode.DestinationUnsupported => Definition(code, "references.destination-unsupported", CliSemanticStatus.Attention),
             ReferencesFindingCode.TargetMissing => Definition(code, "references.target-missing", CliSemanticStatus.Attention),
             ReferencesFindingCode.FragmentMissing => Definition(code, "references.fragment-missing", CliSemanticStatus.Attention),
+            ReferencesFindingCode.LineOutOfRange => Definition(code, "references.line-out-of-range", CliSemanticStatus.Attention),
+            ReferencesFindingCode.SymbolMissing => Definition(code, "references.symbol-missing", CliSemanticStatus.Attention),
             ReferencesFindingCode.TargetUnsafe => Definition(code, "references.target-unsafe", CliSemanticStatus.Blocked),
             ReferencesFindingCode.TargetAmbiguous => Definition(code, "references.target-ambiguous", CliSemanticStatus.Blocked),
             ReferencesFindingCode.TargetUnreadable => Definition(code, "references.target-unreadable", CliSemanticStatus.Incomplete),

@@ -149,6 +149,13 @@ Web URLs remain unchecked.
 
 Doctor and Repair use the same rename evidence and protected-source rules. Doctor gives one next step and none when clean. A Git timeout marks reference coverage incomplete without manual-removal advice and repeats the complete request, including its workspace.
 
+Markdown fragments select heading slugs. Non-Markdown files accept existing
+1-based lines (`#L111`, `#L111-L125`) or lexical symbols (`#Type.Member`). Each
+dotted symbol part needs an exact identifier token, including in comments or
+strings. Invalid bounds report `reference.line-out-of-range` in Doctor and
+`references.line-out-of-range` in References. Missing parts report
+`reference.symbol-missing` and `references.symbol-missing`. Fix these by hand.
+
 Continue with [route maintenance](routes.md) for edits or [Framework and packages](packages.md) for lifecycle changes.
 
 In `.agents/open-forge.json`, `ignoreLinksFrom` skips links written inside listed paths and `ignoreLinksTo` skips links whose resolved targets lie inside them. Entries are workspace-relative paths, not patterns. Files match exactly and folders cover descendants, using the same comparison as `allowInstallPaths`. Missing lists mean no exclusions. Doctor names ignored counts and stale entries. Context omits ignored link expansion edges. References lists every link.

@@ -1308,6 +1308,21 @@ Repair writes Index's form when
 correcting other spellings. Command arguments use literal source paths.
 Images with invalid heading fragments need a manual edit.
 
+Markdown file fragments select heading slugs. Other files accept line fragments
+such as `File.cs#L111` and `File.cs#L111-L125` when every selected line exists.
+Other fragments select symbols. For `File.cs#Type.Member`, each dotted part
+needs to appear as a complete identifier token with the same letter case.
+This lexical check includes comments and strings. It does not check declarations
+or member relationships. Fix failed file fragments by hand.
+
+Link checks use these finding codes:
+
+| Check                    | Doctor                        | References                     | Context                     |
+| ------------------------ | ----------------------------- | ------------------------------ | --------------------------- |
+| Missing Markdown heading | `reference.fragment-missing`  | `references.fragment-missing`  | `context.fragment-missing`  |
+| Invalid file line bounds | `reference.line-out-of-range` | `references.line-out-of-range` | `context.line-out-of-range` |
+| Missing file symbol part | `reference.symbol-missing`    | `references.symbol-missing`    | `context.symbol-missing`    |
+
 Use it when `status` or another command reports `blocked`, `incomplete`, or
 `completed-with-warnings`. Diagnosis can show the next repair boundary, but it does not
 apply a proposal.

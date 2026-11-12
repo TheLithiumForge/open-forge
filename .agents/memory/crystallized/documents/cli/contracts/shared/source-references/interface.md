@@ -125,6 +125,31 @@ Markdown character references and backslash escapes in hand-written sources
 still follow CommonMark. Their decoded spans remain ineligible for automatic
 spelling edits when the original bytes do not match the parsed destination.
 
+## Local Fragments
+
+Classify an existing local target before reading its fragment. Folders keep the
+[shared folder rule](../../../shared-operation-contract.md#authored-local-destinations).
+Markdown files, identified by the `.md` extension without regard to letter case,
+use exact heading slugs. A missing heading reports `fragment-missing`.
+
+Other files accept these destinations:
+
+- No fragment selects the file without reading its bytes.
+- `#L<n>` selects one 1-based line. `#L<n>-L<m>` selects an inclusive range.
+  Both endpoints need to exist and the end needs to be at least the start.
+  Empty files have zero lines. A final line ending adds no empty line.
+  Invalid bounds report `line-out-of-range`.
+- Any other fragment selects a symbol. Each dot-separated part needs to appear
+  as a complete identifier token in the file, with exact letter case.
+  Identifiers start with a Unicode letter, `_` or `$` and continue with word
+  characters or `$`. Comments and strings count because this is a lexical check.
+  The check does not establish declarations, nesting or member relationships.
+  A missing part reports `symbol-missing`.
+
+For example, `File.cs#L111-L125` succeeds when the file has at least 125 lines.
+`File.cs#Type.Member` succeeds when `Type` and `Member` both occur as identifier
+tokens. Percent decoding happens before fragment classification and checking.
+
 ## Automatic Source IDs
 
 Every supported file in a primary content location receives an automatic ID derived from its

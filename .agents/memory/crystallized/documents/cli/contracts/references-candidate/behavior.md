@@ -229,9 +229,12 @@ Classify the authored destination before resolving it:
 - An unreadable target needed for local resolution has resolution `unreadable`
   and a `references.target-unreadable` finding.
 - A safely contained path with no existing target has resolution `missing` and a
-  `references.target-missing` finding. An existing target without the authored
-  fragment has resolution `fragment-missing` and a
-  `references.fragment-missing` finding.
+  `references.target-missing` finding. An existing Markdown target without the authored
+  heading has resolution `fragment-missing` and a
+  `references.fragment-missing` finding. Non-Markdown fragment checks use the
+  shared source-reference rules. Invalid line bounds have resolution
+  `line-out-of-range` and finding `references.line-out-of-range`. Missing lexical
+  symbol parts have resolution `symbol-missing` and finding `references.symbol-missing`.
 - An existing, safely contained, unambiguous target with an available fragment
   fact has resolution `complete`.
 

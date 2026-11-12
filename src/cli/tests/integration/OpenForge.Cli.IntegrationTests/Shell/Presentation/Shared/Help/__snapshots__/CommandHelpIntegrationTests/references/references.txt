@@ -33,8 +33,10 @@ Details:
   case-sensitive. Each --include or --exclude consumes one source reference.
   Includes combine and exclusions take priority. Filters affect only incoming
   references and cannot accompany --direction out.
-  Boundary: This deterministic report does not fetch URLs, load target bodies,
-  follow links, build an index, or repair destinations.
+  Boundary: Markdown fragments select headings. Other files accept existing line
+  ranges such as #L1-L3 or lexical symbols such as #Type.Member. This report
+  does not fetch URLs, expand target bodies into context, build an index or
+  repair destinations.
 
 Automation:
   --format json: one minified schema-3 JSON result on stdout for every status.

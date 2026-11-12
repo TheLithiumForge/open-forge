@@ -34,6 +34,8 @@ internal static class ReferencesWireVocabulary
         ReferencesFindingCode.DestinationUnsupported => "references.destination-unsupported",
         ReferencesFindingCode.TargetMissing => "references.target-missing",
         ReferencesFindingCode.FragmentMissing => "references.fragment-missing",
+        ReferencesFindingCode.LineOutOfRange => "references.line-out-of-range",
+        ReferencesFindingCode.SymbolMissing => "references.symbol-missing",
         ReferencesFindingCode.TargetUnsafe => "references.target-unsafe",
         ReferencesFindingCode.TargetAmbiguous => "references.target-ambiguous",
         ReferencesFindingCode.TargetUnreadable => "references.target-unreadable",
@@ -53,6 +55,8 @@ internal static class ReferencesWireVocabulary
             or ReferencesFindingCode.DestinationUnsupported
             or ReferencesFindingCode.TargetMissing
             or ReferencesFindingCode.FragmentMissing
+            or ReferencesFindingCode.LineOutOfRange
+            or ReferencesFindingCode.SymbolMissing
             or ReferencesFindingCode.TargetUnreadable => true,
         _ => false,
     };

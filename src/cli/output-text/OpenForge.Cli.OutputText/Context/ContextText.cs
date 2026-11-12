@@ -277,4 +277,9 @@ internal static class ContextText
     // @OpenForgeText context.help.details-2
     internal static string HelpContentAndLinksDetails()
         => "Content parts are metadata, paths, frontmatter, headings, body, and section:<name>. Supply one comma-separated --content value. Escape commas and backslashes in section names. Generated delimiters surround each physical layer without changing authored bytes. --follow-links accepts a positive base-10 depth or all. It follows contained local Markdown links breadth-first and records broken edges. External URLs are never fetched.";
+    // @OpenForgeText context.fragment.title-link-line-range-is-out-of-range
+    internal static string TitleLinkLineRangeIsOutOfRange() => "Link line range is out of range";
+
+    // @OpenForgeText context.fragment.title-link-symbol-is-missing
+    internal static string TitleLinkSymbolIsMissing() => "Link symbol is missing";
 }

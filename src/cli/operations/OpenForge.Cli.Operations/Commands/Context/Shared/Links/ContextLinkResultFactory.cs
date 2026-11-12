@@ -103,6 +103,8 @@ internal static class ContextLinkResultFactory
             SourceLinkDestinationFindingCode.TargetAmbiguous => ContextFindingCode.TargetAmbiguous,
             SourceLinkDestinationFindingCode.IdentityCollision => ContextFindingCode.IdentityCollision,
             SourceLinkDestinationFindingCode.FragmentMissing => ContextFindingCode.FragmentMissing,
+            SourceLinkDestinationFindingCode.LineOutOfRange => ContextFindingCode.LineOutOfRange,
+            SourceLinkDestinationFindingCode.SymbolMissing => ContextFindingCode.SymbolMissing,
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The shared link finding code is not defined."),
         };
 
@@ -135,6 +137,8 @@ internal static class ContextLinkResultFactory
             SourceLinkTargetResolution.Complete => ContextLinkResolution.Complete,
             SourceLinkTargetResolution.Missing => ContextLinkResolution.Missing,
             SourceLinkTargetResolution.FragmentMissing => ContextLinkResolution.FragmentMissing,
+            SourceLinkTargetResolution.LineOutOfRange => ContextLinkResolution.LineOutOfRange,
+            SourceLinkTargetResolution.SymbolMissing => ContextLinkResolution.SymbolMissing,
             SourceLinkTargetResolution.Malformed => ContextLinkResolution.Malformed,
             SourceLinkTargetResolution.Absolute => ContextLinkResolution.Absolute,
             SourceLinkTargetResolution.Query => ContextLinkResolution.Query,

@@ -27,7 +27,7 @@ internal static class LocalReferenceFactReader
             SourceLinkTargetResolution.Complete => LocalReferenceFragmentObservation.Observed(
                 LocalReferenceFragmentState.Verified,
                 fragment),
-            SourceLinkTargetResolution.FragmentMissing => LocalReferenceFragmentObservation.Observed(
+            SourceLinkTargetResolution.FragmentMissing or SourceLinkTargetResolution.LineOutOfRange or SourceLinkTargetResolution.SymbolMissing => LocalReferenceFragmentObservation.Observed(
                 LocalReferenceFragmentState.Missing,
                 fragment),
             SourceLinkTargetResolution.Unreadable or SourceLinkTargetResolution.EncodingUnsupported

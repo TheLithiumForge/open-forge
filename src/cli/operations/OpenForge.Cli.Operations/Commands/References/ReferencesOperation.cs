@@ -266,6 +266,8 @@ internal sealed class ReferencesOperation
                                 && TargetMatchesSource(targetFacts.Target, logicalSource, sourceSession.Catalogue)
                                 && targetFacts.Target.Resolution is ReferencesTargetResolution.Complete
                                     or ReferencesTargetResolution.FragmentMissing
+                                    or ReferencesTargetResolution.LineOutOfRange
+                                    or ReferencesTargetResolution.SymbolMissing
                                     or ReferencesTargetResolution.Unreadable
                                     or ReferencesTargetResolution.EncodingUnsupported)
                             {

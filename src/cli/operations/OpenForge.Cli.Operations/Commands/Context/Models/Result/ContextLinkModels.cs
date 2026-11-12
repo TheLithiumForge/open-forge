@@ -15,6 +15,8 @@ internal enum ContextLinkResolution
     Complete,
     Missing,
     FragmentMissing,
+    LineOutOfRange,
+    SymbolMissing,
     CaseMismatch,
     Malformed,
     Absolute,

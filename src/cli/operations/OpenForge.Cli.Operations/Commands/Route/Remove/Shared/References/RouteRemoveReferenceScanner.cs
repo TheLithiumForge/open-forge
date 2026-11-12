@@ -99,7 +99,8 @@ internal sealed class RouteRemoveReferenceScanner(
                 {
                     if (destination.Target.Kind != SourceLinkTargetKind.External
                         && destination.Finding is { } unrelatedFinding
-                        && destination.Target.Resolution != SourceLinkTargetResolution.FragmentMissing)
+                        && destination.Target.Resolution is not (SourceLinkTargetResolution.FragmentMissing
+                            or SourceLinkTargetResolution.LineOutOfRange or SourceLinkTargetResolution.SymbolMissing))
                     {
                         var blocked = unrelatedFinding.Code is SourceLinkDestinationFindingCode.TargetUnsafe
                             or SourceLinkDestinationFindingCode.IdentityCollision;
@@ -289,7 +290,8 @@ internal sealed class RouteRemoveReferenceScanner(
 
                 if (destination.Target.Kind != SourceLinkTargetKind.External
                     && destination.Finding is { } unrelatedFinding
-                    && destination.Target.Resolution != SourceLinkTargetResolution.FragmentMissing)
+                    && destination.Target.Resolution is not (SourceLinkTargetResolution.FragmentMissing
+                            or SourceLinkTargetResolution.LineOutOfRange or SourceLinkTargetResolution.SymbolMissing))
                 {
                     var blocked = unrelatedFinding.Code is SourceLinkDestinationFindingCode.TargetUnsafe
                         or SourceLinkDestinationFindingCode.IdentityCollision;

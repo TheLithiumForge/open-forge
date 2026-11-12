@@ -1,0 +1,11 @@
+.agents/docs/guide.md
+Workspace: <workspace>
+  out  :8:1   ../../Code.cs -> Code.cs
+  out  :9:1   ../../Code.cs#L2-L4 -> Code.cs
+  out  :10:1   ../../Code.cs#Type.Member -> Code.cs
+  out  :11:1   ../../Code.cs#Type.Missing -> Code.cs   symbol not found
+  out  :12:1   ../../Code.cs#L4-L5 -> Code.cs   line range out of range
+  out  :13:1   reference.md#details -> .agents/docs/reference.md
+0 in, 6 out
+  check the workspace for broken links
+Next: open-forge doctor

@@ -116,6 +116,16 @@ unavailable and a typed finding explains that unavailability. A location field
 may also be `null` when location does not apply to that fact. Parser-native spans
 are not exposed.
 
+## Fragment Findings
+
+A link finding's `subject.location` identifies where the link is written.
+A destination such as `File.cs#L111-L125` keeps its target line range in the
+fragment. It does not replace the authored source location. The
+[local fragment rules](../source-references/interface.md#local-fragments) define
+heading, line-range and symbol checks. Commands keep `fragment-missing`,
+`line-out-of-range` and `symbol-missing` separate in their finding codes and
+resolution values. These additions keep the schema-3 envelope unchanged.
+
 ## Status, Exit, And Stream Coordinates
 
 Human primary output follows this exhaustive table. Bounded diagnostics remain

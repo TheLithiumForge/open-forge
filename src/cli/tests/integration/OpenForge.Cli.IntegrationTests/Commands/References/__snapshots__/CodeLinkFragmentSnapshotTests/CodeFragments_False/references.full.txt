@@ -1,0 +1,15 @@
+.agents/docs/guide.md
+Workspace: <workspace>
+  Warning  .agents/docs/guide.md  Line range is out of range [references.line-out-of-range]
+         .agents/docs/guide.md:12:1  line range out of range
+  Warning  .agents/docs/guide.md  Symbol was not found [references.symbol-missing]
+         .agents/docs/guide.md:11:1  symbol not found
+  out  :8:1   ../../Code.cs -> Code.cs   base
+  out  :9:1   ../../Code.cs#L2-L4 -> Code.cs   base
+  out  :10:1   ../../Code.cs#Type.Member -> Code.cs   base
+  out  :11:1   ../../Code.cs#Type.Missing -> Code.cs   symbol not found   base
+  out  :12:1   ../../Code.cs#L4-L5 -> Code.cs   line range out of range   base
+  out  :13:1   reference.md#details -> .agents/docs/reference.md   base
+0 in, 6 out
+  check the workspace for broken links
+Next: open-forge doctor
