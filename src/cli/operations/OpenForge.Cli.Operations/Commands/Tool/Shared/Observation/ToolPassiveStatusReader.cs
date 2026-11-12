@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Settings.Models.Document;
 using OpenForge.Cli.Core.Framework.Tools;
 using OpenForge.Cli.Core.Framework.Tools.Models.Receipts;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Serialization;
+using OpenForge.Cli.Core.Framework.Tools.Shared.Filesystem;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Validation;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 
@@ -95,7 +96,7 @@ internal static class ToolPassiveStatusReader
         if (manifest.Index.Location == "project-directory" && !manifest.Index.Path.Contains("${", StringComparison.Ordinal))
         {
             var path = receipt.CodeRoot == "." ? manifest.Index.Path : receipt.CodeRoot + "/" + manifest.Index.Path;
-            var observed = ObserveWorkspacePath(workspace, path, token);
+            var observed = ToolFileReader.Observe(workspace, path, token);
             index = observed switch
             {
                 NoFollowLeafState.Missing => new(ToolEvidenceState.NeedsIndex),
@@ -131,30 +132,16 @@ internal static class ToolPassiveStatusReader
         return Rank(next.State) > Rank(previous.State) ? next : previous;
     }
 
-    internal static NoFollowLeafState ObserveWorkspacePath(CliWorkspace workspace, string relative, CancellationToken token)
-    {
-        if (!ToolIdentity.IsRelativePath(relative)) return NoFollowLeafState.Unknown;
-        var paths = new PhysicalPathResolver();
-        var logical = workspace.LexicalRoot;
-        var segments = relative.Split('/');
-        for (var index = 0; index < segments.Length; index++)
-        {
-            logical = Path.Combine(logical, segments[index]);
-            var read = NoFollowLeafObserver.Observe(paths, workspace, logical, token);
-            if (index == segments.Length - 1 || read.State != NoFollowLeafState.Directory) return read.State;
-        }
-        return NoFollowLeafState.Unknown;
-    }
-
     internal static async ValueTask<ToolPassiveFile> ReadWorkspaceFileAsync(CliWorkspace workspace, string relative, CancellationToken token)
     {
-        var observed = ObserveWorkspacePath(workspace, relative, token);
+        var observed = ToolFileReader.Observe(workspace, relative, token);
         if (observed == NoFollowLeafState.Missing) return new(ToolEvidenceState.Missing, null, null);
         if (observed != NoFollowLeafState.OrdinaryFile) return new(ToolEvidenceState.Unavailable, null, "The path or an ancestor isn't an ordinary file or directory.");
         try
         {
-            var bytes = await File.ReadAllBytesAsync(Path.Combine(workspace.PhysicalRoot, relative.Replace('/', Path.DirectorySeparatorChar)), token).ConfigureAwait(false);
-            return ObserveWorkspacePath(workspace, relative, token) == NoFollowLeafState.OrdinaryFile
+            var snapshot = await ToolFileReader.ReadAsync(workspace, relative, token).ConfigureAwait(false);
+            var bytes = snapshot.Bytes.ToArray();
+            return ToolFileReader.Observe(workspace, relative, token) == NoFollowLeafState.OrdinaryFile
                 ? new(ToolEvidenceState.Complete, bytes, null) : new(ToolEvidenceState.Unavailable, null, "The path changed during the read.");
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
