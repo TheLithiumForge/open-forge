@@ -1,0 +1,173 @@
+Read the selected tool definition and its requirements.
+Workspace: <workspace>
+  Error  fixture-tool  Tool observation [tool-inspect.pin-not-supported]
+         The exact definition is not reviewed by this CLI release.
+fixture-tool 1.0.0  <native-target>
+{
+  "schema": 1,
+  "id": "fixture-tool",
+  "name": "Synthetic fixture",
+  "version": "1.0.0",
+  "license": "MIT",
+  "source": {
+    "repository": "https://fixture.invalid/source",
+    "tag": "v1.0.0",
+    "commit": "1111111111111111111111111111111111111111"
+  },
+  "adapter": {
+    "id": "codegraph-1.6",
+    "revision": 1
+  },
+  "admission": "candidate",
+  "admissionReason": "Test-only definition",
+  "capabilities": [
+    "code-graph"
+  ],
+  "downloadBase": "https://fixture.invalid/artifacts/",
+  "artifacts": {
+    "package": {
+      "file": "artifact.bin",
+      "bytes": 19,
+      "integrity": "sha256:b84e82a9ed496e7469c9a2492823d6d0984bd9047cef970b160d13464ca1277e",
+      "archive": "file",
+      "stripComponents": 0
+    }
+  },
+  "targets": {
+    "win-x64": {
+      "state": "available",
+      "artifacts": [
+        "package"
+      ],
+      "entry": "fixture.bin",
+      "lock": null,
+      "reason": null
+    },
+    "win-arm64": {
+      "state": "available",
+      "artifacts": [
+        "package"
+      ],
+      "entry": "fixture.bin",
+      "lock": null,
+      "reason": null
+    },
+    "osx-x64": {
+      "state": "available",
+      "artifacts": [
+        "package"
+      ],
+      "entry": "fixture.bin",
+      "lock": null,
+      "reason": null
+    },
+    "osx-arm64": {
+      "state": "available",
+      "artifacts": [
+        "package"
+      ],
+      "entry": "fixture.bin",
+      "lock": null,
+      "reason": null
+    },
+    "linux-x64": {
+      "state": "available",
+      "artifacts": [
+        "package"
+      ],
+      "entry": "fixture.bin",
+      "lock": null,
+      "reason": null
+    },
+    "linux-arm64": {
+      "state": "available",
+      "artifacts": [
+        "package"
+      ],
+      "entry": "fixture.bin",
+      "lock": null,
+      "reason": null
+    }
+  },
+  "runtime": {
+    "kind": "native",
+    "version": "1.0.0",
+    "notes": "Test-only local fixture",
+    "extraDownloads": [],
+    "installScripts": "forbidden"
+  },
+  "configuration": {
+    "template": "codegraph-manual-v1",
+    "codeRoot": "workspace-relative",
+    "documents": "none",
+    "settings": {},
+    "files": [],
+    "actions": []
+  },
+  "processes": {
+    "telemetry": "off",
+    "updateChecks": "off",
+    "daemon": "off",
+    "watcher": "off",
+    "autoIndex": "off",
+    "hooks": "blocked",
+    "consent": "none",
+    "coordination": "worktree",
+    "environment": {}
+  },
+  "index": {
+    "location": "external",
+    "path": "${state}/index",
+    "perWorktree": true,
+    "sharedContentCache": "none",
+    "freshness": "manual-update",
+    "rebuildOnVersionChange": true
+  },
+  "mcp": {
+    "transport": "stdio",
+    "command": "target-entry",
+    "args": [],
+    "cwd": "worktree",
+    "environment": {},
+    "hosts": {
+      "claude-code": {
+        "path": ".mcp.json",
+        "selector": "/mcpServers/open-forge-fixture-tool"
+      },
+      "codex": {
+        "path": ".codex/config.toml",
+        "selector": "mcp_servers.open-forge-fixture-tool"
+      }
+    }
+  },
+  "skill": {
+    "template": "code-graph-usage-v1",
+    "optional": false,
+    "defaultEnabled": true
+  },
+  "checks": [
+    "artifact-hash",
+    "installed-files",
+    "host-members",
+    "process-policy",
+    "usage-skill"
+  ],
+  "qualification": {
+    "attestation": "release-evidence-required",
+    "workflow": null,
+    "targets": [],
+    "accuracy": "pending"
+  }
+}
+  The exact definition is not reviewed by this CLI release.
+  artifact-hash
+  installed-files
+  host-members
+  process-policy
+  usage-skill
+  Test-only definition
+External instructions unavailable: A verified installation and local store
+bindings are needed to resolve external commands.
+1 errors.
+  Resolve the reported cause, then rerun the same read command.
+Next: open-forge tool inspect --help

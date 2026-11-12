@@ -13,8 +13,6 @@ Status: V1 core contract decided.
 
 ## Syntax
 
-Proposed:
-
 ```text
 open-forge tool list [--role <role>] [--source <path>] [global flags]
 ```
@@ -32,6 +30,23 @@ An omitted `tools` map is empty. Unreadable settings are unavailable. Missing or
 Required `data` fields are `available`, `installed`, `catalogue`, `coverage` and `roleFilter`. Only an inapplicable `roleFilter` is null. Coverage reports complete or unavailable per required store, with its cause. Unknown counts stay unknown.
 
 Invalid source shape or selection is `invalid-input`. Unreadable required bytes give `incomplete`. A complete readable inventory is `completed`. Findings keep independent readable facts when another observation fails. Shared exits, streams and envelope stay unchanged.
+
+## Findings catalogue
+
+Each code names one failed observation. The message carries its exact cause:
+
+| Code | Status | Situation | Message |
+| --- | --- | --- | --- |
+| `tool-list.invalid-input` | `invalid-input` | A bound operand or local flag is invalid | `<cause>` |
+| `tool-list.workspace-unavailable` | `blocked` | The exact workspace cannot be selected | `<cause>` |
+| `tool-list.settings-unavailable` | `incomplete` | Settings cannot be safely read or decoded | `<cause>` |
+| `tool-list.lock-unavailable` | `incomplete` | The required receipt lock cannot be read | `<cause>` |
+| `tool-list.receipt-missing` | `incomplete` | A recorded install has no matching receipt | `<cause>` |
+| `tool-list.receipt-mismatch` | `completed-with-warnings` | The settings pin differs from the receipt pin | `<cause>` |
+| `tool-list.cancelled` | `cancelled` | The read was cancelled | `<cause>` |
+| `tool-list.read-unavailable` | `incomplete` | A required local read failed | `<cause>` |
+| `tool-list.catalogue-invalid` | `invalid-input` | The selected catalogue is malformed | `<cause>` |
+| `tool-list.catalogue-unavailable` | `incomplete` | Required catalogue bytes cannot be read | `<cause>` |
 
 ## Conformance
 

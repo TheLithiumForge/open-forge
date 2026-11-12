@@ -1,7 +1,7 @@
 # External tools
-`open-forge tool` is a planned command group that installs reviewed external programs and configures their workspace use.
+`open-forge tool` is a command group that reads reviewed external tool definitions and recorded workspace installs.
 
-You install a supported pin, build its index through the external program, then choose its workspace role. Installation doesn't choose a role or build an index. The V1 core contracts are decided. Command implementation and concrete CodeGraph and Codebase Memory adapters are still pending.
+You install a supported pin, build its index through the external program, then choose its workspace role. Installation doesn't choose a role or build an index. `list`, `inspect` and `status` are available. The five write commands and concrete CodeGraph and Codebase Memory adapters are pending.
 
 ## Commands
 
@@ -19,6 +19,12 @@ The contracted command order is:
 | `tool choose <role> <id\|none>` | Assigns or clears a workspace role |
 
 The core's production catalogue is empty. A local source can select definitions supported by the CLI release. It can't import adapter code or add unreviewed pins. Another program or pin needs an Open Forge release.
+
+## Read tools
+
+Run `open-forge tool list --format json` to read the catalogue and recorded installs. In a workspace with no tool records, the empty core catalogue returns `completed` with empty `available` and `installed` arrays. An unavailable source keeps its cause and independently readable installed rows.
+
+Run `open-forge tool status` to compare recorded files and configuration with passive evidence. It starts no process or database session. An index file without validated completion evidence reports `present-unverified`. A missing receipt reports unavailable verification.
 
 ## Consent
 
@@ -47,4 +53,4 @@ The core adds no search proxy, index scheduler, arbitrary scripts, system PATH c
 ## Not decided yet
 
 - Confirm recovery v2 coordinates, native settings snapshots and the simultaneous Status, Doctor and Cleanup reader rollout before tool writer implementation.
-- Accept the standard TOML parser dependency before Codex member editing.
+- Confirm the provisional Tomlyn 2.10.2 dependency behind the host-config reader.

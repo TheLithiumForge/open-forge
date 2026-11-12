@@ -1,0 +1,31 @@
+  Explain one exact tool definition and its requirements.
+
+Usage:
+  open-forge tool inspect <id> [--source <path>] [--tool-version <exact>] [global flags]
+
+Examples:
+  open-forge tool inspect example-tool --source ./manifest.json
+  open-forge tool inspect example-tool --source ./manifest.json --tool-version 1.0.0
+
+Behavior:
+  Reads local facts without downloads, child processes or writes.
+  Unavailable observations keep their cause and independently readable facts.
+
+Arguments:
+  <id>  One exact tool ID.
+
+Options:
+  --source <path>         Read one exact local manifest or catalogue.
+  --tool-version <exact>  Select one exact SemVer pin.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  open-forge tool --help

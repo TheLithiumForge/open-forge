@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 3,
+  "command": "tool list",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Read available definitions and recorded tool installs.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {},
+  "limitations": [],
+  "data": {
+    "available": [],
+    "installed": [],
+    "catalogue": {
+      "source": "bundled",
+      "state": "complete",
+      "cause": null
+    },
+    "coverage": [
+      {
+        "store": "settings",
+        "state": "complete",
+        "cause": null
+      },
+      {
+        "store": "lock",
+        "state": "complete",
+        "cause": null
+      },
+      {
+        "store": "catalogue",
+        "state": "complete",
+        "cause": null
+      }
+    ],
+    "roleFilter": null
+  },
+  "recovery": null,
+  "next": null
+}

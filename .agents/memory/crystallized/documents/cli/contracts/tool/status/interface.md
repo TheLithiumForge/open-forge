@@ -13,8 +13,6 @@ Status: V1 core contract decided.
 
 ## Syntax
 
-Proposed:
-
 ```text
 open-forge tool status [<id>] [global flags]
 ```
@@ -39,6 +37,34 @@ Inactive tools need no guidance file. Their absent indexes are information. Miss
 ## Result
 
 Required `data` fields are `tools` and `coverage`. Rows are ordinally sorted by ID. Coverage is complete or unavailable per required store. Unknown counts stay unknown. Shared status precedence, exits, streams and schema 3 stay unchanged.
+
+## Findings catalogue
+
+Each code names one failed observation. The message carries its exact cause:
+
+| Code | Status | Situation | Message |
+| --- | --- | --- | --- |
+| `tool-status.invalid-input` | `invalid-input` | A bound operand or local flag is invalid | `<cause>` |
+| `tool-status.workspace-unavailable` | `blocked` | The exact workspace cannot be selected | `<cause>` |
+| `tool-status.settings-unavailable` | `incomplete` | Settings cannot be safely read or decoded | `<cause>` |
+| `tool-status.lock-unavailable` | `incomplete` | The required receipt lock cannot be read | `<cause>` |
+| `tool-status.receipt-missing` | `incomplete` | A recorded install has no matching receipt | `<cause>` |
+| `tool-status.receipt-mismatch` | `completed-with-warnings` | The settings pin differs from the receipt pin | `<cause>` |
+| `tool-status.cancelled` | `cancelled` | The read was cancelled | `<cause>` |
+| `tool-status.read-unavailable` | `incomplete` | A required local read failed | `<cause>` |
+| `tool-status.tool-not-installed` | `invalid-input` | The requested ID is absent from readable settings | `<cause>` |
+| `tool-status.store-unavailable` | `incomplete` | An installed-file store cannot be verified | `<cause>` |
+| `tool-status.installed-file-missing` | `completed-with-warnings` | A receipted installed file is missing | `<cause>` |
+| `tool-status.installed-file-changed` | `completed-with-warnings` | A receipted file hash differs | `<cause>` |
+| `tool-status.member-changed` | `completed-with-warnings` | A generated host member or recorded setting differs | `<cause>` |
+| `tool-status.host-unavailable` | `incomplete` | A desired host member cannot be safely read | `<cause>` |
+| `tool-status.index-missing` | `completed-with-warnings` | The active provider needs an index | `<cause>` |
+| `tool-status.index-unavailable` | `incomplete` | Native index evidence cannot be safely read | `<cause>` |
+| `tool-status.usage-skill-missing` | `completed-with-warnings` | Active required usage guidance is missing | `<cause>` |
+| `tool-status.usage-skill-changed` | `completed-with-warnings` | Active required usage guidance has changed | `<cause>` |
+| `tool-status.path-excluded` | `completed-with-warnings` | A removal exclusion covers active required guidance | `<cause>` |
+| `tool-status.usage-skill-unavailable` | `incomplete` | Active required usage guidance cannot be safely verified | `<cause>` |
+| `tool-status.native-limits` | `completed-with-warnings` | The active provider has reported native index or language limits | `<cause>` |
 
 ## Conformance
 

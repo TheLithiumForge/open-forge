@@ -13,8 +13,6 @@ Status: V1 core contract decided.
 
 ## Syntax
 
-Proposed:
-
 ```text
 open-forge tool inspect <id> [--source <path>] [--tool-version <exact>] [global flags]
 ```
@@ -30,6 +28,24 @@ Use the selected source's default pin unless `--tool-version` gives an exact lis
 Required `data` fields are `id`, `definition`, `target`, `installed`, `requirements`, `limitations` and `instructions`. `installed` is null only when no install is recorded. Instructions are resolved external command, argument and environment records when the required facts are available. Unavailable values have a cause and aren't invented paths.
 
 Malformed IDs, unknown IDs and absent exact versions are `invalid-input`. Unreadable required source bytes give `incomplete`. A well-formed unreviewed tuple or unavailable adapter revision is `blocked`, exit 5, while readable definition facts stay in the result. A release-supported candidate can complete inspection while reporting its pending activation tests. Shared exits, streams and schema 3 stay unchanged.
+
+## Findings catalogue
+
+Each code names one failed observation. The message carries its exact cause:
+
+| Code | Status | Situation | Message |
+| --- | --- | --- | --- |
+| `tool-inspect.invalid-input` | `invalid-input` | A bound operand or local flag is invalid | `<cause>` |
+| `tool-inspect.workspace-unavailable` | `blocked` | The exact workspace cannot be selected | `<cause>` |
+| `tool-inspect.settings-unavailable` | `incomplete` | Settings cannot be safely read or decoded | `<cause>` |
+| `tool-inspect.lock-unavailable` | `incomplete` | The required receipt lock cannot be read | `<cause>` |
+| `tool-inspect.receipt-missing` | `incomplete` | A recorded install has no matching receipt | `<cause>` |
+| `tool-inspect.receipt-mismatch` | `completed-with-warnings` | The settings pin differs from the receipt pin | `<cause>` |
+| `tool-inspect.cancelled` | `cancelled` | The read was cancelled | `<cause>` |
+| `tool-inspect.read-unavailable` | `incomplete` | A required local read failed | `<cause>` |
+| `tool-inspect.definition-invalid` | `invalid-input` | The definition or exact pin selection is invalid | `<cause>` |
+| `tool-inspect.pin-not-supported` | `blocked` | The release does not support the exact tuple or adapter revision | `<cause>` |
+| `tool-inspect.catalogue-unavailable` | `incomplete` | Required definition source bytes cannot be read | `<cause>` |
 
 ## Conformance
 

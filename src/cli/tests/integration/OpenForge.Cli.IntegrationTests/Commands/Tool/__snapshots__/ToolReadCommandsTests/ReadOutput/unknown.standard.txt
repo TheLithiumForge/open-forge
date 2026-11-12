@@ -1,0 +1,11 @@
+Read passive tool installation and configuration evidence.
+Workspace: <workspace>
+  Error  fixture-tool  Tool observation
+         The tool isn't registered in this workspace.
+None recorded.
+Coverage
+  settings: Complete
+  lock: Complete
+1 errors.
+  Resolve the reported cause, then rerun the same read command.
+Next: open-forge tool status --help

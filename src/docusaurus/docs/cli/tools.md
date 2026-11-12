@@ -1,16 +1,22 @@
 ---
 title: External tools
-description: The planned external tool command group, its consent and workspace records.
+description: Read external tool definitions and recorded workspace installs.
 ---
 
 # External tools
-`open-forge tool` is a planned command group that installs reviewed external programs and configures their workspace use.
+`open-forge tool` is a command group that reads reviewed external tool definitions and recorded workspace installs.
 
-You install a supported pin, build its index through the external program, then choose its role. Installation doesn't choose a provider or build an index. The V1 core contracts are decided. Command implementation and concrete CodeGraph and Codebase Memory adapters are still pending.
+You install a supported pin, build its index through the external program, then choose its role. Installation doesn't choose a provider or build an index. `list`, `inspect` and `status` are available. The five write commands and concrete CodeGraph and Codebase Memory adapters are pending.
 
 ## Commands
 
-The planned commands are `list`, `inspect`, `install`, `configure`, `status`, `update`, `remove` and `choose`, in that order. The core has an empty production catalogue. Local sources can select supported definitions but can't import code or admit another pin.
+The V1 contract defines `list`, `inspect`, `install`, `configure`, `status`, `update`, `remove` and `choose`, in that order. The core has an empty production catalogue. Local sources can select supported definitions but can't import code or admit another pin.
+
+## Read tools
+
+Run `open-forge tool list --format json` to read the catalogue and recorded installs. With no tool records, the empty core catalogue returns `completed` with empty `available` and `installed` arrays. `tool inspect <id> --source <path>` explains one local definition. Unreviewed pins return `blocked` with the readable definition.
+
+Run `open-forge tool status` for passive file and configuration checks. It starts no process or database session. An index file alone reports `present-unverified`. Missing receipts keep the settings entry and report unavailable verification.
 
 ## Consent
 

@@ -14,7 +14,7 @@ internal sealed record ToolReceipt
     public required int AdapterRevision { get; init; }
     public required string CodeRoot { get; init; }
     public required string[] Hosts { get; init; }
-    public required ToolStoreBinding[] Bindings { get; init; }
+    public required ToolStoreReference[] Bindings { get; init; }
     public required ToolFileReceipt[] Files { get; init; }
     public required ToolMemberReceipt[] Members { get; init; }
     public required ToolDirectoryReceipt[] RuntimeDirectories { get; init; }

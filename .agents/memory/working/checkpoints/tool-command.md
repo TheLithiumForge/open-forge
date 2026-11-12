@@ -24,7 +24,7 @@ Concrete CodeGraph and Codebase Memory definitions and adapters belong to the ne
 
 Evening continuation, 2026-11-12. The overseer rebased this branch onto PR #25, with contracts commit `96db76ca1`, and pushed draft PR #26. Keep source-reference and link code outside this work. CI now runs full suites. Locally run only builds and focused Unit and Integration tests. Don't run full suites or Native AOT. The overseer authorizes `NuGetAudit=false` if NU1903 prevents restore. Make one local commit per stage and don't push.
 
-The saved increment is restored except for paths changed upstream. Those overlapping docs and snapshots keep the rebased versions until their Tool additions are merged or regenerated. The existing source-reference implementation is untouched. Stage 2 now has typed manifest and catalogue models, strict JSON and YAML decoding, release admission, exact source selection, settings and lock additions, an empty production catalogue and test-only local artifacts. The stage 2 focused checks are complete. Record its commit, then implement the three readers before the five writers.
+The saved increment is restored and its upstream overlaps are resolved. The existing source-reference implementation is untouched. Stage 2 has typed manifest and catalogue models, strict JSON and YAML decoding, release admission, exact source selection, settings and lock additions, an empty production catalogue and test-only local artifacts. Stage 2 is committed as `c710c38d74b710d72545b5fb1c95eb2e095ab842`. Stage 3 adds List, Inspect and Status. Its focused managed gates pass. The five writers are unstarted.
 
 The overseer directs implementation to use the specification's recommended recovery v2 and TOML choices behind separate seams while maintainer confirmation is pending. These choices no longer block models or readers. Record the exact recovery digest publication rule before writer work. The current recommendation is Tomlyn 2.10.2. No concrete tool or production adapter is admitted.
 
@@ -34,9 +34,9 @@ Read-only prose and contract review is complete. R1 clarified Inspect's blocked 
 
 ## Saved increment
 
-Stash `de681f9d56f95484d789c3782fe2a774ba6fa584` is named `tool-command: preserve guidance payload and fixture changes before deadline`. It keeps the remaining correct work without including it in this commit. Restore only its tracked difference from the stash index and its untracked tree, so the committed contracts and this checkpoint stay intact. Review the resulting tree and keep the stash until its changes are verified and committed.
+The following restore history is complete. Don't restore the stash again. Its correct payload work is committed in stage 2. Stash `de681f9d56f95484d789c3782fe2a774ba6fa584` is named `tool-command: preserve guidance payload and fixture changes before deadline`. It keeps the remaining correct work without including it in this commit. Restore only its tracked difference from the stash index and its untracked tree, so the committed contracts and this checkpoint stay intact. Review the resulting tree and keep the stash until its changes are verified and committed.
 
-After loading context for the restored files, use these commands:
+The earlier restore attempt used these commands. Windows argument limits required a NUL-separated pathspec file for the actual tracked restore:
 
 ```powershell
 $saved = 'de681f9d56f95484d789c3782fe2a774ba6fa584'
@@ -199,3 +199,56 @@ The default-layout byte fixture keeps upstream changes and adds the exact curren
 Current gate reports are in `artifacts/tool-command/stage2-final-unit`, `stage2-accept-integration` and `stage2-commit-catalogue`. Their commands use the built Release assemblies with explicit class filters. Builds use `PublishAot=false` and the authorized local `NuGetAudit=false` override. Integration keeps JSON reflection disabled. Unit keeps its normal fixture-construction setting.
 
 Stage 3 next: add Tool group composition and the List, Inspect and Status leaves through the existing typed binding/report pipeline. Root examples are `Composition/CliExtensionComposer.cs`, `CliCompositionRoot.cs`, `Commands/Extension/List/ExtensionListBinding.cs` and the corresponding Presentation selector. Keep concrete results per leaf and OutputText wording. Source operands resolve from the invocation's process directory. Readers must preserve independently readable settings rows and create no state, leases, transfers or child processes.
+
+
+## Stage 3 scope
+
+The reader stage uses the accepted typed shell binding and report pipeline. Each leaf has its own request, result and source-generated JSON data model. The Tool group is registered directly in root composition. Its bare form stops at help. Local source paths resolve from the invocation's process directory. List keeps catalogue and installed observations independent. Inspect keeps readable blocked definitions. Status reads settings, receipts, workspace file hashes, generated host members and passive index presence. It creates no stores, leases, processes, database sessions or downloads.
+
+The consequence and recovery profile stays local and read-only. Malformed source documents, static links, unreadable stores and cancellation are in scope. Existing BCL path checks, source-generated System.Text.Json, standard YAML, settings and lock readers provide the normal path. Exceptional machinery: none. Unit covers parsing and finite finding codes. Integration covers real temporary filesystems, composed input, help, streams and reviewed output. The explicit evening lane policy puts full suites and Native AOT in CI.
+
+Tomlyn 2.10.2 is provisional under the overseer's direction. Framework Tools contains the host-config parser seam and a generated Tomlyn context. Claude JSON rejects duplicate keys. Codex TOML uses the standard DOM and compares the exact member value. The dependency remains subject to maintainer confirmation. The source is [Tomlyn's DOM documentation](https://xoofx.github.io/Tomlyn/docs/dom/). Host editing is stage 4 work.
+
+External file stores need account-local binding evidence. Until stage 4 provides those records, readers report unavailable verification and never follow a receipt's external physical root. Index presence is `present-unverified`. Native completion and source identity readers belong with compiled adapters on the next branch. External instructions stay unavailable until the required verified store facts exist.
+
+Lock receipts now hold store references with IDs, kinds and binding hashes. Physical binding roots stay in the account-local type. Schema v2 and receipt validation reject a physical root in a workspace binding reference. Pending v2 recovery records add unavailable recovery coverage until the safe bundle reader exists. Metadata alone doesn't verify prior bytes.
+
+Writing review R5 rejected catch-all finding codes. The correction adds finite situation codes with fixed statuses and scoped catalogue rows. The focused recheck passed. Other changed public prose passed review, paired Skill references match and checked links resolve.
+
+## Stage 3 evidence
+
+The final Unit build and Integration build pass with zero warnings and errors. The focused Unit gate passes 39 cases. The affected Integration gate passes 265 cases, including the complete report-corpus invariant class. After the recovery coverage guard, the final reader and catalogue rerun passes 41 cases. These populations overlap. All three runs have zero failures and zero skips. The four schemas compile with Ajv 2020 and URI format support. Index preview checks 199 files and plans no changes. The site production build passes with Node's existing localStorage experimental warning.
+
+Accepted 94 reviewed capture files. Fifty refresh existing baselines for the root help row, the changed CLI Skill reference and the resulting byte, token and ratio measurements. Forty-four add the Tool group and leaf help, empty inventories, a local synthetic catalogue, blocked candidate inspection and an unknown registration across the four detail levels. The fixture declares identical candidate artifacts on all six targets. Only the reported host target is replaced with `<native-target>`, and a direct assertion checks the actual target separately. Received files were decoded and written as UTF-8 with LF. Repeated observations of the same baseline matched.
+
+The first Unit runs caught duplicate TOML keys accepted through the generated DOM context. The reader now runs Tomlyn's standard semantic validation before forming the DOM. The strict regression passes. This finding concerns the pinned 2.10.2 integration, not every Tomlyn API. The first affected Integration run had only expected capture failures. A later corpus run rejected the terminal help filenames. The corpus now classifies `.help.txt` separately from operation reports, alongside its existing content and interaction kinds. All operation reports stay in the invariant checks. No current focused-run flake was observed.
+
+Primary review corrections are:
+
+- R6 - Move physical binding coordinates out of workspace receipts. The reference round trip and rejection case pass.
+- R7 - Keep guidance hashes separate from installation hashes. Matching, missing, changed, excluded and inactive guidance cases pass. Inactive guidance absence produces no missing-file finding.
+- R8 - Report pending v2 recovery-store verification as unavailable. The new case returns incomplete without opening bundle coordinates or creating state.
+
+The exact final build commands are:
+
+```powershell
+dotnet build src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-restore -p:PublishAot=false -p:OpenForgeSkipDevelopmentPublish=true -p:NuGetAudit=false
+dotnet build src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-restore -p:PublishAot=false -p:OpenForgeSkipDevelopmentPublish=true -p:JsonSerializerIsReflectionEnabledByDefault=false -p:NuGetAudit=false
+```
+
+The Unit selection is `*Framework.Tools.*` and `*Commands.Tool.*`. The 265-case Integration selection is the 17 affected classes recorded by stage 2, plus ToolReadCommandsTests, ToolHostStatusTests, CommandHelpIntegrationTests and CliReportInvariantsTests. The 41-case rerun selects ToolReadCommandsTests, ToolHostStatusTests and ToolCatalogueIntegrationTests. Invoke the matching Release DLL with repeated `--filter-class`, then `--minimum-expected-tests 1 --no-ansi --progress off --report-xunit-ctrf --report-xunit-ctrf-filename results.json --results-directory <owned-artifact-directory>`. Machine reports are under `artifacts/tool-command/stage3-unit-gate`, `stage3-integration-final` and `stage3-final-readers`. Full suites, published execution and Native AOT are left to CI under the evening lane rule.
+
+## Resume writers
+
+The clean stopping point completes the reader increment, with unavailable observations where writer or native-adapter facts don't exist yet. Don't restore the saved stash. Continue on the same branch after checking Git status and log.
+
+Stage 4 still needs these parts:
+
+1. Implement Install, Configure, Choose, Update and Remove with their typed requests, results, help, consent flags, preview parity and exact exits.
+2. Add account-local stores, verified bindings and shared references, bounded transfers and extraction, finite process capabilities and process consent. Tests use local hashed artifacts and a test-only profile.
+3. Add paired settings and lock publication, member edits for Claude JSON and Codex TOML, tracked-host checks and managed ignore entries. Keep unrelated values and TOML comments.
+4. Add role activation, required guidance, exclusions and root Remove coexistence, plus removal and shared-artifact release.
+5. Implement recommended recovery v2 behind its separate seam and choose a non-circular lock and bundle digest publication rule. Add the required Status, Doctor and Cleanup readers before writer effects. Version 1 keeps its existing meaning.
+6. Replace unavailable local-store and recovery observations with verified facts when those capabilities exist, and resolve external instructions. Native adapter completion readers and concrete CodeGraph and Codebase Memory definitions stay on the next stacked branch.
+
+The provisional assumptions are Tomlyn 2.10.2 and the spec's recommended v2 ZIP and manifest format. The digest publication rule is still unimplemented. No writer behavior or new recovery effect has been committed. No push, merge or new PR is authorized.

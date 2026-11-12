@@ -116,7 +116,7 @@ internal static partial class ToolManifestValidator
 
     internal static void Template(string value)
     {
-        Require(value is not null && !value.Any(char.IsControl), "invalid template string");
+        Require(value is not null && !value.Contains('\0'), "invalid template string");
         foreach (Match match in Variables().Matches(value)) Require(ToolVocabulary.Variables.Contains(match.Groups[1].Value), "unknown template variable");
         Require(!Variables().Replace(value, "").Contains("${", StringComparison.Ordinal), "unfinished template variable");
     }

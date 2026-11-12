@@ -329,7 +329,6 @@
       "required": [
         "id",
         "kind",
-        "physicalRoot",
         "identitySha256"
       ],
       "properties": {
@@ -344,9 +343,6 @@
             "runtime-state",
             "native-cache"
           ]
-        },
-        "physicalRoot": {
-          "type": "string"
         },
         "identitySha256": {
           "type": "string",

@@ -1206,8 +1206,10 @@ public sealed class CliReportInvariantsTests
                 .SelectMany(directory => Directory.EnumerateFiles(directory, "*.txt", SearchOption.AllDirectories)
                     // A `.content.txt` capture records installed file content, not a command report.
                     // An `.interaction.txt` capture records a terminal conversation, not the report detail ladder.
+                    // A `.help.txt` capture records terminal help, independently of report detail.
                     .Where(path => !path.EndsWith(".content.txt", StringComparison.OrdinalIgnoreCase)
-                        && !path.EndsWith(".interaction.txt", StringComparison.OrdinalIgnoreCase))
+                        && !path.EndsWith(".interaction.txt", StringComparison.OrdinalIgnoreCase)
+                        && !path.EndsWith(".help.txt", StringComparison.OrdinalIgnoreCase))
                     .Select(path => Parse(path, directory)))
                 .ToArray();
             if (all.Length == 0)

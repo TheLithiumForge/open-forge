@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 3,
+  "command": "tool list",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Read available definitions and recorded tool installs.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {},
+  "limitations": [],
+  "data": {
+    "available": [
+      {
+        "id": "fixture-tool",
+        "version": "1.0.0",
+        "capabilities": [
+          "code-graph"
+        ],
+        "target": "<native-target>",
+        "targetSupport": "available",
+        "admission": "candidate",
+        "reviewed": false,
+        "blocker": "The exact definition is not reviewed by this CLI release."
+      }
+    ],
+    "installed": [],
+    "catalogue": {
+      "source": "<workspace>\\manifest.json",
+      "state": "complete",
+      "cause": null
+    },
+    "coverage": [
+      {
+        "store": "settings",
+        "state": "complete",
+        "cause": null
+      },
+      {
+        "store": "lock",
+        "state": "complete",
+        "cause": null
+      },
+      {
+        "store": "catalogue",
+        "state": "complete",
+        "cause": null
+      }
+    ],
+    "roleFilter": null
+  },
+  "recovery": null,
+  "next": null
+}

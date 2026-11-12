@@ -1,0 +1,9 @@
+Read passive tool installation and configuration evidence.
+  Error  fixture-tool  Tool observation
+         The tool isn't registered in this workspace.
+None recorded.
+Coverage
+  settings: Complete
+  lock: Complete
+1 errors.
+Next: open-forge tool status --help

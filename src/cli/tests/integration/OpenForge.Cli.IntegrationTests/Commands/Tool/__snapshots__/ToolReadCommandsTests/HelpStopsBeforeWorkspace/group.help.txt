@@ -1,0 +1,22 @@
+  Manage reviewed external programs and their workspace configuration.
+
+Usage:
+  open-forge tool <command> [options]
+
+Commands:
+  list          List available definitions and installed tools.
+  inspect <id>  Explain one exact tool definition and its requirements.
+  status <id>   Passively check recorded tool installs and configuration.
+
+Options:
+  --workspace <path>          Select the workspace explicitly.
+  --format <format>           Output format: text or json. Default: text.
+  --detail <detail>           Result detail in text and JSON: minimal, standard,
+                              full or debug. Default: minimal.
+  --detail-filter <severity>  List error, warning, info or all severities.
+                              Repeat to combine.
+  --help                      Show help and exit.
+  --version                   Show the executable version and exit.
+
+Command help:
+  Run open-forge tool <command> --help for syntax and examples.

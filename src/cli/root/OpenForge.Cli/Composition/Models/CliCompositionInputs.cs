@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Shell.Interaction;
+using OpenForge.Cli.Core.Framework.Tools;
 
 namespace OpenForge.Cli.Composition.Models;
 
@@ -14,6 +15,7 @@ internal sealed record CliCompositionInputs
     public required bool PromptOutputRedirected { get; init; }
 
     public WorkspaceLockStoreRoot? LockStoreRoot { get; init; }
+    public ToolReleaseSupport? ToolSupport { get; init; }
     public CliTerminal? Terminal { get; init; }
     public bool StandardErrorColor { get; init; }
 }

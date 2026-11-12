@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 3,
+  "command": "tool status",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Read passive tool installation and configuration evidence.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {},
+  "limitations": [],
+  "data": {
+    "tools": [],
+    "coverage": [
+      {
+        "store": "settings",
+        "state": "complete",
+        "cause": null
+      },
+      {
+        "store": "lock",
+        "state": "complete",
+        "cause": null
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

@@ -1,0 +1,30 @@
+namespace OpenForge.Cli.Core.Commands.Tool.Shared.Models.Evidence;
+
+internal enum ToolReadIssueCode
+{
+    InvalidInput,
+    WorkspaceUnavailable,
+    CatalogueInvalid,
+    CatalogueUnavailable,
+    DefinitionInvalid,
+    PinNotSupported,
+    SettingsUnavailable,
+    LockUnavailable,
+    ReceiptMissing,
+    ReceiptMismatch,
+    StoreUnavailable,
+    InstalledFileMissing,
+    InstalledFileChanged,
+    MemberChanged,
+    HostUnavailable,
+    IndexMissing,
+    IndexUnavailable,
+    UsageSkillMissing,
+    UsageSkillChanged,
+    PathExcluded,
+    UsageSkillUnavailable,
+    ToolNotInstalled,
+    NativeLimits,
+    Cancelled,
+    ReadUnavailable,
+}

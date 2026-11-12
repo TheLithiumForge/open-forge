@@ -42,7 +42,7 @@ Select relevant scopes from returned descriptions and batch their source IDs. Af
 
 ## Read Details When Needed
 
-- [External tools](references/tools.md): the planned Tool family, separate artifact and process consent, active-provider guidance and removal exclusions. Check installed help for availability before using it.
+- [External tools](references/tools.md): the Tool read commands and planned writers, separate artifact and process consent, active-provider guidance and removal exclusions. Check installed help for availability before using it.
 
 - [Reading and discovery](references/discovery.md): context, tags, headings, direct references, route inspection, and health checks. Find candidates, inspect their relationships, then load only the relevant chain or bounded linked context.
 - [Route maintenance](references/routes.md): create, update, move, remove, index, repair, and cleanup. Read before changing routes or generated navigation.

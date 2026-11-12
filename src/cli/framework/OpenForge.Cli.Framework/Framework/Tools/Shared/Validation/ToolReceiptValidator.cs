@@ -48,13 +48,13 @@ internal static class ToolReceiptValidator
             foreach (var binding in receipt.Bindings)
                 ToolManifestValidator.Require(binding is not null && ToolIdentity.IsId(binding.Id) && bindings.Add(binding.Id)
                     && binding.Kind is "install" or "archive" or "runtime-state" or "native-cache"
-                    && Path.IsPathFullyQualified(binding.PhysicalRoot) && ToolIdentity.IsSha256(binding.IdentitySha256), "invalid store binding");
+                    && ToolIdentity.IsSha256(binding.IdentitySha256), "invalid store binding reference");
             foreach (var file in receipt.Files)
                 ToolManifestValidator.Require(file is not null && (file.StoreId is null || bindings.Contains(file.StoreId))
                     && ToolIdentity.IsRelativePath(file.Path) && ToolIdentity.IsSha256(file.Sha256), "invalid written file receipt");
             foreach (var member in receipt.Members)
                 ToolManifestValidator.Require(member is not null && ToolIdentity.IsRelativePath(member.Path)
-                    && member.Format is "json-members" or "toml-table" or "native-settings" or "native-collections"
+                    && member.Format is ToolVocabulary.JsonMembers or ToolVocabulary.TomlTable or "native-settings" or "native-collections"
                     && !string.IsNullOrWhiteSpace(member.Selector) && member.Value.ValueKind != JsonValueKind.Undefined, "invalid written member receipt");
             foreach (var directory in receipt.RuntimeDirectories)
             {
