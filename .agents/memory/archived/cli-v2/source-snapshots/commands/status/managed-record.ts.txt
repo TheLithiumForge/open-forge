@@ -1,0 +1,72 @@
+import type { Sha256Checksum } from "../../build/embedded-assets.ts";
+
+export const ManagedRecordPathControl = {
+  prefix: ".agents/",
+  separator: "/",
+  emptySegment: "",
+  currentDirectorySegment: ".",
+  parentDirectorySegment: "..",
+} as const;
+
+const ManagedRecordFileName = "open-forge.json";
+
+export const ManagedRecordPath = `${ManagedRecordPathControl.prefix}${ManagedRecordFileName}`;
+
+export const ManagedRecordSchemaVersion = {
+  current: 1,
+} as const;
+
+export const ManagedRecordMaximumBytes = 16_777_216;
+
+export const ManagedRecordMember = {
+  schema: "schema",
+  formatters: "formatters",
+  framework: "framework",
+  extensions: "extensions",
+  command: "command",
+  files: "files",
+  excluded: "excluded",
+  source: "source",
+  requested: "requested",
+  dependencies: "dependencies",
+} as const;
+
+export const ManagedRecordExtensionSource = {
+  openForge: "open-forge",
+  external: "external",
+} as const;
+
+export type ManagedRecordExtensionSource = (typeof ManagedRecordExtensionSource)[keyof typeof ManagedRecordExtensionSource];
+
+export const ManagedRecordChecksumGrammar = {
+  prefix: "sha256:",
+  digestHexLength: 64,
+  lowercaseHexDigits: "0123456789abcdef",
+} as const;
+
+export type CanonicalManagedPath = `${typeof ManagedRecordPathControl.prefix}${string}`;
+export type ManagedRecordChecksum = Sha256Checksum;
+
+export interface ManagedRecordFormatter {
+  readonly extensions: readonly string[];
+  readonly command: readonly string[];
+}
+
+export interface ManagedRecordFramework {
+  readonly files: Readonly<Record<CanonicalManagedPath, ManagedRecordChecksum>>;
+  readonly excluded: readonly string[];
+}
+
+export interface ManagedRecordExtension {
+  readonly source: ManagedRecordExtensionSource;
+  readonly requested: boolean;
+  readonly dependencies: readonly string[];
+  readonly files: Readonly<Record<CanonicalManagedPath, ManagedRecordChecksum>>;
+}
+
+export interface ManagedRecord {
+  readonly schema: typeof ManagedRecordSchemaVersion.current;
+  readonly formatters?: readonly ManagedRecordFormatter[];
+  readonly framework: ManagedRecordFramework;
+  readonly extensions: Readonly<Record<string, ManagedRecordExtension>>;
+}

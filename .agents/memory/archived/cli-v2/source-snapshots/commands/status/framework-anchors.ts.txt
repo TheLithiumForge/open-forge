@@ -1,0 +1,13 @@
+export const FrameworkAnchorPath = {
+  canonicalEntry: "AGENTS.md",
+  loader: ".agents/loader.md",
+} as const;
+
+export type FrameworkAnchorPath = (typeof FrameworkAnchorPath)[keyof typeof FrameworkAnchorPath];
+
+export const OpenForgeRootMarker = {
+  start: "<!-- open-forge:start -->",
+  end: "<!-- open-forge:end -->",
+} as const;
+
+export type OpenForgeRootMarker = (typeof OpenForgeRootMarker)[keyof typeof OpenForgeRootMarker];

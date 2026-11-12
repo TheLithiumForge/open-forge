@@ -1,0 +1,11 @@
+export const WorkspaceSelectionSource = {
+  currentDirectory: "current-directory",
+  workspaceFlag: "workspace-flag",
+} as const;
+
+export type WorkspaceSelectionSource = (typeof WorkspaceSelectionSource)[keyof typeof WorkspaceSelectionSource];
+
+export interface WorkspaceReference {
+  readonly root: string;
+  readonly selectedBy: WorkspaceSelectionSource;
+}

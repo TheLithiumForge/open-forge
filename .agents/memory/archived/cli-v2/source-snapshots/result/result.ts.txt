@@ -1,0 +1,68 @@
+export const ResultSchemaVersion = {
+  current: 1,
+} as const;
+
+export const ResultStatus = {
+  success: "success",
+  attention: "attention",
+  invalid: "invalid",
+  blocked: "blocked",
+  failed: "failed",
+  cancelled: "cancelled",
+} as const;
+
+export type ResultStatus = (typeof ResultStatus)[keyof typeof ResultStatus];
+
+export const MessageLevel = {
+  info: "info",
+  warning: "warning",
+  error: "error",
+} as const;
+
+export type MessageLevel = (typeof MessageLevel)[keyof typeof MessageLevel];
+
+export const OperationId = {
+  cliHelp: "cli.help",
+  cliVersion: "cli.version",
+  cliParse: "cli.parse",
+  cliFailure: "cli.failure",
+  status: "status",
+  context: "context",
+  find: "find",
+  doctor: "doctor",
+  repair: "repair",
+  create: "create",
+  install: "install",
+  routeList: "route.list",
+  routeInspect: "route.inspect",
+  routeInit: "route.init",
+  routeRebuild: "route.rebuild",
+  extensionList: "extension.list",
+  extensionInspect: "extension.inspect",
+  extensionAdd: "extension.add",
+  extensionUpdate: "extension.update",
+  extensionRemove: "extension.remove",
+  completionInstall: "completion.install",
+  completionRemove: "completion.remove",
+  completionScript: "completion.script",
+} as const;
+
+export type OperationId = (typeof OperationId)[keyof typeof OperationId];
+export type DomainOperationId = Exclude<OperationId, typeof OperationId.cliHelp | typeof OperationId.cliVersion | typeof OperationId.cliParse | typeof OperationId.cliFailure>;
+
+export interface ResultMessage<Code extends string> {
+  readonly code: Code;
+  readonly level: MessageLevel;
+  readonly message: string;
+  readonly suggestion?: string;
+}
+
+export interface OperationResult<Operation extends OperationId, Data extends object, Code extends string> {
+  readonly schemaVersion: typeof ResultSchemaVersion.current;
+  readonly operation: Operation;
+  readonly status: ResultStatus;
+  readonly messages: readonly ResultMessage<Code>[];
+  readonly data: Data;
+}
+
+export type AnyOperationResult = OperationResult<OperationId, object, string>;
