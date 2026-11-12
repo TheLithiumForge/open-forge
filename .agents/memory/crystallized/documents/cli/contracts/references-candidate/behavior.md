@@ -105,6 +105,8 @@ source layer read. With out, reject the filters before scanning.
 
 ## Authored Link Extraction
 
+Also collect [comment links](../shared/source-references/interface.md#comment-links) through the shared reader. Keep their target-word spans and original destination text. Incoming discovery includes eligible comment-bearing workspace files. Exact code paths are valid reference operands. This adds comment occurrences to the existing one-hop result without changing Markdown link admission below.
+
 Extraction uses the one accepted fixed CommonMark/Markdig parser and its typed
 Markdown nodes. It does not add a regular-expression scan, a second parser, or a
 route-specific interpretation. For each inspectable physical layer, the

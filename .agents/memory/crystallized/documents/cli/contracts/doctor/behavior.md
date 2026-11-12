@@ -7,6 +7,8 @@ open-forge:
 
 # Doctor Behavior Contract
 
+The local-reference domain includes [comment links](../shared/source-references/interface.md#comment-links). It reports missing targets, failed fragments and legacy ID targets with exact source locations. Moved-target suggestions keep their Git evidence and confidence separate from weak matches.
+
 An unrecognized authored settings version produces one informational
 `workspace.settings-version-unknown` finding. Continue using understood keys,
 including link exclusions, without changing settings, reducing coverage,

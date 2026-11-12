@@ -7,6 +7,8 @@ open-forge:
 
 # Doctor Interface Contract
 
+The local-reference domain also checks [comment links](../shared/source-references/interface.md#comment-links) in eligible workspace files. Missing paths and fragments keep their existing finding kinds. `reference.legacy-anchor` reports an older ID-style target with suggested file paths when available. Git file moves, heading changes, section content matches and unique slugs retain separate evidence for review.
+
 ## Workspace Layout
 
 Doctor diagnoses the selected context folder and native Skills together. It reports layout disagreements without assuming the default root.
@@ -371,7 +373,7 @@ The informational `workspace.settings-version-unknown` finding has title
 It has no action, does not reduce coverage or raise the result status, and
 does not prevent understood settings keys from taking effect.
 
-The local-reference domain admits supported Markdown source files and local
+The local-reference domain admits supported Markdown sources, eligible comment-bearing files and local
 target paths that are both lexically and physically contained by the selected
 workspace. The normal Open Forge source universe spans both primary content locations. A source or
 target outside the primary content locations is admitted only when it is a supported Markdown or

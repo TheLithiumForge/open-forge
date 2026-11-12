@@ -125,6 +125,27 @@ Markdown character references and backslash escapes in hand-written sources
 still follow CommonMark. Their decoded spans remain ineligible for automatic
 spelling edits when the original bytes do not match the parsed destination.
 
+## Comment Links
+
+A comment link is a path reference that connects code and documentation at the place where the relationship matters. It uses `@open-forge <path> <any other text>` or `@rune <path> <text>`. Both markers have the same meaning.
+
+The marker is the first word of a comment or a line inside a block comment. Recognized comment delimiters include `//`, `///`, `#`, `--`, `;`, `'`, `%`, `/* ... */`, `/** ... */` and `<!-- ... -->`. A block line can start with `*`. A marker mentioned inside prose or a string is not a link. In Markdown, use an HTML comment outside code spans and fences. Ordinary Markdown links keep their existing meaning.
+
+The first whitespace-delimited word after the marker is the target. Text after that word explains the relationship and stays unchanged during repair. The target uses `/` separators and takes an optional fragment under [Local Fragments](#local-fragments). Encode whitespace and reserved path characters when they occur in a filename.
+
+There are two path forms:
+
+- A path without `./` or `../` starts at the repository root, such as `.agents/guidance/style.md` or `src/Order.cs#Order.Save`.
+- A path starting with `./` or `../` starts at the directory containing the comment.
+
+Inside a comment, `./` means next to the containing file. CLI operands keep their existing repo-root `./` meaning. Comment targets use real file paths. They need no ID, frontmatter or relationship registry. An older ID-style target produces a legacy finding with a suggested path when its source ID resolves uniquely. It is never silently interpreted as a path link.
+
+For example, `// @open-forge .agents/guidance/style.md explains this choice` selects that file from the repository root. `<!-- @rune ./Order.cs#Order.Save implements this rule -->` selects `Order.cs` next to the Markdown file, then checks both symbol tokens.
+
+References includes comment occurrences in both directions. Its default incoming scan includes comment-bearing workspace files as well as eligible Markdown sources. Explicit exact paths can select code files. Context checks comments during requested link expansion and keeps its existing target-read rules. Doctor checks missing paths, legacy targets and fragments. Generated and vendored files are excluded from comment discovery. Existing link-scope exclusions still apply.
+
+Repair edits only the target word. It keeps the marker, delimiters and explanation. File and heading moves use Git evidence from the commit that last touched the link when available. Suggestions rank Git file moves, Git heading changes, matching old section content and a unique matching slug in that order. Weak matches stay suggestions. Existing dry-run, selection, expected-byte, protection and recovery rules apply to comments too. A line or symbol failure has no automatic fragment replacement.
+
 ## Local Fragments
 
 Classify an existing local target before reading its fragment. Folders keep the
