@@ -45,18 +45,18 @@
   ],
   "effects": [],
   "counts": {
-    "routedFiles": 19,
+    "routedFiles": 20,
     "startupFiles": 7,
-    "startupTokens": 3977,
+    "startupTokens": 4037,
     "mayLoadAgainFiles": 1,
     "mayLoadAgainTokens": 243,
-    "allTokens": 29053,
-    "startupShare": 13.687915189481292809692630709,
+    "allTokens": 30065,
+    "startupShare": 13.426742058872443040079827041,
     "rootCategories": 7,
     "entriesSectionsCurrent": 12,
     "entriesSectionsStale": 0,
     "entriesSectionsMissing": 0,
-    "frameworkFilesCurrent": 19,
+    "frameworkFilesCurrent": 20,
     "frameworkFilesChanged": 1,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -79,15 +79,15 @@
       "startup": {
         "shipped": {
           "files": 7,
-          "characters": 15907,
-          "bytes": 15907,
-          "tokens": 3977
+          "characters": 16147,
+          "bytes": 16147,
+          "tokens": 4037
         },
         "current": {
           "files": 7,
-          "characters": 15907,
-          "bytes": 15907,
-          "tokens": 3977
+          "characters": 16147,
+          "bytes": 16147,
+          "tokens": 4037
         },
         "difference": {
           "files": 0,
@@ -103,12 +103,12 @@
         }
       },
       "allRouted": {
-        "files": 19,
-        "characters": 116211,
-        "bytes": 116212,
-        "tokens": 29053
+        "files": 20,
+        "characters": 120259,
+        "bytes": 120260,
+        "tokens": 30065
       },
-      "startupShare": 13.687915189481292809692630709,
+      "startupShare": 13.426742058872443040079827041,
       "mayLoadAgainSources": [
         {
           "sourceId": "memory/emerging",
@@ -196,6 +196,10 @@
       },
       {
         "path": ".agents/skills/open-forge-cli/references/routes.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/tools.md",
         "state": "current"
       },
       {

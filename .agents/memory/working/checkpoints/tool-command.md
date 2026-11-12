@@ -20,7 +20,19 @@ The requested review boundaries are:
 
 Concrete CodeGraph and Codebase Memory definitions and adapters belong to the next stacked branch. Production admission stays empty. Tests use minimal synthetic definitions and local hashed artifacts. Settings v6 shows installed pins and active roles. Lock v2 holds detailed receipts and recovery records. Host members, ignore editing, root-removal exclusions and recovery remain required core work.
 
-## Current state
+## Current direction
+
+The maintainer's 2026-11-13 direction replaces the pending recovery v2 proposal with sibling `.bak` files. Save existing files before changes, validate writes, delete backups after success and restore them on failure. Status and Doctor report leftover backups. Repair can restore them. The lock records no backups. Existing recovery v1 stays unchanged.
+
+Codex writes are on hold. Build writers for Claude Code first. Keep the existing Codex seam and Tomlyn dependency, with no further TOML implementation until the maintainer decides.
+
+The branch is rebased onto `feature/comment-links` at `6304c4046`. The three original increments are now `969eb1a42`, `be5688502` and `26fc75e57`. The checkpoint index keeps Comment Links and Tool Command. Code Link Fragments stays archived. Generated Status conflicts are refreshed from the final rebased source, not merged by hand.
+
+Rebase evidence uses a warning-free Integration build and focused Status snapshot tests. The first run has 53 cases, with 48 passes and five expected snapshot failures. Review accepts 63 unique captures. Changes contain the Tool guidance row, combined payload measurements and the inherited Comment Links missing-target wording. The wording producers match the new base and are unchanged by this lane. Repeated captures agree. The verify rerun passes all 53 cases with zero skips. Evidence is recorded under `artifacts/tool-command/nov13-rebase-status-gate`.
+
+Next: replace the recovery proposal and dependent contracts, then implement the five writers and plain backup support. No push or PR mutation is authorized.
+
+## Earlier state
 
 Evening continuation, 2026-11-12. The overseer rebased this branch onto PR #25, with contracts commit `96db76ca1`, and pushed draft PR #26. Keep source-reference and link code outside this work. CI now runs full suites. Locally run only builds and focused Unit and Integration tests. Don't run full suites or Native AOT. The overseer authorizes `NuGetAudit=false` if NU1903 prevents restore. Make one local commit per stage and don't push.
 
