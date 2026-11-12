@@ -7,6 +7,8 @@ open-forge:
 
 # Context Interface Contract
 
+Requested link expansion also checks [comment links](../shared/source-references/interface.md#comment-links). Existing target-read and expansion rules apply. A legacy ID target reports `context.legacy-anchor` with suggested file paths when available.
+
 ## Workspace Layout
 
 Context starts at the selected loader and reads native Skills at their fixed location. Exact `./<workspace-path>` operands select custom-root files and registered outside sources. Short IDs retain their category-relative meaning. Outside registration supplies discovery, not startup loading. Authored rows retain their conditions, order and first-reaching parent when their targets also enter the registered inventory.

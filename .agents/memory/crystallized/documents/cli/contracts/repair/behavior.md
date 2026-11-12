@@ -7,6 +7,8 @@ open-forge:
 
 # Repair Behavior Contract
 
+Authored relinks also cover [comment links](../shared/source-references/interface.md#comment-links). Change only the target word. Relinks write a repository-root path. Existing selection, protection, dry-run, revalidation, recovery and verification apply to these edits. Legacy IDs require a chosen path. Weak move or heading suggestions require selection.
+
 ## Workspace Layout
 
 Carry Doctor’s layout observation through target checks, metadata, classification, planning and result projection. Revalidate it under the lease before effects. Recovery targets and historical bundle paths stay literal.

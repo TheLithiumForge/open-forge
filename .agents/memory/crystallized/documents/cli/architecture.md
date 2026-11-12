@@ -296,6 +296,8 @@ state.
 
 ## Link Fragments
 
+Framework Sources also handles comment markers, target-word spans, path bases and legacy ID findings under the [comment-link contract](contracts/shared/source-references/interface.md#comment-links). References, Context and the local-reference contributor consume these shared facts. Comment discovery extends reference scans without adding routing, loading or metadata authority. The host supplies bounded optional Git history reads. Framework keeps evidence interpretation and commands keep repair selection and effects.
+
 Framework Sources classifies local targets before parsing fragments. Its shared
 resolver gives commands heading, line-range and lexical-symbol facts under the
 [local fragment contract](contracts/shared/source-references/interface.md#local-fragments).

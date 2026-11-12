@@ -7,6 +7,8 @@ open-forge:
 
 # Context Behavior Contract
 
+Requested link expansion includes [comment links](../shared/source-references/interface.md#comment-links). Validate their paths and fragments through the shared resolver. Existing expansion depth, deduplication and target-read rules still apply. A comment alone grants no required-read or routing behavior.
+
 ## Workspace Layout
 
 Use the combined catalogue's retained layout, identities and authored included rows through closure, linked reads and result projection. Resolve loader links from its actual directory and preserve included aliases. Build one logical source for each merged outside target. Inventory must not erase row conditions, reorder authored edges, replace the first-reaching parent or create startup membership.

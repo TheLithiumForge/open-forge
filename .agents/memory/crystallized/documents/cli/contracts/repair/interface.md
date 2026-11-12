@@ -7,6 +7,8 @@ open-forge:
 
 # Repair Interface Contract
 
+Authored relinks also admit [comment links](../shared/source-references/interface.md#comment-links) in code and Markdown. An exact source location can name either file kind. Repair changes only the target word and writes a repository-root path. Existing dry-run, selection, protection and recovery rules apply. Git and weak suggestions remain distinct evidence. Weak candidates and legacy IDs require a chosen target.
+
 ## Workspace Layout
 
 Repair uses the selected layout for diagnosis and repairs. A missing loader can be restored when ordinary repair rules allow it. An intentional removal is respected, and a layout mismatch is not an instruction to relocate files.
@@ -210,7 +212,7 @@ that would otherwise be split:
 
 ### Source location
 
-The first value is a canonical workspace-relative Markdown source location with
+The first value is a canonical workspace-relative authored source location with
 a one-based line and one-based column:
 
 ```text
@@ -226,7 +228,7 @@ For example:
 .agents/docs/guide.md@12:8
 ```
 
-The path uses canonical `/` separators and identifies the authored Markdown file
+The path uses canonical `/` separators and identifies the authored file
 that contains one local-reference occurrence. The line and column identify the
 occurrence in the current source. This value is not a source ID, opaque token, or
 finding code. A source outside the primary content locations is admitted only when Doctor's accepted

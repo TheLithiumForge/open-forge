@@ -63,7 +63,9 @@ a persistent reverse index, diagnose a workspace, or repair a reference.
 
 ### Accepted Authored Reference Forms
 
-Reference extraction reports only non-image link nodes produced by the already
+Shared [comment links](../shared/source-references/interface.md#comment-links) also produce authored occurrences. Both markers work in code comments and Markdown HTML comments. The default incoming scan adds eligible comment-bearing workspace files. Exact `./path` operands can select code files. Generated and vendored files are skipped by comment discovery. A legacy ID target reports `references.legacy-anchor` with suggested file paths when available.
+
+Markdown reference extraction reports non-image link nodes produced by the already
 accepted fixed CommonMark/Markdig parser. The accepted forms are:
 
 - inline links;
