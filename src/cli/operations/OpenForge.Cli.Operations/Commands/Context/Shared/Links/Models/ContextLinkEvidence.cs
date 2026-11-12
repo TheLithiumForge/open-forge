@@ -11,7 +11,7 @@ internal sealed record ContextAuthoredLinkEvidence
 
     public required ContextGraphLayer Layer { get; init; }
 
-    public required MarkdownLinkFact Authored { get; init; }
+    public required OpenForge.Cli.Core.Framework.Sources.Models.References.SourceAuthoredLink Authored { get; init; }
 
     public required SourceLocation Location { get; init; }
 

@@ -13,6 +13,7 @@ using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.Core.Commands.Repair.Models.Diagnosis;
 using OpenForge.Cli.Core.Commands.Shared.RoutedMaintenance;
+using OpenForge.Cli.Core.Framework.Sources.Models.References;
 
 namespace OpenForge.Cli.Core.Commands.Repair;
 
@@ -33,13 +34,13 @@ internal static class RepairOperationFactory
             new PhysicalPathResolver(), renames));
     }
 
-    internal static RepairOperationComponents CreateDefaultComponents(RepairRenameServices? renames = null)
+    internal static RepairOperationComponents CreateDefaultComponents(RepairRenameServices? renames = null, SourceLinkHistoryRead? historyRead = null)
     {
         var physicalPathResolver = new PhysicalPathResolver();
         return CreateComponents(
             DisabledInteraction(),
             lockStoreRoot: null,
-            RepairOperationalContributorFactory.Create(physicalPathResolver),
+            RepairOperationalContributorFactory.Create(physicalPathResolver, historyRead),
             physicalPathResolver, renames);
     }
 

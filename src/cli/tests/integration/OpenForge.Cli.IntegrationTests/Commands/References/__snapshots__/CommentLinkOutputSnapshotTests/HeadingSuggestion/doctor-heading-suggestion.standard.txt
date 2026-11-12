@@ -1,0 +1,10 @@
+No errors. 1 warning and 3 info findings were recorded.
+Workspace: <workspace>
+Links
+  Warning  src/Order.cs:1:4  Linked heading was not found
+         .agents/docs/guide.md has no heading #reference.
+         open-forge repair
+         Choose one of the bounded candidates.
+  4 links and 3 routes checked.
+  To list the info findings: open-forge doctor --detail full
+Next: open-forge repair

@@ -1,0 +1,5 @@
+No errors. 1 warning and 3 info findings were recorded.
+  Warning  src/Order.cs:2:4  This comment uses a legacy source ID. Choose a file path.
+         This comment uses a legacy source ID. Choose a file path.
+  To list the info findings: open-forge doctor --detail full
+Next: This comment uses a legacy source ID. Choose a file path.

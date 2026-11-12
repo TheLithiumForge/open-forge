@@ -112,7 +112,7 @@ public sealed class DoctorTypedFactMappingTests
     [Trait("Boundary", "Processing")]
     [Fact(DisplayName = "Doctor retains every exact producer-owned candidate basis")]
     [Trait("Feature", "doctor-command"), Trait("Evidence", "Unit")]
-    public void CandidateProjectionRetainsAllFourTypedBases()
+    public void CandidateProjectionRetainsEveryTypedBasis()
     {
         const string sourcePath = ".agents/source.md";
         const string destination = "target.md";
@@ -156,15 +156,19 @@ public sealed class DoctorTypedFactMappingTests
                     kind,
                     kind.ToString(),
                     location: null))
-                .ToArray());
+                .ToArray()) with { Fragment = "target-heading" };
 
         var set = LocalReferenceDoctorCandidateProjector.Project(
             reference,
             [candidate]);
 
         var item = Assert.Single(set.Items);
+        Assert.Equal(candidate.Fragment, item.TargetFragment);
         Assert.Equal(
-            Enum.GetValues<DoctorCandidateBasisKind>(),
+            [DoctorCandidateBasisKind.GitRename, DoctorCandidateBasisKind.GitHeadingChange,
+                DoctorCandidateBasisKind.SectionContent, DoctorCandidateBasisKind.UniqueSlug,
+                DoctorCandidateBasisKind.Filename, DoctorCandidateBasisKind.Title,
+                DoctorCandidateBasisKind.LiteralContent, DoctorCandidateBasisKind.RouteNeighborhood],
             item.Evidence.Select(evidence => evidence.Kind));
     }
 }

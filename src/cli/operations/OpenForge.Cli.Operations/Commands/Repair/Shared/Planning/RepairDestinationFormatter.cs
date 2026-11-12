@@ -5,11 +5,12 @@ namespace OpenForge.Cli.Core.Commands.Repair.Shared.Planning;
 
 internal static class RepairDestinationFormatter
 {
-    internal static string Format(string sourceCanonicalPath, RepairTargetSelection target)
+    internal static string Format(string sourceCanonicalPath, RepairTargetSelection target, bool isComment = false)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceCanonicalPath);
         ArgumentNullException.ThrowIfNull(target);
-        return AppendFragment(FormatPath(sourceCanonicalPath, target.CanonicalTargetPath), target.TargetFragment);
+        var path = isComment ? target.CanonicalTargetPath : FormatPath(sourceCanonicalPath, target.CanonicalTargetPath);
+        return AppendFragment(path, target.TargetFragment);
     }
 
     internal static string FormatPath(string sourceCanonicalPath, string canonicalTargetPath)

@@ -259,6 +259,8 @@ internal static class DoctorReportSelector
             Subject(candidate.Subject),
             candidate.Evidence
                 .Select(evidence => DoctorWording.CandidateReason(evidence.Kind))
+                .Concat(candidate.TargetFragment is { } fragment
+                    ? [global::OpenForge.Cli.OutputText.Doctor.DoctorText.CandidateFragment(fragment)] : [])
                 .Distinct(StringComparer.Ordinal)
                 .ToArray());
 

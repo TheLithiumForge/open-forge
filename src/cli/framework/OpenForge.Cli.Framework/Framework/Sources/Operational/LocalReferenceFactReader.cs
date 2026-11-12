@@ -53,7 +53,8 @@ internal static class LocalReferenceFactReader
         string sourcePath,
         string destination,
         SourceLocation? destinationLocation,
-        SourceLinkDestinationFacts facts)
+        SourceLinkDestinationFacts facts,
+        bool isComment = false)
     {
         if (facts.IsFolder
             || facts.Target is not { Kind: SourceLinkTargetKind.Local, Path: { } targetPath }
@@ -92,7 +93,7 @@ internal static class LocalReferenceFactReader
             .Replace(Path.DirectorySeparatorChar, '/');
         var encodedPath = SourceDestinationEncoder.EncodePath(canonicalPath);
         var findings = new List<LocalReferenceCanonicalization>();
-        if (authoredPath.Length > 0
+        if (!isComment && authoredPath.Length > 0
             && !string.Equals(authoredPath, encodedPath, StringComparison.Ordinal)
             && !string.Equals(authoredPath, SourceDestinationEncoder.EncodeLiteralPath(canonicalPath), StringComparison.Ordinal))
         {
@@ -115,7 +116,7 @@ internal static class LocalReferenceFactReader
 
         if (facts.CanonicalFragment is { } fragment)
         {
-            var intendedPath = authoredPath.Length == 0 ? string.Empty : encodedPath;
+            var intendedPath = isComment ? authoredPath : (authoredPath.Length == 0 ? string.Empty : encodedPath);
             findings.Add(new LocalReferenceCanonicalization(
                 kind: LocalReferenceCanonicalizationKind.Fragment,
                 expected: destination,

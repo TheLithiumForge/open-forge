@@ -18,9 +18,10 @@ internal static class RepairCandidateMapper
                     candidate.Destination,
                     reference.Destination,
                     StringComparison.Ordinal))
-            .GroupBy(candidate => EncodeTargetPath(candidate.Candidate.Path), StringComparer.Ordinal)
-            .Select(group => ReadCandidate(group.Key, group, reference.Facts.Fragment))
-            .OrderBy(candidate => candidate.Target.CanonicalTargetPath, StringComparer.Ordinal)
+            .GroupBy(candidate => (Path: EncodeTargetPath(candidate.Candidate.Path), Fragment: candidate.Fragment ?? reference.Facts.Fragment))
+            .OrderBy(group => group.SelectMany(candidate => candidate.Bases).Min(basis => basis.Priority))
+            .ThenBy(group => group.Key.Path, StringComparer.Ordinal)
+            .Select(group => ReadCandidate(group.Key.Path, group, group.Key.Fragment))
             .ToArray();
         return new RepairCandidateSet(candidates);
     }
@@ -51,6 +52,8 @@ internal static class RepairCandidateMapper
                 LocalReferenceCandidateBasisKind.Filename => RepairCandidateEvidenceKind.Filename,
                 LocalReferenceCandidateBasisKind.Title => RepairCandidateEvidenceKind.Title,
                 LocalReferenceCandidateBasisKind.LiteralContent => RepairCandidateEvidenceKind.LiteralContent,
+                LocalReferenceCandidateBasisKind.GitRename or LocalReferenceCandidateBasisKind.GitHeadingChange
+                    or LocalReferenceCandidateBasisKind.SectionContent or LocalReferenceCandidateBasisKind.UniqueSlug => RepairCandidateEvidenceKind.LiteralContent,
                 LocalReferenceCandidateBasisKind.RouteNeighborhood
                     => RepairCandidateEvidenceKind.RouteNeighborhood,
                 _ => throw new ArgumentOutOfRangeException(

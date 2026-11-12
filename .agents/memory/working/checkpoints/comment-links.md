@@ -5,32 +5,71 @@ open-forge:
 ---
 
 # Comment Links
-Comment links is the issue 21 workstream that connects code and docs through path comments.
+Comment Links is the issue 21 feature that connects code and docs through path comments.
 
-The maintainer's lane assignment selects shared recognition, resolution, References, Context, Doctor, Repair and verified historical link fixes. Work stays on `feature/comment-links`. CI runs full suites. Local work runs a build and focused Unit and Integration checks.
+For example, `FindUniverseResolver.cs` points to the Find source-universe contract, and that contract points back to the class. The [source-reference contract](../../crystallized/documents/cli/contracts/shared/source-references/interface.md#comment-links) defines the grammar and resolution rules.
+
+Status: implementation complete, CI pending.
+
+## Changes
+
+The feature recognizes `@open-forge` and `@rune` across common comment delimiters. Plain targets start at the repository root. `./` and `../` start next to the containing file. Markdown HTML comments and ordinary Markdown links share fragment checks.
+
+References includes comment occurrences in both directions and accepts exact code paths. Context checks comments during requested link expansion. Doctor reports broken targets, fragments and legacy IDs with path suggestions. Repair changes only the target word and keeps the surrounding bytes.
+
+Suggestions rank Git file moves, Git heading changes, matching old section content and unique heading slugs. Doctor keeps suggested fragments and labels weak slug matches. Repair keeps that order and requires selection for weak matches.
+
+Contracts were committed before implementation. Public updates cover `docs/cli.md`, the Docusaurus pages, References help and both CLI Skill copies. The 66 audited code-link occurrences across 15 historical docs are fixed. The three `RouteSourceStructureReader.cs` citations are included in that count. The completed fragment checkpoint is archived under CLI Development Tasks.
 
 ## Execution
 
-The CLI edits local project files. Git and existing recovery bundles provide recovery. Existing containment, expected-byte and mutation guards handle malformed input, stale plans and cooperating processes. Same-user hostile namespace changes stay outside the existing safety model.
+The shared Sources layer handles recognition, resolution and candidate facts. The host reads Git history through the existing bounded process runner. Command code maps the shared results. Comment discovery gives code files no navigation or metadata authority.
 
-Use the current Markdig facts, BCL file reads and shared reference resolver. The product-defined comment grammar belongs in Sources. No dependency or runtime change is selected. The only grammar addition is the requested marker syntax. Existing bounded host Git reads provide history evidence. No exceptional machinery is selected.
-
-Unit checks cover marker and path rules. Integration checks cover command consumers, real file moves and exact repair bytes. Full managed, EndToEnd and Native AOT gates run in CI under the lane instruction.
-
-## State
-
-Done: Loaded lane instructions, issue spec and scoped rules. Updated shared and consuming contracts. The managed Unit-project build passes with zero warnings. The focused `Feature=references` selection passes 121 tests with no skips.
-Now: Implement shared comment extraction and command integration.
-Next: Run focused checks, update public docs and Skills, then verify and fix the 66 audited links and three historical ranges.
-Blocker: The standard repository build reports NU1903 for the existing ILCompiler pin. The workspace-local APPDATA retry did not produce a verified repository build. A local-only warning override is awaiting maintainer direction. No dependency pin was changed.
+The feature uses the current Markdig parser, BCL file reads and shared resolver. It changes no dependency or runtime pin. Existing containment, expected-byte, protection and recovery checks apply to repairs. Same-user hostile namespace changes stay outside the existing safety model.
 
 ## Verification
 
-The first managed reference selection ran 121 tests. It found one scanner defect and three new finding-inventory expectations. The corrected selection passes 121 of 121 with no skips. Commands:
+The standard build reports NU1903 for the existing `Microsoft.DotNet.ILCompiler` 10.0.1 pin. Local verification keeps that audit warning visible through a command-only `WarningsNotAsErrors=NU1903` override. Project settings and pins are unchanged. The final build uses frozen sources and disables incremental compilation:
 
 ```powershell
-dotnet build src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-restore -p:OpenForgeSkipDevelopmentPublish=true
-dotnet artifacts/bin/OpenForge.Cli.Core.UnitTests/release/OpenForge.Cli.Core.UnitTests.dll --filter-trait Feature=references --minimum-expected-tests 1 --fail-warns on --fail-skips on --no-ansi --progress off
+dotnet build OpenForge.Cli.slnx --configuration Release --no-restore --no-incremental -p:OpenForgeSkipDevelopmentPublish=true -p:WarningsNotAsErrors=NU1903
 ```
 
-`npm ci` passes in the repository and documentation site. `git diff --check` passes. Index preview and application update only this checkpoint's catalogue. Full managed, EndToEnd and Native AOT suites have not run locally.
+Local results:
+
+| Check | Result |
+| --- | --- |
+| Managed solution build | Pass, 3 NU1903 warnings |
+| Unit `Feature=references` | 122 passed |
+| Unit `Feature=context` | 53 passed |
+| Unit `Feature=repair` | 122 passed |
+| Unit `Feature=doctor-command` | 154 passed |
+| Integration `Feature=comment-links` | 13 passed |
+| Integration `CodeLinkFragmentSnapshotTests` | 2 passed |
+| Integration `CommandHelpIntegrationTests` | 36 passed |
+| Integration `StatusBeforeOutputSnapshotTests` | 5 passed |
+| Integration `RepairProtectionIntegrationTests` | 21 passed |
+| Integration `RepositoryMarkdownTests` | 13 passed |
+| Docusaurus build | Pass |
+| `npm ci`, repository and site | Pass |
+
+All focused test selections have zero skips. Full Unit, Integration, EndToEnd and Native AOT suites have not run locally. CI is the full-suite gate under the lane instruction.
+
+The test commands run the built assemblies with a feature or exact class filter, `--minimum-expected-tests`, `--fail-warns on` and `--fail-skips on`. Logs are kept locally under `artifacts/comment-links-*.log`. No flakes were seen. Earlier failures found scanner, finding-inventory, protection and candidate-output defects. Minimum-count checks also caught stale incremental test output. The final clean build and focused results replace those failed attempts.
+
+## Snapshots
+
+Reviewed and accepted output:
+
+| Group | Files | Reason |
+| --- | --- | --- |
+| `CommentLinkOutputSnapshotTests` | 30 new | Legacy paths, comment rows and a weak heading suggestion with its fragment |
+| `CodeLinkFragmentSnapshotTests` | 8 updated | Ordinary code files use the manual fragment action without false protection |
+| `CommandHelpIntegrationTests`, References | 1 updated | Comment grammar and exact code operands |
+| `StatusBeforeOutputSnapshotTests` | 56 updated | Skill payload byte, character, token and startup-share totals |
+
+Received output stays under `artifacts/command-output-snapshots/<run>/<Class>/<Group>/`. The accepted snapshots verify in ordinary runs.
+
+## Handoff
+
+The branch is `feature/comment-links`, stacked on `fix/code-link-fragments` at `c41e95b1b`. Changes stay in this worktree. No push, merge or PR was made. The overseer publishes the branch and runs CI. The existing NuGet audit failure needs maintainer follow-up if it blocks CI.

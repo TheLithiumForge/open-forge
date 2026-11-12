@@ -24,8 +24,11 @@ internal static class LocalReferenceDoctorCandidateProjector
                 || candidate.Candidate.Path != reference.SourcePath
                     && candidate.Candidate.Path != reference.RoutePath
                     && candidate.Bases.Any(basis => basis.Kind != LocalReferenceCandidateBasisKind.RouteNeighborhood))
+            .OrderBy(candidate => candidate.Bases.Min(basis => basis.Priority))
+            .ThenBy(candidate => candidate.Candidate.Path, StringComparer.Ordinal)
             .Select(candidate => new DoctorCandidate
             {
+                TargetFragment = candidate.Fragment,
                 Subject = DoctorDomainSupport.Subject(
                     DoctorSubjectKind.Target,
                     candidate.Candidate.Path,
@@ -36,7 +39,6 @@ internal static class LocalReferenceDoctorCandidateProjector
                     DoctorProvenanceSource.LocalReferences,
                     candidate.Candidate.Path),
             })
-            .OrderBy(candidate => candidate.Subject.Path, StringComparer.Ordinal)
             .ToArray();
         return new DoctorCandidateSet
         {
@@ -58,6 +60,10 @@ internal static class LocalReferenceDoctorCandidateProjector
                 LocalReferenceCandidateBasisKind.Filename => DoctorCandidateBasisKind.Filename,
                 LocalReferenceCandidateBasisKind.Title => DoctorCandidateBasisKind.Title,
                 LocalReferenceCandidateBasisKind.LiteralContent => DoctorCandidateBasisKind.LiteralContent,
+                LocalReferenceCandidateBasisKind.GitRename => DoctorCandidateBasisKind.GitRename,
+                LocalReferenceCandidateBasisKind.GitHeadingChange => DoctorCandidateBasisKind.GitHeadingChange,
+                LocalReferenceCandidateBasisKind.SectionContent => DoctorCandidateBasisKind.SectionContent,
+                LocalReferenceCandidateBasisKind.UniqueSlug => DoctorCandidateBasisKind.UniqueSlug,
                 LocalReferenceCandidateBasisKind.RouteNeighborhood => DoctorCandidateBasisKind.RouteNeighborhood,
                 _ => throw new ArgumentOutOfRangeException(
                     nameof(basis),

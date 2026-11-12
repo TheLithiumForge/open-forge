@@ -8,6 +8,8 @@ namespace OpenForge.Cli.Core.Commands.References.Models.Resolution;
 
 internal sealed record ReferencesDestinationInput
 {
+    internal bool IsComment { get; init; }
+
     internal ReferencesDestinationInput(
         CliWorkspace workspace,
         SourceCatalogue catalogue,

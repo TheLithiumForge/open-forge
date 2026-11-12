@@ -9,6 +9,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
+using OpenForge.Cli.Core.Framework.Sources.References;
 
 namespace OpenForge.Cli.Core.Commands.References.Shared.Extraction;
 
@@ -31,9 +32,10 @@ internal sealed class ReferencesLinkExtractor
         var findings = new List<ReferencesInspectionFinding>();
         var map = new Utf8SourceMap(document.Source);
         var region = document.GeneratedRegion;
-        var noSuppressionBoundary = document.BodySpan is not null;
+        var markdown = OpenForge.Cli.Core.Framework.Sources.Loading.SourceGeneratedDestinationResolver.IsMarkdown(canonicalPath);
+        var noSuppressionBoundary = !markdown || document.BodySpan is not null;
         var blocked = false;
-        if (region.State is MarkdownGeneratedRegionState.Invalid or MarkdownGeneratedRegionState.Unavailable)
+        if (markdown && region.State is MarkdownGeneratedRegionState.Invalid or MarkdownGeneratedRegionState.Unavailable)
         {
             blocked = !noSuppressionBoundary;
             findings.Add(new ReferencesInspectionFinding(
@@ -42,9 +44,9 @@ internal sealed class ReferencesLinkExtractor
                 blocked));
         }
 
-        foreach (var link in document.Links)
+        foreach (var link in SourceAuthoredLinkReader.Read(canonicalPath, document))
         {
-            if (region.State == MarkdownGeneratedRegionState.Complete
+            if (markdown && region.State == MarkdownGeneratedRegionState.Complete
                 && region.EntriesBlock?.Span is { } content
                 && link.Span.Start >= content.Start
                 && link.Span.End <= content.End)
@@ -94,7 +96,8 @@ internal sealed class ReferencesLinkExtractor
                 destinationLocation,
                 link.RawDestination,
                 fragment,
-                provenance));
+                provenance)
+            { IsComment = link.IsComment });
         }
 
         return new ReferencesInspectionFacts(
@@ -103,7 +106,7 @@ internal sealed class ReferencesLinkExtractor
             canonicalPath,
             links,
             findings,
-            established: document.BodySpan is not null,
+            established: noSuppressionBoundary,
             blocked);
     }
 

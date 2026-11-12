@@ -1,0 +1,298 @@
+{
+  "schemaVersion": 3,
+  "command": "doctor",
+  "status": "completed-with-warnings",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "No errors. 1 warning and 3 info findings were recorded.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "reference.legacy-anchor",
+      "title": "This comment uses a legacy source ID. Choose a file path.",
+      "message": "This comment uses a legacy source ID. Choose a file path.",
+      "subject": {
+        "kind": "source",
+        "path": "src/Order.cs",
+        "id": "docs/reference",
+        "location": {
+          "line": 2,
+          "column": 4
+        }
+      },
+      "category": "Links",
+      "resolution": "manual-decision",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "This comment uses a legacy source ID. Choose a file path.",
+          "reason": "This comment uses a legacy source ID. Choose a file path."
+        }
+      ],
+      "candidates": [
+        {
+          "subject": {
+            "kind": "file",
+            "path": ".agents/docs/reference.md",
+            "id": "docs/reference",
+            "location": null
+          },
+          "reasons": [
+            "content match"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "label": "authored value",
+          "value": "docs/reference"
+        },
+        {
+          "label": "state",
+          "value": "malformed"
+        }
+      ],
+      "provenance": {
+        "source": "local links",
+        "path": "src/Order.cs",
+        "location": {
+          "line": 2,
+          "column": 4
+        }
+      }
+    },
+    {
+      "severity": "info",
+      "code": "library.ownership-observation",
+      "title": "No ownership record",
+      "message": "No ownership record exists, so Libraries cannot be read from it.",
+      "subject": {
+        "kind": "identifier",
+        "path": ".agents/open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": "Workspace",
+      "resolution": "informational",
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "state",
+          "value": "unavailable"
+        }
+      ],
+      "provenance": {
+        "source": "file ownership records",
+        "path": ".agents/open-forge.lock.json",
+        "location": null
+      }
+    },
+    {
+      "severity": "info",
+      "code": "framework.ownership-observation",
+      "title": "No ownership record",
+      "message": "No ownership record exists, so Framework files cannot be read from it.",
+      "subject": {
+        "kind": "file",
+        "path": "<workspace>\\.agents\\open-forge.lock.json",
+        "id": null,
+        "location": null
+      },
+      "category": "Framework files",
+      "resolution": "informational",
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "state",
+          "value": "unavailable"
+        }
+      ],
+      "provenance": {
+        "source": "Framework installation record",
+        "path": "<workspace>\\.agents\\open-forge.lock.json",
+        "location": null
+      }
+    },
+    {
+      "severity": "info",
+      "code": "extension.ownership-observation",
+      "title": "No ownership record",
+      "message": "No ownership record exists, so installed Extensions cannot be read from it.",
+      "subject": {
+        "kind": "identifier",
+        "path": "<workspace>\\.agents\\open-forge.lock.json",
+        "id": "<workspace>\\.agents\\open-forge.lock.json",
+        "location": null
+      },
+      "category": "Extensions",
+      "resolution": "informational",
+      "actions": [],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "state",
+          "value": "unavailable"
+        }
+      ],
+      "provenance": {
+        "source": "Extension installation record",
+        "path": "<workspace>\\.agents\\open-forge.lock.json",
+        "location": null
+      }
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "checks": 6,
+    "checksComplete": 6,
+    "errors": 0,
+    "warnings": 1,
+    "infos": 3,
+    "linksChecked": 6,
+    "linksValid": 5,
+    "externalLinksNotChecked": 0,
+    "imageLinks": 0,
+    "routesChecked": 3,
+    "frameworkFiles": 0,
+    "extensionsInstalled": 0,
+    "librariesRegistered": null
+  },
+  "limitations": [],
+  "data": {
+    "recoveryStores": [
+      {
+        "kind": "workspace",
+        "path": "<workspace-recovery-store>",
+        "coverage": "complete",
+        "candidates": [],
+        "cause": null
+      },
+      {
+        "kind": "legacy",
+        "path": "<legacy-recovery-store>",
+        "coverage": "complete",
+        "candidates": [],
+        "cause": null
+      }
+    ],
+    "categories": [
+      {
+        "name": "Workspace",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 1
+        },
+        "limitations": [],
+        "lanes": {
+          "safeExact": 0,
+          "guidedChoice": 0,
+          "targetedOperation": 0,
+          "manualDecision": 0,
+          "blockedRepair": 0
+        }
+      },
+      {
+        "name": "Recovery data",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "limitations": [],
+        "lanes": {
+          "safeExact": 0,
+          "guidedChoice": 0,
+          "targetedOperation": 0,
+          "manualDecision": 0,
+          "blockedRepair": 0
+        }
+      },
+      {
+        "name": "Routes and Entries",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "limitations": [],
+        "lanes": {
+          "safeExact": 0,
+          "guidedChoice": 0,
+          "targetedOperation": 0,
+          "manualDecision": 0,
+          "blockedRepair": 0
+        }
+      },
+      {
+        "name": "Links",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 1,
+          "infos": 0
+        },
+        "limitations": [],
+        "lanes": {
+          "safeExact": 0,
+          "guidedChoice": 0,
+          "targetedOperation": 0,
+          "manualDecision": 1,
+          "blockedRepair": 0
+        }
+      },
+      {
+        "name": "Framework files",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 1
+        },
+        "limitations": [],
+        "lanes": {
+          "safeExact": 0,
+          "guidedChoice": 0,
+          "targetedOperation": 0,
+          "manualDecision": 0,
+          "blockedRepair": 0
+        }
+      },
+      {
+        "name": "Extensions",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 1
+        },
+        "limitations": [],
+        "lanes": {
+          "safeExact": 0,
+          "guidedChoice": 0,
+          "targetedOperation": 0,
+          "manualDecision": 0,
+          "blockedRepair": 0
+        }
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "sentence",
+    "command": "This comment uses a legacy source ID. Choose a file path.",
+    "reason": "This comment uses a legacy source ID. Choose a file path."
+  }
+}

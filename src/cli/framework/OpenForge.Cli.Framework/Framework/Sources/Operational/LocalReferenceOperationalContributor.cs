@@ -20,6 +20,9 @@ using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.References;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational;
 
@@ -34,7 +37,8 @@ internal interface ILocalReferenceOperationalContributor
 internal sealed class LocalReferenceOperationalContributor(
     RouteSourceInspector sourceInspector,
     SourceLinkDestinationResolver destinationResolver,
-    LocalReferenceCandidateReader candidateReader) : ILocalReferenceOperationalContributor
+    LocalReferenceCandidateReader candidateReader,
+    SourceLinkHistoryRead? historyRead = null) : ILocalReferenceOperationalContributor
 {
     internal async ValueTask<LocalReferenceDoctorView> ReadDoctorAsync(CliWorkspace workspace, CancellationToken cancellationToken, RouteDoctorView? routes = null)
     {
@@ -97,15 +101,42 @@ internal sealed class LocalReferenceOperationalContributor(
             foreach (var document in source.Documents) observations.Documents[document.Key] = document.Value;
         }
 
+        var readSession = inspection.Session ?? new SourceReadSession(inspection.Catalogue,
+            new SourceDocumentReader(inspection.Catalogue.Workspace, paths), []);
+        var comments = await SourceCommentSourceReader.ReadAsync(readSession, cancellationToken).ConfigureAwait(false);
+        var commentSession = SourceCommentSourceReader.Extend(readSession, comments);
+        foreach (var source in comments.Sources)
+        {
+            var path = source.Base.CanonicalPath;
+            var document = comments.Documents[path];
+            var locations = new Utf8SourceMap(document.Source);
+            observations.Documents[path] = document;
+            observations.Sources.Add(new LocalReferenceSourceObservation(path, source.Identity.AutomaticId,
+                [new LocalReferenceParsedLayer(path, document, locations)]));
+            await LocalReferenceOccurrenceReader.ReadAsync(new(commentSession.Catalogue, path, path, document, locations),
+                observations, resolver, cancellationToken).ConfigureAwait(false);
+        }
+
+        var history = historyRead is null ? new SourceLinkHistory([])
+            : await historyRead(new(inspection.Catalogue.Workspace, observations.References), cancellationToken).ConfigureAwait(false);
+        var fragments = observations.References.GroupBy(reference => (reference.SourcePath, reference.Destination))
+            .ToDictionary(group => group.Key, group => group.First().Facts.Fragment);
         var candidates = candidateReader.Read(
             observations.References,
             observations.Sources,
-            inspection.Routes.Topology);
+            inspection.Routes.Topology).Concat(SourceLinkSuggestionReader.Read(observations.References, observations.Sources, history, comments.TextFiles))
+            .GroupBy(candidate => (candidate.SourcePath, candidate.Destination, candidate.Candidate.Path,
+                Fragment: candidate.Fragment ?? fragments[(candidate.SourcePath, candidate.Destination)]))
+            .Select(group => LocalReferenceCandidateObservation.Create(group.Key.SourcePath, group.Key.Destination,
+                group.First().Candidate, group.SelectMany(candidate => candidate.Bases).Distinct().OrderBy(basis => basis.Priority).ToArray())
+                with
+            { Fragment = group.Key.Fragment })
+            .OrderBy(candidate => candidate.Bases.Min(basis => basis.Priority)).ThenBy(candidate => candidate.Candidate.Path, StringComparer.Ordinal).ToArray();
         return new LocalReferenceDoctorView(
-            settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable
+            !comments.Complete || settings.State is WorkspaceSettingsReadState.Invalid or WorkspaceSettingsReadState.Unavailable
                 ? OperationalViewState.Incomplete : inspection.State,
             observations.References.ToArray(),
-            ReadCandidateState(inspection.State),
+            !comments.Complete || history.TimedOut ? LocalReferenceCandidateScanState.Incomplete : ReadCandidateState(inspection.State),
             candidates,
             LocalReferenceGraphReader.Read(observations.References))
         {
@@ -131,7 +162,6 @@ internal sealed class LocalReferenceOperationalContributor(
         SourceLinkDestinationResolver resolver,
         CancellationToken cancellationToken)
     {
-        var settings = observations.Settings;
         var parsedLayers = new List<LocalReferenceParsedLayer>();
         foreach (var layer in source.Layers)
         {
@@ -151,50 +181,8 @@ internal sealed class LocalReferenceOperationalContributor(
                 layer.Path,
                 document,
                 locations));
-            var references = document.Links
-                .Select(link => (Fact: link, Kind: LocalReferenceKind.Link))
-                .Concat(document.Images.Select(image => (Fact: image, Kind: LocalReferenceKind.Image)));
-            foreach (var reference in references)
-            {
-                if (WorkspaceLinkScope.IgnoresSource(settings, layer.Path))
-                {
-                    observations.IgnoredLinkCount++;
-                    continue;
-                }
-                var link = reference.Fact;
-                var facts = await resolver.ResolveAsync(
-                        new SourceLinkDestinationInput
-                        {
-                            Workspace = inspection.Catalogue.Workspace,
-                            Catalogue = inspection.Catalogue,
-                            SourceCanonicalPath = layer.Path,
-                            RawDestination = link.RawDestination,
-                        },
-                        cancellationToken)
-                    .ConfigureAwait(false);
-                if (WorkspaceLinkScope.IgnoresTarget(settings, facts.Target.Path))
-                {
-                    observations.IgnoredLinkCount++;
-                    continue;
-                }
-                var location = locations.Map(link.Span.Start, link.Span.Length);
-                var destinationLocation = ReadEditableDestinationLocation(document, link, locations);
-                observations.References.Add(new LocalReferenceObservation
-                {
-                    SourcePath = layer.Path,
-                    RoutePath = source.Source.Identity.CanonicalBasePath,
-                    Kind = reference.Kind,
-                    Destination = link.RawDestination,
-                    Label = link.Label,
-                    Location = location,
-                    DestinationLocation = destinationLocation,
-                    Facts = facts,
-                    Fragment = LocalReferenceFactReader.ReadFragment(facts),
-                    Canonicalizations = reference.Kind == LocalReferenceKind.Link
-                        ? LocalReferenceFactReader.ReadCanonicalizations(layer.Path, link.RawDestination, destinationLocation, facts)
-                        : [],
-                });
-            }
+            await LocalReferenceOccurrenceReader.ReadAsync(new(inspection.Catalogue, layer.Path, source.Source.Identity.CanonicalBasePath,
+                document, locations), observations, resolver, cancellationToken).ConfigureAwait(false);
         }
 
         observations.Sources.Add(new LocalReferenceSourceObservation(
@@ -216,23 +204,6 @@ internal sealed class LocalReferenceOperationalContributor(
                 state,
                 "The local-reference candidate scan state is not defined."),
         };
-
-    private static SourceLocation? ReadEditableDestinationLocation(MarkdownDocumentFacts document, MarkdownLinkFact link, Utf8SourceMap locations)
-    {
-        if (link.DestinationSpan is not { } span) return null;
-        var start = span.Start;
-        var length = span.Length;
-        var authored = document.Source.AsSpan(start, length);
-        // The parser includes angle delimiters in its span. Keep them outside the exact URL edit.
-        if (authored.Length >= 2 && authored[0] == '<' && authored[^1] == '>')
-        {
-            start++;
-            length -= 2;
-            authored = authored[1..^1];
-        }
-        // Decoded entities or Markdown escapes do not prove the exact bytes required by Repair.
-        return authored.SequenceEqual(link.RawDestination.AsSpan()) ? locations.Map(start, length) : null;
-    }
 
     private static IReadOnlyList<(string Key, string Path)> ReadMissingEntries(
         WorkspaceSettingsDocument settings, SourceCatalogue catalogue, PhysicalPathResolver paths, CancellationToken token)

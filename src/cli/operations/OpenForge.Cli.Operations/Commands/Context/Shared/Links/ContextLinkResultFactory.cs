@@ -105,6 +105,7 @@ internal static class ContextLinkResultFactory
             SourceLinkDestinationFindingCode.FragmentMissing => ContextFindingCode.FragmentMissing,
             SourceLinkDestinationFindingCode.LineOutOfRange => ContextFindingCode.LineOutOfRange,
             SourceLinkDestinationFindingCode.SymbolMissing => ContextFindingCode.SymbolMissing,
+            SourceLinkDestinationFindingCode.LegacyAnchor => ContextFindingCode.LegacyAnchor,
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The shared link finding code is not defined."),
         };
 
