@@ -6,13 +6,20 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { hashArtifact } from "../../manifest.ts";
-import { MainPackageName, PlatformPackages } from "../../package-model.ts";
+import { readPackage } from "../../package-json.ts";
+import { AliasPackageName, MainPackageName, PlatformPackages } from "../../package-model.ts";
 import { IsolatedNpm } from "../../npm/__tests__/isolated-npm.ts";
 import { compileLauncher, stagePackages } from "../../npm/stage.ts";
 import { collectPackages } from "../collect-packages.ts";
 import { readReleasePublications } from "../release-publications.ts";
 
 import { AllTargets } from "../../targets.ts";
+import { createWheel } from "../../pypi/wheel.ts";
+import { pythonVersion } from "../../pypi/version.ts";
+import { wheelName } from "../../pypi/wheel-model.ts";
+import { preparePyPI, releaseWheels, PyPIOutput } from "../../pypi/release-wheels.ts";
+import { readReleasePlan } from "../read-release-plan.ts";
+import { ReleaseTarget } from "../release-plan.ts";
 
 const repository = fileURLToPath(new URL("../../../../", import.meta.url));
 const version = "0.1.0-beta.1";
@@ -48,7 +55,12 @@ for (const targets of [AllTargets, ["osx-x64", "win-x64"]] as const)
       });
       const main = npm.pack(staged.mainPackageDirectory, join(root, "packs", platform.runtime, "main"));
       const target = npm.pack(staged.platformPackageDirectory, join(root, "packs", platform.runtime, "target"));
-      for (const pack of [main, target]) copyFileSync(pack.path, join(directory, pack.path.split(/[\\/]/u).at(-1) ?? "missing"));
+      const alias = npm.pack(staged.aliasPackageDirectory, join(root, "packs", platform.runtime, "alias"));
+      for (const pack of [main, target, alias]) copyFileSync(pack.path, join(directory, pack.path.split(/[\\/]/u).at(-1) ?? "missing"));
+      writeFileSync(
+        join(directory, wheelName(pythonVersion(version), platform.runtime)),
+        createWheel(version, platform.runtime, readFileSync(native), readFileSync(join(root, "LICENSE"))),
+      );
       const archive = `open-forge-${version}-${platform.runtime}.tar.gz`;
       execFileSync("tar", ["-czf", join(directory, archive), "-C", portable, platform.nativeFileName, "LICENSE"]);
       const files = readdirSync(directory).map((path) => ({ path, sha256: hashArtifact(directory, path) }));
@@ -58,28 +70,32 @@ for (const targets of [AllTargets, ["osx-x64", "win-x64"]] as const)
       );
     }
     collectPackages(input, output, sha, version, targets);
-    assert.equal(readdirSync(output).filter((file) => file.endsWith(".tgz")).length, targets.length + 1);
+    assert.equal(readdirSync(output).filter((file) => file.endsWith(".tgz")).length, targets.length + 2);
     assert.equal(readdirSync(output).filter((file) => file.endsWith(".tar.gz")).length, targets.length);
     assert.equal(readFileSync(join(output, "SHA256SUMS"), "utf8").trim().split("\n").length, targets.length);
     const source = { sha, dirty: false };
     const publications = readReleasePublications(root, releaseDirectory, source, version);
     assert.deepEqual(
       publications.map((publication) => publication.name),
-      [...targets.map((target) => PlatformPackages[target].packageName), MainPackageName],
+      [...targets.map((target) => PlatformPackages[target].packageName), MainPackageName, AliasPackageName],
     );
     assert.throws(() => readReleasePublications(root, releaseDirectory, { ...source, sha: "b".repeat(40) }, version), /Release source mismatch/u);
     assert.throws(() => readReleasePublications(root, releaseDirectory, source, "0.1.0-beta.2"), /Release version mismatch/u);
-    const publisher = new URL("../../npm/publish-packages.ts", import.meta.url).href;
-    const preview = spawnSync(
-      process.execPath,
-      [
-        "--input-type=module",
-        "-e",
-        `import { publishPackages } from ${JSON.stringify(publisher)}; delete process.env.npm_execpath; await publishPackages(process.cwd(), JSON.parse(process.argv[1]), "beta", true);`,
-        JSON.stringify(publications),
-      ],
-      { cwd: root, encoding: "utf8" },
+    preparePyPI(root, releaseDirectory, source, version);
+    assert.equal(readdirSync(join(root, PyPIOutput)).length, targets.length);
+    const plan = readReleasePlan(root, releaseDirectory, source, version, ReleaseTarget.all, "beta", true);
+    assert.deepEqual(
+      plan.packages,
+      publications.map((publication) => publication.name),
     );
+    assert.equal(plan.wheels?.length, targets.length);
+    assert.throws(() => releaseWheels(root, releaseDirectory, { ...source, dirty: true }, version));
+    const wheel = releaseWheels(root, releaseDirectory, source, version)[0] ?? assert.fail();
+    const originalWheel = readFileSync(wheel);
+    writeFileSync(wheel, "changed wheel");
+    assert.throws(() => releaseWheels(root, releaseDirectory, source, version));
+    writeFileSync(wheel, originalWheel);
+    const preview = spawnSync(process.execPath, [fileURLToPath(new URL("./preview-publications.ts", import.meta.url)), sha, version], { cwd: root, encoding: "utf8" });
     assert.equal(preview.error, undefined);
     assert.equal(preview.status, 0, preview.stderr);
     assert.deepEqual(
@@ -104,6 +120,20 @@ for (const targets of [AllTargets, ["osx-x64", "win-x64"]] as const)
     writeFileSync(metadata, JSON.stringify({ ...JSON.parse(originalMetadata), tested: false }));
     assert.throws(() => collectPackages(input, join(root, "untested"), sha, version, targets), /requires tested packages/);
     writeFileSync(metadata, originalMetadata);
+    const inputWheel = wheelName(pythonVersion(version), targets.at(-1) ?? assert.fail());
+    const originalInputWheel = readFileSync(join(last, inputWheel));
+    writeFileSync(join(last, inputWheel), "tampered wheel with refreshed outer hash");
+    const wheelMetadata = readPackage(metadata);
+    const wheelFiles = wheelMetadata["files"];
+    assert.ok(Array.isArray(wheelFiles));
+    wheelMetadata["files"] = wheelFiles.map((file: unknown) => {
+      assert.ok(typeof file === "object" && file !== null && "path" in file);
+      return file.path === inputWheel ? { path: inputWheel, sha256: hashArtifact(last, inputWheel) } : file;
+    });
+    writeFileSync(metadata, JSON.stringify(wheelMetadata));
+    assert.throws(() => collectPackages(input, join(root, "wrong-wheel"), sha, version, targets));
+    writeFileSync(metadata, originalMetadata);
+    writeFileSync(join(last, inputWheel), originalInputWheel);
     const nativePack = readdirSync(last).find((file) => file.endsWith(".tgz") && file.includes(targets.at(-1) ?? "missing"));
     assert.ok(nativePack);
     writeFileSync(join(last, nativePack), "changed tarball");

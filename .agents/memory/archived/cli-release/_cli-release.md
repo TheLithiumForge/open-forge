@@ -38,5 +38,6 @@ descendants here preserve origin, reasoning, dissent, and evidence only.
 - [Per-file Gate 1 register for the ignored Native handoff and raw CLI evidence package](gate-1-handoff-register.md) - #Memory #Archived #CLI #Release #Gate #Audit #FileRegister #Handoff #Prototype #Contextual #Historical
 - [Per-artifact Gate 1 audit register for current repository surfaces that can affect the CLI release](gate-1-repository-register.md) - #Memory #Archived #CLI #Release #Gate #Audit #FileRegister #Repository #Contextual #Historical
 - [Historical lessons and salvage inventory from the removed C# CLI and route-list implementation](implementation-reset-2026-08-21.md) - #Memory #Archived #Contextual #Historical #CLI #Architecture #Implementation #Testing #Reset
+- [Issue 24 package alias implementation, local gates and Windows installation smoke receipt](issue24-package-aliases.md) - #Memory #Archived #Contextual #Historical #CLI #Delivery
 - [Historical gates, tasks, dependencies, validation, and stop states from the removed first C# CLI implementation program](release-plan-2026-08-21.md) - #Memory #Archived #Contextual #Historical #CLI #Release #Program #Gate #Plan
 - [Historical CLI release review records retained after accepted units left active review](review/_review.md) - #Memory #Archived #Contextual #Historical #CLI #Release #Review #Council

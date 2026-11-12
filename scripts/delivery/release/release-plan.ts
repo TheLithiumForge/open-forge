@@ -14,6 +14,7 @@ export interface ReleasePlan {
   sha: string;
   packages: readonly string[];
   files: readonly string[];
+  wheels?: readonly string[];
 }
 
 export function readReleaseTarget(value?: string): ReleaseTarget {
@@ -39,5 +40,6 @@ export function publicationPlan(plan: ReleasePlan): string {
     ...plan.packages.map((name) => `  ${name}@${plan.version}`),
     "GitHub release files:",
     ...plan.files.map((file) => `  ${file}`),
+    ...(plan.wheels === undefined ? [] : ["PyPI wheels:", ...plan.wheels.map((wheel) => `  ${wheel}`)]),
   ].join("\n");
 }

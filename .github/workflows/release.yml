@@ -66,6 +66,8 @@ jobs:
     needs: [select, build]
     if: ${{ !cancelled() && needs.select.result == 'success' && (needs.build.result == 'success' || needs.build.result == 'skipped') }}
     runs-on: ubuntu-24.04
+    env:
+      RELEASE_PYPI: ${{ vars.PUBLISH_PYPI == 'true' && needs.select.outputs.target == 'all' }}
     permissions:
       contents: write
       actions: read
@@ -88,14 +90,24 @@ jobs:
           path: artifacts/release-input
           digest-mismatch: error
       - run: npm run release:collect -- artifacts/release-input artifacts/release
+      - name: Prepare validated PyPI wheels
+        if: env.RELEASE_PYPI == 'true'
+        run: npm run release:pypi
       - name: Review publication plan and wait before uploads
         run: npm run release:checkpoint -- --target ${{ needs.select.outputs.target }} --tag ${{ needs.select.outputs.channel }}
-      - name: Publish six platform packages before the main package
+      - name: Publish native packages, then the scoped package and alias
         if: needs.select.outputs.target == 'npm' || needs.select.outputs.target == 'all'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           CHANNEL: ${{ needs.select.outputs.channel }}
         run: npm run publish:release -- --tag "$CHANNEL"
+      - name: Transfer wheels for trusted publishing
+        if: env.RELEASE_PYPI == 'true'
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: pypi-${{ needs.select.outputs.sha }}
+          path: artifacts/pypi/*.whl
+          if-no-files-found: error
       - name: Publish GitHub release
         if: needs.select.outputs.target == 'github' || needs.select.outputs.target == 'all'
         uses: softprops/action-gh-release@v3
@@ -107,3 +119,24 @@ jobs:
           files: |
             artifacts/release/*.tar.gz
             artifacts/release/SHA256SUMS
+
+  pypi:
+    needs: [select, publish]
+    if: vars.PUBLISH_PYPI == 'true' && needs.select.outputs.target == 'all'
+    runs-on: ubuntu-24.04
+    environment:
+      name: pypi
+      url: https://pypi.org/p/open-forge
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v8.0.1
+        with:
+          name: pypi-${{ needs.select.outputs.sha }}
+          path: artifacts/pypi
+          digest-mismatch: error
+      - name: Publish wheels with PyPI trusted publishing
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: artifacts/pypi/

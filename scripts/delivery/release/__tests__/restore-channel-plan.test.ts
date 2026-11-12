@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { restoreArguments, restoreChannelPlan, restoreChannels, restoreCommands } from "../restore-channel-plan.ts";
 import { distTagArguments, DistTagCommand } from "../../npm/dist-tag.ts";
-import { MainPackageName, PlatformPackages } from "../../package-model.ts";
+import { AliasPackageName, MainPackageName, PlatformPackages } from "../../package-model.ts";
 import { AllTargets } from "../../targets.ts";
 import { ReleaseChannel } from "../release-selection.ts";
 
@@ -11,7 +11,7 @@ const PreviousBeta = "0.9.0-beta.10";
 const BadStable = "1.0.1";
 const PreviousStable = "1.0.0";
 const Channels = { beta: "beta", preview: "preview" } as const;
-const Names = [...AllTargets.map((rid) => PlatformPackages[rid].packageName), MainPackageName];
+const Names = [...AllTargets.map((rid) => PlatformPackages[rid].packageName), MainPackageName, AliasPackageName];
 
 for (const [version, previous, channels, expected] of [
   [BadBeta, PreviousBeta, undefined, [ReleaseChannel.latest, Channels.beta]],

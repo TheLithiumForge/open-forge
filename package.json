@@ -25,6 +25,7 @@
     "publish:wrapper": "node scripts/delivery/cli.ts publish:wrapper",
     "release:select": "node scripts/delivery/cli.ts release:select",
     "release:collect": "node scripts/delivery/cli.ts release:collect",
+    "release:pypi": "node scripts/delivery/cli.ts release:pypi",
     "release:checkpoint": "node scripts/delivery/cli.ts release:checkpoint",
     "release:restore-channels": "node scripts/delivery/cli.ts release:restore-channels",
     "publish:release": "node scripts/delivery/cli.ts publish:release",
@@ -51,7 +52,7 @@
     "check:dotnet:style": "dotnet format OpenForge.Cli.slnx --no-restore --verify-no-changes --severity warn",
     "check:docs": "dotnet run --project src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-restore -p:OpenForgeSkipDevelopmentPublish=true -- --filter-class OpenForge.Cli.IntegrationTests.Framework.Documents.RepositoryDocumentation.RepositoryMarkdownTests --minimum-expected-tests 1 --fail-warns on --fail-skips on --no-ansi --progress off",
     "typecheck:delivery": "tsc --project tsconfig.json",
-    "test:delivery": "node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=./scripts/delivery/github-test-reporter.ts --test-reporter-destination=stdout scripts/delivery/__tests__/*.test.ts scripts/delivery/release/__tests__/*.test.ts scripts/delivery/npm/__tests__/publication.integration.test.ts scripts/delivery/npm/__tests__/publish-uploads.test.ts scripts/delivery/ci/__tests__/*.test.ts",
+    "test:delivery": "node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=./scripts/delivery/github-test-reporter.ts --test-reporter-destination=stdout scripts/delivery/__tests__/*.test.ts scripts/delivery/release/__tests__/*.test.ts scripts/delivery/npm/__tests__/publication.integration.test.ts scripts/delivery/npm/__tests__/publish-uploads.test.ts scripts/delivery/npm/__tests__/alias.test.ts scripts/delivery/pypi/__tests__/*.test.ts scripts/delivery/ci/__tests__/*.test.ts",
     "test:agent-tooling": "node --test scripts/agent-tooling/agent-projections/*.test.ts scripts/agent-tooling/review/*.test.ts",
     "build:launcher": "tsc --project scripts/delivery/npm/tsconfig.build.json",
     "forge": "node scripts/delivery/cli.ts",
@@ -64,6 +65,7 @@
     "ci:watch": "node scripts/delivery/cli.ts ci:watch",
     "ci:timings": "node scripts/delivery/cli.ts ci:timings",
     "smoke:public": "node scripts/delivery/cli.ts smoke:public",
+    "smoke:aliases": "node scripts/delivery/cli.ts smoke:aliases",
     "gate:wsl": "node scripts/delivery/cli.ts gate:wsl"
   },
   "engines": {

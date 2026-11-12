@@ -21,6 +21,7 @@ To use Open Forge, you need:
 
 - An agent tool that reads `AGENTS.md` or `CLAUDE.md`.
 - Node.js 22.18 or later, if you install the CLI from npm. The native release and the manual copy need no Node.js.
+- Python 3.9 or later with pipx or uv, if you install the CLI from PyPI.
 
 ## Install
 
@@ -31,6 +32,27 @@ npm install -g @thelithiumforge/open-forge@beta
 ```
 
 The CLI is optional. Everything it does, you can do by editing files. The other install methods are below.
+
+### Alias And Python
+
+The next release adds the unscoped npm alias and PyPI wheels. Until those packages are published, use the scoped npm command above.
+
+To use the npm alias after that release, run:
+
+```sh
+npm install -g open-forge@beta
+```
+
+The alias uses `@thelithiumforge/open-forge` at the same version. Install one or the other globally because both provide `open-forge`.
+
+To install the beta from PyPI with pipx, run:
+
+```sh
+pipx install --pip-args=--pre open-forge
+open-forge --version
+```
+
+To run it with uv, use `uvx --prerelease allow open-forge --version`. Each wheel contains the same native executable as npm. Python starts that executable. It doesn't build or download one during installation. Linux wheels require glibc 2.39 or later, and macOS wheels require macOS 15 or later. Windows wheels cover x64 and ARM64.
 
 ### From a GitHub release
 

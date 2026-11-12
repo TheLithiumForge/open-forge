@@ -13,6 +13,7 @@ export interface PackageContents {
   readonly name: string;
   readonly version: string;
   readonly optionalDependencies: Readonly<Record<string, string>>;
+  readonly manifest: Readonly<Record<string, unknown>>;
   readonly files: readonly { readonly path: string; readonly sha256: string; readonly bytes: number }[];
 }
 
@@ -47,6 +48,7 @@ export function inspectPackageContents(rootDirectory: string, tarballPath: strin
   return {
     name: manifest.name,
     version: manifest.version,
+    manifest: Object.fromEntries(Object.entries(manifest)),
     optionalDependencies,
     files: content.map((file) => ({ path: file.path, sha256: createHash("sha256").update(file.bytes).digest("hex"), bytes: file.bytes.length })),
   };

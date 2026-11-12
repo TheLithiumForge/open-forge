@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { valid } from "semver";
-import { MainPackageName, PlatformPackages } from "../package-model.ts";
+import { AliasPackageName, MainPackageName, PlatformPackages } from "../package-model.ts";
 import { AllTargets } from "../targets.ts";
 import { releaseChannel, ReleaseChannel } from "./release-selection.ts";
 import { distTagArguments } from "../npm/dist-tag.ts";
@@ -21,7 +21,7 @@ export function restoreChannels(version: string, channels?: string): string[] {
 export function restoreChannelPlan(version: string, previous: string, channels?: string): ChannelRestore[] {
   assert.ok(valid(previous), "--to must be an exact SemVer.");
   const tags = restoreChannels(version, channels);
-  const names = [...AllTargets.map((rid) => PlatformPackages[rid].packageName), MainPackageName];
+  const names = [...AllTargets.map((rid) => PlatformPackages[rid].packageName), MainPackageName, AliasPackageName];
   return names.flatMap((name) => tags.map((channel) => ({ name, version: previous, channel })));
 }
 

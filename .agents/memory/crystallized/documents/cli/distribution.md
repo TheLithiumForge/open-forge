@@ -7,6 +7,10 @@ open-forge:
 
 # CLI Distribution
 
+CLI distribution is the package system that delivers the same native Open Forge executable through npm, PyPI and portable archives.
+
+For example, an npm alias installation and a Python wheel installation run the executable from the same selected release artifacts.
+
 ## Status And Authority
 
 This document defines the accepted public package graph, platform horizon,
@@ -23,12 +27,13 @@ implementation state and evidence receipts.
 
 ## Accepted Package Graph
 
-The default public graph contains exactly one main package and six
-platform packages:
+The default npm graph contains one main package, six platform packages and one
+unscoped alias:
 
 | Package                                    | Native payload                 | npm platform metadata                        |
 | ------------------------------------------ | ------------------------------ | -------------------------------------------- |
 | `@thelithiumforge/open-forge`              | Thin launcher only             | Platform-independent main package            |
+| `open-forge`                             | Delegates to the main launcher | Exact dependency on the main package         |
 | `@thelithiumforge/open-forge-linux-x64`    | `linux-x64` glibc executable   | `os: [linux]`, `cpu: [x64]`, `libc: glibc`   |
 | `@thelithiumforge/open-forge-darwin-x64`   | `osx-x64` executable           | `os: [darwin]`, `cpu: [x64]`                 |
 | `@thelithiumforge/open-forge-win-x64`      | `win-x64` executable           | `os: [win32]`, `cpu: [x64]`                  |
@@ -38,14 +43,53 @@ platform packages:
 
 The main package uses exact synchronized optional dependencies on the platforms
 selected for that version, with all six as the default. They are not peer dependencies. Every staged public manifest
-uses the same release or development version. The main package alone owns the
-`open-forge` executable mapping. Each platform package contains only its
+uses the same release or development version. The main package and alias expose the
+`open-forge` executable mapping. Install one of them globally because their bin names overlap. Each platform package contains only its
 manifest, license, and native executable.
 
 The maintainer accepted ARM64 alongside x64 on Linux, macOS, and Windows on
 2026-09-09. Qualification of that graph is recorded below. Additional operating
 systems, architectures, RIDs, libc variants,
 channels, or support-floor claims require a new maintainer decision.
+
+## Alias And PyPI
+
+Status: decided on 2026-11-12 by the maintainer through [issue #24](https://github.com/TheLithiumForge/open-forge/issues/24).
+
+Staging generates the npm alias from the same selected version as the main
+package. Its dependency pins that exact main-package version. Its bin imports
+the main launcher and contains no launcher logic or native payload. The release
+coordinator publishes it immediately after the main package. It is never bumped
+or published separately.
+
+PyPI `open-forge` contains one platform wheel for each selected native target.
+Each wheel includes the staged executable, license and a small Python console
+entry point. It runs the packaged executable with the caller's arguments,
+environment and streams. It requires Python 3.9 or later and performs no source
+build or install-time download. `pipx install --pip-args=--pre open-forge` installs
+the beta. `uvx --prerelease allow open-forge --version` runs it without a global
+installation.
+
+The root npm version also gives the wheel version. Stable versions stay the
+same. Alpha, beta and release candidates map to PEP 440 `a`, `b` and `rc`, so
+`0.9.0-beta.18` becomes `0.9.0b18`. SHA-qualified development wheels use a local
+version and cannot be uploaded to PyPI. Unsupported prerelease shapes fail
+before packing instead of mapping two versions to one.
+
+The Linux tags use glibc 2.39, matching the current Ubuntu 24.04 build hosts.
+The macOS tags use macOS 15, matching the current build hosts. These tags make
+no lower support-floor promise. Windows wheels select AMD64 or ARM64. Every
+wheel uses the generic Python 3 tag and no Python ABI dependency.
+
+Wheel ZIP entries have fixed timestamps, order and permissions. TypeScript
+writes the metadata and SHA-256 `RECORD` from those entries. Collection checks
+the wheel against the same native bytes used by npm before any upload.
+
+The Release workflow can publish PyPI wheels through trusted publishing after
+npm publication. Its repository switch defaults off until the maintainer
+configures the trusted publisher. The [delivery guide](../../../../../scripts/delivery/README.md#pypi-setup)
+gives the one-time setup and local smoke commands. Enabling the switch adds
+PyPI to the `all` destination in that release run.
 
 ## Release State
 
@@ -73,7 +117,7 @@ The root package.json owns the product version. Native npm version handling
 calculates the next version or accepts an explicit version without creating a
 commit or tag. A small npm lifecycle hook projects that exact value to
 one .NET version property for direct .NET/IDE builds. Informational version derives
-from that property. The seven npm manifests and exact optional dependencies
+from that property. The eight npm manifests, exact dependencies and wheel metadata
 are generated during staging from the selected version and platform table;
 there are no tracked npm manifest copies to synchronize. The version:bump
 script delegates directly to npm version --no-git-tag-version. Future shims
@@ -163,13 +207,13 @@ verify runs once in a shared-check job. Each host builds, tests and packages
 before uploading its finished package set. Release collection consumes those
 packages directly, and npm publication shares archive validation and upload
 code with the individual local publishers. The release publisher validates every
-native package and wrapper in the recorded selection before uploading any and places the wrapper last. Its input
+native package, wrapper and alias in the recorded selection before uploading any and places the wrapper immediately before the alias. Its input
 is collected packages, independent of the publication host and native build
 directories. Intermediate-only historical builds do not supply the new inputs.
 
 GitHub receives one release with the complete portable target set and checksums.
 npm publishes every platform package at the synchronized version before the
-main package. No command subset, platform subset presented as complete,
+main package, then the alias. No command subset, platform subset presented as complete,
 partial graph presented as a successful release, or warning-bearing artifact is
 accepted. Publication across packages and services is not a transaction: a
 failure or cancellation can leave earlier uploads present. A publication
@@ -177,7 +221,7 @@ checkpoint prints the complete plan and waits 60 seconds before either
 destination. Cancelling during that wait uploads nothing. During npm
 publication, SIGINT or SIGTERM stops further uploads and tag changes after the
 current effect settles and reports partial results with a non-zero exit.
-Channel restoration previews commands for all seven packages and applies them
+Channel restoration previews commands for all eight packages and applies them
 only with `--apply`, after checking every previous version. Before any npm upload, the shared
 publisher queries every selected exact version. An existing version emits a
 warning and is skipped without retagging when its identity matches. Existing

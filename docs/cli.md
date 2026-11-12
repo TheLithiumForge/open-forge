@@ -23,6 +23,13 @@ For repository setup, build prerequisites, and a worktree-local executable,
 see [Development and setup](development.md). For package structure and manual
 Extension use, see [Extensions](extensions.md).
 
+Install the CLI with `npm install -g @thelithiumforge/open-forge@beta`.
+The next release adds the same-version npm alias `open-forge@beta` and PyPI
+wheels for `pipx install --pip-args=--pre open-forge` or
+`uvx --prerelease allow open-forge --version`. Install one npm name globally
+because both provide the same command. The [installation guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation)
+gives the platform requirements and other install methods.
+
 The primary content locations are the selected context folder and native Skills at `.agents/skills`. Examples with `.agents` as the context folder use the default layout. For a custom folder, use the actual workspace path with `./`, or keep using short source IDs. See [Context folder](#context-folder).
 
 ## Command index

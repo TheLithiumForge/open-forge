@@ -1,12 +1,21 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 
-export function registryVersionExists(root: string, name: string, version: string, optionalDependencies?: Record<string, string>): boolean {
+export function registryVersionExists(root: string, name: string, version: string, optionalDependencies?: Record<string, string>, dependencies?: Record<string, string>): boolean {
   const cli = process.env["npm_execpath"];
   assert.ok(cli, "Run this command through npm run.");
   const result = spawnSync(
     process.execPath,
-    [cli, "view", `${name}@${version}`, "version", ...(optionalDependencies === undefined ? [] : ["optionalDependencies"]), "--json", "--prefer-online"],
+    [
+      cli,
+      "view",
+      `${name}@${version}`,
+      "version",
+      ...(optionalDependencies === undefined ? [] : ["optionalDependencies"]),
+      ...(dependencies === undefined ? [] : ["dependencies"]),
+      "--json",
+      "--prefer-online",
+    ],
     {
       cwd: root,
       shell: false,
@@ -15,10 +24,17 @@ export function registryVersionExists(root: string, name: string, version: strin
   );
   if (result.error) throw result.error;
   assert.equal(result.signal, null, `Registry check interrupted for ${name}@${version}.`);
-  return readRegistryVersion(result.status, result.stdout, name, version, optionalDependencies);
+  return readRegistryVersion(result.status, result.stdout, name, version, optionalDependencies, dependencies);
 }
 
-export function readRegistryVersion(status: number | null, output: string, name: string, version: string, optionalDependencies?: Record<string, string>): boolean {
+export function readRegistryVersion(
+  status: number | null,
+  output: string,
+  name: string,
+  version: string,
+  optionalDependencies?: Record<string, string>,
+  dependencies?: Record<string, string>,
+): boolean {
   let value: unknown;
   try {
     value = JSON.parse(output);
@@ -26,10 +42,16 @@ export function readRegistryVersion(status: number | null, output: string, name:
     throw new Error(`Registry check for ${name}@${version} returned invalid JSON (exit ${status}). No upload attempted.`);
   }
   if (status === 0) {
-    if (optionalDependencies === undefined && value === version) return true;
-    if (optionalDependencies !== undefined && typeof value === "object" && value !== null && "version" in value && value.version === version) {
-      assert.ok("optionalDependencies" in value, "Published wrapper is missing its target dependencies.");
-      assert.deepEqual(value.optionalDependencies, optionalDependencies, "Published wrapper targets differ. Use a new version; an existing npm version cannot be changed.");
+    if (optionalDependencies === undefined && dependencies === undefined && value === version) return true;
+    if ((optionalDependencies !== undefined || dependencies !== undefined) && typeof value === "object" && value !== null && "version" in value && value.version === version) {
+      if (optionalDependencies !== undefined) {
+        assert.ok("optionalDependencies" in value, "Published wrapper is missing its target dependencies.");
+        assert.deepEqual(value.optionalDependencies, optionalDependencies, "Published wrapper targets differ. Use a new version; an existing npm version cannot be changed.");
+      }
+      if (dependencies !== undefined) {
+        assert.ok("dependencies" in value, "Published alias is missing its dependency.");
+        assert.deepEqual(value.dependencies, dependencies, "Published alias dependency differs. Use a new version.");
+      }
       return true;
     }
   }

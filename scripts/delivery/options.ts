@@ -26,6 +26,8 @@ const flags = {
   limit: { type: "string", description: "Number of recent completed Build runs to compare, 1 to 50, default 10." },
   commit: { type: "string", description: "Full Git commit SHA to qualify inside WSL." },
   version: { type: "string", description: "Exact published version to check or recover from." },
+  aliases: { type: "boolean", description: "Also check the published npm alias and PyPI wheel. Use only after both exist." },
+  pypi: { type: "boolean", description: "Include PyPI wheels in the publication checkpoint." },
   help: { type: "boolean", short: "h", description: "Show this command's options." },
 } as const;
 

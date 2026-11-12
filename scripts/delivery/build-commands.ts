@@ -74,7 +74,7 @@ export const buildCommands = {
     options: ["rid", "targets", "skip-tests"],
     details: [
       "Requires current build:native artifacts; normally also requires passing test:built reports. Does not rebuild or run .NET tests.",
-      "Creates a portable archive, native npm tarball, wrapper npm tarball and checksums in artifacts/delivery/<RID>/packages. Licenses are included.",
+      "Creates a portable archive, native npm tarball, wrapper, alias, Python wheel and checksums in artifacts/delivery/<RID>/packages. Licenses are included.",
       "--skip-tests bypasses qualification and the npm installation check. Untested native packages cannot be published or collected for release.",
       "--targets changes the wrapper's dependencies, not the native build target; the list must include this host.",
     ],
