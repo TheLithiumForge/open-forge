@@ -52,7 +52,7 @@ pipx install --pip-args=--pre open-forge
 open-forge --version
 ```
 
-To run it with uv, use `uvx --prerelease allow open-forge --version`. The prefixed name works too, for example `pipx install --pip-args=--pre thelithiumforge-open-forge` or `uvx --prerelease allow thelithiumforge-open-forge --version`.
+To run it with uv, use `uvx --prerelease allow open-forge --version`. The prefixed name works too, for example `pipx install --pip-args=--pre thelithiumforge-open-forge` or `uvx --prerelease allow --from thelithiumforge-open-forge open-forge --version`. `--from` selects the package while `open-forge` selects the command.
 
 PyPI mirrors npm's three package kinds. The `open-forge` alias depends on `thelithiumforge-open-forge` at the exact same version. That pure Python entry package provides the launcher and selects one `thelithiumforge-open-forge-<target>` wheel through environment markers. Only the platform wheel contains the native executable. Both entry names provide the same command, so install one or the other. Stable releases work with `pipx install open-forge` and `uvx open-forge`.
 

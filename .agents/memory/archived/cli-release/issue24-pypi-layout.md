@@ -40,6 +40,8 @@ Docusaurus typecheck and build passed. Its build reported the existing nonfatal 
 
 The seven package-layout checks and thirteen Markdown checks passed with zero skips. Delivery TypeScript, lint and formatting passed. The final collection tests check typed validation failures without matching diagnostic text. The fresh full delivery run after that assertion change again passed 180 tests with one declared Windows exclusion. No new runtime flake was seen in this revision.
 
+Review R1 corrected the README and site examples for the prefixed package. Its command is `open-forge`, so uvx needs `--from thelithiumforge-open-forge open-forge`. The [uv tools guide](https://docs.astral.sh/uv/guides/tools/#commands-with-different-package-names) defines that syntax. The correction changes documentation only. The local implementation commit includes it, and its Markdown and site build gates were repeated afterward.
+
 The runtime and tools are Windows x64, managed .NET Release, Node 26.12.1, npm 11.20.0, .NET SDK 10.0.101 and Python 3.13.14. The working root is `D:/Repositories/open-forge-worktrees/package-aliases`. The executable inputs for the managed gate have these SHA-256 identities:
 
 | Artifact | SHA-256 |
