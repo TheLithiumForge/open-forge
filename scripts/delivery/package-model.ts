@@ -1,7 +1,7 @@
 export const MainPackageName = "@thelithiumforge/open-forge";
 export const AliasPackageName = "open-forge";
 export const AliasDirectory = "open-forge-alias";
-export const HostArtifactCount = 5;
+export const HostArtifactCount = 7;
 
 export const PlatformPackages = {
   "osx-x64": {

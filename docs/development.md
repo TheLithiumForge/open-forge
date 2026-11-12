@@ -402,8 +402,13 @@ The default collection checks all six targets and replaces its generated release
 Older build runs containing only intermediate test artifacts cannot be reused.
 Release does not compile, repack or change the product version.
 
-Each host also packs the same-version npm alias and a platform Python wheel.
-The release publishes native npm packages, then the scoped package and alias.
+Each host also packs the same-version npm alias and three Python wheels.
+Both registries use platform packages, an entry package and an alias. PyPI names
+are generated from npm names by removing `@` and replacing `/` with `-`.
+The pure entry wheel selects one exact-version native package through environment
+markers. The pure alias pins the entry package and shares its launcher.
+Collection keeps one copy of each universal wheel and rejects different host copies.
+Each registry publishes platform packages, then the entry package and alias.
 PyPI publishing defaults off until the maintainer completes the
 [trusted publisher setup](../scripts/delivery/README.md#pypi-setup).
 Run `npm run smoke:aliases` on the matching host for an offline alias and wheel

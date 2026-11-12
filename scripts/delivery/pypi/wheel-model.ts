@@ -1,8 +1,7 @@
 import type { SupportedRuntime } from "../package-model.ts";
+import { pythonModule } from "./package-model.ts";
 
 export const PythonPackage = {
-  name: "open-forge",
-  module: "open_forge",
   suffix: ".whl",
   tag: "py3-none",
   minimum: ">=3.9",
@@ -13,6 +12,7 @@ export const PythonPackage = {
   init: "__init__.py",
   license: "licenses/LICENSE",
   licenseFile: "LICENSE",
+  universal: "any",
 } as const;
 
 // Match the existing ubuntu-24.04 and macos-15 native build hosts.
@@ -25,14 +25,14 @@ export const WheelPlatforms = {
   "linux-arm64": "manylinux_2_39_aarch64",
 } as const satisfies Record<SupportedRuntime, string>;
 
-export function wheelTag(runtime: SupportedRuntime): string {
-  return `${PythonPackage.tag}-${WheelPlatforms[runtime]}`;
+export function wheelTag(runtime?: SupportedRuntime): string {
+  return `${PythonPackage.tag}-${runtime === undefined ? PythonPackage.universal : WheelPlatforms[runtime]}`;
 }
 
-export function wheelName(version: string, runtime: SupportedRuntime): string {
-  return `${PythonPackage.module}-${version}-${wheelTag(runtime)}${PythonPackage.suffix}`;
+export function wheelName(version: string, name: string, runtime?: SupportedRuntime): string {
+  return `${pythonModule(name)}-${version}-${wheelTag(runtime)}${PythonPackage.suffix}`;
 }
 
-export function wheelInfo(version: string): string {
-  return `${PythonPackage.module}-${version}.dist-info`;
+export function wheelInfo(version: string, name: string): string {
+  return `${pythonModule(name)}-${version}.dist-info`;
 }

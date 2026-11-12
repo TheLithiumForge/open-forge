@@ -1,0 +1,22 @@
+[
+  {
+    "npm": "1.2.3",
+    "python": "1.2.3",
+    "candidate": "1.2.3.dev0+sha.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+    "npm": "1.2.3-alpha.1",
+    "python": "1.2.3a1",
+    "candidate": "1.2.3a1.dev0+sha.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+    "npm": "0.9.0-beta.18",
+    "python": "0.9.0b18",
+    "candidate": "0.9.0b18.dev0+sha.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+    "npm": "1.2.3-rc.0",
+    "python": "1.2.3rc0",
+    "candidate": "1.2.3rc0.dev0+sha.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+]

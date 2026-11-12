@@ -26,8 +26,11 @@ Extension use, see [Extensions](extensions.md).
 Install the CLI with `npm install -g @thelithiumforge/open-forge@beta`.
 The next release adds the same-version npm alias `open-forge@beta` and PyPI
 wheels for `pipx install --pip-args=--pre open-forge` or
-`uvx --prerelease allow open-forge --version`. Install one npm name globally
-because both provide the same command. The [installation guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation)
+`uvx --prerelease allow open-forge --version`. Both registries use platform
+packages, an entry package and an alias. PyPI's prefixed entry name is
+`thelithiumforge-open-forge`. Its environment markers select one native package,
+and its alias pins that entry version. Both names work with pipx and uvx.
+Install one entry name because both provide the same command. The [installation guide](https://thelithiumforge.github.io/open-forge/docs/getting-started/installation)
 gives the platform requirements and other install methods.
 
 The primary content locations are the selected context folder and native Skills at `.agents/skills`. Examples with `.agents` as the context folder use the default layout. For a custom folder, use the actual workspace path with `./`, or keep using short source IDs. See [Context folder](#context-folder).

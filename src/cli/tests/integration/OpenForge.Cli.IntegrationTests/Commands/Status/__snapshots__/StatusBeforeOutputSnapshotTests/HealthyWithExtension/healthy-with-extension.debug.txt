@@ -5,7 +5,7 @@ Startup context
   This workspace:        7 files, about 4.1k tokens
   May load again later:  1 file, about 0.3k tokens
 Compared with shipped: about 0.2k more tokens
-All routed files: 59 files, about 45.8k tokens (startup is 9%)
+All routed files: 59 files, about 45.9k tokens (startup is 9%)
 Routes: 7 root categories, 26 Entries sections current
 Framework files: 20 current
 Extensions: development 0.4.0 (4 files current)
@@ -146,4 +146,4 @@ Extension workflows files
   .agents/templates/workflows/_workflows.md              current
   .agents/templates/workflows/workflow.md                current
 Recovery data: none
-59 routed files, 7 startup files, 4148 startup tokens, 1 may-load-again files, 315 may-load-again tokens, 45767 all routed tokens, 9.063397900210852916434509958 startup share, 7 root categories, 26 current Entries sections, 20 current Framework files, 6 installed Extensions.
+59 routed files, 7 startup files, 4148 startup tokens, 1 may-load-again files, 315 may-load-again tokens, 45871 all routed tokens, 9.042701038232008066054445868 startup share, 7 root categories, 26 current Entries sections, 20 current Framework files, 6 installed Extensions.

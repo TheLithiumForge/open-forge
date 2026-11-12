@@ -15,9 +15,7 @@ import { packNpmPackages } from "./npm/pack-packages.ts";
 import { testInstalledNative } from "./npm/__tests__/installed-native.ts";
 import { runStage } from "./stage.ts";
 import { recordWrapper } from "./npm/wrapper-artifact.ts";
-import { createWheel } from "./pypi/wheel.ts";
-import { pythonVersion } from "./pypi/version.ts";
-import { wheelName } from "./pypi/wheel-model.ts";
+import { hostWheels } from "./pypi/wheel.ts";
 import { smokeAliases } from "./aliases/smoke.ts";
 
 export function pack(root: string, rid: SupportedRuntime, skipTests = false, targets: readonly SupportedRuntime[] = AllTargets): void {
@@ -49,8 +47,8 @@ export function pack(root: string, rid: SupportedRuntime, skipTests = false, tar
       compiledLauncher: join(directory, "build/launcher"),
     }),
   );
-  const wheel = wheelName(pythonVersion(manifest.version), rid);
-  writeFileSync(join(output, wheel), createWheel(manifest.version, rid, readFileSync(packages.stagedNative), readFileSync(join(root, "LICENSE"))));
+  const wheels = hostWheels(manifest.version, rid, readFileSync(packages.stagedNative), readFileSync(join(root, "LICENSE")), targets);
+  for (const [name, bytes] of wheels) writeFileSync(join(output, name), bytes);
   if (!skipTests)
     runStage("Test installed npm package", () =>
       testInstalledNative({
@@ -62,7 +60,7 @@ export function pack(root: string, rid: SupportedRuntime, skipTests = false, tar
       }),
     );
   if (!skipTests) runStage("Test installed alias", () => smokeAliases(output, rid, manifest.version, false));
-  const paths = [archive, basename(packages.mainTarball), basename(packages.platformTarball), basename(packages.aliasTarball), wheel];
+  const paths = [archive, basename(packages.mainTarball), basename(packages.platformTarball), basename(packages.aliasTarball), ...wheels.keys()];
   const files = paths.map((path) => ({ path, sha256: hashArtifact(output, path) }));
   writeFileSync(join(output, "SHA256SUMS"), files.map((file) => `${file.sha256}  ${basename(file.path)}\n`).join(""));
   readBuilt(root, rid, !skipTests);

@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import { inflateRawSync } from "node:zlib";
-import type { SupportedRuntime } from "../../package-model.ts";
 
 export const WheelFixture = {
   version: "0.9.0-beta.18",
@@ -8,16 +7,6 @@ export const WheelFixture = {
   native: Buffer.from("owned inert executable fixture"),
   license: Buffer.from("owned license fixture\n"),
 } as const;
-
-// Independent external-format oracle for the six published wheel platforms.
-export const ExpectedTags = {
-  "win-x64": "py3-none-win_amd64",
-  "win-arm64": "py3-none-win_arm64",
-  "osx-x64": "py3-none-macosx_15_0_x86_64",
-  "osx-arm64": "py3-none-macosx_15_0_arm64",
-  "linux-x64": "py3-none-manylinux_2_39_x86_64",
-  "linux-arm64": "py3-none-manylinux_2_39_aarch64",
-} as const satisfies Record<SupportedRuntime, string>;
 
 // Read ZIP's central directory independently of the writer to check its offsets and payloads.
 export function readWheel(bytes: Buffer): { path: string; bytes: Buffer; mode: number; checksum: number }[] {

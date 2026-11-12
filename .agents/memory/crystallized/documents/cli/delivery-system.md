@@ -67,9 +67,13 @@ runs on its platform or is skipped elsewhere with a reason declared in
 
 Each Build job writes `build.log`, `bundle.log`, `test.log` and `pack.log` to `artifacts/delivery/logs/<rid>/`, and uploads packages, the downloadable binary and diagnostics. The [CLI Distribution](distribution.md#publication-boundary) document defines the package graph and the complete-release rules that `publish` enforces.
 
-Each host packs a same-version npm alias and one platform wheel alongside its
-existing packages. The release publishes the native npm packages, then the
-scoped main package and alias. The optional `pypi` job publishes collected wheels
+Each host packs a same-version npm alias and three Python wheels alongside its
+existing packages. Both registries use platform packages, an entry package and
+an alias. PyPI names come from the npm model. Its pure entry wheel selects one
+native package through environment markers, and its pure alias shares that
+entry launcher. Collection keeps one matching copy of each universal wheel.
+The release publishes platform packages, then the main package and alias in
+each registry. The optional `pypi` job publishes collected wheels
 through OIDC after the main publish job succeeds. It runs only for `all` when
 `PUBLISH_PYPI=true`. The switch defaults off. The
 [PyPI setup guide](../../../../../scripts/delivery/README.md#pypi-setup) gives the

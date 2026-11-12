@@ -43,7 +43,7 @@ To use the npm alias after that release, run:
 npm install -g open-forge@beta
 ```
 
-The alias uses `@thelithiumforge/open-forge` at the same version. Install one or the other globally because both provide `open-forge`.
+The alias uses `@thelithiumforge/open-forge` at the same version. That entry package selects one native platform package. Install one entry name or the other globally because both provide `open-forge`.
 
 To install the beta from PyPI with pipx, run:
 
@@ -52,7 +52,11 @@ pipx install --pip-args=--pre open-forge
 open-forge --version
 ```
 
-To run it with uv, use `uvx --prerelease allow open-forge --version`. Each wheel contains the same native executable as npm. Python starts that executable. It doesn't build or download one during installation. Linux wheels require glibc 2.39 or later, and macOS wheels require macOS 15 or later. Windows wheels cover x64 and ARM64.
+To run it with uv, use `uvx --prerelease allow open-forge --version`. The prefixed name works too, for example `pipx install --pip-args=--pre thelithiumforge-open-forge` or `uvx --prerelease allow thelithiumforge-open-forge --version`.
+
+PyPI mirrors npm's three package kinds. The `open-forge` alias depends on `thelithiumforge-open-forge` at the exact same version. That pure Python entry package provides the launcher and selects one `thelithiumforge-open-forge-<target>` wheel through environment markers. Only the platform wheel contains the native executable. Both entry names provide the same command, so install one or the other. Stable releases work with `pipx install open-forge` and `uvx open-forge`.
+
+Platform wheels contain the same executable as npm. Python starts that executable without building it or fetching a separate binary. Linux wheels require glibc 2.39 or later, and macOS wheels require macOS 15 or later. Windows wheels cover x64 and ARM64.
 
 ### From a GitHub release
 

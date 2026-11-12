@@ -632,7 +632,10 @@ test, collection and npm publication behavior belongs to shared root scripts.
 Root package.json owns one product version. Standard npm version handling and a
 small lifecycle hook project that exact version to one .NET property. Staging
 generates all eight npm manifests and dependencies from the version and platform
-table. Python wheel metadata maps that same version to PEP 440. The informational version derives from the .NET version. Builds stamp the selected version before compilation. Optional SHA builds
+table. Python wheel metadata maps that same version to PEP 440 and mirrors the
+npm platform, entry and alias graph. PyPI package names derive from npm names.
+Environment markers select one platform dependency of the pure entry wheel.
+The pure alias exposes that entry launcher's console script. The informational version derives from the .NET version. Builds stamp the selected version before compilation. Optional SHA builds
 change only the produced artifact version. Tests, packages and releases consume
 that identity rather than supplying a second version. A release may reuse a
 successful build only for the selected source commit and version.

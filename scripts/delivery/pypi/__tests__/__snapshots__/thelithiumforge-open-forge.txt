@@ -1,0 +1,116 @@
+{
+  "name": "thelithiumforge_open_forge-0.9.0b18-py3-none-any.whl",
+  "tag": "py3-none-any",
+  "files": [
+    {
+      "path": "thelithiumforge_open_forge/__init__.py",
+      "mode": 33188,
+      "text": [
+        "import os",
+        "import platform",
+        "import subprocess",
+        "import sys",
+        "from importlib.metadata import PackageNotFoundError, distribution",
+        "",
+        "",
+        "_TARGETS = [",
+        "    (\"darwin\", [\"x86_64\"], \"thelithiumforge-open-forge-darwin-x64\", \"thelithiumforge_open_forge_darwin_x64/bin/open-forge\"),",
+        "    (\"linux\", [\"x86_64\"], \"thelithiumforge-open-forge-linux-x64\", \"thelithiumforge_open_forge_linux_x64/bin/open-forge\"),",
+        "    (\"win32\", [\"AMD64\",\"amd64\",\"x86_64\"], \"thelithiumforge-open-forge-win-x64\", \"thelithiumforge_open_forge_win_x64/bin/open-forge.exe\"),",
+        "    (\"darwin\", [\"arm64\"], \"thelithiumforge-open-forge-darwin-arm64\", \"thelithiumforge_open_forge_darwin_arm64/bin/open-forge\"),",
+        "    (\"linux\", [\"aarch64\",\"arm64\"], \"thelithiumforge-open-forge-linux-arm64\", \"thelithiumforge_open_forge_linux_arm64/bin/open-forge\"),",
+        "    (\"win32\", [\"ARM64\",\"arm64\"], \"thelithiumforge-open-forge-win-arm64\", \"thelithiumforge_open_forge_win_arm64/bin/open-forge.exe\"),",
+        "]",
+        "",
+        "",
+        "def _fail(message):",
+        "    print(message, file=sys.stderr)",
+        "    return 1",
+        "",
+        "",
+        "def main():",
+        "    machine = platform.machine()",
+        "    target = next((item for item in _TARGETS if item[0] == sys.platform and machine in item[1]), None)",
+        "    if target is None:",
+        "        return _fail(f\"Open Forge does not provide a PyPI package for {sys.platform}/{machine}.\")",
+        "    name, path = target[2:]",
+        "    try:",
+        "        executable = str(distribution(name).locate_file(path))",
+        "    except PackageNotFoundError:",
+        "        return _fail(f\"The required platform package {name} is not installed.\")",
+        "    arguments = [executable, *sys.argv[1:]]",
+        "    try:",
+        "        if os.name != \"nt\":",
+        "            os.execv(executable, arguments)",
+        "        return subprocess.call(arguments)",
+        "    except OSError as error:",
+        "        return _fail(f\"Unable to start {name}: {error}\")",
+        "    except KeyboardInterrupt:",
+        "        return 130",
+        ""
+      ]
+    },
+    {
+      "path": "thelithiumforge_open_forge-0.9.0b18.dist-info/METADATA",
+      "mode": 33188,
+      "text": [
+        "Metadata-Version: 2.4",
+        "Name: thelithiumforge-open-forge",
+        "Version: 0.9.0b18",
+        "Summary: Open Forge native CLI",
+        "Requires-Python: >=3.9",
+        "License-Expression: MIT",
+        "License-File: LICENSE",
+        "Requires-Dist: thelithiumforge-open-forge-darwin-x64==0.9.0b18; sys_platform == \"darwin\" and platform_machine == \"x86_64\"",
+        "Requires-Dist: thelithiumforge-open-forge-linux-x64==0.9.0b18; sys_platform == \"linux\" and platform_machine == \"x86_64\"",
+        "Requires-Dist: thelithiumforge-open-forge-win-x64==0.9.0b18; sys_platform == \"win32\" and (platform_machine == \"AMD64\" or platform_machine == \"amd64\" or platform_machine == \"x86_64\")",
+        "Requires-Dist: thelithiumforge-open-forge-darwin-arm64==0.9.0b18; sys_platform == \"darwin\" and platform_machine == \"arm64\"",
+        "Requires-Dist: thelithiumforge-open-forge-linux-arm64==0.9.0b18; sys_platform == \"linux\" and (platform_machine == \"aarch64\" or platform_machine == \"arm64\")",
+        "Requires-Dist: thelithiumforge-open-forge-win-arm64==0.9.0b18; sys_platform == \"win32\" and (platform_machine == \"ARM64\" or platform_machine == \"arm64\")",
+        "",
+        ""
+      ]
+    },
+    {
+      "path": "thelithiumforge_open_forge-0.9.0b18.dist-info/WHEEL",
+      "mode": 33188,
+      "text": [
+        "Wheel-Version: 1.0",
+        "Generator: open-forge",
+        "Root-Is-Purelib: true",
+        "Tag: py3-none-any",
+        ""
+      ]
+    },
+    {
+      "path": "thelithiumforge_open_forge-0.9.0b18.dist-info/entry_points.txt",
+      "mode": 33188,
+      "text": [
+        "[console_scripts]",
+        "open-forge = thelithiumforge_open_forge:main",
+        ""
+      ]
+    },
+    {
+      "path": "thelithiumforge_open_forge-0.9.0b18.dist-info/licenses/LICENSE",
+      "mode": 33188,
+      "text": [
+        "owned license fixture",
+        ""
+      ]
+    },
+    {
+      "path": "thelithiumforge_open_forge-0.9.0b18.dist-info/RECORD",
+      "mode": 33188,
+      "text": [
+        "thelithiumforge_open_forge/__init__.py,sha256=7jb4GJHrmIpuAsaPb84X0AD1u-pFmTlgR-GoJ29GJ9s,1776",
+        "thelithiumforge_open_forge-0.9.0b18.dist-info/METADATA,sha256=ocAM7IYrr-BbsMUTibVb7Bkf5ZOPkHyIOEUepub7Uss,1029",
+        "thelithiumforge_open_forge-0.9.0b18.dist-info/WHEEL,sha256=txCIgOsv9MSs8ryDOeneNBkgJz7QL3lq5-AgXaiiWbw,81",
+        "thelithiumforge_open_forge-0.9.0b18.dist-info/entry_points.txt,sha256=AsUkWRKV-tCVNJ1eVkB0Q2SK4XxhUxcJgLlTrKbWqlg,63",
+        "thelithiumforge_open_forge-0.9.0b18.dist-info/licenses/LICENSE,sha256=poNJDloyB6H1Jsakd9AomotlxPLbEO9xo74TTqK41Ow,22",
+        "thelithiumforge_open_forge-0.9.0b18.dist-info/RECORD,,",
+        ""
+      ]
+    }
+  ]
+}

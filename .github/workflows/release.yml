@@ -106,7 +106,7 @@ jobs:
         uses: actions/upload-artifact@v7.0.1
         with:
           name: pypi-${{ needs.select.outputs.sha }}
-          path: artifacts/pypi/*.whl
+          path: artifacts/pypi/
           if-no-files-found: error
       - name: Publish GitHub release
         if: needs.select.outputs.target == 'github' || needs.select.outputs.target == 'all'
@@ -136,7 +136,15 @@ jobs:
           name: pypi-${{ needs.select.outputs.sha }}
           path: artifacts/pypi
           digest-mismatch: error
-      - name: Publish wheels with PyPI trusted publishing
+      - name: Publish PyPI platform packages
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: artifacts/pypi/
+          packages-dir: artifacts/pypi/platform/
+      - name: Publish PyPI entry package
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: artifacts/pypi/entry/
+      - name: Publish PyPI alias
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: artifacts/pypi/alias/

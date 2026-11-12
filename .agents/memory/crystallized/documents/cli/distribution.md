@@ -62,13 +62,33 @@ the main launcher and contains no launcher logic or native payload. The release
 coordinator publishes it immediately after the main package. It is never bumped
 or published separately.
 
-PyPI `open-forge` contains one platform wheel for each selected native target.
-Each wheel includes the staged executable, license and a small Python console
-entry point. It runs the packaged executable with the caller's arguments,
-environment and streams. It requires Python 3.9 or later and performs no source
-build or install-time download. `pipx install --pip-args=--pre open-forge` installs
-the beta. `uvx --prerelease allow open-forge --version` runs it without a global
-installation.
+The maintainer replaced the PyPI layout on the same date. PyPI mirrors the
+three npm package kinds. Names are generated from the npm package model by
+removing `@` and replacing `/` with `-`:
+
+| Kind | PyPI package | Contents |
+| --- | --- | --- |
+| Platform | `thelithiumforge-open-forge-<target>` | One platform-tagged wheel with that target's staged executable and required wheel metadata |
+| Entry | `thelithiumforge-open-forge` | One pure `py3-none-any` wheel with the launcher and `open-forge` console script |
+| Alias | `open-forge` | One pure `py3-none-any` wheel with an exact entry-package dependency and the same console script pointing to the entry launcher |
+
+Platform names and their order follow the npm model, including npm's `darwin`
+spelling for macOS. Platform wheels have no console script. The entry package
+depends on every selected platform package at the exact version through
+`sys_platform` and `platform_machine` environment markers. Pip installs only
+the matching platform package. The launcher finds its installed executable and
+runs it with the caller's arguments, environment and streams. Unsupported hosts,
+missing packages and launch failures follow the npm launcher's error behavior.
+The alias contains no launcher logic or binary.
+
+All three kinds use the same selected version and release run. Publication
+orders platform packages, the entry package and the alias. Python 3.9 or later
+is required. Installation performs no source build or executable download
+outside the selected package dependency. Install one entry name or the other
+because both provide `open-forge`. `pipx install open-forge` and `uvx open-forge`
+use the alias. The prefixed name works too. For the beta, use
+`pipx install --pip-args=--pre open-forge` or
+`uvx --prerelease allow open-forge --version`.
 
 The root npm version also gives the wheel version. Stable versions stay the
 same. Alpha, beta and release candidates map to PEP 440 `a`, `b` and `rc`, so

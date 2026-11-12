@@ -2,18 +2,21 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { candidateVersion } from "../../version.ts";
 import { pythonVersion } from "../version.ts";
+import { fileSnapshot } from "./file-snapshot.ts";
 
-const Versions = [
-  ["1.2.3", "1.2.3"],
-  ["1.2.3-alpha.1", "1.2.3a1"],
-  ["0.9.0-beta.18", "0.9.0b18"],
-  ["1.2.3-rc.0", "1.2.3rc0"],
-] as const;
-for (const [npm, python] of Versions) test(`${npm} maps to PEP 440 ${python}`, () => assert.equal(pythonVersion(npm), python));
+const Versions = ["1.2.3", "1.2.3-alpha.1", "0.9.0-beta.18", "1.2.3-rc.0"] as const;
+test("release and SHA candidate versions keep their exact PEP 440 identity", (context) => {
+  const sha = "a".repeat(40);
+  fileSnapshot(
+    context,
+    "versions",
+    Versions.map((npm) => ({ npm, python: pythonVersion(npm), candidate: pythonVersion(candidateVersion(npm, sha)) })),
+  );
+});
 
 test("SHA candidates keep their identity in local development wheel versions", () => {
   const sha = "a".repeat(40);
-  for (const [npm, python] of Versions) assert.equal(pythonVersion(candidateVersion(npm, sha)), `${python}.dev0+sha.${sha}`);
+  for (const npm of Versions) assert.equal(pythonVersion(candidateVersion(npm, sha)), `${pythonVersion(npm)}.dev0+sha.${sha}`);
 });
 
 test("ambiguous and unsupported wheel versions fail instead of losing identity", () => {

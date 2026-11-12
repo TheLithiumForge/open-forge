@@ -39,7 +39,7 @@ export const releaseCommands = {
     options: ["targets"],
     usage: "release:collect <input-directory> <output-directory> [--targets <rids>]",
     details: [
-      "Requires committed source and input/package-<RID>/package.json plus its five archives for every selected target.",
+      "Requires committed source and input/package-<RID>/package.json plus its seven archives for every selected target.",
       "Use the same --targets when packing on each selected host. All versions, source identities, hashes and wrapper dependencies must match.",
       "Replaces the output directory with selected archives, checksums and release.json. Keep input/output separate; output must be inside artifacts/.",
     ],

@@ -1,0 +1,57 @@
+{
+  "name": "thelithiumforge_open_forge_linux_arm64-0.9.0b18-py3-none-manylinux_2_39_aarch64.whl",
+  "tag": "py3-none-manylinux_2_39_aarch64",
+  "files": [
+    {
+      "path": "thelithiumforge_open_forge_linux_arm64/bin/open-forge",
+      "mode": 33261,
+      "sha256": "640213d502b9f6fd416891127273e2b21af3f9244512a08f1b24ddc842feb528"
+    },
+    {
+      "path": "thelithiumforge_open_forge_linux_arm64-0.9.0b18.dist-info/METADATA",
+      "mode": 33188,
+      "text": [
+        "Metadata-Version: 2.4",
+        "Name: thelithiumforge-open-forge-linux-arm64",
+        "Version: 0.9.0b18",
+        "Summary: Open Forge native CLI",
+        "Requires-Python: >=3.9",
+        "License-Expression: MIT",
+        "License-File: LICENSE",
+        "",
+        ""
+      ]
+    },
+    {
+      "path": "thelithiumforge_open_forge_linux_arm64-0.9.0b18.dist-info/WHEEL",
+      "mode": 33188,
+      "text": [
+        "Wheel-Version: 1.0",
+        "Generator: open-forge",
+        "Root-Is-Purelib: false",
+        "Tag: py3-none-manylinux_2_39_aarch64",
+        ""
+      ]
+    },
+    {
+      "path": "thelithiumforge_open_forge_linux_arm64-0.9.0b18.dist-info/licenses/LICENSE",
+      "mode": 33188,
+      "text": [
+        "owned license fixture",
+        ""
+      ]
+    },
+    {
+      "path": "thelithiumforge_open_forge_linux_arm64-0.9.0b18.dist-info/RECORD",
+      "mode": 33188,
+      "text": [
+        "thelithiumforge_open_forge_linux_arm64/bin/open-forge,sha256=ZAIT1QK59v1BaJEScnPishrz-SRFEqCPGyTdyEL-tSg,30",
+        "thelithiumforge_open_forge_linux_arm64-0.9.0b18.dist-info/METADATA,sha256=mWq1YITThnEy7NdtLL2cbpjRH2Z_TLkLyE24u8mJ16U,186",
+        "thelithiumforge_open_forge_linux_arm64-0.9.0b18.dist-info/WHEEL,sha256=JZRhOoIhjgckenuePPgbOvENuhcSf9c7cM1bZ-rZlzM,101",
+        "thelithiumforge_open_forge_linux_arm64-0.9.0b18.dist-info/licenses/LICENSE,sha256=poNJDloyB6H1Jsakd9AomotlxPLbEO9xo74TTqK41Ow,22",
+        "thelithiumforge_open_forge_linux_arm64-0.9.0b18.dist-info/RECORD,,",
+        ""
+      ]
+    }
+  ]
+}

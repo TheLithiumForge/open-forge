@@ -6,9 +6,7 @@ import { join, resolve } from "node:path";
 import { AliasPackageName, MainPackageName, PlatformPackages, type SupportedRuntime } from "../package-model.ts";
 import { LauncherPath } from "../npm/package-manifests.ts";
 import { IsolatedNpm } from "../npm/__tests__/isolated-npm.ts";
-import { pythonVersion } from "../pypi/version.ts";
-import { wheelName } from "../pypi/wheel-model.ts";
-import { findPython } from "./python.ts";
+import { smokePythonPackages } from "../pypi/smoke.ts";
 
 export function smokeAliases(directory: string, runtime: SupportedRuntime, version: string, includeWheel = true): void {
   const root = mkdtempSync(join(tmpdir(), "open-forge-alias-smoke-"));
@@ -33,25 +31,8 @@ export function smokeAliases(directory: string, runtime: SupportedRuntime, versi
     assert.equal(run(process.execPath, [join(alias, LauncherPath), "--version"]), version);
     process.stdout.write(`Alias smoke passed: ${AliasPackageName}@${version} delegates to ${MainPackageName}.\n`);
     if (!includeWheel) return;
-    const python = findPython();
-    if (python === undefined) {
-      process.stdout.write("Wheel smoke not run: Python is unavailable.\n");
-      return;
-    }
-    const venv = join(root, "venv");
-    run(python.executable, [...python.args, "-m", "venv", venv]);
-    const bin = join(venv, process.platform === "win32" ? "Scripts" : "bin");
-    run(join(bin, process.platform === "win32" ? "python.exe" : "python"), [
-      "-m",
-      "pip",
-      "install",
-      "--no-index",
-      "--no-deps",
-      resolve(directory, wheelName(pythonVersion(version), runtime)),
-    ]);
-    assert.equal(run(join(bin, PlatformPackages[runtime].nativeFileName), ["--version"]), version);
-    process.stdout.write(`Wheel smoke passed: ${wheelName(pythonVersion(version), runtime)}.\n`);
-    writeFileSync(join(directory, "alias-smoke.json"), `${JSON.stringify({ runtime, version, alias: "passed", wheel: "passed" }, null, 2)}\n`);
+    const wheel = smokePythonPackages(root, runtime, version, environment, directory);
+    writeFileSync(join(directory, "alias-smoke.json"), `${JSON.stringify({ runtime, version, alias: "passed", wheel }, null, 2)}\n`);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
