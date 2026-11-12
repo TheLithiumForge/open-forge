@@ -197,3 +197,9 @@ open-forge remove guidance/old-note --kind route --automatic
 ## Workspace Runtime Boundary
 
 Preserve `.open-forge-state/` and its recovery evidence. Explicit removal targets and aliases into it are refused. Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the [mutation and recovery design](../../technical-designs/mutation-and-recovery.md) for the bridge gap and typed failures.
+
+## Tool path receipts
+
+Root path Remove releases Tool path or member receipts within its exact target and records the normal file or directory exclusion. It leaves the external install, registration and host members outside the selected target alone. Removing required usage guidance leaves the provider registered but incomplete. Status warns. Tool Configure and Choose block until every covering exclusion is cleared. Tool Remove can still release the remaining registration without restoring missing content. The [shared Tool rules](../../shared-operation-contract.md#exclusions) define restoration.
+
+Root Remove involving Tool content requires the proposed recovery v2 reader and writer gate. Its attribution is workspace Remove with the selected physical workspace key. Existing v1-only removals keep their format and behavior.

@@ -616,3 +616,7 @@ remain the output evidence.
 ## Workspace Runtime Boundary
 
 Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the [mutation and recovery design](../../../technical-designs/mutation-and-recovery.md) for the bridge gap and typed failures.
+
+## Tool coexistence
+
+Keep Tool-managed content and references when checking Sync destinations without changing Library source files. See [shared coexistence rules](../../../shared-operation-contract.md#content-coexistence).

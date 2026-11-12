@@ -524,3 +524,7 @@ CLI help syntax: [`cleanup.help.syntax`](../../../../../../../src/cli/output-tex
 ## Recovery Stores
 
 At full and debug detail, `data.stores` reports ordered store records with kind, path, coverage, candidates, cause and `safety`, `revalidation` and `verification`. Candidate rows carry their integrity and outcome. Existing aggregate fields remain. Each store has a frozen plan and deletion session. Local deletion can complete when legacy coverage or matching legacy lock authority is unavailable. The result reports completed effects and retained or unknown items even when its aggregate status is incomplete or blocked. Store kinds are `workspace` and `legacy`. Text reports planned or completed deletions, retained items and findings. The separate store records are JSON data.
+
+## Recovery v2
+
+The tools release adds explicit v2 bundle and draft validation while keeping v1 and unsupported-schema behavior unchanged. Cleanup deletes only recognized recovery artifacts in the chosen workspace's recovery store. It never restores entries or deletes external targets. A valid bundle can be deleted after its external unit disappears. The [recovery v2 proposal](../../technical-designs/recovery-v2.md#readers) defines the required reader gate.

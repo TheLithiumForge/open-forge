@@ -188,3 +188,7 @@ status, exit, stream, or coordinate rules.
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)
 - [CLI Command Contract Set](../../../command-contract-set.md)
 - [CLI Architecture](../../../architecture.md)
+
+## Tool results
+
+The contracted Tool leaves keep schema 3, exact envelope field order, null rules, source locations, seven statuses, exits and streams. Command payloads come from the [Tool interfaces](../../tool/_tool.md). Writers include complete plan, consent, verification and unfinished-work data at every detail level. Tool settings v6, lock v2 and proposed recovery v2 don't change the result envelope version.

@@ -171,6 +171,7 @@ current grouped families are:
 - `extension` with `list`, `inspect`, `create`, `install`, `update`, and
   `remove` operations.
 - `library` with `list`, `inspect`, `attach`, `sync`, and `detach` operations.
+- `tool` with `list`, `inspect`, `install`, `configure`, `status`, `update`, `remove` and `choose` operations. These V1 core contracts precede executable delivery.
 
 The `library` family composes ordinary consumer paths from one registered
 contained source root. Its command-local contracts own the exact source
@@ -984,3 +985,78 @@ Route and Extension writers report drafts, damaged or invalid bundles, and unava
 Only Busy establishes contention. Lock wording keeps the exact failed path at every detail level and in JSON. Install keeps its `install.workspace-unsafe` code for lock failure. Cancellation keeps its existing command result mapping. The shared family above does not change any command's code, status, stream or exit. No lock failure recommends deleting a lock or bundle.
 
 Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.
+
+## Tool operations
+
+The [tool command group](contracts/tool/_tool.md) adds three readers and five writers for reviewed external programs. Its core has no concrete production tool. Search, indexing, ranking and external maintenance remain outside these operations.
+
+### Plans and consent
+
+Install, configure, update, remove and choose form one complete ordered plan before effects. Preview uses apply's request, current facts, plan and checks. It creates no files, grants, leases, processes or network traffic. Checks requiring future artifact bytes or processes stay conditional.
+
+Show exact transfers, settings processes, host members, guidance, grants, exclusions, store references, deletions, recovery bytes and required host restarts. Missing consent returns `blocked` with required flags and all plan facts that can be determined. Equal consent gives equal preview and apply decisions before effects.
+
+Interactive apply separates artifact consent, daemon consent, destination grants and final confirmation. JSON and automatic mode never prompt. `--automatic` supplies final confirmation only. It doesn't approve downloads, process scope, role selection or conflict overrides. Download consent binds this invocation's exact URL, byte size and digest. Process consent binds the declared local build, cache and session scope. Account-local consent doesn't travel through Git.
+
+### Writer results
+
+Every tool writer supplies these `data` fields:
+
+| Field | Meaning |
+| --- | --- |
+| `mode` | `preview` or `apply` |
+| `id` | Exact tool ID, or `none` when clearing a role |
+| `role` | Requested role for Choose, otherwise null |
+| `pin` | Exact applicable pin, otherwise null |
+| `plan` | Ordered proposed changes and checks |
+| `permissions` | Destination decisions and proposed saved grants |
+| `consents` | Exact descriptors, requirement, scope and decision |
+| `verification` | Checks and their results |
+| `remaining` | Every unfinished requested part |
+| `instructions` | Resolved external command, argument and environment records |
+
+Plan records contain `kind`, `subject`, `action`, `before`, `after`, `requires` and `verification`. Subjects identify paths, member selectors, roles, digests or store keys. Effects contain changed items only. Instructions are data and aren't executed by rendering.
+
+Consent decisions are `not-required`, `missing`, `supplied` and `recorded-local`. Checks are `not-run`, `verified`, `failed` and `unavailable`. Coverage is complete or unavailable per store, with a cause. Counts are numbers or unknown. Only inapplicable role, pin, roleFilter and installed values are null in their command payloads.
+
+Bad input stops before resolution. Failure and cancellation keep their event meanings. Otherwise precedence is `blocked`, `incomplete`, `completed-with-warnings`, `completed`. Install's expected `needs-index` is information. Status warns for active index or language limits and missing required guidance. Inactive missing indexes are information. Known retained recovery warns. Unknown cleanup state fails. Partial effects name verified changes and unfinished work.
+
+Tool finding codes use the command prefix and one situation per suffix. Defined suffixes include `download-consent-required`, `session-daemon-consent-required`, `target-unsupported`, `pin-not-supported`, `member-changed`, `hooks-uncontrolled`, `daemon-conflict`, `cache-permission-rejected`, `index-missing`, `index-stale`, `deletion-rebuild-required`, `usage-skill-missing`, `path-excluded`, `store-unavailable` and `removal-incomplete`. Existing path, permission and lock codes keep their meanings. Recovery v2 findings remain separate from v1 findings.
+
+### Shared members
+
+Parse each complete host file and reject duplicate JSON keys, duplicate TOML tables and ambiguous syntax. Keep unrelated bytes, comments, BOM and line endings. A member receipt records the last generated semantic value. Change or remove a member only when that value still matches. Recheck the complete file immediately before writing. Concurrent edits require a new plan.
+
+Managed selectors are `/mcpServers/open-forge-<id>` in `.mcp.json` and `[mcp_servers.open-forge-<id>]` with its child tables in `.codex/config.toml`. Commands are absolute verified entries with separate arguments and process-local environment. Codex receives workspace CWD. Claude Code launches from that project root. Native host trust and approval policies stay unchanged.
+
+Tracked host files block insertion of account-specific paths. Report that shared settings need to move and the file needs to be deliberately untracked, or that host needs to be omitted from managed configuration. Open Forge never changes Git's index. Delete a created host file only when no unrelated content exists and its receipt permits deletion.
+
+Required guidance verifies before launchable members are published. Inactive providers have no managed launch members or usage Skill. Shared content stays while another active role or registration still needs it. An unmanaged duplicate that conflicts with activation blocks and stays untouched.
+
+### Content coexistence
+
+Required Tool Skills and Tool file or member receipts participate in Extension and Library destination collision checks. Matching bytes alone don't adopt managed guidance. Shared guidance stays while an active role or another registration still requires it. Each operation releases only its own receipts and keeps unrelated Tool lock sections and references. Library operations don't write their source bytes or Tool account stores to resolve collisions. Existing permission, expected-state and shared-content checks still apply.
+
+### Ignore entries
+
+The tool section uses `# BEGIN OPEN FORGE TOOLS` and `# END OPEN FORGE TOOLS`. Add exact anchored escaped paths for declared graph state and approved local files. Keep authored rules, other providers' rules, Framework and Library sections, surrounding bytes, BOM and line endings. Duplicate or malformed sections block required changes. Ignore entries never untrack files.
+
+Host, native project settings and ignore-file writes outside context and Skill folders require shared workspace grants. Remove created empty files or directories only when their receipts permit it. The shared mechanical editor doesn't merge Library and Tool policy.
+
+### Exclusions
+
+Every tool writer honors `removedFiles`, `removedDirectories` and applicable `removedCategories` before creating or changing workspace content. Directory exclusions cover future descendants. Grants, automatic mode and role choice never clear exclusions. Clear every covering exclusion before restoring required guidance, host members or native project settings.
+
+Root path Remove releases tool path or member receipts within its exact target and records the normal exclusion. It leaves external installs and host members outside that target alone. Removing required guidance leaves the provider registered but incomplete. Status warns. Configure and Choose block until covering exclusions are cleared. Tool Remove can release remaining registration without restoring missing content.
+
+### Stores and effects
+
+Immutable installs and archives can be shared. Mutable indexes are separate for each physical worktree, code root and execution environment. Bind state to the exact build, native format and extraction settings. A moved checkout needs configuration for its new path. Missing references don't become permission to delete shared artifacts.
+
+Only reviewed finite version and settings actions can run during writes. They never index or search. Consent for a session daemon includes final-client shutdown. Busy or incompatible clients block changes. Never stop a process by name or stale PID, or stop another client's daemon to change a pin.
+
+Acquire the user-store lease first, then at most one workspace lease. Readers and previews take neither. Hold no writing leases during prompts or large transfers. Reacquire and revalidate after staging. Prepare and verify one immutable recovery v2 bundle before any covered effect. Both settings and lock writes are covered. Recovery v2 confirmation and dual readers are prerequisites to writer implementation. The [external-tools design](technical-designs/external-tools.md) defines bounded stores and host capabilities.
+
+Apply in declared order and verify each effect. Publish receipts after verified effects. Publish a new shared reference before releasing its predecessor. Recheck complete references before shared deletion. Stop new effects after failure and report current partial work with recovery. Never roll back or replay a saved plan automatically. A new invocation plans from current files.
+
+After verification, remove only this operation's recognized recovery bundle. A known retained bundle warns with its exact path. Unknown cleanup state fails. Unknown staging and recovery content stays untouched. The [recovery v2 design](technical-designs/recovery-v2.md) defines the proposed format and reader gate without changing v1.

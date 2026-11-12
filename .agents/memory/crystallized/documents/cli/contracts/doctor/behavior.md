@@ -889,3 +889,9 @@ reads the filesystem or broadens Index selection.
 At full and debug detail, `data.recoveryStores` reports ordered store records with `kind`, `path`, `coverage`, `candidates` and `cause`. Existing diagnosis fields remain. Producer-specific target comparison keeps its existing scope. Store kinds are `workspace` and `legacy`. Text reports candidate findings and warnings for unavailable stores. It does not print a separate inventory row for every readable store.
 
 Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.
+
+## Tool facts
+
+Consume fresh passive Tool observations without treating settings edits as verified installs. Keep unavailable coverage and current configuration drift separate. Check mandatory guidance and covering exclusions without restoring content. The [Tool Status behavior](../tool/status/behavior.md) defines shared passive facts.
+
+Add a separate explicit recovery v2 reader with bounded metadata and prior-byte validation before enabling tool writes. Don't extract, disclose or follow target coordinates. Keep v1 and retained legacy interpretation unchanged and report unavailable coverage with causes.

@@ -21,10 +21,12 @@ public behavior that belongs to those sources.
 
 - [Exact lease-bound ordinary-BCL directory-create effect design](directory-creation.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Mutation #Directory #Filesystem
 - [Define automatic embedded Framework and Extension resources, source identity, hashes, and parity evidence](embedded-payload.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Framework #Distribution #EmbeddedResource
+- [Place external tool definitions, stores, host capabilities and finite process profiles in the CLI architecture](external-tools.md) - #Memory #Document #CLI #TechnicalDesign #Tool #CurrentTruth
 - [Complete metadata and missing route chains, and repair proven manual renames without losing authored content](forgiving-maintenance.md) - #Memory #Crystallized #Document #CLI #TechnicalDesign #Index #Repair #Doctor #Frontmatter #Routing #Evergreen
 - [Exact shared formation and projection design for Generated Navigation](generated-navigation.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #GeneratedNavigation #Routing
 - [Ownership receipts and operation-time Framework source alignment](lifecycle-provenance.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Framework #Lifecycle #Provenance
 - [Exact BCL-first locking, recovery-bundle, expected-state, atomic-file, receipt, and guarded-deletion design](mutation-and-recovery.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Mutation #Recovery #Filesystem #Lock
+- [Propose typed recovery v2 coordinates, directory coverage, native settings snapshots and dual readers](recovery-v2.md) - #Memory #Document #CLI #TechnicalDesign #Tool #Recovery #Proposal
 - [Resolve one context folder with fixed native Skills and controls, retain layout evidence, and map installed destinations](workspace-layout.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Layout #Settings
 - [Exact local-only Workspace Libraries record, inventory, projection, and recovery design](workspace-libraries.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Framework #Library #Workspace #Filesystem #Mutation #Recovery
 - [Realize shared destination admission through authored settings and existing mutation receipts](workspace-permissions.md) - #Memory #Crystallized #CLI #TechnicalDesign #Permissions #Settings #CurrentTruth

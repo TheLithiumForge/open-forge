@@ -994,3 +994,9 @@ remain the output evidence.
 At full and debug detail, `data.recovery.stores` reports ordered store records with `kind`, `path`, `coverage`, `candidates` and `cause`. Existing aggregate recovery fields remain. Store kinds are `workspace` and `legacy`. Text lists candidate paths together and adds warnings for unavailable stores. Empty readable stores do not get separate text rows.
 
 Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.
+
+## Tool facts
+
+Root Status adds passive installed-tool, active-role, member, required-guidance and index-evidence facts from settings and receipts. It launches no external probe and doesn't infer running activity. A missing lock never hides a readable settings entry. Missing active guidance warns. Inactive guidance needs no file. Tool details follow the [Tool Status interface](../tool/status/interface.md).
+
+The tools release reports workspace v1, workspace v2 and retained legacy recovery coverage separately. Unavailable coverage isn't empty. It validates bounded metadata and prior-byte hashes without following target coordinates. Recovery v1 stays unchanged. The proposed reader rollout is a prerequisite to tool writes.

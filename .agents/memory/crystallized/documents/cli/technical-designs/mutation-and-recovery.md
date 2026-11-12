@@ -44,7 +44,7 @@ Bootstrap creates or repairs an ordinary `.gitignore` containing `*` before
 creating any other runtime file. The folder ignores itself in Git. Git clean
 with `-x` or `-X` can delete it, including recovery evidence.
 
-New bundles always use the local store. `RecoveryStoreLocator` constructs typed
+New v1 bundles always use the local store. `RecoveryStoreLocator` constructs typed
 workspace and legacy locations without creating storage. The legacy location
 uses the existing per-user `OpenForge/recovery/v1` layout. An absolute
 `OPENFORGE_DATA_HOME` selects only that legacy data root and its `OpenForge/locks/v1`
@@ -514,3 +514,7 @@ operation; existing single-candidate callers retain their guard policy.
 - [Ownership And Source Alignment Technical Design](lifecycle-provenance.md)
 - [Workspace Libraries Technical Design](workspace-libraries.md)
 - [Cleanup Contract](../contracts/cleanup/_cleanup.md)
+
+## Tool recovery v2
+
+The decided Tool receipt kinds don't accept a recovery format. Tool effects require typed external coordinates, complete directory coverage, native-settings snapshots, workspace lock recovery records and dual readers. The [recovery v2 proposal](recovery-v2.md) must be confirmed before implementing Tool writers. Keep current v1 shapes and readers unchanged. The tools release adds Status, Doctor and Cleanup readers together before any Tool effect can occur.

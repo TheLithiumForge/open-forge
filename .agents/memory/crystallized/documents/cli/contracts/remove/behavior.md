@@ -123,3 +123,9 @@ updater or synchronizer, and independently assert that it remains absent.
 ## Workspace Runtime Boundary
 
 Preserve `.open-forge-state/` and its recovery evidence. Explicit removal targets and aliases into it are refused. Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the [mutation and recovery design](../../technical-designs/mutation-and-recovery.md) for the bridge gap and typed failures.
+
+## Tool path receipts
+
+Before planning a root path removal, include Tool path and member receipts intersecting the exact target. Release only selected receipts after their effects verify. Keep unrelated tool receipts, settings entries, external installs and host members. Record normal path exclusions, including future descendants of removed directories. No Tool Configure or Choose plan can restore covered required guidance or host content while those exclusions exist.
+
+Use workspace Remove attribution and recovery v2 when the selected effects involve Tool receipts. Test required Skill removal, a containing directory and a managed host file, followed by Configure and Choose refusal. After every covering exclusion is cleared, test explicit restoration. The [recovery proposal](../../technical-designs/recovery-v2.md) defines the implementation gate.

@@ -737,3 +737,9 @@ Status observes current source metadata and generated navigation without invokin
 At full and debug detail, `data.recovery.stores` reports ordered store records with `kind`, `path`, `coverage`, `candidates` and `cause`. Existing aggregate recovery fields remain. Store kinds are `workspace` and `legacy`. Text lists candidate paths together and adds warnings for unavailable stores. Empty readable stores do not get separate text rows.
 
 Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.
+
+## Tool facts
+
+Read Tool settings independently from lock details and project only passive facts. Keep configured roles separate from verified installation. Report unavailable stores and counts with causes. Never create an index journal, launch a version probe or repair required guidance during observation. The [Tool Status behavior](../tool/status/behavior.md) defines passive checks.
+
+Add a separate explicit recovery v2 reader beside v1 and legacy observation before tool writers are enabled. Validate bounded metadata and prior-byte hashes without extracting payloads or following external coordinates. Unknown schemas stay unsupported and untouched.

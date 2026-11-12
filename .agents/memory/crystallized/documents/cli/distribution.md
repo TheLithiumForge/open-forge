@@ -205,3 +205,9 @@ maintainer accepts the release as complete.
 - [Task 13: Native CI and Reproducible Artifacts](../../../archived/cli-development/tasks/delivery/02-native-ci.md)
 - [CLI Delivery](../../../archived/cli-development/tasks/delivery/_delivery.md)
 - [Repository-Root CLI Tooling Decision](../../decisions/repository-root-cli-tooling.md)
+
+## Tool qualification
+
+The contracted Tool core ships no concrete program or production adapter. The next stacked branch supplies CodeGraph and Codebase Memory definitions and compiled adapters. Full V1 qualification requires both graph pins on all six matching native targets, for twelve native lifecycle journeys. Cross-builds and emulation don't replace those journeys.
+
+Each journey tests both hosts, a pristine first index through the printed external recipe, exact archives and installed hashes, offline restart, spaced and Unicode paths, process-local environment, disabled telemetry and watchers, hook isolation, final-client shutdown, provider switches and verified removal while other worktrees stay usable. Qualification doesn't establish compiler-level call accuracy. The [external-tools design](technical-designs/external-tools.md#native-tests) defines the core and adapter evidence split.
