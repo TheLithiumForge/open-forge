@@ -301,6 +301,8 @@ resolver gives commands heading, line-range and lexical-symbol facts under the
 [local fragment contract](contracts/shared/source-references/interface.md#local-fragments).
 Operations maps these facts to command findings. Presentation keeps their
 messages and machine names separate.
+Context keeps a checked file link separate from a selected Markdown source.
+Link findings retain authored destinations and locations for report actions.
 
 ## Forgiving Maintenance
 

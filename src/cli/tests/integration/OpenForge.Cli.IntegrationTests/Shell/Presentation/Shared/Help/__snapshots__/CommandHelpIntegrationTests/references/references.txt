@@ -34,7 +34,8 @@ Details:
   Includes combine and exclusions take priority. Filters affect only incoming
   references and cannot accompany --direction out.
   Boundary: Markdown fragments select headings. Other files accept existing line
-  ranges such as #L1-L3 or lexical symbols such as #Type.Member. This report
+  ranges such as #L1-L3 or lexical symbols such as #Type.Member. Line and symbol
+  findings give the destination and source location to fix by hand. This report
   does not fetch URLs, expand target bodies into context, build an index or
   repair destinations.
 

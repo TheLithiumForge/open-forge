@@ -47,6 +47,11 @@ needs to appear as a complete identifier token with the same letter case.
 This lexical check includes comments and strings. It does not check declarations
 or member relationships. Fix failed file fragments by hand.
 
+Context checks code-file links without adding their bodies to Markdown context.
+Valid code links keep the result complete. For failed line or symbol checks,
+Context and References name the authored destination and source location to fix
+by hand. If those are the only findings, that correction is the next step.
+
 Link checks use these finding codes:
 
 | Check                    | Doctor                        | References                     | Context                     |

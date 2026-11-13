@@ -21,7 +21,7 @@ internal static class ContextLinkResultFactory
             subject: evidence.Authored.RawDestination,
             cause: finding.Cause,
             reference: null,
-            source: Identity(evidence.Source),
+            source: new ContextSourceIdentity(id: evidence.Source.Id, path: evidence.Layer.CanonicalPath),
             layer: Layer(evidence.Layer.Kind),
             path: facts.Target.Path ?? evidence.Layer.CanonicalPath,
             part: null,

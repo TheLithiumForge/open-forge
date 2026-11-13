@@ -144,7 +144,7 @@ accepted Architecture boundary.
 | Contract fact                  | Design response                                                                                                                                 |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | Startup and explicit closure   | Build the invocation-local graph only when closure relationships are needed, then resolve startup and explicit sources in the contract's order. |
-| Link expansion and cycles      | Traverse contained local links in the same invocation graph, retain inclusion reasons, and terminate cycles without persisting graph state.     |
+| Link expansion and cycles      | Check non-Markdown file links without selecting their bodies. Traverse contained local Markdown links in the same invocation graph, retain inclusion reasons and terminate cycles without persisting graph state. |
 | Base and overwrite layering    | Represent one logical source with ordered physical layers and preserve the contract's base-first projection.                                    |
 | Heading and section projection | Use fixed Markdig structural nodes, visible text, source forms, strict UTF-8, and exact source ranges.                                          |
 | Authored frontmatter           | Use YamlDotNet source-generated semantics while preserving the authored representation required by the contracts.                               |

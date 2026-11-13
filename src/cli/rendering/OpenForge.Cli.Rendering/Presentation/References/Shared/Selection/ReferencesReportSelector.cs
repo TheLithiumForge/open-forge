@@ -209,7 +209,9 @@ internal static class ReferencesReportSelector
             Subject = new CliSubject(
                 SubjectKind(finding.Code),
                 finding.Path,
-                finding.Subject ?? finding.Path ?? "references"),
+                finding.Subject ?? finding.Path ?? "references",
+                finding.LocationView is { } location ? new CliSourceLocation(location.Line, location.Column) : null),
+            Actions = IsManualFragmentFinding(finding) ? [ManualFragmentCorrection(finding)] : [],
             Candidates = Candidates(finding),
         };
 
@@ -341,6 +343,9 @@ internal static class ReferencesReportSelector
             return null;
         }
 
+        if (result.Findings.Count > 0 && result.Findings.All(IsManualFragmentFinding))
+            return ManualFragmentCorrection(result.Findings[0]);
+
         var first = result.Findings.FirstOrDefault();
         return result.Status switch
         {
@@ -354,5 +359,17 @@ internal static class ReferencesReportSelector
                 => new CliNextAction("open-forge references", ReferencesWording.RetryNextReason()),
             _ => new CliNextAction("open-forge doctor", ReferencesWording.DoctorNextReason()),
         };
+    }
+
+    private static bool IsManualFragmentFinding(ReferencesFinding finding)
+        => finding.Code is ReferencesFindingCode.LineOutOfRange or ReferencesFindingCode.SymbolMissing;
+
+    private static CliNextAction ManualFragmentCorrection(ReferencesFinding finding)
+    {
+        var location = finding.LocationView;
+        var sentence = global::OpenForge.Cli.OutputText.Shared.SharedPhrases.FormatFixLinkByHand(
+            finding.RawDestination ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheDestination(),
+            LocationText(finding.Path ?? finding.Source?.Path ?? string.Empty, location?.Line, location?.Column));
+        return new CliNextAction(sentence, sentence) { Kind = CliNextActionKind.Sentence };
     }
 }

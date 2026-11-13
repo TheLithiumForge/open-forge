@@ -46,6 +46,7 @@ internal static class ContextReportSelector
             ShowWorkspace = !data.StartupMissing && selected.ShowWorkspace,
             TextHeadline = headline,
             TextNext = next,
+            ShowNextReason = next?.Kind != CliNextActionKind.Sentence,
             TextFindings = findings,
             TextCounts = [],
             TextLimitations = limitations,
@@ -222,6 +223,9 @@ internal static class ContextReportSelector
                 "open-forge route list --depth all",
                 global::OpenForge.Cli.OutputText.Shared.CliInputWording.SourceDiscoveryNext());
         }
+
+        if (result.Findings.Count > 0 && result.Findings.All(IsManualFragmentFinding))
+            return ManualFragmentCorrection(result.Findings[0]);
 
         if (result.Findings.Any(finding => finding.Code is
             ContextFindingCode.ClosureUnavailable
@@ -526,6 +530,7 @@ internal static class ContextReportSelector
             Title = ContextWording.FindingTitle(finding.Code),
             Message = ContextWording.FindingMessage(finding),
             Subject = Subject(result, finding),
+            Actions = IsManualFragmentFinding(finding) ? [ManualFragmentCorrection(finding)] : [],
             Candidates = finding.Candidates.Select(candidate => new CliCandidate(
                 new CliSubject(CliSubjectKind.Source, candidate.Path, candidate.Id),
                 [])).ToArray(),
@@ -548,6 +553,15 @@ internal static class ContextReportSelector
             path,
             id,
             finding.LocationView is { } location ? new CliSourceLocation(location.Line, location.Column) : null);
+    }
+
+    private static bool IsManualFragmentFinding(ContextFinding finding)
+        => finding.Code is ContextFindingCode.LineOutOfRange or ContextFindingCode.SymbolMissing;
+
+    private static CliNextAction ManualFragmentCorrection(ContextFinding finding)
+    {
+        var sentence = ContextWording.ManualFragmentCorrection(finding);
+        return new CliNextAction(sentence, sentence) { Kind = CliNextActionKind.Sentence };
     }
 
     private static IReadOnlyList<string> Reasons(ContextSource source, ContextLayer layer)

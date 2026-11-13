@@ -129,6 +129,8 @@ are acquired freshly under those rules. Web URLs remain unchecked.
 
 The [local fragment rules](contracts/shared/source-references/interface.md#local-fragments)
 check Markdown headings, file line ranges and lexical symbols by target kind.
+Context keeps checked code files outside its selected Markdown bodies, as its
+[link rules](contracts/context/interface.md#link-rules) describe.
 
 Authored local paths accept both Index's UTF-8 percent-encoded form and a readable
 literal form. The [Source References contract](contracts/shared/source-references/interface.md#authored-local-destination-spellings)

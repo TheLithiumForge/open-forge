@@ -8,9 +8,30 @@ This checkpoint is a handoff record that keeps the issue #22 fix and its broken-
 
 `File.cs#L111-L125` checks file lines, and `File.cs#Type.Member` checks each dotted part as an identifier token. Markdown targets keep heading checks. The [source-reference contract](../../crystallized/documents/cli/contracts/shared/source-references/interface.md#local-fragments) defines the accepted behavior.
 
-Status: implementation complete, verification incomplete.
+Status: PR 25 corrections verified locally.
 
-## Verification
+## Review corrections
+
+The maintainer committed and pushed the earlier work as `c41e95b1b`. The PR 25
+review requested three corrections:
+
+- A1 - Context keeps valid code-file links as complete observations without selecting their bodies. Invalid ranges and symbols keep separate findings. Regression cases cover plain files, valid fragments, invalid fragments and authored overwrite locations.
+- A2 - References puts authored link coordinates in `subject.location`. The code-fragment regression directly checks both new finding codes.
+- A3 - Context and References give each line or symbol finding a manual correction with its authored destination and physical source location. When these are the only findings, the next step is a manual sentence. References keeps these actions visible at every detail level.
+
+The updated lane rules use a managed build, affected tests and both .NET
+formatting checks as the local gate. Full suites and native verification run in
+CI. Current verification receipts are under `artifacts/issue22/pr25/`.
+
+The managed builds pass with zero warnings and errors. All 17 affected Integration cases and both affected EndToEnd cases pass with zero skips or failures. Both .NET formatting checks and the documentation site build pass. No timeout flakes occurred. One fixture setup error was corrected before the final passing run.
+
+We accepted 135 reviewed Imprint snapshots. These include 64 new Context captures, eight code-fragment References captures, six existing broken-link References captures, two help pages, 54 Status metric captures and one custom-root payload capture. The Status changes reflect the 274-byte Skill paragraph change, token rounding and startup-share ratios. The default-layout byte fixture changes only that paragraph. Both CLI Skill copies match.
+
+Index preview and apply completed without findings or effects. The new contract link and this checkpoint's outgoing references checked without findings. No broken links from the earlier audit were edited. Full suites and native builds were left to CI under the updated lane rules.
+
+## Earlier checks
+
+This section records the 12 November run before the maintainer's commit.
 
 The branch is `fix/code-link-fragments`, based on `1ee8ab02987658fdd07fbc87269aa13bb9990ac3`. Issue #21 will be stacked on it. The fix changes the shared resolver, command projections, accepted contracts, user docs and both CLI Skill copies.
 
@@ -30,18 +51,16 @@ An earlier parallel Integration attempt failed Extension list workspace preserva
 
 The Windows x64 Native AOT delivery build passed after recovery. Its binaries predate the default-layout fixture correction. The three native test modes have no fresh completed result. No local commit was created because the required complete EndToEnd gate did not pass. All task changes are kept in the worktree.
 
-To finish this branch:
-
-1. Read the isolated receipts and resolve any failures that still reproduce.
-2. Rebuild delivery with `npm run build:native -- --no-restore`, using the lane's Visual Studio process PATH prefix.
-3. Run `npm run test:built` without filters to complete all six managed and native modes.
-4. Gate the local conventional commit on passing checks in the same command. Don't push, merge or open a PR.
+At that handoff, the branch still needed complete delivery gates and a local
+commit. The maintainer's updated lane rules replace those local full suites
+with the focused gate described above. The PR 25 review records passing checks
+for `c41e95b1b`.
 
 The restore command above still needs `-p:NuGetAudit=false`. Both Index runs over the edited contracts completed with zero effects. Index also listed this checkpoint under Checkpoints. The outgoing reference check of this checkpoint completed with zero findings before the final verification notes were added.
 
 ## Isolated reruns
 
-Each method ran separately with collection parallelism disabled. A theory includes all its cases. These results do not replace the incomplete full gate:
+On 12 November, each method ran separately with collection parallelism disabled. A theory includes all its cases. These reruns do not make that incomplete full attempt pass:
 
 | Method | Passed | Skipped | Failed |
 | --- | --- | --- | --- |
@@ -54,13 +73,14 @@ Each method ran separately with collection parallelism disabled. A theory includ
 | `PublishedDoctorGeneratedNavigationProcessTests.InstalledPlanningCatalogueUsesDefaultIndexAndDoctorReturnsClean` | 1 | 0 | 0 |
 | `PublishedMainRootLifecycleProcessTests.FullLifecycle` | 2 | 0 | 0 |
 
-These methods have no completed isolated rerun before the deadline:
+At the 12 November deadline, these methods had no completed isolated rerun:
 
 - `PublishedLibraryGitIgnoreProcessTests.BoundTerminalChoiceUsesDefaultNoAndDistinguishesEscape`
 - `PublishedMainRootOfflineStartupProcessTests.OfflinePointersRemainSelfContained`
 - `PublishedInstallProcessTests.OutsideLifecycleComposition`
 
-The outside-lifecycle workspace-preservation failure needs an isolated rerun. No passing outcome is recorded for it. Stop work by 18:30 local time.
+The earlier run has no passing isolated outcome for the outside-lifecycle
+workspace-preservation failure. Work stopped before 18:30 on 12 November.
 
 ## Link audit
 

@@ -41,7 +41,9 @@ Details:
   commas and backslashes in section names. Generated delimiters surround each
   physical layer without changing authored bytes. --follow-links accepts a
   positive base-10 depth or all. It follows contained local Markdown links
-  breadth-first and records broken edges. External URLs are never fetched.
+  breadth-first and records broken edges. Code-file links are checked without
+  selecting their bodies. Line and symbol failures give the destination and
+  source location to fix by hand. External URLs are never fetched.
 
 Automation:
   --format json: one minified schema-3 JSON result on stdout for every status.

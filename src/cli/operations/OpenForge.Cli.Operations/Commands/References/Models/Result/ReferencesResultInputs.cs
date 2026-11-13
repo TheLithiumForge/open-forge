@@ -17,6 +17,8 @@ internal sealed record ReferencesFindingInput(
 
     internal string? Subject { get; init; }
 
+    internal string? RawDestination { get; init; }
+
     internal SourceUniverseSelectorRole? SelectorRole { get; init; }
 
     internal int? SelectorOccurrence { get; init; }

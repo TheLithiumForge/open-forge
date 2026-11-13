@@ -483,6 +483,7 @@ internal sealed class ReferencesOperation
                 new ReferencesFindingInput(finding.Code, finding.Cause)
                 {
                     Direction = authored.Direction,
+                    RawDestination = authored.RawDestination,
                     Source = ToSourceIdentity(authored.Source),
                     Layer = authored.Layer,
                     Path = authored.CanonicalPath,

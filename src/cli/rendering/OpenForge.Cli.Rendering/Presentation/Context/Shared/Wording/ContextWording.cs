@@ -200,6 +200,11 @@ internal static class ContextWording
             : problem;
     }
 
+    internal static string ManualFragmentCorrection(ContextFinding finding)
+        => global::OpenForge.Cli.OutputText.Shared.SharedPhrases.FormatFixLinkByHand(
+            finding.Subject ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheDestination(),
+            Location(finding));
+
     internal static string FindingProblem(ContextFinding finding)
     {
         var path = finding.Path ?? finding.Source?.Path ?? finding.Subject ?? global::OpenForge.Cli.OutputText.Context.ContextText.LabelTheRequestedSource();
@@ -299,6 +304,7 @@ internal static class ContextWording
             ContextLinkDisposition.AlreadySelected => "already-selected",
             ContextLinkDisposition.Cycle => "cycle",
             ContextLinkDisposition.ExternalUnchecked => "external-unchecked",
+            ContextLinkDisposition.FileChecked => "file-checked",
             ContextLinkDisposition.Unresolved => "unresolved",
             _ => throw new ArgumentOutOfRangeException(nameof(disposition), disposition, "The Context link disposition is not defined."),
         };

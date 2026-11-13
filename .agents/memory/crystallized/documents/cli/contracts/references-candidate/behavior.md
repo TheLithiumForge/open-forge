@@ -329,6 +329,8 @@ complete.
 The result builder receives already resolved selector occurrences, physical
 source-layer evidence, parsed occurrence facts, and findings. It does not rerun
 source enumeration, parsing, target resolution, or network work for a renderer.
+Link findings keep their authored destination and source location so the report
+can give a manual correction without reconstructing either value from text.
 It retains selector duplicates in `incomingSelection.supplied`, deduplicates
 logical identities only in `effectiveSources`, preserves every physical
 occurrence, and serializes all nullable members and arrays even when empty.

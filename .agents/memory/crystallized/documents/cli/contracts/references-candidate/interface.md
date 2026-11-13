@@ -395,8 +395,11 @@ The status and exit mapping above are unchanged by detail or format. Root effect
 
 ### Next rules
 
-Broken links -> `open-forge doctor`; invalid source -> the route list;
-otherwise none.
+If only line-range or symbol findings are present, give one manual
+correction sentence as the next step. Each such finding carries a sentence
+naming its authored destination and source location to fix by hand.
+Other broken links suggest `open-forge doctor`. An invalid source suggests
+the route list. Otherwise, give no next step.
 
 ## Errors And Boundaries
 
