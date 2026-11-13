@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Locations;
 
 namespace OpenForge.Cli.Core.Framework.Sources.Operational.Shared.References;
 
@@ -51,17 +52,25 @@ internal static class SourceLinkSuggestionReader
             {
                 var old = parser.Parse(previous);
                 var section = old.Sections.SingleOrDefault(section => section.Heading.FragmentIdentifier == decoded);
+                var currentPath = entry.MovedPath ?? targetPath;
+                var current = sections.FirstOrDefault(item => item.Path == currentPath);
+                var renamed = section is not null && current.Document is not null
+                    ? ReadHeadingChange(old, current.Document, section.Heading, entry.TargetChanges) : null;
+                if (renamed is not null)
+                    Add(new() { Id = current.Id, Path = currentPath }, renamed.FragmentIdentifier,
+                        LocalReferenceCandidateBasisKind.GitHeadingChange,
+                        $"Git target diff heading change to #{renamed.FragmentIdentifier} from {entry.Commit}");
                 if (section is not null && Body(old, section).Length > 0)
                 {
                     var hash = Hash(Body(old, section));
                     foreach (var match in sections.Where(item => item.Section.Heading.FragmentIdentifier is not null
                         && Hash(Body(item.Document, item.Section)) == hash))
                     {
-                        var sameTarget = match.Path == (entry.MovedPath ?? reference.Facts.Target.Path);
+                        if (renamed is not null && match.Path == currentPath
+                            && match.Section.Heading.FragmentIdentifier == renamed.FragmentIdentifier) continue;
                         Add(new() { Id = match.Id, Path = match.Path }, match.Section.Heading.FragmentIdentifier,
-                            sameTarget ? LocalReferenceCandidateBasisKind.GitHeadingChange : LocalReferenceCandidateBasisKind.SectionContent,
-                            sameTarget ? $"Git section heading change to #{match.Section.Heading.FragmentIdentifier} from {entry.Commit}"
-                                : $"section #{match.Section.Heading.FragmentIdentifier} content SHA256 {hash}");
+                            LocalReferenceCandidateBasisKind.SectionContent,
+                            $"section #{match.Section.Heading.FragmentIdentifier} content SHA256 {hash}");
                     }
                 }
             }
@@ -84,4 +93,29 @@ internal static class SourceLinkSuggestionReader
         => document.Source[section.Heading.Span.End..section.Span.End].Trim();
 
     private static string Hash(string value) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
+
+    private static MarkdownHeadingFact? ReadHeadingChange(
+        MarkdownDocumentFacts previous,
+        MarkdownDocumentFacts current,
+        MarkdownHeadingFact heading,
+        IReadOnlyList<SourceLinkDiffHunk> changes)
+    {
+        var previousMap = new Utf8SourceMap(previous.Source);
+        var currentMap = new Utf8SourceMap(current.Source);
+        foreach (var change in changes)
+        {
+            var removed = previous.Headings.Where(value => InRange(previousMap, value, change.PreviousLine, change.PreviousCount)).ToArray();
+            var added = current.Headings.Where(value => InRange(currentMap, value, change.CurrentLine, change.CurrentCount)).ToArray();
+            if (removed.Length == 1 && removed[0] == heading && added.Length == 1
+                && added[0].Level == heading.Level && added[0].FragmentIdentifier is not null
+                && added[0].FragmentIdentifier != heading.FragmentIdentifier) return added[0];
+        }
+        return null;
+
+        static bool InRange(Utf8SourceMap map, MarkdownHeadingFact value, int start, int count)
+        {
+            var line = map.Map(value.Span.Start, value.Span.Length).Line;
+            return line >= start && line - start < count;
+        }
+    }
 }

@@ -1,6 +1,9 @@
 using OpenForge.Cli.Composition.Shared.Git;
 using OpenForge.Cli.Core.Commands.Repair;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
+using OpenForge.Cli.Core.Commands.Repair.Models.Selection;
+using OpenForge.Cli.Core.Commands.Repair.Models.Result;
+using OpenForge.Cli.Core.Commands.Repair.Shared.Diagnosis;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
@@ -11,8 +14,11 @@ using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.References;
 using OpenForge.Cli.Core.Framework.Sources.References.Shared.Comments;
+using OpenForge.Cli.Core.Framework.Sources.Shared.Destinations;
+using OpenForge.Cli.Core.Presentation.Repair;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.IntegrationTests.Framework.Sources.Operational.Shared.RenameEvidence;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.References;
@@ -24,6 +30,83 @@ public sealed class CommentLinkRepairIntegrationTests
     private const string OldFragment = "rule";
     private static string GuidePath => $"{WorkspaceLayout.DefaultMainRoot}/docs/guide.md";
     private static string NewGuidePath => $"{WorkspaceLayout.DefaultMainRoot}/docs/new-guide.md";
+
+    [Theory(DisplayName = "A suggested comment target with spaces survives preview application and fresh diagnosis"), InlineData(false), InlineData(true)]
+    public async Task TargetWithSpaces(bool encodedSelection)
+    {
+        using var repository = new RenameEvidenceGitWorkspace();
+        await repository.InitializeAsync(unborn: true);
+        Seed(repository);
+        var oldTarget = $"{GuidePath}#{OldFragment}";
+        var authored = $"// {SourceCommentLinkReader.OpenForgeMarker} {oldTarget} explains this behavior\nclass Order {{}}\n";
+        repository.Write(CodePath, authored);
+        await Commit(repository);
+        var targetPath = $"{WorkspaceLayout.DefaultMainRoot}/docs/new guide %20.md";
+        repository.Move(GuidePath, targetPath);
+        await Commit(repository);
+
+        var view = await Read(repository);
+        var occurrence = Assert.Single(view.References, item => item.SourcePath == CodePath);
+        var candidate = Assert.Single(RepairCandidateMapper.Read(occurrence, view).Items,
+            item => Uri.UnescapeDataString(item.Target.CanonicalTargetPath) == targetPath);
+        var selection = encodedSelection ? SourceDestinationEncoder.EncodePath(targetPath) : candidate.Target.CanonicalTargetPath;
+        var location = Assert.IsType<Core.Framework.Sources.Models.Locations.SourceLocation>(occurrence.DestinationLocation);
+        var relink = new RepairRelinkRequest(CodePath, location.Line, location.Column, oldTarget, selection, OldFragment);
+        var operation = new RepairOperation(RepairOperationFactory.CreateDefaultComponents(historyRead:
+            new GitSourceLinkHistoryReader(repository.Configure).ReadAsync));
+        var before = repository.Snapshot();
+        var preview = await operation.ExecuteAsync(new(repository.Workspace, RepairMode.DryRun, false, [relink], false), TestContext.Current.CancellationToken);
+        Assert.False(preview.Plan?.IsBlocked ?? true);
+        var intended = $"{SourceDestinationEncoder.EncodePath(targetPath)}#{OldFragment}";
+        Assert.Equal(intended, Assert.Single(preview.Plan?.Selection.Selected ?? []).Resolution.IntendedDestination);
+        Assert.Equal(before, repository.Snapshot());
+        var applied = await operation.ExecuteAsync(new(repository.Workspace, RepairMode.Apply, false, [relink], false), TestContext.Current.CancellationToken);
+        Assert.False(applied.Plan?.IsBlocked ?? true);
+        Assert.Equal(RepairVerificationState.Verified, applied.Verification.ResultingBytes);
+        Assert.Equal(authored.Replace(oldTarget, intended, StringComparison.Ordinal), File.ReadAllText(repository.PathFor(CodePath)));
+        var fresh = Assert.Single((await Read(repository)).References, item => item.SourcePath == CodePath);
+        Assert.Equal(targetPath, fresh.Facts.Target.Path);
+        Assert.Equal(OldFragment, fresh.Facts.Fragment);
+        Assert.Null(fresh.Facts.Finding);
+    }
+
+    [Theory(DisplayName = "Git target diff identifies a unique heading rename with a changed or empty body"), InlineData(false), InlineData(true)]
+    public async Task HeadingDiff(bool empty)
+    {
+        using var repository = new RenameEvidenceGitWorkspace();
+        await repository.InitializeAsync(unborn: true);
+        Seed(repository);
+        repository.Write(CodePath, $"// {SourceCommentLinkReader.RuneMarker} {GuidePath}#{OldFragment} explains this behavior\n");
+        if (empty) repository.Write(GuidePath, Document("# Guide\n\n## Rule\n"));
+        await Commit(repository);
+        repository.Write(GuidePath, Document(empty ? "# Guide\n\n## Changed rule\n" : "# Guide\n\n## Changed rule\n\nA changed section body.\n"));
+        await Commit(repository);
+        var before = repository.Snapshot();
+        var view = await Read(repository);
+        var occurrence = Assert.Single(view.References, item => item.SourcePath == CodePath);
+        var candidate = Assert.Single(view.Candidates, item => item.SourcePath == CodePath && item.Candidate.Path == GuidePath);
+        Assert.Equal("changed-rule", candidate.Fragment);
+        Assert.Contains(candidate.Bases, basis => basis.Kind == LocalReferenceCandidateBasisKind.GitHeadingChange);
+        Assert.Contains(Assert.Single(RepairCandidateMapper.Read(occurrence, view).Items).Evidence,
+            evidence => evidence.Kind == RepairCandidateEvidenceKind.GitHeadingChange);
+        Assert.Equal(before, repository.Snapshot());
+    }
+
+    [Fact(DisplayName = "Repair labels a unique heading slug as weak in its target choice"), Trait("Boundary", "Output")]
+    public async Task WeakSlugRepairChoice()
+    {
+        using var repository = new RenameEvidenceGitWorkspace();
+        await repository.InitializeAsync(unborn: true);
+        Seed(repository);
+        repository.Write(CodePath, $"// {SourceCommentLinkReader.OpenForgeMarker} {GuidePath}#relocated-rule explains this behavior\n");
+        repository.Write(NewGuidePath, Document("# New guide\n\n## Relocated rule\n\nAn unrelated section body.\n"));
+        var before = repository.Snapshot();
+        var result = await new RepairOperation().ExecuteAsync(new(repository.Workspace, RepairMode.DryRun, false, [], false), TestContext.Current.CancellationToken);
+        var candidate = Assert.Single(Assert.Single(result.PostDiagnosis.Proposals, item => item.SourceCanonicalPath == CodePath).Candidates?.Items ?? []);
+        Assert.Contains(candidate.Evidence, evidence => evidence.Kind == RepairCandidateEvidenceKind.UniqueSlug);
+        CommandOutputRenderers<RepairResult>.From(RepairPresentation.Rendering).MatchDetails(result, "repair-weak-slug-choice");
+        Assert.Equal(before, repository.Snapshot());
+    }
 
     [Theory(DisplayName = "Git file and heading moves produce selectable comment repairs that preserve surrounding bytes"), InlineData(false), InlineData(true)]
     public async Task MoveAndHeading(bool heading)
@@ -48,6 +131,9 @@ public sealed class CommentLinkRepairIntegrationTests
             && item.Candidate.Path == targetPath && item.Fragment == fragment);
         Assert.Contains(suggested.Bases, basis => basis.Kind == (heading
             ? LocalReferenceCandidateBasisKind.GitHeadingChange : LocalReferenceCandidateBasisKind.GitRename));
+        Assert.Contains(Assert.Single(RepairCandidateMapper.Read(occurrence, view).Items,
+                item => item.Target.CanonicalTargetPath == targetPath).Evidence,
+            evidence => evidence.Kind == (heading ? RepairCandidateEvidenceKind.GitHeadingChange : RepairCandidateEvidenceKind.GitRename));
         var location = Assert.IsType<OpenForge.Cli.Core.Framework.Sources.Models.Locations.SourceLocation>(occurrence.DestinationLocation);
         var relink = new RepairRelinkRequest(CodePath, location.Line, location.Column, oldTarget, targetPath, fragment);
         var operation = new RepairOperation(RepairOperationFactory.CreateDefaultComponents(historyRead:
@@ -100,6 +186,10 @@ public sealed class CommentLinkRepairIntegrationTests
         Assert.Equal(history ? "moved-rule" : OldFragment, candidate.Fragment);
         Assert.Contains(candidate.Bases, basis => basis.Kind == (history
             ? LocalReferenceCandidateBasisKind.SectionContent : LocalReferenceCandidateBasisKind.UniqueSlug));
+        var occurrence = Assert.Single(view.References, item => item.SourcePath == CodePath);
+        Assert.Contains(Assert.Single(RepairCandidateMapper.Read(occurrence, view).Items,
+                item => item.Target.CanonicalTargetPath == NewGuidePath).Evidence,
+            evidence => evidence.Kind == (history ? RepairCandidateEvidenceKind.SectionContent : RepairCandidateEvidenceKind.UniqueSlug));
         Assert.Equal(before, repository.Snapshot());
     }
 

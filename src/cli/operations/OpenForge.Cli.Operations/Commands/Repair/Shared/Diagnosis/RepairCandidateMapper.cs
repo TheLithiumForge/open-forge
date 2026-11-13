@@ -52,8 +52,10 @@ internal static class RepairCandidateMapper
                 LocalReferenceCandidateBasisKind.Filename => RepairCandidateEvidenceKind.Filename,
                 LocalReferenceCandidateBasisKind.Title => RepairCandidateEvidenceKind.Title,
                 LocalReferenceCandidateBasisKind.LiteralContent => RepairCandidateEvidenceKind.LiteralContent,
-                LocalReferenceCandidateBasisKind.GitRename or LocalReferenceCandidateBasisKind.GitHeadingChange
-                    or LocalReferenceCandidateBasisKind.SectionContent or LocalReferenceCandidateBasisKind.UniqueSlug => RepairCandidateEvidenceKind.LiteralContent,
+                LocalReferenceCandidateBasisKind.GitRename => RepairCandidateEvidenceKind.GitRename,
+                LocalReferenceCandidateBasisKind.GitHeadingChange => RepairCandidateEvidenceKind.GitHeadingChange,
+                LocalReferenceCandidateBasisKind.SectionContent => RepairCandidateEvidenceKind.SectionContent,
+                LocalReferenceCandidateBasisKind.UniqueSlug => RepairCandidateEvidenceKind.UniqueSlug,
                 LocalReferenceCandidateBasisKind.RouteNeighborhood
                     => RepairCandidateEvidenceKind.RouteNeighborhood,
                 _ => throw new ArgumentOutOfRangeException(

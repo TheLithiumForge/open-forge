@@ -9,7 +9,9 @@ internal static class RepairDestinationFormatter
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceCanonicalPath);
         ArgumentNullException.ThrowIfNull(target);
-        var path = isComment ? target.CanonicalTargetPath : FormatPath(sourceCanonicalPath, target.CanonicalTargetPath);
+        var path = isComment
+            ? SourceDestinationEncoder.EncodePath(Uri.UnescapeDataString(target.CanonicalTargetPath))
+            : FormatPath(sourceCanonicalPath, target.CanonicalTargetPath);
         return AppendFragment(path, target.TargetFragment);
     }
 

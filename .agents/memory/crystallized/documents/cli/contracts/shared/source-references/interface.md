@@ -129,7 +129,7 @@ spelling edits when the original bytes do not match the parsed destination.
 
 A comment link is a path reference that connects code and documentation at the place where the relationship matters. It uses `@open-forge <path> <any other text>` or `@rune <path> <text>`. Both markers have the same meaning.
 
-The marker is the first word of a comment or a line inside a block comment. Recognized comment delimiters include `//`, `///`, `#`, `--`, `;`, `'`, `%`, `/* ... */`, `/** ... */` and `<!-- ... -->`. A block line can start with `*`. A marker mentioned inside prose or a string is not a link. In Markdown, use an HTML comment outside code spans and fences. Ordinary Markdown links keep their existing meaning.
+The marker is the first word of a comment or a line inside a block comment. Recognized comment delimiters include `//`, `///`, `#`, `--`, `;`, `'`, `%`, `/* ... */`, `/** ... */` and `<!-- ... -->`. Select delimiters using the file's comment syntax. Trailing comments count too. E.g. a VB apostrophe or a TeX percent starts a trailing comment, while a C# decrement operator doesn't. A block line can start with `*`. A marker mentioned inside prose or a string is not a link. In Markdown, use an HTML comment outside code spans and fences. Native Markdown links and images keep their existing meaning only in Markdown files.
 
 The first whitespace-delimited word after the marker is the target. Text after that word explains the relationship and stays unchanged during repair. The target uses `/` separators and takes an optional fragment under [Local Fragments](#local-fragments). Encode whitespace and reserved path characters when they occur in a filename.
 
@@ -144,7 +144,7 @@ For example, `// @open-forge .agents/guidance/style.md explains this choice` sel
 
 References includes comment occurrences in both directions. Its default incoming scan includes comment-bearing workspace files as well as eligible Markdown sources. Explicit exact paths can select code files. Context checks comments during requested link expansion and keeps its existing target-read rules. Doctor checks missing paths, legacy targets and fragments. Generated and vendored files are excluded from comment discovery. Existing link-scope exclusions still apply.
 
-Repair edits only the target word. It keeps the marker, delimiters and explanation. File and heading moves use Git evidence from the commit that last touched the link when available. Suggestions rank Git file moves, Git heading changes, matching old section content and a unique matching slug in that order. Weak matches stay suggestions. Existing dry-run, selection, expected-byte, protection and recovery rules apply to comments too. A line or symbol failure has no automatic fragment replacement.
+Repair edits only the target word and writes an encoded repository-root destination. It keeps the marker, delimiters and explanation. File and heading moves use Git evidence from the commit that last touched the link when available. A unique removed and added heading pair in a target diff gives heading-change evidence even when the body changes or is empty. Ambiguous heading pairs give no heading-change candidate. Suggestions rank Git file moves, Git heading changes, matching old section content and a unique matching slug in that order. Weak matches stay suggestions. Existing dry-run, selection, expected-byte, protection and recovery rules apply to comments too. A line or symbol failure has no automatic fragment replacement.
 
 ## Local Fragments
 

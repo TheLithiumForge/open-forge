@@ -7,7 +7,7 @@ open-forge:
 
 # Repair Interface Contract
 
-Authored relinks also admit [comment links](../shared/source-references/interface.md#comment-links) in code and Markdown. An exact source location can name either file kind. Repair changes only the target word and writes a repository-root path. Existing dry-run, selection, protection and recovery rules apply. Git and weak suggestions remain distinct evidence. Weak candidates and legacy IDs require a chosen target.
+Authored relinks also admit [comment links](../shared/source-references/interface.md#comment-links) in code and Markdown. An exact source location can name either file kind. Repair changes only the target word and writes an encoded repository-root path. Existing dry-run, selection, protection and recovery rules apply. Git and weak suggestions stay distinct evidence in the result and choice labels. Unique-slug choices are labelled weak. Weak candidates and legacy IDs require a chosen target.
 
 ## Workspace Layout
 
@@ -256,10 +256,10 @@ normalized before comparison and is not a candidate selector.
 ### Selected target path
 
 The third value is the exact selected contained workspace-relative target path,
-with an optional Markdown fragment:
+with an optional target-kind fragment:
 
 ```text
-<path>[#<markdown-fragment>]
+<path>[#<heading-or-line-range-or-symbol>]
 ```
 
 It is a canonical workspace-relative path, not a URL, source ID, glob, query,
@@ -273,13 +273,24 @@ The first literal `#` separates the target path from its optional fragment. A
 literal `#` in a path component must use the supported Markdown destination
 encoding `%23`; an unencoded `#` is always the fragment delimiter. A query
 component, a second unencoded fragment delimiter, or an empty fragment after `#`
-is invalid. A supplied fragment is one non-empty supported Markdown fragment
-spelling and must resolve under the current target-heading facts.
+is invalid. A supplied fragment must resolve under the shared local fragment rules
+for the selected target kind.
 
-Repair computes the correct authored relative destination from the source file
-to the selected target. It changes only the addressed destination literal. The
-link label, surrounding Markdown, source metadata, and all unrelated bytes stay
-unchanged.
+Repair computes a relative destination for native Markdown links. For comment
+links, it writes an encoded repository-root destination. E.g. selecting
+`docs/new guide.md#rule` writes `docs/new%20guide.md#rule`. It changes only the
+addressed destination literal. The link label, comment marker, delimiters,
+explanation, source metadata and all unrelated bytes stay unchanged.
+
+For a comment on line 1 that begins `// @open-forge docs/old.md#rule`, the target
+starts at column 16. If `docs/new guide.md#rule` is a reported candidate, preview
+its encoded replacement with this command.
+
+Illustrative:
+
+```text
+open-forge repair --relink "src/Order.cs@1:16" "docs/old.md#rule" "docs/new guide.md#rule" --dry-run
+```
 
 The three values provide user intent, not mechanical proof. Repair still freshly
 resolves the source occurrence, old literal, target, and expected and intended
@@ -413,10 +424,10 @@ General Repair admits only these effects:
 | Same-target canonical case      | The authored local destination differs only in case from the exact target spelling, and physical identity is unambiguous. It is `safe-exact` only when that identity is proven.                                                                                                                                         |
 | Same-target canonical encoding  | The authored destination uses a non-canonical encoding for the same target. It is `safe-exact` only when the expected and intended bytes are exact.                                                                                                                                                                     |
 | Unique canonical fragment       | The target is the same and one canonical fragment correction is proven. It is `safe-exact` and may be selected by `--automatic`.                                                                                                                                                                                        |
-| Missing-target relink           | The authored target is missing and Doctor supplies bounded filename, title, literal-content, or structural route-neighborhood candidates. Weak evidence is `guided-choice`. A uniquely proven rename or move is `safe-exact` under Forgiving Maintenance.                                                               |
+| Missing-target relink           | The authored target or fragment is missing, or a legacy comment ID needs a path. Doctor supplies bounded Git rename, heading-diff, old section-content, weak unique-slug, filename, title, literal-content or structural route-neighborhood candidates. Weak evidence is `guided-choice`. A uniquely proven rename or move is `safe-exact` under Forgiving Maintenance. |
 | Typed Library residual recovery | A semantically verified current-v1 residual is attributed to the selected workspace's Library record and the existing automatic/guided selection shape authorizes one exact safe-exact ordinary-record, ordinary-file, or relative-file-link recovery effect. It uses no new syntax and never becomes generic rollback. |
 
-The filename, title, literal-content, and route-neighborhood evidence is finite
+The candidate evidence is finite
 and visible. Zero, one, and several candidates remain distinct. A recommendation
 is never selected automatically, including when there is only one candidate.
 Explicit `--relink` supplies the user's selected target and does not rely on a

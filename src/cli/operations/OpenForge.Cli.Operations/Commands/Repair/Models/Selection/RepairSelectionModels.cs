@@ -29,6 +29,10 @@ internal enum RepairCandidateEvidenceKind
     Title,
     LiteralContent,
     RouteNeighborhood,
+    GitRename,
+    GitHeadingChange,
+    SectionContent,
+    UniqueSlug,
 }
 
 internal enum RepairCandidateCardinality

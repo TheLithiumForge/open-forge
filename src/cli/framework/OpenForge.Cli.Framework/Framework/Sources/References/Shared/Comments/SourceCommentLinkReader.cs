@@ -14,10 +14,11 @@ internal static class SourceCommentLinkReader
     private const string BlockOpen = "/*";
     private const string BlockClose = "*/";
 
-    internal static IReadOnlyList<SourceAuthoredLink> Read(string source, MarkdownDocumentFacts? markdown = null)
+    internal static IReadOnlyList<SourceAuthoredLink> Read(string path, string source, MarkdownDocumentFacts? markdown = null)
     {
         if (!source.Contains(OpenForgeMarker, StringComparison.Ordinal) && !source.Contains(RuneMarker, StringComparison.Ordinal)) return [];
         var links = new List<SourceAuthoredLink>();
+        var syntax = SourceCommentSyntax.Read(path);
         string? blockEnd = null;
         char quote = '\0';
         var quoteWidth = 0;
@@ -60,8 +61,8 @@ internal static class SourceCommentLinkReader
                 if (width >= quoteWidth) { index += quoteWidth - 1; quote = '\0'; }
                 continue;
             }
-            if (source.AsSpan(index).StartsWith(HtmlOpen, StringComparison.Ordinal)
-                || markdown is null && source.AsSpan(index).StartsWith(BlockOpen, StringComparison.Ordinal))
+            if (syntax.HtmlBlocks && source.AsSpan(index).StartsWith(HtmlOpen, StringComparison.Ordinal)
+                || syntax.SlashBlocks && markdown is null && source.AsSpan(index).StartsWith(BlockOpen, StringComparison.Ordinal))
             {
                 var html = source.AsSpan(index).StartsWith(HtmlOpen, StringComparison.Ordinal);
                 var length = html ? HtmlOpen.Length : BlockOpen.Length;
@@ -72,12 +73,10 @@ internal static class SourceCommentLinkReader
                 continue;
             }
             if (markdown is not null) continue;
-            var lineDelimiter = current == '#' || lineStart && current is ';' or '%' or '\'';
-            var pairDelimiter = source.AsSpan(index).StartsWith("//", StringComparison.Ordinal)
-                || source.AsSpan(index).StartsWith("--", StringComparison.Ordinal);
-            if (lineDelimiter || pairDelimiter)
+            var delimiter = syntax.Lines.FirstOrDefault(value => source.AsSpan(index).StartsWith(value, StringComparison.Ordinal));
+            if (delimiter is not null)
             {
-                var start = index + (pairDelimiter ? 2 : 1);
+                var start = index + delimiter.Length;
                 while (start < source.Length && source[start] == '/') start++;
                 ReadMarker(start, null);
                 var end = source.IndexOf('\n', start);

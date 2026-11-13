@@ -10,15 +10,15 @@ public sealed class SourceCommentLinkReaderTests
     private const string Target = "../docs/rules.md#choice";
 
     [Theory(DisplayName = "Both markers use one target word in common comment styles"),
-        InlineData("//", ""), InlineData("///", ""), InlineData("#", ""), InlineData("--", ""),
-        InlineData(";", ""), InlineData("'", ""), InlineData("%", ""), InlineData("/*", "*/"),
-        InlineData("/**", "*/"), InlineData("<!--", "-->")]
-    public void CommentStyles(string open, string close)
+        InlineData("sample.cs", "//", ""), InlineData("sample.cs", "///", ""), InlineData("sample.py", "#", ""), InlineData("sample.sql", "--", ""),
+        InlineData("sample.ini", ";", ""), InlineData("sample.vb", "'", ""), InlineData("sample.tex", "%", ""), InlineData("sample.cs", "/*", "*/"),
+        InlineData("sample.cs", "/**", "*/"), InlineData("sample.html", "<!--", "-->")]
+    public void CommentStyles(string path, string open, string close)
     {
         foreach (var marker in new[] { SourceCommentLinkReader.OpenForgeMarker, SourceCommentLinkReader.RuneMarker })
         {
             var source = $"{open} {marker} {Target} explains this choice {close}";
-            var link = Assert.Single(SourceCommentLinkReader.Read(source));
+            var link = Assert.Single(SourceCommentLinkReader.Read(path, source));
             Assert.True(link.IsComment);
             Assert.Equal(Target, link.RawDestination);
             Assert.NotNull(link.DestinationSpan);
@@ -30,7 +30,7 @@ public sealed class SourceCommentLinkReaderTests
     public void BlockLines()
     {
         var source = $"/*\n * {SourceCommentLinkReader.OpenForgeMarker} {Target} explains this\n */\nvar value = 1; // {SourceCommentLinkReader.RuneMarker} ./target.cs#Value reason";
-        var links = SourceCommentLinkReader.Read(source);
+        var links = SourceCommentLinkReader.Read("sample.cs", source);
         Assert.Equal(2, links.Count);
         Assert.All(links, link => Assert.Equal(link.RawDestination,
             source[link.DestinationSpan!.Start..link.DestinationSpan.End]));
@@ -41,7 +41,19 @@ public sealed class SourceCommentLinkReaderTests
     {
         var marker = SourceCommentLinkReader.OpenForgeMarker;
         var source = $"// Mention {marker} {Target}\nvar text = \"// {marker} {Target}\";\nvar raw = \"\"\"\n// {marker} {Target}\n\"\"\";\n# Mention {marker} {Target}";
-        Assert.Empty(SourceCommentLinkReader.Read(source));
+        Assert.Empty(SourceCommentLinkReader.Read("sample.cs", source));
+    }
+
+    [Theory(DisplayName = "Trailing comments use the file syntax without consuming a decrement operator"),
+        InlineData("sample.vb", "Dim x = 1 '", false), InlineData("sample.tex", "text %", true),
+        InlineData("sample.cs", "i--; //", false)]
+    public void TrailingCommentSyntax(string path, string prefix, bool rune)
+    {
+        var marker = rune ? SourceCommentLinkReader.RuneMarker : SourceCommentLinkReader.OpenForgeMarker;
+        var source = $"{prefix} {marker} {Target} explains this choice";
+        var link = Assert.Single(SourceCommentLinkReader.Read(path, source));
+        Assert.Equal(Target, link.RawDestination);
+        Assert.Equal(Target, source[link.DestinationSpan!.Start..link.DestinationSpan.End]);
     }
 
     [Fact(DisplayName = "Markdown reads HTML comments and native links while excluding code examples")]

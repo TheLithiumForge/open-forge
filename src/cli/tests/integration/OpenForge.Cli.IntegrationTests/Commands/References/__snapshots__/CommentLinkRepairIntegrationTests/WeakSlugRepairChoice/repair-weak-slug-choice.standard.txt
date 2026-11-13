@@ -1,0 +1,7 @@
+Repair cannot ask for a choice in this session. Nothing was changed.
+Workspace: <workspace>
+  Warning  src/Order.cs:1:16  Broken link
+         1 possible target.
+         To use ../.agents/docs/new-guide.md (unique heading slug (weak)):
+           open-forge repair --relink 'src/Order.cs@1:16' '.agents/docs/guide.md#relocated-rule' '.agents/docs/new-guide.md#relocated-rule' --automatic --workspace <workspace>
+Next: Choose a target above, then run its command.

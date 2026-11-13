@@ -126,3 +126,59 @@ The focused runs total 330 Integration tests and seven Unit tests, with zero ski
 ## Handoff
 
 The branch is `feature/comment-links`, stacked on `fix/code-link-fragments` at `c41e95b1b`. Changes stay in this worktree. The original lane made no push, merge or PR. The overseer later opened PR #27 and ran CI. The existing NuGet audit failure needs maintainer follow-up if it blocks CI.
+
+## Spec Review
+
+The maintainer selected review findings A1 through A6 for correction after `a299037d1`.
+The changes stay in comment recognition, suggestion evidence, Repair and their contracts.
+The CLI edits local authored files through the existing expected-byte, containment,
+verification and recovery pipeline. Git and recovery bundles provide the existing
+recovery limits. The supported same-user threat model stays unchanged.
+
+The fixes reuse the shared destination encoder, parsed Markdown headings, source
+locations, Git process runner and Repair pipeline. No dependency or runtime change
+is needed. Exceptional machinery: none. The existing product marker scanner gains
+file-syntax selection. Git target diffs give changed line ranges to the shared
+heading matcher.
+
+The local evidence is the touched pure scanner and finite-mapping tests, the new
+code-string exclusion, encoded comment repair and heading-diff Integration cases,
+and reviewed Repair and guidance snapshots. Only touched or created tests run
+locally under the updated lane rule. CI covers complete managed and native suites.
+
+The review corrections are complete:
+
+| Finding | Correction | Regression evidence |
+| --- | --- | --- |
+| A1 | Decode the selected comment path once, then use the shared path encoder | `TargetWithSpaces` checks raw and encoded selections, spaces and a literal percent sequence, preview, application, byte preservation and fresh diagnosis |
+| A2 | Select comment delimiters by file syntax and allow trailing comments | `TrailingCommentSyntax` covers VB, TeX and C# decrement followed by a comment. Updated `CommentStyles`, `BlockLines` and `Mentions` keep the existing scanner cases |
+| A3 | Admit native Markdown images only from Markdown files | `CodeStringImage` keeps one real comment reference and excludes the JavaScript string image from the Doctor view and References |
+| A4 | Read target diff hunks and pair unique changed parsed headings before section-content evidence | `HeadingDiff` covers changed and empty bodies. `MoveAndHeading` and `SectionSuggestions` keep Git, section-content and slug evidence distinct |
+| A5 | Correct References source-universe and Repair exact-relink contracts | Grammar examples cover code sources, target-kind fragments and encoded repository-root comment replacements. Updated docs, site, help and both CLI Skill copies agree |
+| A6 | Keep Git rename, Git heading change, section-content and weak unique-slug kinds through Repair | Mapper assertions cover all four kinds. `FiniteValuesMapExactly` covers their machine names. `WeakSlugRepairChoice` snapshots the weak choice label |
+
+The local managed gates use only touched or created tests:
+
+| Check | Result |
+| --- | --- |
+| Solution build | Pass, 3 existing NU1903 warnings with the command-only override above |
+| Unit selected methods | 16 passed, zero skips |
+| Integration selected comment-link methods and guidance snapshot | 11 passed, zero skips |
+| Integration Repair help case | 1 passed, zero skips |
+| `npm run check:dotnet:whitespace` | Pass, workspace-loading warning |
+| `npm run check:dotnet:style` | Pass, workspace-loading warning |
+| Scoped contract Index preview | Entries current in all three affected catalogues |
+| Changed local Markdown links and Skill parity | Four links resolve. Both copies match |
+
+Accepted snapshots are ten new `WeakSlugRepairChoice` views, the shared custom-guidance
+view and the Repair help page. The Repair views label the unique slug weak at every
+choice view and in full JSON reasons. They show no selected effect or recovery
+bundle. The guidance and help changes describe file-syntax comments and encoded
+repository-root relinks. Existing platform comparison handles these shared baselines.
+
+No flakes occurred. The first focused run exposed a suppressed cross-document
+section-content suggestion. The correction keeps that suggestion after the new
+Git heading-diff candidate. Missing or changed snapshot baselines were reviewed
+before acceptance. No full local suite, native gate, Unix run or push was used.
+There are no deviations or open maintainer questions. The maintainer controls the
+later rebase onto PR 25 and the CI gate.

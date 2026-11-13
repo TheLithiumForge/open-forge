@@ -358,11 +358,11 @@ internal static class RepairText
         => "Worked relink example";
     // @OpenForgeText repair.help.details-1
     internal static string HelpRelinkCoordinatesDetails()
-        => "Use one-based path@line:column, with the column at the start of the link destination. Doctor points to the link, so its displayed location cannot be copied directly. Inspect the current source or use Repair's destination location. For [Rule](../working/order-rule.md) at the start of line 7, use column 8. The expected destination must equal the exact authored value. The new contained target must be an admitted reported candidate.";
+        => "Use one-based path@line:column, with the column at the start of the link destination. Doctor points to the link, so its displayed location cannot be copied directly. Inspect the current source or use Repair's destination location. For [Rule](../working/order-rule.md) at the start of line 7, use column 8. The expected destination must equal the exact authored value. The new contained target must be an admitted reported candidate. Code and Markdown comments use the same coordinates. Comment relinks write an encoded repository-root path and keep the surrounding comment.";
 
     // @OpenForgeText repair.help.details-2
     internal static string HelpWorkedRelinkExampleDetails()
-        => "open-forge repair --relink \".agents/memory/crystallized/repair-note.md@7:8\" \"../working/order-rule.md\" \".agents/memory/crystallized/order-rule.md\" --dry-run";
+        => "open-forge repair --relink \".agents/memory/crystallized/repair-note.md@7:8\" \"../working/order-rule.md\" \".agents/memory/crystallized/order-rule.md\" --dry-run\nopen-forge repair --relink \"src/Order.cs@1:16\" \"docs/old.md#rule\" \"docs/new guide.md#rule\" --dry-run";
 
     // @OpenForgeText repair.help.details-3
     internal static string HelpOtherRepairsDetails()

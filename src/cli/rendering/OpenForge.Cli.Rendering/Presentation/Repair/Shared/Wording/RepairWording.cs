@@ -152,7 +152,11 @@ internal static class RepairWording
     }
 
     internal static string CandidateReason(RepairCandidateEvidence evidence)
-        => $"{EvidenceKind(evidence.Kind)}: {evidence.Value}";
+    {
+        var kind = EvidenceKind(evidence.Kind);
+        if (string.Equals(kind, evidence.Value, StringComparison.OrdinalIgnoreCase)) return kind;
+        return $"{kind}: {evidence.Value}";
+    }
 
     internal static string Target(RepairTargetSelection target)
         => target.TargetFragment is { } fragment
@@ -200,12 +204,16 @@ internal static class RepairWording
             if (identity.Similarity is { } similarity) return global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.Similarity(similarity);
             return global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.MetadataProof();
         }
-        var evidence = candidate.Evidence.OrderBy(item => item.Kind).First();
+        var evidence = candidate.Evidence.OrderBy(item => EvidencePriority(item.Kind)).First();
         return evidence.Kind switch
         {
             RepairCandidateEvidenceKind.Filename => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.SameFileName(),
             RepairCandidateEvidenceKind.Title => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.SameTitle(),
             RepairCandidateEvidenceKind.LiteralContent => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.MatchingText(),
+            RepairCandidateEvidenceKind.GitRename => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.GitRename(),
+            RepairCandidateEvidenceKind.GitHeadingChange => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.GitHeadingChange(),
+            RepairCandidateEvidenceKind.SectionContent => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.SectionContent(),
+            RepairCandidateEvidenceKind.UniqueSlug => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.UniqueSlug(),
             _ => CandidateEvidence(sourceCanonicalPath, candidate, evidence).TrimEnd('.'),
         };
     }
@@ -258,6 +266,20 @@ internal static class RepairWording
             _ => throw new ArgumentOutOfRangeException(nameof(question), question.Kind, "The Repair confirmation kind is not defined."),
         };
 
+    private static int EvidencePriority(RepairCandidateEvidenceKind kind)
+        => kind switch
+        {
+            RepairCandidateEvidenceKind.GitRename => 0,
+            RepairCandidateEvidenceKind.GitHeadingChange => 1,
+            RepairCandidateEvidenceKind.SectionContent => 2,
+            RepairCandidateEvidenceKind.UniqueSlug => 3,
+            RepairCandidateEvidenceKind.Filename => 4,
+            RepairCandidateEvidenceKind.Title => 5,
+            RepairCandidateEvidenceKind.LiteralContent => 6,
+            RepairCandidateEvidenceKind.RouteNeighborhood => 7,
+            _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The Repair evidence kind is not defined."),
+        };
+
     private static string EvidenceKind(RepairCandidateEvidenceKind kind)
         => kind switch
         {
@@ -265,6 +287,10 @@ internal static class RepairWording
             RepairCandidateEvidenceKind.Title => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTitleMatch(),
             RepairCandidateEvidenceKind.LiteralContent => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelContentMatch(),
             RepairCandidateEvidenceKind.RouteNeighborhood => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNearbyRoute(),
+            RepairCandidateEvidenceKind.GitRename => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.GitRename(),
+            RepairCandidateEvidenceKind.GitHeadingChange => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.GitHeadingChange(),
+            RepairCandidateEvidenceKind.SectionContent => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.SectionContent(),
+            RepairCandidateEvidenceKind.UniqueSlug => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.UniqueSlug(),
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The Repair evidence kind is not defined."),
         };
 
@@ -272,7 +298,7 @@ internal static class RepairWording
     {
         if (evidence.Kind != RepairCandidateEvidenceKind.RouteNeighborhood)
         {
-            return $"{EvidenceKind(evidence.Kind)}: {evidence.Value}.";
+            return $"{CandidateReason(evidence)}.";
         }
 
         return evidence.Value switch

@@ -10,7 +10,12 @@ internal sealed record SourceLinkHistoryEntry(
     string Destination,
     string Commit,
     string? MovedPath,
-    string? PreviousText);
+    string? PreviousText)
+{
+    internal IReadOnlyList<SourceLinkDiffHunk> TargetChanges { get; init; } = [];
+}
+
+internal sealed record SourceLinkDiffHunk(int PreviousLine, int PreviousCount, int CurrentLine, int CurrentCount);
 
 internal sealed record SourceLinkHistory(IReadOnlyList<SourceLinkHistoryEntry> Entries, bool TimedOut = false);
 

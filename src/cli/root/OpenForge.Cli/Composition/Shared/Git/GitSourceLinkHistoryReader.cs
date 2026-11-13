@@ -32,8 +32,10 @@ internal sealed class GitSourceLinkHistoryReader(Action<ProcessStartInfo>? confi
                 var old = await Run(["show", $"{commit}:{prefix}{oldPath}"]);
                 var diff = await Run(["diff", "--relative", "--name-status", "-z", "--find-renames", commit, "HEAD", "--"]);
                 var moved = diff.ExitCode == 0 ? ReadMove(diff.Output, oldPath) : null;
+                var targetDiff = await Run(["diff", "--no-ext-diff", "--no-textconv", "--unified=0", "--find-renames", commit, "--", oldPath, moved ?? oldPath]);
                 entries.Add(new(reference.SourcePath, reference.Destination, commit, moved,
-                    old.ExitCode == 0 ? old.Output : null));
+                    old.ExitCode == 0 ? old.Output : null)
+                { TargetChanges = targetDiff.ExitCode == 0 ? GitSourceLinkDiffReader.Read(targetDiff.Output) : [] });
             }
         }
         catch (OperationCanceledException) when (!token.IsCancellationRequested)

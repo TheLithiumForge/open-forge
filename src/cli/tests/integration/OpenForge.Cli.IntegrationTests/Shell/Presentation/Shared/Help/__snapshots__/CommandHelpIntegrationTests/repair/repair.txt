@@ -35,9 +35,12 @@ Details:
   location cannot be copied directly. Inspect the current source or use Repair's
   destination location. For [Rule](../working/order-rule.md) at the start of
   line 7, use column 8. The expected destination must equal the exact authored
-  value. The new contained target must be an admitted reported candidate.
+  value. The new contained target must be an admitted reported candidate. Code
+  and Markdown comments use the same coordinates. Comment relinks write an
+  encoded repository-root path and keep the surrounding comment.
   Worked relink example:
   open-forge repair --relink ".agents/memory/crystallized/repair-note.md@7:8" "../working/order-rule.md" ".agents/memory/crystallized/order-rule.md" --dry-run
+  open-forge repair --relink "src/Order.cs@1:16" "docs/old.md#rule" "docs/new guide.md#rule" --dry-run
   Other repairs: Repair corrects path spelling, case, encoding, or unique
   fragments while preserving the target. Explicit relinking uses a possible
   target reported by Doctor. It can complete selected incomplete Library

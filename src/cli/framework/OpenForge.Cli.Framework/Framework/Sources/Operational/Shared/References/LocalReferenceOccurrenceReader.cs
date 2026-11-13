@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
@@ -20,9 +21,11 @@ internal static class LocalReferenceOccurrenceReader
         var settings = observations.Settings;
         var document = input.Document;
         var locations = input.Locations;
+        var images = Path.GetExtension(input.Path).Equals(SourceFormClassifier.MarkdownExtension, StringComparison.OrdinalIgnoreCase)
+            ? document.Images : [];
         var references = SourceAuthoredLinkReader.Read(input.Path, document)
             .Select(link => (Fact: link, Kind: LocalReferenceKind.Link))
-            .Concat(document.Images.Select(image => (Fact: new SourceAuthoredLink(image), Kind: LocalReferenceKind.Image)));
+            .Concat(images.Select(image => (Fact: new SourceAuthoredLink(image), Kind: LocalReferenceKind.Image)));
         foreach (var reference in references)
         {
             if (WorkspaceLinkScope.IgnoresSource(settings, input.Path))

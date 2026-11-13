@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Cannot repair: repair needs to know which repairs to apply, and this session cannot ask. Nothing was changed.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "repair.selection-required",
+      "title": "Selection required",
+      "message": "Repair needs to know which repairs to apply, and this session cannot ask.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "repair.selection-required",
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    },
+    {
+      "severity": "warning",
+      "code": "repair.guided-finding-remaining",
+      "title": "Broken link",
+      "message": "1 possible target.",
+      "subject": {
+        "kind": "file",
+        "path": "src/Order.cs",
+        "id": null,
+        "location": {
+          "line": 1,
+          "column": 16
+        }
+      },
+      "category": null,
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge repair --relink 'src/Order.cs@1:16' '.agents/docs/guide.md#relocated-rule' '.agents/docs/new-guide.md#relocated-rule' --automatic --workspace <workspace>",
+          "reason": "To use ../.agents/docs/new-guide.md (unique heading slug (weak)):"
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "linksRepaired": 0,
+    "problemsRemaining": 1,
+    "problemsNeedingChoice": 1,
+    "problemsNeedingHand": 0,
+    "librarySteps": 0,
+    "errors": 1,
+    "warnings": 1,
+    "entriesUpdated": 0,
+    "metadataCompleted": 0,
+    "entrypointsCreated": 0,
+    "filesSkipped": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "selection": "prompt",
+    "repairs": [],
+    "remaining": [
+      {
+        "path": "src/Order.cs",
+        "location": {
+          "line": 1,
+          "column": 16
+        },
+        "kind": "guided",
+        "candidates": 1
+      }
+    ],
+    "renames": [],
+    "navigation": [],
+    "metadata": [],
+    "entrypoints": []
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "sentence",
+    "command": "Choose a target above, then run its command.",
+    "reason": "Review remaining broken links in Repair, then select a possible target in the interactive prompt or provide an explicit --relink target."
+  }
+}

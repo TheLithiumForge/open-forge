@@ -95,7 +95,7 @@ Index and Repair preserve protected sources, including managed files. Doctor nam
 
 Code and docs can connect through `@open-forge <path> <text>` or `@rune <path> <text>` at the start of a comment. Markdown uses an HTML comment. Plain paths start at the repository root, while `./` and `../` start next to the file holding the comment.
 
-References lists these links, Context checks them during requested link expansion and Doctor reports broken targets. Repair suggests moved targets and edits the chosen target word. The [comment-link reference](/guides/cli#comment-links) gives the grammar, examples and repair rules.
+References lists these links, Context checks them during requested link expansion and Doctor reports broken targets. Repair suggests moved targets and edits the chosen target word with an encoded repository-root path. Its choices distinguish Git renames, heading diffs, old section content and weak unique slugs. The [comment-link reference](/guides/cli#comment-links) gives the grammar, examples and repair rules.
 
 ## Everyday habits
 

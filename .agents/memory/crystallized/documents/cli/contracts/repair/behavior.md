@@ -279,8 +279,10 @@ folder explicitly named with a trailing slash stays manual, and an existing
 folder with a fragment stays malformed. Neither admits an explicit file relink.
 
 For a missing local target on an authored local-reference occurrence, the
-resolver may form a guided proposal from bounded filename, title,
-literal-content, and structural route-neighborhood evidence.
+resolver can form a guided proposal from bounded Git rename, Git heading-diff,
+old section-content, weak unique-slug, filename, title, literal-content and
+structural route-neighborhood evidence. Repair keeps these evidence kinds distinct
+in its result and choice labels. A unique-slug choice is labelled weak.
 It records zero, one, or several candidates and preserves each candidate's
 evidence and provenance. It may identify one candidate as a recommendation for
 review, but it never selects that candidate automatically. A user selection in
@@ -303,7 +305,7 @@ a blocked boundary, except for the explicitly typed
 For each explicit relink, the resolver parses:
 
 ```text
-<canonical-workspace-relative-markdown-path>@<one-based-line>:<one-based-column>
+<canonical-workspace-relative-authored-file-path>@<one-based-line>:<one-based-column>
 <exact-current-authored-destination>
 <exact-contained-target-path>[#<optional-fragment>]
 ```
@@ -311,7 +313,7 @@ For each explicit relink, the resolver parses:
 Shell quoting has already been removed before this stage. The resolver preserves
 the resulting bytes and does not implement another quote or escape language.
 
-The source-location path must identify a supported authored Markdown source
+The source-location path must identify a supported authored Markdown or comment-link source
 inside the selected workspace, and the occurrence must be outside a recognized
 generated `Entries` region. If it is outside the primary content locations, Doctor's accepted
 contained local-reference boundary must include it. The one-based line and
@@ -322,18 +324,21 @@ remainder is one valid positive location suffix.
 
 The expected destination must equal the complete current authored destination
 literal at that occurrence. The target path must identify one current contained
-target, with an optional Markdown fragment, inside the same accepted boundary.
+target, with an optional fragment, inside the same accepted boundary.
 It cannot be an ID, URL, glob, query, or semantic expression.
 
 The first unencoded `#` separates the target path from a fragment. A literal
 path-component `#` must use the supported Markdown destination encoding `%23`.
 An empty fragment, second unencoded fragment delimiter, or query component is
-invalid. A supplied fragment must be one non-empty supported Markdown fragment
-spelling and resolve through the current target-heading facts.
+invalid. A supplied fragment must resolve through the shared target-kind checks
+for Markdown headings, file line ranges or lexical symbols.
 
-The resolver computes the intended authored relative destination from the source
-file's directory to the selected target and fragment. It plans only a literal
-replacement. The link label and every unrelated byte remain outside the effect.
+For native Markdown links, the resolver computes the destination relative to the
+source file's directory. For [comment links](../shared/source-references/interface.md#comment-links),
+it decodes the selected path once and writes an encoded repository-root destination.
+For example, a selected `docs/new guide.md#rule` becomes `docs/new%20guide.md#rule`
+inside a comment. It plans only a literal target replacement. The link label,
+comment marker, delimiters, explanation and every unrelated byte stay outside the effect.
 
 The resolver does not use a target recommendation as a substitute for the
 explicit target. It still checks that the selected target is the current target
@@ -477,7 +482,7 @@ identity, containment, and recovery-bundle facts immediately before effects. A
 changed fact blocks before that effect can write.
 
 Each selected ordinary local-reference effect writes only the computed
-destination literal in its addressed Markdown source. It preserves labels, existing metadata, overwrite layers and unrelated bytes. The same plan may complete affected metadata, chains and generated navigation under Forgiving Maintenance. It never replaces supplied authored meaning. Only eligible absent fields and canonical scaffolds may be added under Forgiving Maintenance.
+destination literal in its addressed authored source. It keeps labels, comment markers, delimiters, explanations, existing metadata, overwrite layers and unrelated bytes. The same plan can complete affected metadata, chains and generated navigation under Forgiving Maintenance. It never replaces supplied authored meaning. Only eligible absent fields and canonical scaffolds can be added under Forgiving Maintenance.
 
 For a selected Library residual, application performs only the typed no-follow
 effect admitted by preflight: delete the exact intended created record/link/
@@ -662,7 +667,7 @@ section. A conforming implementation must additionally prove:
 - Non-interactive and JSON selection authority, including blocked bare and
   blocked `--dry-run` requests without automatic or explicit relink authority.
 - Exact authored relink source occurrence outside generated `Entries`, expected
-  literal, contained target, relative destination computation, label and
+  literal, contained target, relative Markdown or encoded repository-root comment destination computation, label and
   unrelated-byte preservation, stale state, shifted occurrence, target change,
   identity ambiguity, containment, and candidate disappearance.
 - Fresh relevant-domain diagnosis as the selected-edit write gate and fresh
