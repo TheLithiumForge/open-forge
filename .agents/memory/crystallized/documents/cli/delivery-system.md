@@ -97,8 +97,9 @@ with GitHub's **Re-run failed jobs**, then reuse the completed run.
 Cancelling during the publication checkpoint uploads nothing. During npm
 publication, SIGINT or SIGTERM stops further uploads after the current effect
 settles and reports partial results with a non-zero exit. Published uploads
-remain present. `release:restore-channels` previews npm channel recovery for all
-eight packages and applies it only with `--apply`. The [delivery guide](../../../../../scripts/delivery/README.md#reuse-builds-and-cancel-publication)
+remain present. `release:restore-channels` restores packages from the previous
+release graph and applies that plan only with `--apply`. Alias tags absent from
+the previous graph require a separate reviewed action. The [delivery guide](../../../../../scripts/delivery/README.md#reuse-builds-and-cancel-publication)
 explains recovery, including manual GitHub release changes.
 
 ## Qualifying a release

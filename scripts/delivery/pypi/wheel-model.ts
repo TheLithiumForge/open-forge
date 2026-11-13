@@ -15,10 +15,22 @@ export const PythonPackage = {
   universal: "any",
 } as const;
 
+export const WheelField = {
+  name: "Name",
+  version: "Version",
+  requires: "Requires-Dist",
+  python: "Requires-Python",
+  license: "License-File",
+  pure: "Root-Is-Purelib",
+  tag: "Tag",
+} as const;
+export const PythonConsole = { section: "console_scripts", callable: "main" } as const;
+
 // Match the existing ubuntu-24.04 and macos-15 native build hosts.
 export const WheelPlatforms = {
   "win-x64": "win_amd64",
-  "win-arm64": "win_arm64",
+  // The ARM64 executable is data, launched out of process on ARM64 hardware by either interpreter.
+  "win-arm64": "win_amd64.win_arm64",
   "osx-x64": "macosx_15_0_x86_64",
   "osx-arm64": "macosx_15_0_arm64",
   "linux-x64": "manylinux_2_39_x86_64",
@@ -27,6 +39,10 @@ export const WheelPlatforms = {
 
 export function wheelTag(runtime?: SupportedRuntime): string {
   return `${PythonPackage.tag}-${runtime === undefined ? PythonPackage.universal : WheelPlatforms[runtime]}`;
+}
+
+export function wheelTags(runtime?: SupportedRuntime): string[] {
+  return (runtime === undefined ? [PythonPackage.universal] : WheelPlatforms[runtime].split(".")).map((platform) => `${PythonPackage.tag}-${platform}`);
 }
 
 export function wheelName(version: string, name: string, runtime?: SupportedRuntime): string {

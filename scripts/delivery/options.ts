@@ -3,6 +3,8 @@ import { AllTargets } from "./targets.ts";
 import { deliveryCommands, type DeliveryCommand } from "./commands.ts";
 import { parseArgs } from "node:util";
 import { CiCommand } from "./ci/command-names.ts";
+import { SmokeOption } from "./ci/smoke-checks.ts";
+import { DeliveryOption } from "./option-names.ts";
 
 const flags = {
   rid: { type: "string", description: "Native RID; defaults to this host and must match it." },
@@ -14,19 +16,20 @@ const flags = {
   plan: { type: "boolean", description: "Print stages and effective arguments without executing them." },
   tag: { type: "string", description: "npm distribution tag, such as preview or latest." },
   "dry-run": { type: "boolean", description: "Validate and print an offline publication plan; no registry contact." },
-  from: { type: "string", description: "Collected release directory; defaults to artifacts/release." },
+  [DeliveryOption.from]: { type: "string", description: "Collected release directory. See the command's defaults and version requirements." },
   target: { type: "string", description: "Publication destination: github, npm or all (default)." },
   wait: { type: "string", description: "Seconds to wait at the publication checkpoint, default 60." },
-  to: { type: "string", description: "Previous version to restore on npm channels." },
+  [DeliveryOption.to]: { type: "string", description: "Previous version to restore on npm channels." },
   channels: { type: "string", description: "Comma-separated npm tags. Defaults to latest plus the bad version's prerelease channel." },
   apply: { type: "boolean", description: "Check every previous version and apply the printed channel changes." },
+  [DeliveryOption.registry]: { type: "boolean", description: "Read the previous npm release graph from the registry for recovery preview." },
   preid: { type: "string", description: "Prerelease identifier passed to npm version, such as beta." },
   log: { type: "string", description: "Write complete stdout and stderr to this file while printing them." },
   run: { type: "string", description: "GitHub workflow run ID to watch." },
   limit: { type: "string", description: "Number of recent completed Build runs to compare, 1 to 50, default 10." },
   commit: { type: "string", description: "Full Git commit SHA to qualify inside WSL." },
-  version: { type: "string", description: "Exact published version to check or recover from." },
-  aliases: { type: "boolean", description: "Also check the published npm alias and PyPI wheel. Use only after both exist." },
+  [DeliveryOption.version]: { type: "string", description: "Exact published version to check or recover from." },
+  [SmokeOption.aliases]: { type: "boolean", description: "Also check the published npm alias and PyPI wheel. Use only after both exist." },
   pypi: { type: "boolean", description: "Include PyPI wheels in the publication checkpoint." },
   help: { type: "boolean", short: "h", description: "Show this command's options." },
 } as const;

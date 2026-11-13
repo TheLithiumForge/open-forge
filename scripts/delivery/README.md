@@ -181,7 +181,7 @@ passes, Release can reuse that run without rebuilding those hosts.
 ```sh
 npx forge ci:reuse --help
 npx forge release:checkpoint --wait 60
-npx forge release:restore-channels --version 0.9.0-beta.11 --to 0.9.0-beta.10
+npx forge release:restore-channels --version 0.9.0-beta.11 --to 0.9.0-beta.10 --registry
 ```
 
 `release:checkpoint` prints the target, channel, version, source commit, every
@@ -199,12 +199,22 @@ published. Force cancellation can prevent this report. Inspect npm and GitHub
 before recovery because publication across packages and destinations is not a
 transaction.
 
-`release:restore-channels` prints `npm dist-tag add` commands for all eight
-packages without registry contact. Its default tags are `latest` and the bad
-version's prerelease channel, or just `latest` for a stable version. Use
-`--channels latest,beta` to choose tags explicitly. Add `--apply` only after
-reviewing the plan. It checks that `--to` exists for every package before
-changing any tag. It never unpublishes or deprecates a version.
+`release:restore-channels` builds `npm dist-tag add` commands from the previous
+release's graph. `--registry` reads its scoped wrapper dependencies and checks
+whether its alias version exists. For an offline preview, use
+`--from <previous-release-directory>` with its collected `release.json`. Without
+either source, preview stops before registry contact. Default tags are `latest`
+and the bad version's prerelease channel, or just `latest` for a stable version.
+Use `--channels latest,beta` to choose tags. Add `--apply` only after reviewing
+the plan. It permits registry lookup and checks that `--to` exists for every
+package in the previous graph before changing any tag.
+
+The first alias release can restore the seven preceding packages without a
+previous alias version. Candidate alias tag removals are printed separately and
+never run with `--apply`. Before running them, use `npm view open-forge dist-tags --json`
+to check the current tags. Remove a tag only if the bad release introduced
+the alias and the tag still points to that version. Recovery never unpublishes
+or deprecates a version.
 
 For GitHub recovery, open the affected release under the repository's
 **Releases** page. Use **Edit** to mark it as a prerelease, remove its latest

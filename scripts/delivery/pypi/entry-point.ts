@@ -1,6 +1,7 @@
 import { PlatformPackages } from "../package-model.ts";
 import { pythonEnvironment } from "./environment-markers.ts";
 import { pythonExecutable, pythonPlatformPackage } from "./package-model.ts";
+import { PythonConsole } from "./wheel-model.ts";
 
 export function pythonEntryPoint(): string {
   const targets = Object.values(PlatformPackages).map(({ runtime }) => {
@@ -24,7 +25,7 @@ def _fail(message):
     return 1
 
 
-def main():
+def ${PythonConsole.callable}():
     machine = platform.machine()
     target = next((item for item in _TARGETS if item[0] == sys.platform and machine in item[1]), None)
     if target is None:

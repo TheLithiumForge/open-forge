@@ -33,7 +33,7 @@ unscoped alias:
 | Package                                    | Native payload                 | npm platform metadata                        |
 | ------------------------------------------ | ------------------------------ | -------------------------------------------- |
 | `@thelithiumforge/open-forge`              | Thin launcher only             | Platform-independent main package            |
-| `open-forge`                             | Delegates to the main launcher | Exact dependency on the main package         |
+| `open-forge`                               | Delegates to the main launcher | Exact dependency on the main package         |
 | `@thelithiumforge/open-forge-linux-x64`    | `linux-x64` glibc executable   | `os: [linux]`, `cpu: [x64]`, `libc: glibc`   |
 | `@thelithiumforge/open-forge-darwin-x64`   | `osx-x64` executable           | `os: [darwin]`, `cpu: [x64]`                 |
 | `@thelithiumforge/open-forge-win-x64`      | `win-x64` executable           | `os: [win32]`, `cpu: [x64]`                  |
@@ -66,11 +66,11 @@ The maintainer replaced the PyPI layout on the same date. PyPI mirrors the
 three npm package kinds. Names are generated from the npm package model by
 removing `@` and replacing `/` with `-`:
 
-| Kind | PyPI package | Contents |
-| --- | --- | --- |
-| Platform | `thelithiumforge-open-forge-<target>` | One platform-tagged wheel with that target's staged executable and required wheel metadata |
-| Entry | `thelithiumforge-open-forge` | One pure `py3-none-any` wheel with the launcher and `open-forge` console script |
-| Alias | `open-forge` | One pure `py3-none-any` wheel with an exact entry-package dependency and the same console script pointing to the entry launcher |
+| Kind     | PyPI package                          | Contents                                                                                                                        |
+| -------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Platform | `thelithiumforge-open-forge-<target>` | One platform-tagged wheel with that target's staged executable and required wheel metadata                                      |
+| Entry    | `thelithiumforge-open-forge`          | One pure `py3-none-any` wheel with the launcher and `open-forge` console script                                                 |
+| Alias    | `open-forge`                          | One pure `py3-none-any` wheel with an exact entry-package dependency and the same console script pointing to the entry launcher |
 
 Platform names and their order follow the npm model, including npm's `darwin`
 spelling for macOS. Platform wheels have no console script. The entry package
@@ -98,8 +98,14 @@ before packing instead of mapping two versions to one.
 
 The Linux tags use glibc 2.39, matching the current Ubuntu 24.04 build hosts.
 The macOS tags use macOS 15, matching the current build hosts. These tags make
-no lower support-floor promise. Windows wheels select AMD64 or ARM64. Every
-wheel uses the generic Python 3 tag and no Python ABI dependency.
+no lower support-floor promise. Windows markers select the reported machine's payload.
+The ARM64 payload wheel uses the compressed `win_amd64.win_arm64` platform tag
+and lists both expanded tags in `WHEEL`. This lets x64 Python on ARM64 Windows
+install and start the native ARM64 executable. The executable runs outside
+Python, so its architecture is independent of the interpreter's ABI. Native
+x64 hosts still select only the x64 package. Every wheel uses the generic Python
+3 tag and no Python ABI dependency. The [platform tag specification](https://packaging.python.org/en/latest/specifications/platform-compatibility-tags/#compressed-tag-sets)
+defines compressed tag sets.
 
 Wheel ZIP entries have fixed timestamps, order and permissions. TypeScript
 writes the metadata and SHA-256 `RECORD` from those entries. Collection checks
@@ -241,8 +247,15 @@ checkpoint prints the complete plan and waits 60 seconds before either
 destination. Cancelling during that wait uploads nothing. During npm
 publication, SIGINT or SIGTERM stops further uploads and tag changes after the
 current effect settles and reports partial results with a non-zero exit.
-Channel restoration previews commands for all eight packages and applies them
-only with `--apply`, after checking every previous version. Before any npm upload, the shared
+Channel restoration uses the previous release's package graph. `--from` reads
+a previous collected `release.json` offline. `--registry` reads the previous
+wrapper dependencies and alias-version presence from npm. A preview without
+either source stops before registry contact. `--apply` also permits that lookup
+and changes only the previous graph's packages after checking every destination
+version. An alias absent from that graph never blocks restoration. Its candidate
+tag removals are shown for separate review and never run through `--apply`.
+Before removing a new alias's tags, check that the bad release introduced it and
+that those tags still point to the bad version. Before any npm upload, the shared
 publisher queries every selected exact version. An existing version emits a
 warning and is skipped without retagging when its identity matches. Existing
 wrappers must have exactly the selected dependencies; a mismatch rejects before

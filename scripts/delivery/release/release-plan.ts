@@ -5,7 +5,7 @@ export const CheckpointWaitSeconds = 60;
 export const MillisecondsPerSecond = 1_000;
 export const ReleaseTarget = { all: "all", npm: "npm", github: "github" } as const;
 export type ReleaseTarget = (typeof ReleaseTarget)[keyof typeof ReleaseTarget];
-export const ReleaseFile = { portableSuffix: ".tar.gz", checksums: "SHA256SUMS" } as const;
+export const ReleaseFile = { manifest: "release.json", portableSuffix: ".tar.gz", checksums: "SHA256SUMS" } as const;
 
 export interface ReleasePlan {
   target: ReleaseTarget;

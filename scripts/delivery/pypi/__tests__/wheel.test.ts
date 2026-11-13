@@ -4,21 +4,24 @@ import { test } from "node:test";
 import { crc32 } from "node:zlib";
 import { AllTargets } from "../../targets.ts";
 import { hostWheels } from "../wheel.ts";
-import { pythonExecutable, pythonPlatformPackage, PythonMainPackage, PythonAliasPackage } from "../package-model.ts";
-import { PythonPackage, wheelInfo, wheelName, wheelTag } from "../wheel-model.ts";
-import { readWheel, WheelFixture } from "./wheel-fixtures.ts";
-import { fileSnapshot } from "./file-snapshot.ts";
+import { pythonExecutable, pythonModule, pythonPlatformPackage, PythonMainPackage, PythonAliasPackage } from "../package-model.ts";
+import { PythonConsole, PythonPackage, WheelField, wheelInfo, wheelName } from "../wheel-model.ts";
+import { ExpectedWheelTag, readWheel, WheelFixture } from "./wheel-fixtures.ts";
 import { ZipFormat } from "../zip-format.ts";
+import { metadata } from "./wheel-metadata.ts";
+import { platformMarker } from "../environment-markers.ts";
+import { pythonEntryPoint } from "../entry-point.ts";
+import { AliasPackageName } from "../../package-model.ts";
 
 for (const runtime of AllTargets)
-  test(`platform wheel for ${runtime} contains only the native payload and wheel metadata`, (context) => {
+  test(`platform wheel for ${runtime} contains only the native payload and wheel metadata`, () => {
     const fixture = WheelFixture;
     const name = pythonPlatformPackage(runtime);
     const path = wheelName(fixture.pythonVersion, name, runtime);
     const wheels = hostWheels(fixture.version, runtime, fixture.native, fixture.license);
     const archive = wheels.get(path) ?? assert.fail();
     assert.deepEqual(hostWheels(fixture.version, runtime, fixture.native, fixture.license).get(path), archive);
-    const files = verifyWheel(archive, name);
+    const files = verifyWheel(archive, name, pythonExecutable(runtime));
     const executable = files.find((entry) => entry.path === pythonExecutable(runtime)) ?? assert.fail();
     assert.deepEqual(executable.bytes, fixture.native);
     assert.equal(executable.mode, ZipFormat.executableMode);
@@ -31,11 +34,14 @@ for (const runtime of AllTargets)
       files.some((entry) => entry.path.endsWith(PythonPackage.entryPoints)),
       false,
     );
-    fileSnapshot(context, runtime, { name: path, tag: wheelTag(runtime), files: projection(files) });
+    const { fields, wheel } = metadata(files, name);
+    assert.equal(fields.has(WheelField.requires), false);
+    assert.deepEqual(wheel.get(WheelField.pure), [String(false)]);
+    assert.deepEqual(wheel.get(WheelField.tag), ExpectedWheelTag.platforms[runtime]);
   });
 
 for (const name of [PythonMainPackage, PythonAliasPackage])
-  test(`universal wheel ${name} has the shared console script and no native payload`, (context) => {
+  test(`universal wheel ${name} has the shared console script and no native payload`, () => {
     const fixture = WheelFixture;
     const path = wheelName(fixture.pythonVersion, name);
     const archive = hostWheels(fixture.version, AllTargets[0] ?? assert.fail(), fixture.native, fixture.license).get(path) ?? assert.fail();
@@ -46,10 +52,21 @@ for (const name of [PythonMainPackage, PythonAliasPackage])
     );
     const info = wheelInfo(fixture.pythonVersion, name);
     assert.equal(files.filter((entry) => !entry.path.startsWith(info + "/")).length, name === PythonAliasPackage ? 0 : 1);
-    fileSnapshot(context, name, { name: path, tag: wheelTag(), files: projection(files) });
+    const { fields, wheel, file } = metadata(files, name);
+    assert.deepEqual(
+      fields.get(WheelField.requires),
+      name === PythonAliasPackage
+        ? [`${PythonMainPackage}==${fixture.pythonVersion}`]
+        : AllTargets.map((runtime) => `${pythonPlatformPackage(runtime)}==${fixture.pythonVersion}; ${platformMarker(runtime)}`),
+    );
+    assert.deepEqual(wheel.get(WheelField.pure), [String(true)]);
+    assert.deepEqual(wheel.get(WheelField.tag), [ExpectedWheelTag.universal]);
+    const lines = file(PythonPackage.entryPoints).bytes.toString().trim().split("\n");
+    assert.deepEqual(lines, [`[${PythonConsole.section}]`, `${AliasPackageName} = ${pythonModule(PythonMainPackage)}:${PythonConsole.callable}`]);
+    if (name === PythonMainPackage) assert.deepEqual(files.find((entry) => entry.path === `${pythonModule(name)}/${PythonPackage.init}`)?.bytes, Buffer.from(pythonEntryPoint()));
   });
 
-function verifyWheel(archive: Buffer, name: string) {
+function verifyWheel(archive: Buffer, name: string, executable?: string) {
   const files = readWheel(archive);
   const info = wheelInfo(WheelFixture.pythonVersion, name);
   const file = (path: string) => files.find((entry) => entry.path === path) ?? assert.fail(path);
@@ -58,17 +75,10 @@ function verifyWheel(archive: Buffer, name: string) {
   const records = file(recordPath).bytes.toString().trimEnd().split("\n");
   assert.equal(records.length, files.length);
   for (const entry of files) {
+    assert.equal(entry.mode, entry.path === executable ? ZipFormat.executableMode : ZipFormat.fileMode);
     assert.equal(entry.checksum, crc32(entry.bytes));
     const record = entry.path === recordPath ? `${recordPath},,` : `${entry.path},sha256=${createHash("sha256").update(entry.bytes).digest("base64url")},${entry.bytes.length}`;
     assert.ok(records.includes(record));
   }
   return files;
-}
-
-function projection(files: ReturnType<typeof readWheel>) {
-  return files.map((entry) => ({
-    path: entry.path,
-    mode: entry.mode,
-    ...(entry.mode === ZipFormat.executableMode ? { sha256: createHash("sha256").update(entry.bytes).digest("hex") } : { text: entry.bytes.toString().split("\n") }),
-  }));
 }

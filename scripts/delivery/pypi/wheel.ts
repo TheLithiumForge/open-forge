@@ -5,7 +5,7 @@ import { pythonVersion } from "./version.ts";
 import { pythonEntryPoint } from "./entry-point.ts";
 import { platformMarker } from "./environment-markers.ts";
 import { PythonAliasPackage, PythonMainPackage, pythonExecutable, pythonModule, pythonPlatformPackage } from "./package-model.ts";
-import { PythonPackage, wheelInfo, wheelName, wheelTag } from "./wheel-model.ts";
+import { PythonConsole, PythonPackage, WheelField, wheelInfo, wheelName, wheelTags } from "./wheel-model.ts";
 import { wheelZip, type ZipEntry } from "./zip.ts";
 
 interface WheelRequest {
@@ -29,19 +29,26 @@ function buildWheel(request: WheelRequest): Buffer {
       `${info}/${PythonPackage.metadata}`,
       [
         "Metadata-Version: 2.4",
-        `Name: ${name}`,
-        `Version: ${version}`,
+        `${WheelField.name}: ${name}`,
+        `${WheelField.version}: ${version}`,
         "Summary: Open Forge native CLI",
-        `Requires-Python: ${PythonPackage.minimum}`,
+        `${WheelField.python}: ${PythonPackage.minimum}`,
         "License-Expression: MIT",
-        `License-File: ${PythonPackage.licenseFile}`,
-        ...request.requires.map((dependency) => `Requires-Dist: ${dependency}`),
+        `${WheelField.license}: ${PythonPackage.licenseFile}`,
+        ...request.requires.map((dependency) => `${WheelField.requires}: ${dependency}`),
         "",
         "",
       ].join("\n"),
     ),
-    text(`${info}/${PythonPackage.wheel}`, `Wheel-Version: 1.0\nGenerator: open-forge\nRoot-Is-Purelib: ${runtime === undefined}\nTag: ${wheelTag(runtime)}\n`),
-    ...(request.console ? [text(`${info}/${PythonPackage.entryPoints}`, `[console_scripts]\n${AliasPackageName} = ${pythonModule(PythonMainPackage)}:main\n`)] : []),
+    text(
+      `${info}/${PythonPackage.wheel}`,
+      `Wheel-Version: 1.0\nGenerator: open-forge\n${WheelField.pure}: ${runtime === undefined}\n${wheelTags(runtime)
+        .map((tag) => `${WheelField.tag}: ${tag}\n`)
+        .join("")}`,
+    ),
+    ...(request.console
+      ? [text(`${info}/${PythonPackage.entryPoints}`, `[${PythonConsole.section}]\n${AliasPackageName} = ${pythonModule(PythonMainPackage)}:${PythonConsole.callable}\n`)]
+      : []),
     { path: `${info}/${PythonPackage.license}`, bytes: license },
   ];
   const record = entries.map((entry) => `${entry.path},sha256=${createHash("sha256").update(entry.bytes).digest("base64url")},${entry.bytes.length}\n`).join("");

@@ -1,4 +1,6 @@
 import { CiCommand } from "./command-names.ts";
+import { SmokeOption } from "./smoke-checks.ts";
+import { DeliveryOption } from "../option-names.ts";
 
 export const ciCommands = {
   [CiCommand.reuse]: {
@@ -44,7 +46,7 @@ export const ciCommands = {
   },
   [CiCommand.smoke]: {
     script: "ci/smoke-public.ts",
-    options: ["version", "aliases"],
+    options: [DeliveryOption.version, SmokeOption.aliases],
     description: "Check an exact published npm version in a fresh workspace.",
     details: [
       "Requires --version <x.y.z-pre>. Contacts npm and installs into a new temporary directory.",
