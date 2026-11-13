@@ -2,7 +2,7 @@
 
 Open Forge gives your coding agent the rules, docs and decisions each task needs, and a place to keep what it learns for the next session.
 
-I built it because one long `AGENTS.md` hands every task every rule, and every new session starts by relearning the project. Open Forge has three parts: agent documents with the routes that link them, a CLI that installs and maintains them, and optional workflows from Extensions. It's all built on Markdown files in your repository, so you read, diff and review it like the rest of your code.
+I built it because one long `AGENTS.md` hands every task every rule, and every new session starts by relearning the project. At The Lithium Forge we forge software, and over time that became a way of working, a forge methodology. Open Forge opens it up to everyone, together with the tooling that makes it easy to follow. It has three parts: agent documents with the routes that link them, a CLI that installs and maintains them, and optional workflows from Extensions. It's all built on Markdown files in your repository, so you read, diff and review it like the rest of your code.
 
 E.g. a rule tagged `LoadNow` with `applyTo: ["src/export/**"]` loads only for tasks that change export code. A fact your team accepted last month, such as "CSV exports use UTF-8", sits in Crystallized Memory, so the next export task starts from it instead of guessing.
 
