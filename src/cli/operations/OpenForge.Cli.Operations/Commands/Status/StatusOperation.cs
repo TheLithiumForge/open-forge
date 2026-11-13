@@ -8,13 +8,16 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Backups;
+using OpenForge.Cli.Core.Commands.Tool.Run;
 
 namespace OpenForge.Cli.Core.Commands.Status;
 
 internal sealed class StatusOperation(
     OperationalContributorCatalogue contributors,
-    PhysicalPathResolver physicalPathResolver)
+    PhysicalPathResolver physicalPathResolver,
+    ToolRunMissingReader? missingTools = null)
 {
+    private readonly ToolRunMissingReader _missingTools = missingTools ?? new(new());
     internal async ValueTask<StatusResult> ExecuteAsync(
         StatusRequest request,
         CancellationToken cancellationToken)
@@ -58,7 +61,9 @@ internal sealed class StatusOperation(
                 OutsideRoutes = outside,
                 ToolBackups = ToolBackupReader.Read(request.Workspace, ToolBackupPaths.WorkspaceTargets, cancellationToken),
             };
-            return StatusResultBuilder.Build(request, observations);
+            var result = StatusResultBuilder.Build(request, observations);
+            return StatusToolFindingAppender.Append(result, await _missingTools.ReadAsync(request.Workspace,
+                new(observation.Settings, observation.Ownership), cancellationToken).ConfigureAwait(false));
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

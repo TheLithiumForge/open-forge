@@ -29,6 +29,10 @@ The primary content locations are the selected context folder and native Skills 
 
 The external Tool family provides `tool list`, `tool inspect` and `tool status`. The [external tool reference](tools.md) describes these read commands, the pending writers, consent, Git or sibling-backup recovery and workspace records. The decided supply model downloads verified official artifacts and uses tool-owned installers for agent configuration. Node tools use a private pinned runtime and frozen npm lock. Tools never self-update and the visible `tools.<id>.telemetry` setting defaults to `false`. Same-pin Install repairs bytes and reruns the installer. Tool Run is required in V1 and its implementation is pending.
 
+The Tool Run contract puts Open Forge options before the tool ID. It forwards child help and every later option unchanged. Workspace selection uses `--workspace`, then `CLAUDE_PROJECT_DIR`, then an upward search from CWD. The child keeps CWD. A declared missing tool requires `open-forge tool install`. Interactive Run offers normal Install consent. Non-interactive Run exits 5 without installing.
+
+The child shares the console or foreground process group. Run waits through Ctrl+C and Ctrl+Break, then returns the child's exit. Parent-only SIGTERM, SIGHUP or verified MCP input-pipe closure waits one second, then stops the running process tree. Run returns 143 for SIGTERM or 129 for hangup. Ordinary CLI pipe EOF keeps normal child behavior.
+
 Choose a task, then follow its command link. Each operation has the same shape:
 purpose, common examples, options, behavior notes, and next step. Read-only
 examples need no preview. Mutation examples show a preview before application.

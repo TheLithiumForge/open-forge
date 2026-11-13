@@ -32,6 +32,6 @@ Tool Status, workspace Status, Doctor and Run report declared missing tools with
 
 `ToolLaunchBinding.McpArguments` records each fully resolved argument vector after the Run ID for a verified MCP invocation. Writers records these vectors during full verification of the registered MCP command. An absent value keeps existing launch records valid and gives normal CLI input behavior. Run matches the forwarded arguments exactly, after consuming its optional delimiter.
 
-For a matching MCP invocation with redirected stdin, the host relays raw input bytes without capture. EOF starts the parent-stop policy in the interface. Ordinary CLI input inherits stdin, so EOF adds no execution timeout.
+For a matching MCP invocation with redirected stdin, the host relays raw input bytes without capture. If the child closes stdin first, the host keeps reading the parent pipe until EOF. EOF starts the parent-stop policy in the interface. Ordinary CLI input inherits stdin, so EOF adds no execution timeout.
 
 The [interface](interface.md) defines caller behavior. The [dated decisions](../../../technical-designs/external-tools.md#decisions-2026-11-13) keep the source history.

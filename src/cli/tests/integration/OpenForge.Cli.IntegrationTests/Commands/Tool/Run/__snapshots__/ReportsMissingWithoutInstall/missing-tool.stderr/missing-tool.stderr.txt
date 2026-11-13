@@ -1,0 +1,2 @@
+tool-run.declared-tool-missing: fixture-tool: The declared tool pin isn't installed for this account.
+Next: open-forge tool install

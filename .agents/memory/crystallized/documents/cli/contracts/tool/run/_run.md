@@ -19,4 +19,5 @@ The [interface](interface.md) defines inputs and failures. The [behavior](behavi
 ## Entries
 
 - [Define cheap Run checks and complete Status hashing](behavior.md) - #Memory #Document #CLI #Contract #Tool #Run #CurrentTruth
+- [Record Dispatch services, registration points and focused verification evidence](implementation.md) - #Memory #Document #CLI #Tool #Run
 - [Define Tool Run operands, raw streams and strict executable selection](interface.md) - #Memory #Document #CLI #Contract #Tool #Run #CurrentTruth

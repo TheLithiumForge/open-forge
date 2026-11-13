@@ -6,13 +6,14 @@ using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Commands.Tool.Run;
 
 namespace OpenForge.Cli.Core.Commands.Doctor;
 
 internal sealed class DoctorOperation(OperationalContributorCatalogue contributors, RenameEvidenceReader? renames = null,
-    Func<CliWorkspace, CancellationToken, ValueTask<WorkspaceLayoutRead>>? readLayout = null)
+    Func<CliWorkspace, CancellationToken, ValueTask<WorkspaceLayoutRead>>? readLayout = null, ToolRunMissingReader? missingTools = null)
 {
-    private readonly DoctorDiagnosisReader _reader = new(contributors, renames, readLayout);
+    private readonly DoctorDiagnosisReader _reader = new(contributors, renames, readLayout, missingTools);
 
     internal async ValueTask<DoctorResult> ExecuteAsync(
         DoctorRequest request,

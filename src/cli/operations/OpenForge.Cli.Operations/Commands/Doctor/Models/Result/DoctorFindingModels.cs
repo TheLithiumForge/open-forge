@@ -135,6 +135,7 @@ internal enum DoctorFindingKind
     ReferenceTargetRenamed,
     ToolBackupPresent,
     ToolBackupUnavailable,
+    ToolDeclaredMissing,
 }
 
 internal sealed record DoctorFinding

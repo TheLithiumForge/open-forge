@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Commands.Tool.Shared.Reporting;
 
 namespace OpenForge.Cli.Core.Commands.Status.Models.Result;
 
@@ -59,6 +60,7 @@ internal static class StatusFindingVocabulary
         Finding(StatusFindingCode.GeneratedNavigationMetadataInvalid, "generated-navigation-metadata-invalid", CliSemanticStatus.Attention),
         Finding(StatusFindingCode.ToolBackupPresent, "tool-backup-present", CliSemanticStatus.Attention),
         Finding(StatusFindingCode.ToolBackupUnavailable, "tool-backup-unavailable", CliSemanticStatus.Incomplete),
+        Finding(StatusFindingCode.ToolDeclaredMissing, ToolContractCodes.StatusDeclaredToolMissing[(StatusDefinitions.CommandIdentity.Length + 1)..], CliSemanticStatus.Attention),
     ];
 
     internal static string ReadMachineName(StatusFindingCode code) => Read(code).MachineName;

@@ -13,6 +13,7 @@ internal static class DoctorWording
 {
     internal static string MachineCode(DoctorFindingKind kind)
     {
+        if (kind == DoctorFindingKind.ToolDeclaredMissing) return OpenForge.Cli.Core.Commands.Tool.Shared.Reporting.ToolContractCodes.DoctorDeclaredToolMissing;
         var value = JsonNamingPolicy.KebabCaseLower.ConvertName(kind.ToString());
         var separator = value.IndexOf('-');
         return separator < 0
@@ -25,6 +26,7 @@ internal static class DoctorWording
     internal static string Category(DoctorFindingKind kind)
         => kind.ToString() switch
         {
+            nameof(DoctorFindingKind.ToolDeclaredMissing) => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspace(),
             nameof(DoctorFindingKind.ToolBackupPresent) or nameof(DoctorFindingKind.ToolBackupUnavailable)
                 => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryData(),
             var value when value.StartsWith("Workspace", StringComparison.Ordinal)
@@ -70,6 +72,7 @@ internal static class DoctorWording
             DoctorProvenanceSource.ExtensionSource => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleExtensionSource(),
             DoctorProvenanceSource.LifecycleOwnership => global::OpenForge.Cli.OutputText.Doctor.DoctorText.LabelFileOwnershipRecords(),
             DoctorProvenanceSource.ToolBackups => global::OpenForge.Cli.OutputText.Tool.ToolText.Backups(),
+            DoctorProvenanceSource.Tools => global::OpenForge.Cli.OutputText.Tool.Run.ToolRunText.ToolsLabel,
             _ => throw new ArgumentOutOfRangeException(nameof(source), source, "The Doctor provenance source is not defined."),
         };
 
@@ -84,7 +87,7 @@ internal static class DoctorWording
             DoctorSubjectKind.Target => "file",
             DoctorSubjectKind.RecoveryItem => "file",
             DoctorSubjectKind.ManagedFile => "file",
-            DoctorSubjectKind.Extension => "identifier",
+            DoctorSubjectKind.Extension or DoctorSubjectKind.Tool => "identifier",
             DoctorSubjectKind.Dependency => "identifier",
             DoctorSubjectKind.Library or DoctorSubjectKind.LibraryMapping => "identifier",
             DoctorSubjectKind.LibrarySourceRoot => "directory",
@@ -153,6 +156,7 @@ internal static class DoctorWording
             DoctorFindingKind.LibraryRecoverySafeExact => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleVerifiedLibraryRecoveryIsAvailable(),
             DoctorFindingKind.ToolBackupPresent => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupTitle(),
             DoctorFindingKind.ToolBackupUnavailable => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupUnavailableTitle(),
+            DoctorFindingKind.ToolDeclaredMissing => global::OpenForge.Cli.OutputText.Tool.Run.ToolRunText.MissingTitle,
             DoctorFindingKind.RecoveryBundleRecognized => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleIsKept(),
             DoctorFindingKind.RecoveryDraftRecognized => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleIncompleteRecoveryDraftFound(),
             DoctorFindingKind.RecoveryBundleCollision => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleIsDamaged(),
@@ -286,6 +290,7 @@ internal static class DoctorWording
             DoctorFindingKind.LibraryRecoverySafeExact => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatAVerifiedRecoveryStepForCanRestore($"{LibraryId(finding)}", $"{path}"),
             DoctorFindingKind.ToolBackupPresent => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupMessage(path),
             DoctorFindingKind.ToolBackupUnavailable => Cause(finding, global::OpenForge.Cli.OutputText.Tool.ToolText.BackupUnavailableTitle()),
+            DoctorFindingKind.ToolDeclaredMissing => global::OpenForge.Cli.OutputText.Tool.Run.ToolRunText.MissingMessage(finding.Subject.Identifier ?? string.Empty),
             DoctorFindingKind.RecoveryBundleRecognized => global::OpenForge.Cli.OutputText.Shared.SharedPhrases.FormatARecoveryBundleFromAnEarlierCommandIsKeptAt($"{path}"),
             DoctorFindingKind.RecoveryDraftRecognized => global::OpenForge.Cli.OutputText.Shared.SharedPhrases.FormatAnUnfinishedRecoveryDraftIsAtACommandDidNotFinish($"{path}"),
             DoctorFindingKind.RecoveryBundleCollision => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatTheRecoveryBundleAtIsDamagedItWasLeftInPlace($"{path}", $"{Cause(finding, "the records conflict")}"),
@@ -365,6 +370,8 @@ internal static class DoctorWording
 
     internal static IReadOnlyList<CliNextAction> Actions(DoctorFinding finding)
     {
+        if (finding.Kind == DoctorFindingKind.ToolDeclaredMissing)
+            return [new(OpenForge.Cli.Core.Commands.Tool.Shared.Reporting.ToolContractCodes.RestoreCommand, global::OpenForge.Cli.OutputText.Tool.Run.ToolRunText.InstallNextReason)];
         if (finding.ProtectedReferencePath is { } protectedPath)
             return [Sentence(global::OpenForge.Cli.OutputText.Doctor.DoctorMaintenanceText.ProtectedLinkEdit(
                 Path(finding), protectedPath, finding.Subject.LocationView?.Line, finding.Subject.LocationView?.Column))];

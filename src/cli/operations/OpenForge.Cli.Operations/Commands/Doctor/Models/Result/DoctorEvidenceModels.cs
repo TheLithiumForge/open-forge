@@ -128,4 +128,5 @@ internal enum DoctorProvenanceSource
     ExtensionSource,
     LifecycleOwnership,
     ToolBackups,
+    Tools,
 }

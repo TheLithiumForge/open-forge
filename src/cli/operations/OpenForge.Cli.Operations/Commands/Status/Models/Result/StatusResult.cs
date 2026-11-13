@@ -61,6 +61,7 @@ internal enum StatusFindingCode
     GeneratedNavigationMetadataInvalid,
     ToolBackupPresent,
     ToolBackupUnavailable,
+    ToolDeclaredMissing,
 }
 internal sealed record StatusFinding
 {

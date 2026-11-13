@@ -11,12 +11,15 @@ using OpenForge.Cli.Core.Commands.Doctor.Shared.Maintenance;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Backups;
+using OpenForge.Cli.Core.Commands.Tool.Run;
+using OpenForge.Cli.Core.Commands.Doctor.Shared.Domains;
 
 namespace OpenForge.Cli.Core.Commands.Doctor;
 
 internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue contributors, RenameEvidenceReader? renames = null,
-    Func<CliWorkspace, CancellationToken, ValueTask<WorkspaceLayoutRead>>? readLayout = null)
+    Func<CliWorkspace, CancellationToken, ValueTask<WorkspaceLayoutRead>>? readLayout = null, ToolRunMissingReader? missingTools = null)
 {
+    private readonly ToolRunMissingReader _missingTools = missingTools ?? new(new());
     private readonly OperationalContributorCatalogue _contributors = contributors;
     private readonly DoctorMaintenanceReader _maintenance = new(renames ?? new RenameEvidenceReader(new PhysicalPathResolver()));
 
@@ -72,7 +75,8 @@ internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue cont
             OutsideRoutes = outside,
             ToolBackups = ToolBackupReader.Read(request.Workspace, ToolBackupPaths.WorkspaceTargets, cancellationToken),
         };
-        var result = DoctorResultBuilder.Build(request, resultObservation);
+        var result = DoctorToolFindingAppender.Append(DoctorResultBuilder.Build(request, resultObservation),
+            await _missingTools.ReadAsync(request.Workspace, new(observation.Settings, observation.Ownership), cancellationToken).ConfigureAwait(false));
         return new DoctorDiagnosisRead(resultObservation, result);
     }
 }

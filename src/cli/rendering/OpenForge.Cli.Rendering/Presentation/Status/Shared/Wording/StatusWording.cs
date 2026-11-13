@@ -378,6 +378,7 @@ internal static class StatusWording
         StatusFindingCode.InvalidInput => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleInvalidInput(),
         StatusFindingCode.ToolBackupPresent => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupTitle(),
         StatusFindingCode.ToolBackupUnavailable => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupUnavailableTitle(),
+        StatusFindingCode.ToolDeclaredMissing => global::OpenForge.Cli.OutputText.Tool.Run.ToolRunText.MissingTitle,
         StatusFindingCode.WorkspaceUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsUnavailable(),
         StatusFindingCode.WorkspaceNotDirectory => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsNotADirectory(),
         StatusFindingCode.WorkspaceUnsafe => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsUnsafe(),
@@ -436,6 +437,7 @@ internal static class StatusWording
         {
             StatusFindingCode.ToolBackupPresent => OpenForge.Cli.Core.Commands.Shared.CommandLines.RepairAutomaticPreview,
             StatusFindingCode.ToolBackupUnavailable => "open-forge doctor",
+            StatusFindingCode.ToolDeclaredMissing => OpenForge.Cli.Core.Commands.Tool.Shared.Reporting.ToolContractCodes.RestoreCommand,
             StatusFindingCode.FrameworkTargetChanged or StatusFindingCode.FrameworkTargetMissing => "open-forge update",
             StatusFindingCode.ExtensionTargetChanged or StatusFindingCode.ExtensionTargetMissing
                 => $"open-forge extension update {owner ?? "<id>"}",
@@ -474,6 +476,7 @@ internal static class StatusWording
         => code switch
         {
             StatusFindingCode.ToolBackupPresent => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupNext(),
+            StatusFindingCode.ToolDeclaredMissing => global::OpenForge.Cli.OutputText.Tool.Run.ToolRunText.InstallNextReason,
             StatusFindingCode.FrameworkTargetChanged or StatusFindingCode.FrameworkTargetMissing
                 => global::OpenForge.Cli.OutputText.Status.StatusText.MessageUpdateTheFrameworkFilesThatNeedAttention(),
             StatusFindingCode.ExtensionTargetChanged or StatusFindingCode.ExtensionTargetMissing

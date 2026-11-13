@@ -479,7 +479,7 @@ internal static class StatusReportSelector
         var isOwnership = finding.Code is StatusFindingCode.FrameworkOwnershipObservation
             or StatusFindingCode.ExtensionOwnershipObservation
             or StatusFindingCode.LibraryOwnershipObservation;
-        var isIdentifier = isLibrarySource || finding.Code is StatusFindingCode.ExtensionSourceUnavailable;
+        var isIdentifier = isLibrarySource || finding.Code is StatusFindingCode.ExtensionSourceUnavailable or StatusFindingCode.ToolDeclaredMissing;
         var path = isOwnership
             ? subject ?? ".agents/open-forge.lock.json"
             : isIdentifier && !isLibrarySource ? null : subject;
@@ -558,6 +558,7 @@ internal static class StatusReportSelector
             StatusFindingCode.LibraryExtensionCollision => finding.Cause,
             StatusFindingCode.ToolBackupPresent => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupMessage(subject),
             StatusFindingCode.ToolBackupUnavailable => finding.Cause,
+            StatusFindingCode.ToolDeclaredMissing => global::OpenForge.Cli.OutputText.Tool.Run.ToolRunText.MissingMessage(subject),
             StatusFindingCode.InvalidInput => StatusWording.Invalid(StatusWording.TrimSentence(finding.Cause)),
             StatusFindingCode.WorkspaceUnavailable => StatusWording.WorkspaceUnavailable(),
             StatusFindingCode.WorkspaceNotDirectory => StatusWording.WorkspaceNotDirectory(),
@@ -588,7 +589,7 @@ internal static class StatusReportSelector
             ? null
             : code switch
             {
-                StatusFindingCode.ToolBackupPresent => CliResolution.TargetedOperation,
+                StatusFindingCode.ToolBackupPresent or StatusFindingCode.ToolDeclaredMissing => CliResolution.TargetedOperation,
                 StatusFindingCode.FrameworkTargetChanged or StatusFindingCode.FrameworkTargetMissing
                     or StatusFindingCode.ExtensionTargetChanged or StatusFindingCode.ExtensionTargetMissing
                     or StatusFindingCode.LibraryProjectionMissing or StatusFindingCode.LibraryProjectionChanged

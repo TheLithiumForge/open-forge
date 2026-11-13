@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Shell.Definitions.Models;
+using OpenForge.Cli.Core.Commands.Tool.Shared.Reporting;
 
 namespace OpenForge.Cli.Core.Commands.Doctor;
 
@@ -56,6 +57,7 @@ internal static class DoctorDefinitions
             DoctorFindingKind.RecoveryProvenanceUnavailable => "recovery.provenance-unavailable",
             DoctorFindingKind.ToolBackupPresent => "tool.backup-present",
             DoctorFindingKind.ToolBackupUnavailable => "tool.backup-unavailable",
+            DoctorFindingKind.ToolDeclaredMissing => ToolContractCodes.DoctorDeclaredToolMissing,
             DoctorFindingKind.RouteEntrypointMissing => "route.entrypoint-missing",
             DoctorFindingKind.RouteEntrypointDuplicate => "route.entrypoint-duplicate",
             DoctorFindingKind.RouteEscape => "route.escape",

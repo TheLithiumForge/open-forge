@@ -60,7 +60,15 @@ Each active tool needs a Skill describing its purpose, commands, limits and trus
 
 ## Tool Run
 
-V1 contract, implementation pending: `open-forge tool run <tool> -- <args>` runs the pinned binary and private runtime from the current directory. It adds no PATH entry or symlink. It isn't implemented.
+The V1 Tool Run contract accepts `open-forge tool run [--workspace <dir>] <tool> [--] <args...>`. Put Open Forge options before the ID. Everything after it stays child input, including `--help`. One immediate delimiter is consumed. Further delimiters stay in the child argument array.
+
+Select the workspace with `--workspace`, then `CLAUDE_PROJECT_DIR`, then an upward search from CWD. A supplied but invalid selection fails without fallback. The child keeps CWD.
+
+Run accepts only a declared, installed and verified tool ID. It resolves the recorded executable in the verified store. Paths, shell strings and unknown IDs are refused. Each immutable member must match its recorded size and UTC timestamp. Status hashes the files in full. Missing or changed members block launch.
+
+A declared missing tool requires `open-forge tool install`. Interactive Run offers normal Install consent. Non-interactive Run exits 5 without installing. Arguments pass as an array without a shell. Raw stdin, stdout, stderr and exit code have no result envelope or successful-run output.
+
+The child shares the console or foreground process group. Run waits through Ctrl+C and Ctrl+Break, then returns the child's exit. Parent-only SIGTERM, SIGHUP or verified MCP input-pipe closure waits one second, then stops the running process tree. Run returns 143 for SIGTERM or 129 for hangup. Ordinary CLI pipe EOF keeps normal child behavior.
 
 ## Graph use
 
@@ -68,7 +76,7 @@ Graph results are leads. Before an edit depends on an edge, read the caller and 
 
 The [shared options](common.md) define global flags, results and runtime-folder rules.
 
-Bare `open-forge tool install` restores every declared pin against the lock with the same consent. Declared missing tools report this exact next step in Tool Status, workspace Status, Doctor and Run. Non-interactive installs take `--prompt-hook yes|no` for the declared component. Run is required in V1 and its implementation is pending.
+Bare `open-forge tool install` restores every declared pin against the lock with the same consent. Declared missing tools report this exact next step in Tool Status, workspace Status, Doctor and Run. Non-interactive installs take `--prompt-hook yes|no` for the declared component. Run is required in V1.
 
 ## V1 registration
 
@@ -77,5 +85,3 @@ Tools create their own host entries. After Install, Configure or Update, Open Fo
 Definitions declare first-party or third-party origin. List groups by origin and shows it in a column. Inspect shows the origin, installer entries, rewrites and optional components. Third-party consent identifies upstream software, its repository, licence, official release and authors.
 
 Choose switches recognized role integrations and the required Skill while keeping both installs and indexes. Each active role adds one conditional line in Open Forge's managed `AGENTS.md` and `CLAUDE.md` block. Clearing the role removes that line. No additional help pointer is added.
-
-Tool Run accepts only a declared installed and verified tool ID. It resolves the recorded executable in the verified store and passes the remaining arguments as an array without a shell. It checks recorded size and timestamp on each run. Status re-hashes the files. Paths, shell strings, unknown IDs and changed or missing bytes are refused. Run forwards streams, signals and exit code without successful-run output. Put `--workspace <dir>` before the ID, or use `CLAUDE_PROJECT_DIR`, when the host starts outside the workspace. Otherwise Run searches upward from the current directory.

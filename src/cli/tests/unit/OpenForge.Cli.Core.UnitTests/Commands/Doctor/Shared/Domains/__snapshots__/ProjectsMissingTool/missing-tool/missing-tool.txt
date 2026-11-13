@@ -1,0 +1,4 @@
+Declared tool is missing
+The declared tool fixture-tool isn't installed for this workspace.
+open-forge tool install
+Restore the workspace's declared tool pins.
