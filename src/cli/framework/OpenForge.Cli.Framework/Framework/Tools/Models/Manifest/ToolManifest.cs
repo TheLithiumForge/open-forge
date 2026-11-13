@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using OpenForge.Cli.Core.Framework.Tools.Models.Artifacts;
+using OpenForge.Cli.Core.Framework.Tools.Models.Supply;
 using OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
 using OpenForge.Cli.Core.Framework.Tools.Models.Lifecycle;
 using OpenForge.Cli.Core.Framework.Tools.Models.Execution;
