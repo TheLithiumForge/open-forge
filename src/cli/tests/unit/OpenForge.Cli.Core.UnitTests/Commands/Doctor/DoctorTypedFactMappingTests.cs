@@ -156,7 +156,8 @@ public sealed class DoctorTypedFactMappingTests
                     kind,
                     kind.ToString(),
                     location: null))
-                .ToArray()) with { Fragment = "target-heading" };
+                .ToArray()) with
+        { Fragment = "target-heading" };
 
         var set = LocalReferenceDoctorCandidateProjector.Project(
             reference,
