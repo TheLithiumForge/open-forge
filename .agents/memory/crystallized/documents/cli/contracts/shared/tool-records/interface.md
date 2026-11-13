@@ -57,9 +57,11 @@ tools.codegraph = {
 
 The exact version is a tested baseline, not a separate executable pin for every project.
 A detected compatible patch can be reused and reported as distinct from the baseline.
-For a missing installation, the proposed team-install rule selects the baseline when it is still available and admitted.
+For a missing installation, the proposed team-install rule selects the baseline when it is still available and reviewed.
 Update resolves a new baseline and supported range.
 A missing or inconsistent baseline requires a reviewed plan. It never becomes a silent latest-version selection.
+Whether a newly resolved package patch becomes the tested baseline, or the lock keeps a catalogue-tested patch, is part of Q1.
+The machine's installed version and the lock's tested baseline stay separate until that choice is made.
 
 ## Workspace state
 
@@ -67,6 +69,7 @@ Workspace edit history lives at `.open-forge-state/tools/<id>.json`.
 This uses the existing fixed workspace state directory, including with a custom context root.
 Its local `.gitignore` excludes the state from Git.
 Keep schema 1 edit records with ID, profile digest, target scope, file and selector, prior presence and value, applied presence and value and verification state.
+Keep the typed removal recipe for an Open Forge change so later catalogue changes don't erase its restoration rules.
 JSON null is a present value. Absence is separate.
 Text records keep the exact block or managed-file bytes, not a diff.
 Native-command records keep the read-back prior and applied values and allow-listed restoration vector.

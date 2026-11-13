@@ -15,6 +15,9 @@ Commands follow the [context folder chosen at installation](../getting-started/i
 
 ## Start with these commands
 
+Tool setup has a [planned command outline](tools.md).
+Its six commands wait for the implementation lanes.
+
 | When you want to                               | Run                                                   |
 | ---------------------------------------------- | ----------------------------------------------------- |
 | Read startup context                           | [`open-forge context`](/guides/cli#context)           |

@@ -42,6 +42,8 @@ Select relevant scopes from returned descriptions and batch their source IDs. Af
 
 ## Read Details When Needed
 
+Tool setup has a [planned command outline](references/tools.md). Full help lands with its implementation.
+
 - [Reading and discovery](references/discovery.md): context, tags, headings, direct references, route inspection, and health checks. Find candidates, inspect their relationships, then load only the relevant chain or bounded linked context.
 - [Route maintenance](references/routes.md): create, update, move, remove, index, repair, and cleanup. Read before changing routes or generated navigation.
 - [Framework and packages](references/packages.md): install setup, update, removal, all Extension commands, and all Library commands. Read for an authorized lifecycle task.

@@ -127,7 +127,6 @@
     "tools": {
       "type": "object",
       "description": "Declared tools and their supported major.minor ranges. Machine paths and edit history stay local.",
-      "propertyNames": { "pattern": "^[a-z0-9][a-z0-9-]*$" },
       "additionalProperties": {
         "type": "object",
         "additionalProperties": true,

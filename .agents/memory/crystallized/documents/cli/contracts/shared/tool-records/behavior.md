@@ -61,7 +61,7 @@ Whether to run a local native uninstall as well is a review question.
 
 ## Backups
 
-For a tracked file whose current bytes match Git's saved bytes, Git provides the backup.
+For a tracked file whose current bytes match HEAD, Git provides the backup.
 For an untracked file or a file with uncommitted bytes, prepare a sibling `.bak` before changing it.
 Git can't recover uncommitted bytes.
 An occupied or unreadable backup destination blocks replacement.
@@ -78,7 +78,7 @@ Verify config and direct-command readiness before publishing the portable tool b
 Write settings and lock with the existing writers under the workspace lease.
 A failed second write is reported as incomplete records. Reapply reconciles from actual facts and saved local history.
 Machine records stay outside the workspace.
-They don't grant project write permission or prove another project's compatibility.
+They don't grant project write permission or show another project's compatibility.
 
 Readers accept unknown keys and report unrecognized schema versions while using understood keys.
 Invalid fields they act on block the dependent effect.

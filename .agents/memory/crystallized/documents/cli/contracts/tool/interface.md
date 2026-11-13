@@ -17,11 +17,11 @@ A tool ID selects a typed catalogue entry. It isn't a path or a source ID.
 The six leaves are defined by the [group](_tool.md).
 All leaves accept the [global flags](../shared/global-flags/interface.md).
 Writer leaves accept `--dry-run`, `--automatic` and repeated `--allow-path <path>`.
-Install and Update retain `--allow-download` as separate consent for the exact disclosed network installation plan.
+Install and Update keep `--allow-download` as separate consent for the exact disclosed network installation plan.
 `--automatic` skips final confirmation and grants neither download consent nor PATH or file-deletion consent.
 The review proposals for unresolved consent syntax are in [Review questions](../../technical-designs/tool-setup-lanes.md#not-decided-yet).
 
-IDs use lowercase ASCII letters, digits and hyphens, starting with a letter or digit.
+IDs are the exact keys in the typed catalogue.
 Unknown IDs and channels, malformed ranges, extra operands and repeated singleton values are invalid input.
 Repeated Boolean flags are idempotent. Permission paths keep the shared path rules.
 Bare Install and Update select declared IDs in ordinal order.
@@ -56,7 +56,7 @@ The result conditions are:
 - `failed` - an attempted operation or verification fails.
 - `cancelled` - cancellation stops the operation.
 - `incomplete` - required facts or a selected step couldn't be completed.
-- `completed-with-warnings` - the observation or operation completes with drift or a disclosed remaining readiness issue.
+- `completed-with-warnings` - the check or operation completes with drift or a disclosed remaining readiness issue.
 - `completed` - all selected work verifies, including a no-op.
 
 Result coordinates defines numeric exits and streams, not batch aggregation.

@@ -14,7 +14,7 @@ Status: V1 design decided. Implementation waits for maintainer review of step 0.
 ## Detection
 
 Resolve the declared command and run its bounded `--version` probe through an argument vector.
-The version parser returns an exact stable version or a failed observation.
+The version parser returns an exact stable version or a failed check.
 A probe has a timeout and output cap. It never requests setup or indexing.
 A wrapper that can download during a version probe needs a read-only readiness check before invocation.
 If that check can't establish a read-only probe, report unavailable detection.
@@ -27,10 +27,10 @@ Open Forge leaves upstream hooks, permissions, watchers, daemons, indexing and s
 
 Unless `--channel` chooses an advertised channel, use this order:
 
-1. Reuse an existing supported installation.
+1. Reuse an existing supported installation that satisfies the requested range.
 2. Choose a tool-published package manager that meets all requirements. Prefer the manager the project uses.
 3. For an npm tool without a suitable Node, install with a private Node runtime.
-4. Choose an admitted GitHub release archive.
+4. Choose an reviewed GitHub release archive.
 
 Check runtime, manager version, OS, CPU and Linux libc before proposing a channel.
 Keep the manager responsible for an existing installation. A preference never creates a second install.

@@ -100,7 +100,7 @@ Remember every added entry and block per machine in state.
 The marks identify their purpose even if that state is lost.
 When the last tool is removed, offer PATH removal and ask for confirmation.
 Say that terminals and agent apps need a restart.
-Current-process PATH membership doesn't prove a restarted agent can launch the tool.
+Current-process PATH membership doesn't show a restarted agent can launch the tool.
 
 ## Configuration
 
