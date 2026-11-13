@@ -70,6 +70,30 @@ Reviewed and accepted output:
 
 Received output stays under `artifacts/command-output-snapshots/<run>/<Class>/<Group>/`. The accepted snapshots verify in ordinary runs.
 
+## CI Follow-up
+
+The overseer opened PR #27 at `9e6b9203b5082299c259d05e57f43af9f3999c98`. Run `43401811949` reports five Integration failures in Linux job `131810132481`. Linux x64 was the only failed platform job when this follow-up started. The maintainer selected the finding catalogue and guidance snapshot failures for this fix.
+
+The Doctor, References and Context Findings catalogue tables now list all three comment-link finding codes. The production definitions added only `reference.legacy-anchor`, `references.legacy-anchor` and `context.legacy-anchor`. The invariant test passes without a new catalogue exception.
+
+The reviewed Linux received snapshot adds the Comment links section and the References comment-link sentence. One shared `custom-guidance.content.txt` expectation feeds the Windows, Linux and macOS adapters. Its update passes the Windows payload-rendering test and the existing platform-comparer checks. No runtime, shipped payload or test implementation changed.
+
+Follow-up checks:
+
+| Check | Result |
+| --- | --- |
+| Integration `CliReportInvariantsTests` | 9 passed |
+| Integration `CustomGuidanceMatchesReviewedTemplates` | 1 passed |
+| Integration `RepositoryMarkdownTests` | 13 passed |
+| Unit `PlatformSnapshotComparerTests` | 7 passed |
+| `npm run check:dotnet:whitespace` | Pass |
+| `npm run check:dotnet:style` | Pass |
+| Index preview for the three contracts | Entries current |
+
+All focused selections have zero skips. Both formatting commands report workspace-loading warnings and exit successfully. No full local suite or native suite ran. The snapshot update accepts one shared expectation for all three supported platform adapters. Local logs use the `artifacts/pr27-` prefix.
+
+The other Linux failures concern included-file Doctor output, reference parse counts and custom-guidance path checks. They are outside the two selected fixes and still need follow-up. This follow-up makes no push.
+
 ## Handoff
 
-The branch is `feature/comment-links`, stacked on `fix/code-link-fragments` at `c41e95b1b`. Changes stay in this worktree. No push, merge or PR was made. The overseer publishes the branch and runs CI. The existing NuGet audit failure needs maintainer follow-up if it blocks CI.
+The branch is `feature/comment-links`, stacked on `fix/code-link-fragments` at `c41e95b1b`. Changes stay in this worktree. The original lane made no push, merge or PR. The overseer later opened PR #27 and ran CI. The existing NuGet audit failure needs maintainer follow-up if it blocks CI.
