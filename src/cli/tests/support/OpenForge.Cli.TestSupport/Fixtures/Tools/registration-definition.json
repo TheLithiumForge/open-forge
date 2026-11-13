@@ -1,0 +1,61 @@
+{
+  "rewrites": [
+    {
+      "kind": "json-command",
+      "id": "fixture-mcp",
+      "host": "claude-code",
+      "file": ".mcp.json",
+      "pointer": "/mcpServers/codegraph",
+      "expected": { "command": "codegraph", "args": ["serve", "--mcp"] },
+      "replacement": { "command": "${openForge}", "args": ["tool", "run", "codegraph", "serve", "--mcp"] }
+    },
+    {
+      "kind": "toml-command",
+      "id": "fixture-codex",
+      "host": "codex",
+      "file": ".codex/config.toml",
+      "table": "mcp_servers.codegraph",
+      "expected": { "command": "codegraph", "args": ["serve", "--mcp"] },
+      "replacement": { "command": "${openForge}", "args": ["tool", "run", "codegraph", "serve", "--mcp"] }
+    },
+    {
+      "kind": "hook-command",
+      "id": "fixture-hook",
+      "host": "claude-code",
+      "file": ".claude/settings.json",
+      "component": "prompt-hook",
+      "pointer": "/hooks/UserPromptSubmit/0/hooks/0/command",
+      "expected": "codegraph hooks prompt",
+      "replacement": "\"${openForge}\" tool run codegraph hooks prompt"
+    },
+    {
+      "kind": "marked-line",
+      "id": "fixture-line",
+      "host": "claude-code",
+      "file": "CLAUDE.md",
+      "startMarker": "<!-- codegraph:start -->",
+      "endMarker": "<!-- codegraph:end -->",
+      "expected": "codegraph context \"$ARGUMENTS\"",
+      "replacement": "\"${openForge}\" tool run codegraph context \"$ARGUMENTS\""
+    }
+  ],
+  "components": [
+    {
+      "id": "prompt-hook",
+      "flag": "prompt-hook",
+      "description": "Add local-index context to structural prompts. Data stays on this machine. Set CODEGRAPH_NO_PROMPT_HOOK=1 to disable it.",
+      "defaultEnabled": true,
+      "declinedEntries": [
+        {
+          "host": "claude-code",
+          "file": ".claude/settings.json",
+          "pointer": "/hooks/UserPromptSubmit/0/hooks/0",
+          "expected": { "type": "command", "command": "codegraph hooks prompt" }
+        }
+      ]
+    }
+  ],
+  "roleGuidance": [{ "role": "code-navigation", "line": "Use the CodeGraph Skill for local code navigation. Check graph answers against source." }],
+  "activate": null,
+  "deactivate": null
+}

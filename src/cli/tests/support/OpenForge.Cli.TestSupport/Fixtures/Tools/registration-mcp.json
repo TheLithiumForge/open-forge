@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "codegraph": {
+      "command": "codegraph",
+      "args": ["serve", "--mcp"],
+      "env": { "CODEGRAPH_NO_DAEMON": "1", "CODEGRAPH_NO_WATCH": "1" }
+    },
+    "fixture-other": { "command": "fixture-other", "args": [] }
+  },
+  "fixture-authored": true
+}

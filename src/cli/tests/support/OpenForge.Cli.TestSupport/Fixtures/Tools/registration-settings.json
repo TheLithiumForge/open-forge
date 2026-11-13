@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      { "matcher": "", "hooks": [{ "type": "command", "command": "codegraph hooks prompt" }] },
+      { "hooks": [{ "type": "command", "command": "fixture-custom-hook" }] }
+    ],
+    "SessionStart": [{ "hooks": [{ "type": "command", "command": "fixture-session-hook" }] }]
+  },
+  "fixture-authored": true
+}

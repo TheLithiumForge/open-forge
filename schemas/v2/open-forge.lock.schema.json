@@ -297,6 +297,19 @@
             }
           ]
         },
+        "declinedComponents": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ToolComponentDeclineReceipt"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "guidance": {
           "anyOf": [
             {
@@ -514,6 +527,29 @@
             "enum": ["claude-code", "codex"]
           }
         }
+      }
+    },
+    "ToolComponentDeclineReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "absentEntries"],
+      "properties": {
+        "id": { "type": "string" },
+        "absentEntries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ToolJsonEntryRemoval" }
+        }
+      }
+    },
+    "ToolJsonEntryRemoval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["host", "file", "pointer", "expected"],
+      "properties": {
+        "host": { "enum": ["claude-code", "codex"] },
+        "file": { "type": "string" },
+        "pointer": { "type": "string" },
+        "expected": {}
       }
     },
     "ToolEntryRewrite": {

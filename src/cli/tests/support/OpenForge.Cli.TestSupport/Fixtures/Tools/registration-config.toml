@@ -1,0 +1,15 @@
+# Authored Codex settings
+model = "fixture-model"
+
+[mcp_servers.codegraph]
+command = "codegraph"
+args = ["serve", "--mcp"]
+startup_timeout_sec = 20
+
+[mcp_servers.codegraph.env]
+CODEGRAPH_NO_DAEMON = "1"
+CODEGRAPH_NO_WATCH = "1"
+
+[mcp_servers.fixture-other]
+command = "fixture-other"
+args = []
