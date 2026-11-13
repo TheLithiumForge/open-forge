@@ -1,4 +1,5 @@
 # External tools
+
 `open-forge tool` is a command group that reads reviewed external tool definitions and recorded workspace installs.
 
 You install a supported pin, build its index through the external program, then choose its workspace role. Installation doesn't choose a role or build an index. `list`, `inspect` and `status` are available. The five write commands and concrete CodeGraph and Codebase Memory adapters are pending.
@@ -7,16 +8,16 @@ You install a supported pin, build its index through the external program, then 
 
 The contracted command order is:
 
-| Command | What it does |
-| --- | --- |
-| `tool list` | Lists available definitions and recorded installs |
-| `tool inspect <id>` | Explains one exact definition and its requirements |
-| `tool install <id>` | Verifies and registers a pin without choosing a role |
-| `tool configure <id>` | Reconciles settings, desired hosts and code root |
-| `tool status [<id>]` | Passively checks one or all recorded tools |
-| `tool update <id>` | Changes a registration to one exact supported pin |
-| `tool remove <id>` | Removes a registration and its recognized artifacts |
-| `tool choose <role> <id\|none>` | Assigns or clears a workspace role |
+| Command                         | What it does                                         |
+| ------------------------------- | ---------------------------------------------------- |
+| `tool list`                     | Lists available definitions and recorded installs    |
+| `tool inspect <id>`             | Explains one exact definition and its requirements   |
+| `tool install <id>`             | Verifies and registers a pin without choosing a role |
+| `tool configure <id>`           | Reconciles settings, desired hosts and code root     |
+| `tool status [<id>]`            | Passively checks one or all recorded tools           |
+| `tool update <id>`              | Changes a registration to one exact supported pin    |
+| `tool remove <id>`              | Removes a registration and its recognized artifacts  |
+| `tool choose <role> <id\|none>` | Assigns or clears a workspace role                   |
 
 The core's production catalogue is empty. A local source can select definitions supported by the CLI release. It can't import adapter code or add unreviewed pins. Another program or pin needs an Open Forge release.
 
@@ -52,4 +53,13 @@ The core adds no search proxy, index scheduler, arbitrary scripts, system PATH c
 
 ## Tool commands
 
-Concrete installer, uninstaller and cleanup arguments belong to the next branch. The core keeps those definitions generic and ships no concrete tool.
+The two drafts keep verified release facts separate from pending commands:
+
+| Tool            | Pin      | Draft state                                           |
+| --------------- | -------- | ----------------------------------------------------- |
+| CodeGraph       | `1.6.2`  | R2, private launcher and native qualification pending |
+| Codebase Memory | `0.12.1` | R1, account scope and native qualification pending    |
+
+All twelve selected archives pass size, published SHA-256 and signature verification. The drafts aren't catalogue sources or admitted installs. Unresolved arguments stay null. The [maintenance checklist](tool-maintenance.md) gives admission steps, both worked examples and proposed passive checks using the native MCP names.
+
+The inventories describe pinned-source writes before installation. [CodeGraph consent](tools/codegraph-consent.md) covers local Claude Code and Codex setup. [Codebase Memory consent](tools/codebase-memory-consent.md) covers account setup and its wider uninstall scope.

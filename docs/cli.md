@@ -27,7 +27,7 @@ The primary content locations are the selected context folder and native Skills 
 
 ## Command index
 
-The external Tool family provides `tool list`, `tool inspect` and `tool status`. The [external tool reference](tools.md) describes these read commands, the pending writers, consent, Git or sibling-backup recovery and workspace records. The decided writers invoke tool-owned installers for agent configuration.
+The external Tool family provides `tool list`, `tool inspect` and `tool status`. The [external tool reference](tools.md) describes these read commands, pending writers, consent, recovery and workspace records. CodeGraph `1.6.2` and Codebase Memory `0.12.1` have drafts with all six asset pins. Installer decisions are pending, so neither is admitted. The decided writers invoke tool-owned installers for agent configuration.
 
 Choose a task, then follow its command link. Each operation has the same shape:
 purpose, common examples, options, behavior notes, and next step. Read-only
@@ -37,7 +37,7 @@ examples need no preview. Mutation examples show a preview before application.
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Learn Open Forge concepts     | [help](#help)                                                                                                                                                                                                                            |
 | Read and discover context     | [status](#status), [context](#context), [find](#find), [references](#references), [route list](#route-list), [route inspect](#route-inspect)                                                                                             |
-| Add and organize knowledge    | [route init](#route-init), [route create](#route-create), [route include](#route-include), [route exclude](#route-exclude), [route update](#route-update), [route move](#route-move), [route remove](#route-remove)                                                                                        |
+| Add and organize knowledge    | [route init](#route-init), [route create](#route-create), [route include](#route-include), [route exclude](#route-exclude), [route update](#route-update), [route move](#route-move), [route remove](#route-remove)                      |
 | Check and repair              | [index](#index), [doctor](#doctor), [repair](#repair), [cleanup](#cleanup)                                                                                                                                                               |
 | Manage the Framework          | [install](#install), [update](#update), [remove](#remove)                                                                                                                                                                                |
 | Manage Extensions             | [extension list](#extension-list), [extension inspect](#extension-inspect), [extension create](#extension-create), [extension install](#extension-install), [extension update](#extension-update), [extension remove](#extension-remove) |
@@ -295,14 +295,14 @@ no-ops create nothing in this folder.
 
 When a command cannot take the lock, it changes nothing and says why:
 
-| Cause | Message |
-| --- | --- |
-| Busy | `Another Open Forge command holds the lock at <path>. Nothing was changed.` |
-| Access denied | `Cannot open the lock at <path>: access denied. Nothing was changed.` |
-| Unsupported | `Cannot lock <path>: this filesystem does not support file locks. Nothing was changed.` |
-| Invalid target | `Cannot use <path> as the lock: it is not an ordinary file. Nothing was changed.` |
-| I/O error | `Cannot open the lock at <path>. Nothing was changed.` |
-| Cancelled | `Cancelled before taking the lock at <path>. Nothing was changed.` |
+| Cause          | Message                                                                                 |
+| -------------- | --------------------------------------------------------------------------------------- |
+| Busy           | `Another Open Forge command holds the lock at <path>. Nothing was changed.`             |
+| Access denied  | `Cannot open the lock at <path>: access denied. Nothing was changed.`                   |
+| Unsupported    | `Cannot lock <path>: this filesystem does not support file locks. Nothing was changed.` |
+| Invalid target | `Cannot use <path> as the lock: it is not an ordinary file. Nothing was changed.`       |
+| I/O error      | `Cannot open the lock at <path>. Nothing was changed.`                                  |
+| Cancelled      | `Cancelled before taking the lock at <path>. Nothing was changed.`                      |
 
 Only a busy lock means another command is running. Retry when it finishes.
 
@@ -731,15 +731,15 @@ The directory must be inside the workspace without overlapping the main root, fi
 
 Use exact source references with the filename, such as `./docs/_docs.md` and `./docs/testing.md`. Registration creates no short ID or alias. The spelling stays literal, while discovery and command admission depend on registration or retained inclusion.
 
-| Command | Within a registered outside route |
-| --- | --- |
-| `route create` | Create a Markdown leaf and necessary descendant chains below an existing recognized anchor |
-| `route init` | Initialize or restore a generic canonical entrypoint chain, stopping at the registered directory |
-| `route update` | Change eligible existing metadata or complete an eligible empty body |
-| `index` | Maintain listed roots by default, or an explicitly selected unlisted tree |
-| `repair` | Maintain only the affected closure of selected proven repairs |
-| `route move` | Move an eligible leaf or descendant category within the same registration |
-| `route remove` | Remove eligible descendants and record literal file/directory exclusions without deregistering |
+| Command        | Within a registered outside route                                                                |
+| -------------- | ------------------------------------------------------------------------------------------------ |
+| `route create` | Create a Markdown leaf and necessary descendant chains below an existing recognized anchor       |
+| `route init`   | Initialize or restore a generic canonical entrypoint chain, stopping at the registered directory |
+| `route update` | Change eligible existing metadata or complete an eligible empty body                             |
+| `index`        | Maintain listed roots by default, or an explicitly selected unlisted tree                        |
+| `repair`       | Maintain only the affected closure of selected proven repairs                                    |
+| `route move`   | Move an eligible leaf or descendant category within the same registration                        |
+| `route remove` | Remove eligible descendants and record literal file/directory exclusions without deregistering   |
 
 For example, after registration:
 
@@ -1461,7 +1461,7 @@ open-forge install --configure --frontmatter root --automatic
 
 | Option                                              | What it does                                                                                                                                        |
 | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--main-root <folder>` | Choose a new or existing context folder at first installation, defaulting to `.agents`. Existing installations cannot change roots. |
+| `--main-root <folder>`                              | Choose a new or existing context folder at first installation, defaulting to `.agents`. Existing installations cannot change roots.                 |
 | `--configure`                                       | Revisit route choices or the frontmatter form in an installed workspace                                                                             |
 | `--preset <minimal\|essentials\|full-core\|custom>` | Select built-in routes without the preset question                                                                                                  |
 | `--frontmatter <root\|scoped>`                      | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
@@ -1532,12 +1532,12 @@ Status names a custom context folder. Status and Install expose `data.layout` wi
 
 ##### Setup choices
 
-| Preset       | Supplied defaults                                                                                                                                           |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Preset       | Supplied defaults                                                                                                                                                           |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `minimal`    | Directives and Crystallized Memory, with the Memory catalogue, plus the loader, the guide at `<mainRoot>/README.md` and the managed sections in `AGENTS.md` and `CLAUDE.md` |
-| `essentials` | Everything in Minimal, plus Patterns, Skills and Emerging Memory, and Working Memory with private contents and a shared entrypoint                          |
-| `full-core`  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                                          |
-| `custom`     | The current concrete selection in an existing workspace, or Essentials in a fresh one, with selected row overrides                                          |
+| `essentials` | Everything in Minimal, plus Patterns, Skills and Emerging Memory, and Working Memory with private contents and a shared entrypoint                                          |
+| `full-core`  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                                                          |
+| `custom`     | The current concrete selection in an existing workspace, or Essentials in a fresh one, with selected row overrides                                                          |
 
 Essentials omits Guidance, Maps, Templates, and Archived Memory. Full Core
 includes the base categories, not optional Extensions or an agent runtime.
@@ -1938,7 +1938,7 @@ Removal records exclusions in `.agents/open-forge.json`:
 
 | Setting              | Keeps removed                                            |
 | -------------------- | -------------------------------------------------------- |
-| `removedCategories`  | Root categories in the selected layout                          |
+| `removedCategories`  | Root categories in the selected layout                   |
 | `removedFiles`       | Exact workspace-relative file destinations               |
 | `removedDirectories` | Directories and every descendant, including future files |
 | `removedExtensions`  | Packages, including requests through dependencies        |
@@ -2587,7 +2587,6 @@ The target is the first word after the marker. Encode spaces in filenames. Markd
 References lists comment links in both directions and accepts exact code paths. Context checks them when you request link expansion. Doctor reports missing targets, failed fragments and older ID-style anchors. A legacy finding suggests a file path when the ID resolves. Comment links need no IDs or frontmatter. Generated and vendored files are skipped.
 
 Doctor and Repair suggest moved targets using Git history, heading changes, matching section content and a unique heading slug, in that order. Weak suggestions require selection. Preview `repair --relink` before applying a chosen target. Repair changes only the target word and keeps the marker, comment delimiters and explanation. Relinks write a repository-root path.
-
 
 ## .gitignore fallback rules
 

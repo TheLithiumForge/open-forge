@@ -4,6 +4,7 @@ description: Read external tool definitions and recorded workspace installs.
 ---
 
 # External tools
+
 `open-forge tool` is a command group that reads reviewed external tool definitions and recorded workspace installs.
 
 You install a supported pin, build its index through the external program, then choose its role. Installation doesn't choose a provider or build an index. `list`, `inspect` and `status` are available. The five write commands and concrete CodeGraph and Codebase Memory adapters are pending.
@@ -13,6 +14,8 @@ You install a supported pin, build its index through the external program, then 
 The V1 contract defines `list`, `inspect`, `install`, `configure`, `status`, `update`, `remove` and `choose`, in that order. The core has an empty production catalogue. Local sources can select supported definitions but can't import code or admit another pin.
 
 ## Read tools
+
+[CodeGraph](codegraph.md) `1.6.2` and [Codebase Memory](codebase-memory.md) `0.12.1` have drafts with verified releases for all six targets. Both are blocked on installer decisions and native qualification. Draft wrappers aren't accepted `--source` inputs. Required Skills and consent inventories are prepared for review. No installer runs while those decisions are pending.
 
 Run `open-forge tool list --format json` to read the catalogue and recorded installs. With no tool records, the empty core catalogue returns `completed` with empty `available` and `installed` arrays. `tool inspect <id> --source <path>` explains one local definition. Unreviewed pins return `blocked` with the readable definition.
 

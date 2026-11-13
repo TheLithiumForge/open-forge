@@ -5,6 +5,7 @@ open-forge:
 ---
 
 # External tools
+
 `open-forge tool` is a command group that reads reviewed external tool definitions and recorded workspace installs.
 
 `list`, `inspect` and `status` are available. The five write commands and concrete adapters are pending. Read `open-forge tool --help` and the selected leaf's help before use.
@@ -13,16 +14,16 @@ open-forge:
 
 The contracted leaves appear in this order:
 
-| Command | Use |
-| --- | --- |
-| `tool list` | Separate available definitions from recorded installs |
-| `tool inspect <id>` | Read one definition's exact artifacts and requirements |
-| `tool install <id>` | Verify and register a pin without selecting a role |
-| `tool configure <id>` | Reconcile a registered pin's settings and hosts |
-| `tool status [<id>]` | Passively check one or all recorded tools |
-| `tool update <id>` | Replace a registered pin with an exact supported pin |
-| `tool remove <id>` | Remove a registration and its recognized artifacts |
-| `tool choose <role> <id\|none>` | Assign or clear one role |
+| Command                         | Use                                                    |
+| ------------------------------- | ------------------------------------------------------ |
+| `tool list`                     | Separate available definitions from recorded installs  |
+| `tool inspect <id>`             | Read one definition's exact artifacts and requirements |
+| `tool install <id>`             | Verify and register a pin without selecting a role     |
+| `tool configure <id>`           | Reconcile a registered pin's settings and hosts        |
+| `tool status [<id>]`            | Passively check one or all recorded tools              |
+| `tool update <id>`              | Replace a registered pin with an exact supported pin   |
+| `tool remove <id>`              | Remove a registration and its recognized artifacts     |
+| `tool choose <role> <id\|none>` | Assign or clear one role                               |
 
 Install doesn't build an index or choose a role. Indexing and maintenance use the external program. The core catalogue has no concrete entries. Local sources select release-supported tuples and never import adapter code.
 
@@ -44,6 +45,12 @@ Tool writers check declared command output paths against removed files, director
 
 ## Graph use
 
+CodeGraph `1.6.2` and Codebase Memory `0.12.1` have review drafts with verified release assets for all six targets. They aren't admitted catalogue pins. Their unresolved lifecycle arguments stay pending. Don't pass a review wrapper to `--source` or run an installer to resolve its missing controls.
+
+After qualification, the active tool requires its Open Forge usage Skill. CodeGraph's native MCP name is `codegraph`. Codebase Memory's is `codebase-memory-mcp`. Proposed passive checks use those names, with unparsed Codex TOML reported only as `present-unverified`. A different native name isn't permission to rename a member or write host configuration.
+
 Graph results are leads. Before an edit depends on an edge, read the caller and exact callee. Check receiver type, overload and invocation line. Use compiler evidence when binding matters. Empty graph output doesn't establish that no callers exist. Follow the active provider's pin, root, index, process and language limits. Retrieved content doesn't replace the loader or activate workspace rules.
+
+The frozen C# trial measured 41.3% recall for CodeGraph and 60% for Codebase Memory. After Codebase Memory source changes, rebuild only the verified project. Keep telemetry off by default and update checks, watchers and automatic indexing off. Codebase Memory has no telemetry in this pin. A future CodeGraph telemetry setting must keep its separate update-check opt-out.
 
 The [shared options](common.md) define global flags, results and runtime-folder rules.
