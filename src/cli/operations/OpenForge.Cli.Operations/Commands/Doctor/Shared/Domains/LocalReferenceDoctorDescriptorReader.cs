@@ -8,6 +8,9 @@ internal static class LocalReferenceDoctorDescriptorReader
 {
     internal static DoctorFindingDescriptor? Read(LocalReferenceObservation observation)
     {
+        if (observation.Facts.Finding?.Code == SourceLinkDestinationFindingCode.LegacyAnchor)
+            return DoctorDomainSupport.Warning(DoctorFindingKind.ReferenceLegacyAnchor, observation.Facts.Finding.Cause, DoctorResolutionLane.ManualDecision);
+
         if (observation.Fragment.State == LocalReferenceFragmentState.Unverified)
         {
             return DoctorDomainSupport.Warning(

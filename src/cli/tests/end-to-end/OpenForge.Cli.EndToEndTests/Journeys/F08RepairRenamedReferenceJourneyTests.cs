@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
@@ -73,19 +74,20 @@ public sealed class F08RepairRenamedReferenceJourneyTests
     {
         using var journey = await PublishedMaintenanceJourney.CreateAsync("f08-choice");
         await MaintenanceRenameFixture.SeedAsync(journey);
+        var head = await journey.GitAsync("rev-parse", "HEAD");
         const string alternate = ".agents/guidance/billing/alternate-rounding.md";
         var target = journey.Document(MaintenanceRenameFixture.Description, ["Guidance"], MaintenanceRenameFixture.RoundingBody);
         File.Move(journey.Combine(MaintenanceRenameFixture.Old), journey.Combine(MaintenanceRenameFixture.New));
         journey.Write(alternate, target);
         await journey.TextAsync(0, false, "index");
         var before = journey.Snapshot();
-        using (var preview = await journey.JsonAsync(2, true, "repair", "--automatic", "--dry-run")) AssertChoices(preview, alternate);
+        using (var preview = await journey.JsonAsync(2, true, "repair", "--automatic", "--dry-run")) AssertChoices(preview, alternate: alternate, head: head);
         var automatic = await journey.TextAsync(2, true, "repair", "--automatic");
         Assert.Equal(before, journey.Snapshot());
         string command;
         using (var json = await journey.JsonAsync(2, true, "repair", "--automatic"))
         {
-            AssertChoices(json, alternate);
+            AssertChoices(json, alternate: alternate, head: head);
             Assert.Equal("Choose a target above, then run its command.", PublishedMaintenanceJourney.Next(json));
             var finding = Assert.Single(json.RootElement.GetProperty("findings").EnumerateArray(), row => row.GetProperty("code").GetString() == "repair.guided-finding-remaining");
             var actions = finding.GetProperty("actions").EnumerateArray().ToArray();
@@ -111,7 +113,7 @@ public sealed class F08RepairRenamedReferenceJourneyTests
         await journey.NoOpAsync("repair");
     }
 
-    private static void AssertChoices(JsonDocument json, string alternate)
+    private static void AssertChoices(JsonDocument json, string alternate, string head)
     {
         var data = json.RootElement.GetProperty("data");
         Assert.Empty(data.GetProperty("renames").EnumerateArray());
@@ -119,7 +121,10 @@ public sealed class F08RepairRenamedReferenceJourneyTests
         var remaining = Assert.Single(data.GetProperty("remaining").EnumerateArray());
         Assert.Equal("guided", remaining.GetProperty("kind").GetString());
         Assert.Equal([alternate + "#rounding", MaintenanceRenameFixture.New + "#rounding"], remaining.GetProperty("candidates").EnumerateArray().Select(row => row.GetProperty("path").GetString()).Order(StringComparer.Ordinal));
-        Assert.All(remaining.GetProperty("candidates").EnumerateArray(), row => Assert.Equal(new[] { "title match: Rounding", "content match: Rounding" }, row.GetProperty("reasons").EnumerateArray().Select(reason => reason.GetString())));
+        var reasons = string.Join("\n\n", remaining.GetProperty("candidates").EnumerateArray().Select(row =>
+            $"{row.GetProperty("path").GetString()}\n{string.Join('\n', row.GetProperty("reasons").EnumerateArray().Select(reason => reason.GetString()))}"));
+        CommandOutputSnapshot.MatchSnapshot(reasons.Replace(head, "<head>", StringComparison.Ordinal),
+            "ambiguous-candidate-reasons", testName: nameof(AmbiguousSuccessors));
     }
 
     [Fact(DisplayName = "F08 leaves a deleted note as a precise author edit and never guesses a replacement")]

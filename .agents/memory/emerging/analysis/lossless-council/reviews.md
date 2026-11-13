@@ -161,7 +161,7 @@ Most proposals independently agree that:
 
    Keep recursive catalogues in Markdown. Link exact files rather than expanding globs or directories automatically. For other formats, entry metadata should control Open Forge loading without interpreting native activation fields or emulating another tool’s imports.
 
-   This needs reader and source-model work plus Context, Index and Doctor parity tests. The [current linked-destination resolver](src/cli/framework/OpenForge.Cli.Framework/Framework/Sources/Loading/SourceGeneratedDestinationResolver.cs) explicitly rejects non-Markdown suffixes. Documentation alone cannot provide this capability.
+   This needs reader and source-model work plus Context, Index and Doctor parity tests. The [current linked-destination resolver](https://github.com/TheLithiumForge/open-forge/blob/43c684e4d2e1129610d580f6f2eb86a979751e1a/src/cli/framework/OpenForge.Cli.Framework/Framework/Sources/Loading/SourceGeneratedDestinationResolver.cs#L8-L53) explicitly rejects non-Markdown suffixes. Documentation alone cannot provide this capability.
 
 ### Revised position
 
@@ -1583,7 +1583,7 @@ Most proposals independently support these points:
 
 Non-Markdown sources should be read as opaque leaves. Their native frontmatter, globs and import syntax must remain untouched, with no automatic translation into Open Forge loading behavior. Open Forge conditions belong on the loader entry, and instructions independently loaded by another host remain active independently.
 
-This needs resolver, source-loading, diagnostic and fixture work. The [current resolver](src/cli/framework/OpenForge.Cli.Framework/Framework/Sources/Loading/SourceGeneratedDestinationResolver.cs:68) explicitly requires `.md`, so expanding formats is a real implementation change. Keep catalogue traversal Markdown-based, require explicit file paths, and avoid loading an entire rules directory merely because it exists.
+This needs resolver, source-loading, diagnostic and fixture work. The [current resolver](https://github.com/TheLithiumForge/open-forge/blob/43c684e4d2e1129610d580f6f2eb86a979751e1a/src/cli/framework/OpenForge.Cli.Framework/Framework/Sources/Loading/SourceGeneratedDestinationResolver.cs#L8-L53) explicitly requires `.md`, so expanding formats is a real implementation change. Keep catalogue traversal Markdown-based, require explicit file paths, and avoid loading an entire rules directory merely because it exists.
 
 ### 9. Revised position
 

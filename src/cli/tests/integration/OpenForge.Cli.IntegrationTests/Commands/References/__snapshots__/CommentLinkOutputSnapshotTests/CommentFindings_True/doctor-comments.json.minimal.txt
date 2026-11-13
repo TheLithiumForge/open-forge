@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 3,
+  "command": "doctor",
+  "status": "completed-with-warnings",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "No errors. 1 warning and 3 info findings were recorded.",
+    "kind": "warnings"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "checks": 6,
+    "checksComplete": 6,
+    "errors": 0,
+    "warnings": 1,
+    "infos": 3,
+    "linksChecked": 6,
+    "linksValid": 5,
+    "externalLinksNotChecked": 0,
+    "imageLinks": 0,
+    "routesChecked": 3,
+    "frameworkFiles": 0,
+    "extensionsInstalled": 0,
+    "librariesRegistered": null
+  },
+  "limitations": [],
+  "data": {},
+  "recovery": null,
+  "next": {
+    "kind": "sentence",
+    "command": "This comment uses a legacy source ID. Choose a file path.",
+    "reason": "This comment uses a legacy source ID. Choose a file path."
+  }
+}

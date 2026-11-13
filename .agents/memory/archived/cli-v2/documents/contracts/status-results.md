@@ -46,11 +46,11 @@ Production source defines each protocol inventory once through a readonly const
 object and derives its type from that object.
 
 The focused production modules for [Framework
-anchors](../../../../../../src/cli/commands/status/framework-anchors.ts), the
-[managed record](../../../../../../src/cli/commands/status/managed-record.ts),
-[recovery artifacts](../../../../../../src/cli/commands/status/recovery-artifacts.ts),
+anchors](../../source-snapshots/commands/status/framework-anchors.ts.txt), the
+[managed record](../../source-snapshots/commands/status/managed-record.ts.txt),
+[recovery artifacts](../../source-snapshots/commands/status/recovery-artifacts.ts.txt),
 and [relevant Git
-paths](../../../../../../src/cli/commands/status/status-git-paths.ts) are
+paths](../../source-snapshots/commands/status/status-git-paths.ts.txt) are
 authoritative for their exact implemented values, types, interfaces, and import
 paths. This contract defines their status meaning without copying those
 declarations.

@@ -63,7 +63,9 @@ a persistent reverse index, diagnose a workspace, or repair a reference.
 
 ### Accepted Authored Reference Forms
 
-Reference extraction reports only non-image link nodes produced by the already
+Shared [comment links](../shared/source-references/interface.md#comment-links) also produce authored occurrences. Both markers work in code comments and Markdown HTML comments. The default incoming scan adds eligible comment-bearing workspace files. Exact `./path` operands can select code files. Generated and vendored files are skipped by comment discovery. A legacy ID target reports `references.legacy-anchor` with suggested file paths when available.
+
+Markdown reference extraction reports non-image link nodes produced by the already
 accepted fixed CommonMark/Markdig parser. The accepted forms are:
 
 - inline links;
@@ -188,9 +190,10 @@ sources, entrypoints, `SKILL.md`, Markdown Skill resources, Templates, and valid
 base/overwrite layers grouped as logical sources. Eligible registered outside
 Markdown also participates, including unlisted files. Active included Markdown files
 and the listed descendants of included catalogues also participate. Other
-included text formats are opaque. Non-Markdown resources,
-provider bridges outside the primary content locations, receipts, recovery data, and operational
-metadata are excluded. An unreadable, unsafe, malformed, or otherwise
+included text formats contribute only recognized comment links. Eligible comment-bearing
+workspace files also participate under the shared [comment rules](../shared/source-references/interface.md#comment-links).
+Native Markdown links and images are read only from Markdown files. Receipts,
+recovery data and operational metadata are excluded. An unreadable, unsafe, malformed, or otherwise
 uninspectable candidate affects incoming coverage rather than disappearing. The
 command does not silently broaden that universe to every workspace Markdown
 file. The shared filter contract owns omission and set composition but does not
@@ -288,7 +291,8 @@ merely because no network request was attempted.
 The incoming universe also includes active included Markdown files and listed
 descendants of included catalogues. Use `./<workspace-path>` to select one.
 Authored links in those files count normally. Loader and catalogue Entries stay
-navigation and are not counted. Other included text formats are opaque.
+navigation and are not counted. Other included text formats contribute only
+recognized comment links under the shared comment rules.
 
 ## Human Output
 
@@ -431,6 +435,7 @@ The findings catalogue below is the command's finite error and warning vocabular
 | references.target-missing               | warning  | local                 | row state `missing`                                                                                                                                                                                                                                                                                                                                     | `open-forge doctor`                 |
 | references.line-out-of-range            | warning  | local                 | row state `line range out of range`                                                                                                                                                                                                                                                                                                                     | fix by hand                         |
 | references.symbol-missing               | warning  | local                 | row state `symbol not found`                                                                                                                                                                                                                                                                                                                            | fix by hand                         |
+| references.legacy-anchor | warning | local | [wording](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/References/ReferencesText.cs); [snapshot](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/References/__snapshots__/CommentLinkOutputSnapshotTests/CommentFindings_False/references-comments.json.full.txt) | `open-forge doctor` |
 | references.fragment-missing             | warning  | local                 | row state `heading not found`                                                                                                                                                                                                                                                                                                                           | `open-forge doctor`                 |
 | references.target-unsafe                | error    | local                 | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/References/Shared/Wording/ReferencesWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`references.target-unsafe`).                | fix by hand                         |
 | references.target-ambiguous             | error    | local                 | [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/References/Shared/Wording/ReferencesWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`references.target-ambiguous`).             | fix by hand                         |

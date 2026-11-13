@@ -274,6 +274,7 @@ internal static class ReferencesReportSelector
             ReferencesFindingCode.FragmentMissing => RowStateMessage(location, global::OpenForge.Cli.OutputText.References.ReferencesText.LabelHeadingNotFound()),
             ReferencesFindingCode.LineOutOfRange => RowStateMessage(location, global::OpenForge.Cli.OutputText.References.ReferencesText.LabelLineRangeOutOfRange()),
             ReferencesFindingCode.SymbolMissing => RowStateMessage(location, global::OpenForge.Cli.OutputText.References.ReferencesText.LabelSymbolNotFound()),
+            ReferencesFindingCode.LegacyAnchor => RowStateMessage(location, global::OpenForge.Cli.OutputText.References.ReferencesText.LegacyAnchor()),
             ReferencesFindingCode.TargetUnsafe => ReferencesWording.TargetUnsafe(location),
             ReferencesFindingCode.TargetAmbiguous => ReferencesWording.TargetAmbiguous(location),
             ReferencesFindingCode.TargetUnreadable => RowStateMessage(location, global::OpenForge.Cli.OutputText.References.ReferencesText.LabelTargetCouldNotBeRead()),
@@ -301,7 +302,7 @@ internal static class ReferencesReportSelector
 
     private static IReadOnlyList<CliCandidate> Candidates(ReferencesFinding finding)
     {
-        if (finding.Code is not (ReferencesFindingCode.IdentityCollision or ReferencesFindingCode.PhysicalAlias))
+        if (finding.Code is not (ReferencesFindingCode.IdentityCollision or ReferencesFindingCode.PhysicalAlias or ReferencesFindingCode.LegacyAnchor))
         {
             return [];
         }
@@ -309,6 +310,7 @@ internal static class ReferencesReportSelector
         var reason = finding.Code switch
         {
             ReferencesFindingCode.IdentityCollision => global::OpenForge.Cli.OutputText.References.ReferencesText.LabelMatchesTheSameAutomaticId(),
+            ReferencesFindingCode.LegacyAnchor => global::OpenForge.Cli.OutputText.References.ReferencesText.LabelMatchesTheSameAutomaticId(),
             ReferencesFindingCode.PhysicalAlias => global::OpenForge.Cli.OutputText.References.ReferencesText.LabelResolvesToTheSamePhysicalFile(),
             _ => throw new ArgumentOutOfRangeException(nameof(finding), finding.Code, "The References finding code has no candidate wording."),
         };

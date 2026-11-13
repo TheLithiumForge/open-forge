@@ -7,6 +7,8 @@ open-forge:
 
 # Doctor Behavior Contract
 
+The local-reference domain includes [comment links](../shared/source-references/interface.md#comment-links). It reports missing targets, failed fragments and legacy ID targets with exact source locations. Moved-target suggestions keep their Git evidence and confidence separate from weak matches.
+
 An unrecognized authored settings version produces one informational
 `workspace.settings-version-unknown` finding. Continue using understood keys,
 including link exclusions, without changing settings, reducing coverage,
@@ -846,6 +848,9 @@ locking, isolated tests, and package journeys.
 Consume shared ordinary-file completion eligibility, root-chain eligibility and proven rename facts. Do not derive action from message text. A missing-field or gap finding is targeted Index only when that selected operation can complete it. Excluded or detached roots, managed sources, native packages, unsafe boundaries and unavailable required reads keep their actual limits and useful actions.
 
 For missing references, evaluate all strong identity evidence before cardinality. One unique candidate forms `reference.target-renamed` and an exact proposal. Two strong candidates or weak-only matches remain guided. No candidate remains manual. Optional unavailable Git evidence does not prevent other checks and creates no persistent state. Current or HEAD stale Entries may prove former metadata identity but never define current topology. See the [evidence model](../../technical-designs/forgiving-maintenance.md#rename-and-move-evidence).
+
+Shared comment-link history adds suggestions. It doesn't replace a retained unique
+rename proof or change that proof's safe-exact resolution.
 
 Deduplicate malformed metadata findings by physical source and retain the precise edit-and-index action. Select one Next in the Interface's order. Keep domain coverage distinct from findings, and verify the stated continuation through a clean Doctor. New and changed exact text, codes and additive evidence values are defined by the Interface and [wire inventory](../../technical-designs/forgiving-maintenance.md#safety-and-wire-inventory).
 

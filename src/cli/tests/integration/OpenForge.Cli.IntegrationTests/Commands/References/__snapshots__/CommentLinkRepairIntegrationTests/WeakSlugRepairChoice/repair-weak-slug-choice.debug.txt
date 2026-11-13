@@ -1,0 +1,13 @@
+Repair cannot ask for a choice in this session. Nothing was changed.
+Workspace: <workspace>
+  Warning  src/Order.cs:1:16  Broken link [repair.guided-finding-remaining]
+         1 possible target.
+         needs a choice
+         To use ../.agents/docs/new-guide.md (unique heading slug (weak)):
+           open-forge repair --relink 'src/Order.cs@1:16' '.agents/docs/guide.md#relocated-rule' '.agents/docs/new-guide.md#relocated-rule' --automatic --workspace <workspace>
+  Diagnosis coverage: Workspace and path were checked; route and heading were checked; local references were checked; selected scope was checked.
+  Checks before writing: not run.
+  No verification was needed.
+  Recovery: No recovery bundle was required.
+  Checks after writing: completed.
+Next: Choose a target above, then run its command.

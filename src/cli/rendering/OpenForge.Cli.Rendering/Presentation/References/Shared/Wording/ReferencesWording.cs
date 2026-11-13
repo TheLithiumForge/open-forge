@@ -184,6 +184,7 @@ internal static class ReferencesWording
         ReferencesFindingCode.FragmentMissing => global::OpenForge.Cli.OutputText.References.ReferencesText.TitleHeadingWasNotFound(),
         ReferencesFindingCode.LineOutOfRange => global::OpenForge.Cli.OutputText.References.ReferencesText.TitleLineRangeIsOutOfRange(),
         ReferencesFindingCode.SymbolMissing => global::OpenForge.Cli.OutputText.References.ReferencesText.TitleSymbolWasNotFound(),
+        ReferencesFindingCode.LegacyAnchor => global::OpenForge.Cli.OutputText.References.ReferencesText.LegacyAnchor(),
         ReferencesFindingCode.TargetUnsafe => global::OpenForge.Cli.OutputText.References.ReferencesText.TitleLinkPointsOutsideTheWorkspace(),
         ReferencesFindingCode.TargetAmbiguous => global::OpenForge.Cli.OutputText.References.ReferencesText.TitleLinkCouldPointToMoreThanOneFile(),
         ReferencesFindingCode.TargetUnreadable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleLinkTargetCouldNotBeRead(),

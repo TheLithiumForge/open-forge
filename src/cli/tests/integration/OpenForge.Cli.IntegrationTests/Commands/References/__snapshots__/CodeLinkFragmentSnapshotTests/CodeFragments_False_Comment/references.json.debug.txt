@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 3,
+  "command": "references",
+  "status": "completed-with-warnings",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": ".agents/docs/guide.md",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "references.symbol-missing",
+      "title": "Symbol was not found",
+      "message": ".agents/docs/guide.md:8:6  symbol not found",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/guide.md",
+        "id": ".agents/docs/guide.md",
+        "location": {
+          "line": 8,
+          "column": 6
+        }
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Fix Code.cs#Type.Missing by hand at .agents/docs/guide.md:8:6.",
+          "reason": "Fix Code.cs#Type.Missing by hand at .agents/docs/guide.md:8:6."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    },
+    {
+      "severity": "warning",
+      "code": "references.line-out-of-range",
+      "title": "Line range is out of range",
+      "message": ".agents/docs/guide.md:9:6  line range out of range",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/guide.md",
+        "id": ".agents/docs/guide.md",
+        "location": {
+          "line": 9,
+          "column": 6
+        }
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Fix ../../Code.cs#L4-L5 by hand at .agents/docs/guide.md:9:6.",
+          "reason": "Fix ../../Code.cs#L4-L5 by hand at .agents/docs/guide.md:9:6."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "incoming": null,
+    "outgoing": 2,
+    "sourcesScanned": null,
+    "warnings": 2
+  },
+  "limitations": [],
+  "data": {
+    "source": {
+      "id": "docs/guide",
+      "path": ".agents/docs/guide.md"
+    },
+    "direction": "out",
+    "outgoing": [
+      {
+        "location": ":8:6",
+        "destination": "Code.cs#Type.Missing",
+        "resolvedPath": "Code.cs",
+        "state": "symbol-missing",
+        "layer": "base"
+      },
+      {
+        "location": ":9:6",
+        "destination": "../../Code.cs#L4-L5",
+        "resolvedPath": "Code.cs",
+        "state": "line-out-of-range",
+        "layer": "base"
+      }
+    ],
+    "coverage": {
+      "outgoing": "complete"
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "sentence",
+    "command": "Fix ../../Code.cs#L4-L5 by hand at .agents/docs/guide.md:9:6.",
+    "reason": "Fix ../../Code.cs#L4-L5 by hand at .agents/docs/guide.md:9:6."
+  }
+}

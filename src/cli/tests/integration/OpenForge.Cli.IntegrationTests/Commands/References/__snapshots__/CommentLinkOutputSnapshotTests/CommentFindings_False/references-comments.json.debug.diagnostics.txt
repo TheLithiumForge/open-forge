@@ -1,0 +1,5 @@
+status=completed-with-warnings
+incoming=0
+outgoing=2
+scanned=0
+This comment uses a legacy source ID. Replace it with a repository-root file path.

@@ -22,6 +22,10 @@ internal static class RepairMaintenanceText
     internal static string SameFileName() => "same file name";
     internal static string SameTitle() => "same title";
     internal static string MatchingText() => "matching text";
+    internal static string GitRename() => "Git rename";
+    internal static string GitHeadingChange() => "Git heading change";
+    internal static string SectionContent() => "matching old section content";
+    internal static string UniqueSlug() => "unique heading slug (weak)";
     internal static string ChooseTarget() => "Choose a target above, then run its command.";
     internal static string NothingAutomatic(int choices, int edits) => "Nothing could be repaired automatically. " + Remainder(choices, edits);
     internal static string ManualEdit(string source, int line, int column)

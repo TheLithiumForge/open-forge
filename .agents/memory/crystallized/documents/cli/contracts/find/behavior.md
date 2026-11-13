@@ -258,6 +258,8 @@ paths. Omit applicability when `--for` is omitted.
 
 ## Source-Universe Filter Responsibilities
 
+<!-- @rune src/cli/operations/OpenForge.Cli.Operations/Commands/Find/Shared/Selection/FindUniverseResolver.cs#FindUniverseResolver applies these selection rules -->
+
 The [Shared Source-Universe Filters Behavior
 Contract](../shared/source-universe-filters/behavior.md) owns the technology-
 neutral resolution, physical expansion, set formation, safety, determinism, and

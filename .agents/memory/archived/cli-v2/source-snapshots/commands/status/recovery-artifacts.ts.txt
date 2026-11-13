@@ -1,0 +1,30 @@
+export const GitlessBackupSuffix = ".bak";
+
+export const OpenForgeResidualSuffix = {
+  preparedReplacement: ".open-forge.next",
+  preservedPrevious: ".open-forge.previous",
+} as const;
+
+export type OpenForgeResidualSuffix = (typeof OpenForgeResidualSuffix)[keyof typeof OpenForgeResidualSuffix];
+
+export const RecoveryArtifactKind = {
+  gitlessBackup: "gitless-backup",
+  preparedReplacement: "prepared-replacement",
+  preservedPrevious: "preserved-previous",
+} as const;
+
+export type RecoveryArtifactKind = (typeof RecoveryArtifactKind)[keyof typeof RecoveryArtifactKind];
+
+export type KnownRecoveryArtifact =
+  | {
+      readonly kind: typeof RecoveryArtifactKind.gitlessBackup;
+      readonly suffix: typeof GitlessBackupSuffix;
+    }
+  | {
+      readonly kind: typeof RecoveryArtifactKind.preparedReplacement;
+      readonly suffix: typeof OpenForgeResidualSuffix.preparedReplacement;
+    }
+  | {
+      readonly kind: typeof RecoveryArtifactKind.preservedPrevious;
+      readonly suffix: typeof OpenForgeResidualSuffix.preservedPrevious;
+    };

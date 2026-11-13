@@ -51,7 +51,7 @@ internal sealed class RepairRenameProposalReader(WorkspaceLayout layout, Physica
             var target = new RepairTargetSelection(Encode(finalPath), facts.CanonicalFragment?.Canonical ?? reference.Facts.Fragment)
             { RenameProof = proof ?? move?.TargetMove ?? move?.SourceMove };
             return new RepairProposal(RepairCatalogueMember.MissingTargetRelink, reference.SourcePath, reference.DestinationLocation,
-                reference.Destination, RepairDestinationFormatter.Format(reference.SourcePath, target), target)
+                reference.Destination, RepairDestinationFormatter.Format(reference.SourcePath, target, reference.IsComment), target)
             {
                 RenameProof = proof ?? move?.TargetMove,
                 SourceMoveProof = move?.SourceMove,
@@ -59,7 +59,12 @@ internal sealed class RepairRenameProposalReader(WorkspaceLayout layout, Physica
                 RenameResolution = RenameResolution.Proven,
             };
         }
-        var candidates = RepairCandidateMapper.Read(reference, FilterWeak(view, reference, evidence, candidateFilter)).Items.ToList();
+        var candidateView = FilterWeak(view, reference, evidence, candidateFilter);
+        var candidates = RepairCandidateMapper.Read(reference, candidateView).Items.ToList();
+        var priorities = candidateView.Candidates
+            .Where(candidate => candidate.SourcePath == reference.SourcePath && candidate.Destination == reference.Destination)
+            .GroupBy(candidate => (candidate.Candidate.Path, Fragment: candidate.Fragment ?? reference.Facts.Fragment))
+            .ToDictionary(group => group.Key, group => group.SelectMany(candidate => candidate.Bases).Min(basis => basis.Priority));
         foreach (var path in (resolution?.GuidedCandidatePaths ?? [])
             .Concat(resolution?.StrongEvidence.Select(item => item.NewPath) ?? []).Distinct(StringComparer.Ordinal))
         {
@@ -74,7 +79,10 @@ internal sealed class RepairRenameProposalReader(WorkspaceLayout layout, Physica
             candidates.Add(new(new(Encode(path), reference.Facts.Fragment, [reason]), [reason]) { Identity = identity });
         }
         return new RepairProposal(RepairCatalogueMember.MissingTargetRelink, reference.SourcePath, reference.DestinationLocation,
-            reference.Destination, new RepairCandidateSet(candidates.OrderBy(candidate => candidate.Target.CanonicalTargetPath, StringComparer.Ordinal)))
+            reference.Destination, new RepairCandidateSet(candidates
+                .OrderBy(candidate => priorities.GetValueOrDefault((Uri.UnescapeDataString(candidate.Target.CanonicalTargetPath), candidate.Target.TargetFragment),
+                    (int)LocalReferenceCandidateBasisKind.GitRename))
+                .ThenBy(candidate => candidate.Target.CanonicalTargetPath, StringComparer.Ordinal)))
         {
             MissingPath = reference.Facts.Target.Path,
             RenameResolution = resolution?.Resolution ?? RenameResolution.WeakOnly,
@@ -92,7 +100,10 @@ internal sealed class RepairRenameProposalReader(WorkspaceLayout layout, Physica
             Candidates = view.Candidates.Where(candidate => candidate.SourcePath != reference.SourcePath || candidate.Destination != reference.Destination
                 || candidate.Candidate.Path != reference.SourcePath
                     && candidate.Bases.Any(basis => basis.Kind != LocalReferenceCandidateBasisKind.RouteNeighborhood)
-                    && (evidence is null || candidateFilter?.ContainsCandidate(candidate.Candidate.Path) == true)).ToArray(),
+                    && (candidate.Bases.Any(basis => basis.Kind is LocalReferenceCandidateBasisKind.GitRename
+                            or LocalReferenceCandidateBasisKind.GitHeadingChange or LocalReferenceCandidateBasisKind.SectionContent
+                            or LocalReferenceCandidateBasisKind.UniqueSlug)
+                        || evidence is null || candidateFilter?.ContainsCandidate(candidate.Candidate.Path) == true)).ToArray(),
         };
     }
 

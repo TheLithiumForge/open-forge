@@ -1,0 +1,80 @@
+export const StatusExposure = {
+  full: "full",
+  redacted: "redacted",
+} as const;
+
+export type StatusExposure = (typeof StatusExposure)[keyof typeof StatusExposure];
+
+export const FrameworkAnchorState = {
+  absent: "absent",
+  recognized: "recognized",
+  malformed: "malformed",
+  conflicting: "conflicting",
+} as const;
+
+export type FrameworkAnchorState = (typeof FrameworkAnchorState)[keyof typeof FrameworkAnchorState];
+
+export const FrameworkPresenceState = {
+  uninstalled: "uninstalled",
+  installed: "installed",
+  incomplete: "incomplete",
+  conflicting: "conflicting",
+} as const;
+
+export type FrameworkPresenceState = (typeof FrameworkPresenceState)[keyof typeof FrameworkPresenceState];
+
+export const ManagedRecordState = {
+  absent: "absent",
+  valid: "valid",
+  invalid: "invalid",
+} as const;
+
+export type ManagedRecordState = (typeof ManagedRecordState)[keyof typeof ManagedRecordState];
+
+export const GitStatusState = {
+  unavailable: "unavailable",
+  notRepository: "not-repository",
+  clean: "clean",
+  dirty: "dirty",
+  failed: "failed",
+} as const;
+
+export type GitStatusState = (typeof GitStatusState)[keyof typeof GitStatusState];
+
+export const StatusMessageCode = {
+  workspaceUnavailable: "status.workspace-unavailable",
+  workspaceInspectionFailed: "status.workspace-inspection-failed",
+  entryInspectionFailed: "status.entry-inspection-failed",
+  loaderInspectionFailed: "status.loader-inspection-failed",
+  frameworkIncomplete: "status.framework-incomplete",
+  frameworkConflicting: "status.framework-conflicting",
+  managedRecordInvalid: "status.managed-record-invalid",
+  managedRecordInspectionFailed: "status.managed-record-inspection-failed",
+  managedTargetInspectionFailed: "status.managed-target-inspection-failed",
+  frameworkReconciliationRequired: "status.framework-reconciliation-required",
+  extensionFilesMissing: "status.extension-files-missing",
+  gitInspectionFailed: "status.git-inspection-failed",
+  recoveryEvidencePresent: "status.recovery-evidence-present",
+  recoveryInspectionFailed: "status.recovery-inspection-failed",
+  cancelled: "status.cancelled",
+} as const;
+
+export type StatusMessageCode = (typeof StatusMessageCode)[keyof typeof StatusMessageCode];
+
+export const StatusSuggestionReason = {
+  installFramework: "Install the Open Forge Framework in this workspace.",
+  diagnoseWorkspace: "Inspect the incomplete or conflicting Open Forge state.",
+  reconcileFramework: "Reconcile managed Framework files with the running payload.",
+  inspectExtensions: "Inspect installed Extensions with missing files.",
+} as const;
+
+export type StatusSuggestionReason = (typeof StatusSuggestionReason)[keyof typeof StatusSuggestionReason];
+
+export const StatusRedactionPlaceholder = {
+  workspace: "<workspace>",
+  routePrefix: "<route-",
+  routeSuffix: ">",
+} as const;
+
+export type StatusRedactedWorkspaceRoot = typeof StatusRedactionPlaceholder.workspace;
+export type StatusRedactedRoute = `${typeof StatusRedactionPlaceholder.routePrefix}${number}${typeof StatusRedactionPlaceholder.routeSuffix}`;

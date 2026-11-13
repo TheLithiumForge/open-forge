@@ -26,6 +26,8 @@ public sealed class RepairLayoutAuthorityTests
         const string leaf = "/notes/source" + SourceFormClassifier.MarkdownExtension;
 
         Assert.True(RepairProtectionReader.Allows(mainRoot + leaf, policy));
+        Assert.True(RepairProtectionReader.Allows("src/Order.cs", policy));
+        Assert.False(RepairProtectionReader.Allows(SourceOverwritePath.ReadAdjacentPath(mainRoot + leaf), policy));
         Assert.False(RepairProtectionReader.Allows(mainRoot.ToUpperInvariant() + leaf, policy));
         var native = WorkspaceLayout.NativeSkillsPath + "/workshop/reference" + SourceFormClassifier.MarkdownExtension;
         Assert.True(RepairProtectionReader.Allows(native, policy));

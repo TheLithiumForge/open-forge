@@ -535,7 +535,7 @@ Load a chosen result with [`context`](#context) before relying on its rules.
 
 ### `references`
 
-Show direct authored incoming and outgoing Markdown links for one source.
+Show direct authored Markdown links and comment links into and out of one source.
 
 #### Common examples
 
@@ -555,10 +555,7 @@ See [global options](#global-options) for shared flags.
 
 #### Behavior notes
 
-`references` reports direct authored incoming and outgoing Markdown references
-for one source. The default direction is `both`. Active included Markdown files
-also participate. Other included text formats are opaque, and loader rows remain
-navigation rather than authored references.
+`references` reports direct authored Markdown links and [comment links](#comment-links) for one source. The default direction is `both`. Active included Markdown files and eligible comment-bearing code files also participate. Loader rows stay navigation.
 
 `--direction=in|out|both` selects the report. `--include` and `--exclude`
 limit the incoming scan. Combining them with `--direction=out` is invalid
@@ -2567,6 +2564,33 @@ open-forge route inspect "memory/project alpha/documents"
 The shell removes the quotes before the CLI receives the value. Exact paths
 resolve inside the selected workspace and cannot escape it through lexical or
 physical aliases.
+
+### Comment links
+
+A comment link connects code and docs with `@open-forge <path> <any other text>`. `@rune <path> <text>` works the same way. Put the marker first in the comment or on a line inside a block comment. Text after the target explains the relationship.
+
+Plain paths start at the repository root. Paths starting with `./` or `../` start next to the file holding the comment. Inside comments, `./` means next to that file. In CLI operands, `./` keeps its repository-root meaning.
+
+For example, these comments point from code to a rule and from a Markdown rule to code.
+
+Illustrative:
+
+```csharp
+// @open-forge .agents/guidance/style.md#naming explains this choice
+```
+
+Illustrative:
+
+```md
+<!-- @rune src/Order.cs#Order.Save implements this rule -->
+```
+
+The target is the first word after the marker. Encode spaces in filenames. Markdown targets use heading slugs. Code targets use lexical symbols or line ranges. Delimiters follow the file's comment syntax, including trailing comments. Common comment styles include `//`, `///`, `#`, `--`, `;`, `'`, `%`, block comments and HTML comments. In Markdown, use HTML comments outside code spans and fences. Ordinary Markdown links still work.
+
+References lists comment links in both directions and accepts exact code paths. Context checks them when you request link expansion. Doctor reports missing targets, failed fragments and older ID-style anchors. A legacy finding suggests a file path when the ID resolves. Comment links need no IDs or frontmatter. Generated and vendored files are skipped.
+
+Doctor and Repair suggest moved targets using Git history, heading changes, matching section content and a unique heading slug, in that order. Weak suggestions require selection. Preview `repair --relink` before applying a chosen target. Repair changes only the target word and keeps the marker, comment delimiters and explanation. Relinks write an encoded repository-root path. For example, selecting `docs/new guide.md#rule` writes `docs/new%20guide.md#rule`. Repair keeps Git rename, heading-diff, old section-content and weak unique-slug evidence distinct in its choices.
+
 
 ## .gitignore fallback rules
 

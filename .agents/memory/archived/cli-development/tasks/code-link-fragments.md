@@ -1,16 +1,34 @@
 ---
 open-forge:
-  description: Issue 22 verification and the broken code links to review in the next stack A branch
-  tags: [Memory, Working, Checkpoint, Contextual, CLI]
+  description: Completed issue 22 fragment work and the issue 21 historical code-link follow-up
+  tags: [Memory, Archived, Checkpoint, Contextual, Historical, CLI]
 ---
 # Code-link fragments
-This checkpoint is a handoff record that keeps the issue #22 fix and its broken-link audit ready for the next stack A branch.
+Code-link fragments is a record that keeps the issue #22 fix and its completed code-link audit.
 
-`File.cs#L111-L125` checks file lines, and `File.cs#Type.Member` checks each dotted part as an identifier token. Markdown targets keep heading checks. The [source-reference contract](../../crystallized/documents/cli/contracts/shared/source-references/interface.md#local-fragments) defines the accepted behavior.
+It began as a handoff from `fix/code-link-fragments` to `feature/comment-links`. The earlier checks keep the results recorded at that handoff.
 
-Status: PR 25 corrections verified locally.
+`File.cs#L111-L125` checks file lines, and `File.cs#Type.Member` checks each dotted part as an identifier token. Markdown targets keep heading checks. The [source-reference contract](../../../crystallized/documents/cli/contracts/shared/source-references/interface.md#local-fragments) defines the accepted behavior.
+
+Original status: implementation complete, verification incomplete.
+
+## Link follow-up
+
+Status: finished.
+
+The issue #21 follow-up fixes all 66 audited code-link occurrences across 15 documents. They used 54 old target spellings. The three `RouteSourceStructureReader.cs` citations are part of those 66 occurrences.
+
+Each replacement selects code checked in retained Git history. Historical citations keep the code their prose describes, including retired TypeScript modules and behavior that later changed. The two colon-style line suffixes now use GitHub line fragments. Stale line ranges now select the relevant methods or constants. The `ReadAxioms` citations select its checked implementation at lines 97-129 of commit `62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f`.
+
+Eight retired TypeScript files are kept as `.ts.txt` files under `../../cli-v2/source-snapshots/`. They match commit `c246601c64acf3916adf3da71126a17d424dfbc9` byte for byte. These copies keep the historical citations usable in a checkout because a public permalink for that revision could not be verified. The other citations use GitHub blobs from revisions contained in retained remote refs.
+
+Focused References reads check all 15 affected documents. The 11 local replacement links resolve. The 55 web replacement links report `external-unchecked`, with their selected code checked through Git. Those reads also report 56 other archival findings outside the supplied code-link list. The local audit keeps them at `artifacts/comment-links-historical-reference-coverage.json` for a separate follow-up.
+
+The link-only follow-up keeps the original verification results below. The maintainer's lane direction makes CI the full-suite gate for the stacked comment-link branch.
 
 ## Review corrections
+
+Status: PR 25 corrections verified locally.
 
 The maintainer committed and pushed the earlier work as `c41e95b1b`. The PR 25
 review requested three corrections:
@@ -174,6 +192,8 @@ Every row gives the authored source, its line and the missing target. Fragments 
 | `.agents/memory/emerging/analysis/lossless-council/reviews.md` | 1586 | `.agents/memory/emerging/analysis/lossless-council/src/cli/framework/OpenForge.Cli.Framework/Framework/Sources/Loading/SourceGeneratedDestinationResolver.cs:68` | `` |
 | `.agents/memory/emerging/analysis/route-include-council/proposals.md` | 2326 | `src/cli/operations/OpenForge.Cli.Operations/Commands/Context/Shared/Graph/ContextLinkedEntryReader.cs` | `` |
 
-## Next branch
+## Original next step
 
-Review these links in the next branch. This branch fixes none of them. Historical targets can be retired on purpose, so a matching filename alone does not establish a replacement.
+The handoff ended with this instruction:
+
+> Review these links in the next branch. This branch fixes none of them. Historical targets can be retired on purpose, so a matching filename alone does not establish a replacement.

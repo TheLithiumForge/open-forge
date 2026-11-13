@@ -90,6 +90,10 @@ internal static class RepairDefinitions
             RepairCandidateEvidenceKind.Title => "title",
             RepairCandidateEvidenceKind.LiteralContent => "literal-content",
             RepairCandidateEvidenceKind.RouteNeighborhood => "route-neighborhood",
+            RepairCandidateEvidenceKind.GitRename => "git-rename",
+            RepairCandidateEvidenceKind.GitHeadingChange => "git-heading-change",
+            RepairCandidateEvidenceKind.SectionContent => "section-content",
+            RepairCandidateEvidenceKind.UniqueSlug => "unique-slug",
             _ => Undefined(nameof(kind), kind),
         };
 

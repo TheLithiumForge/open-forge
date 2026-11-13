@@ -1,0 +1,11 @@
+.agents/guidance/billing/alternate-rounding.md#rounding
+Git rename: Git committed content SHA256 D8AD6B60C156072EC0384CBC6E3A8F0DD95329936CB906A1AA3CB47F7CEDEF11 from <head>
+matching old section content: section #rounding content SHA256 1A7C882E71E96E05FBA7087942595D95B9FF146154EF359AC0D382FFF01930A2
+title match: Rounding
+content match: Rounding
+
+.agents/guidance/billing/money-rounding.md#rounding
+Git rename: Git committed content SHA256 D8AD6B60C156072EC0384CBC6E3A8F0DD95329936CB906A1AA3CB47F7CEDEF11 from <head>
+matching old section content: section #rounding content SHA256 1A7C882E71E96E05FBA7087942595D95B9FF146154EF359AC0D382FFF01930A2
+title match: Rounding
+content match: Rounding

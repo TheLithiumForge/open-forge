@@ -146,13 +146,16 @@ internal static class LocalReferenceDoctorInspector
             yield return movedFinding;
             yield break;
         }
-        if (target.Resolution == SourceLinkTargetResolution.Missing && target.Path is not null && renames is not null)
+        if (target.Resolution == SourceLinkTargetResolution.Missing && target.Path is not null && renames is not null
+            && (renames.Find(target.Path)?.Proven is not null
+                || !observations.Any(candidate => candidate.Bases.Any(basis => basis.Kind == LocalReferenceCandidateBasisKind.GitRename))))
         {
             yield return DoctorRenameFindingFactory.Create(observation, renames, candidateScanComplete ? observations : [], candidateFilter);
             yield break;
         }
         var candidates = candidateScanComplete
-            && target.Resolution is SourceLinkTargetResolution.Missing or SourceLinkTargetResolution.FragmentMissing
+            && (target.Resolution is SourceLinkTargetResolution.Missing or SourceLinkTargetResolution.FragmentMissing
+                || observation.Facts.Finding?.Code == SourceLinkDestinationFindingCode.LegacyAnchor)
             ? LocalReferenceDoctorCandidateProjector.Project(observation, observations)
             : null;
         var descriptor = LocalReferenceDoctorDescriptorReader.Read(observation);

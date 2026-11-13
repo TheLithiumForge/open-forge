@@ -236,6 +236,7 @@ internal static class ContextReportSelector
                 or ContextFindingCode.FragmentMissing
                 or ContextFindingCode.LineOutOfRange
                 or ContextFindingCode.SymbolMissing
+                or ContextFindingCode.LegacyAnchor
                 or ContextFindingCode.LinkEncodingInvalid
                 or ContextFindingCode.TargetUnreadable
                 or ContextFindingCode.ProjectionUnavailable
