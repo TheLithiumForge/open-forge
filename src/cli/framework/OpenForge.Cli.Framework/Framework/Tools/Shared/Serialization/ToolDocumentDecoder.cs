@@ -18,7 +18,7 @@ internal static class ToolDocumentDecoder
     internal static byte[] JsonBytes(ReadOnlySpan<byte> bytes, string path)
     {
         var text = Utf8.GetString(bytes);
-        if (Path.GetExtension(path) is not (".yaml" or ".yml"))
+        if (Path.GetExtension(path).ToLowerInvariant() is not (".yaml" or ".yml"))
         {
             JsonDuplicatePropertyValidator.ValidateNoDuplicateProperties(bytes);
             return bytes.ToArray();

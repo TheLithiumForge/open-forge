@@ -14,6 +14,25 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Tools;
 [Trait("Feature", "tool-records"), Trait("Evidence", "Unit")]
 public sealed class ToolReceiptTests
 {
+    [Fact(DisplayName = "Workspace tool receipts hold store references and reject physical binding coordinates")]
+    public void KeepsPhysicalBindingsOutsideWorkspaceLock()
+    {
+        var receipt = Receipt() with { Bindings = [new("fixture-store", "install", new string('1', 64))] };
+        var document = WorkspaceOwnershipDocument.Empty with
+        { Tools = ImmutableDictionary<string, ToolReceipt>.Empty.Add(ToolFixtureSource.Id, receipt) };
+        var bytes = WorkspaceOwnershipCodec.Write(document);
+        var root = Assert.IsType<JsonObject>(JsonNode.Parse(bytes));
+        var tools = Assert.IsType<JsonObject>(root[JsonNamingPolicy.CamelCase.ConvertName(nameof(WorkspaceOwnershipDocument.Tools))]);
+        var tool = Assert.IsType<JsonObject>(tools[ToolFixtureSource.Id]);
+        var references = Assert.IsType<JsonArray>(tool[JsonNamingPolicy.CamelCase.ConvertName(nameof(ToolReceipt.Bindings))]);
+        var reference = Assert.IsType<JsonObject>(Assert.Single(references));
+        var physicalRoot = JsonNamingPolicy.CamelCase.ConvertName(nameof(ToolStoreBinding.PhysicalRoot));
+        Assert.False(reference.ContainsKey(physicalRoot));
+        Assert.NotNull(WorkspaceOwnershipCodec.Read(bytes).Document);
+        reference[physicalRoot] = Path.GetFullPath("fixture-store");
+        Assert.Null(WorkspaceOwnershipCodec.Read(Encoding.UTF8.GetBytes(root.ToJsonString())).Document);
+    }
+
     [Fact(DisplayName = "Lock v2 round trips exact tool snapshots and keeps the existing Framework receipt")]
     public void RoundTripsPairedRecords()
     {

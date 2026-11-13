@@ -1,0 +1,16 @@
+Read the selected tool definition and its requirements.
+Workspace: <workspace>
+  Error  fixture-tool  Tool observation
+         The exact definition is not reviewed by this CLI release.
+fixture-tool 1.0.0  <native-target>
+  The exact definition is not reviewed by this CLI release.
+  artifact-hash
+  installed-files
+  host-members
+  process-policy
+  usage-skill
+  Test-only definition
+External instructions unavailable: A verified installation and local store
+bindings are needed to resolve external commands.
+1 errors.
+Next: open-forge tool inspect --help

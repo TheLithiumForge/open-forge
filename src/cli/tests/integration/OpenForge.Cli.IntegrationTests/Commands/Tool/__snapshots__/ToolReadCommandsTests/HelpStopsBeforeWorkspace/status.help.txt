@@ -1,0 +1,27 @@
+  Passively check recorded tool installs and configuration.
+
+Usage:
+  open-forge tool status [<id>] [global flags]
+
+Examples:
+  open-forge tool status --format json
+  open-forge tool status example-tool
+
+Behavior:
+  Reads local facts without downloads, child processes or writes.
+  Unavailable observations keep their cause and independently readable facts.
+
+Arguments:
+  <id>  One exact tool ID.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  open-forge tool --help

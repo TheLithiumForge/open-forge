@@ -1,13 +1,13 @@
 ---
 open-forge:
-  description: Explain planned external tool commands, separate consent and persistent removal exclusions
+  description: Explain external tool read commands, separate consent and persistent removal exclusions
   tags: [Skill, CLI, Reference, Tool]
 ---
 
 # External tools
-`open-forge tool` is a planned command group that manages reviewed external programs and their workspace roles.
+`open-forge tool` is a command group that reads reviewed external tool definitions and recorded workspace installs.
 
-The V1 core contracts precede implementation and concrete adapters. Check `open-forge --help` for availability. If the group is available, read `open-forge tool --help` and the selected leaf's help before use.
+`list`, `inspect` and `status` are available. The five write commands and concrete adapters are pending. Read `open-forge tool --help` and the selected leaf's help before use.
 
 ## Commands
 

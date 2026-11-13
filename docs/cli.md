@@ -27,7 +27,7 @@ The primary content locations are the selected context folder and native Skills 
 
 ## Command index
 
-The planned external Tool family is being built separately. The [external tool reference](tools.md) describes its contracted commands, consent and workspace records. Use installed help to check availability.
+The external Tool family provides `tool list`, `tool inspect` and `tool status`. The [external tool reference](tools.md) describes these read commands, the pending writers, consent and workspace records.
 
 Choose a task, then follow its command link. Each operation has the same shape:
 purpose, common examples, options, behavior notes, and next step. Read-only

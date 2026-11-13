@@ -22,15 +22,30 @@ public sealed class ToolManifestTests
         Assert.Equal(ToolVocabulary.Targets.Count, definition.Manifest.Targets.Count);
     }
 
-    [Fact(DisplayName = "Tool JSON and block YAML use the same typed model")]
-    public void JsonAndYamlAgree()
+    [Theory(DisplayName = "Tool JSON and block YAML use the same typed model")]
+    [InlineData("fixture.yaml")]
+    [InlineData("fixture.YAML")]
+    public void JsonAndYamlAgree(string path)
     {
         var json = ToolFixtureSource.Manifest();
         var yaml = string.Join('\n', json.Select(pair => $"{pair.Key}: {pair.Value?.ToJsonString() ?? "null"}"));
-        var definition = new ToolCatalogueReader().Definition(Encoding.UTF8.GetBytes(yaml), "fixture.yaml", true);
+        var definition = new ToolCatalogueReader().Definition(Encoding.UTF8.GetBytes(yaml), path, true);
         Assert.Equal(ToolFixtureSource.Id, definition.Manifest.Id);
         Assert.Equal(ToolFixtureSource.Version, definition.Manifest.Version);
         Assert.Equal(Read(json).Manifest.Artifacts["package"].Integrity, definition.Manifest.Artifacts["package"].Integrity);
+    }
+
+    [Fact(DisplayName = "Tool environment values keep exact newlines but reject null characters")]
+    public void KeepsExactEnvironmentValues()
+    {
+        const string value = "first\nsecond";
+        var json = ToolFixtureSource.Manifest();
+        var processes = Assert.IsType<JsonObject>(json["processes"]);
+        var environment = Assert.IsType<JsonObject>(processes["environment"]);
+        environment["FIXTURE_VALUE"] = value;
+        Assert.Equal(value, Read(json).Manifest.Processes.Environment["FIXTURE_VALUE"]);
+        environment["FIXTURE_VALUE"] = "bad\0value";
+        Assert.Throws<JsonException>(() => Read(json));
     }
 
     [Theory(DisplayName = "Strict Tool decoding rejects unknown keys and forbidden YAML constructs")]

@@ -7,6 +7,8 @@ internal static class ToolVocabulary
     internal const int ManifestSchema = 1;
     internal const string CodeNavigationRole = "code-navigation";
     internal const string CodeGraphCapability = "code-graph";
+    internal const string JsonMembers = "json-members";
+    internal const string TomlTable = "toml-table";
     internal static readonly FrozenSet<string> Targets = Set("win-x64", "win-arm64", "osx-x64", "osx-arm64", "linux-x64", "linux-arm64");
     internal static readonly FrozenSet<string> Adapters = Set("codegraph-1.6", "cbm-0.12", "qmd-2.8");
     internal static readonly FrozenSet<string> Templates = Set("codegraph-manual-v1", "cbm-manual-v1", "qmd-inventory-v1");

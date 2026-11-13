@@ -15,7 +15,7 @@ Commands follow the [context folder chosen at installation](../getting-started/i
 
 ## Start with these commands
 
-The planned [external tool commands](tools.md) install reviewed programs and configure their workspace roles. The current work defines the core before concrete adapters. Check installed help for availability.
+The [external tool commands](tools.md) read definitions and recorded installs through `tool list`, `tool inspect` and `tool status`. Writers and concrete adapters are pending.
 
 | When you want to                               | Run                                                   |
 | ---------------------------------------------- | ----------------------------------------------------- |
