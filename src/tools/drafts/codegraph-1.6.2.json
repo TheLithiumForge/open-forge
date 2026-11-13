@@ -1,0 +1,328 @@
+{
+  "$schema": "../../../schemas/tools/drafts/v1/definition.schema.json",
+  "schemaVersion": 1,
+  "status": "draft",
+  "definition": {
+    "schema": 1,
+    "id": "codegraph",
+    "name": "CodeGraph",
+    "version": "1.6.2",
+    "license": "MIT",
+    "source": {
+      "repository": "https://github.com/colbymchenry/codegraph",
+      "tag": "v1.6.2",
+      "commit": "6560052a6f856855d3f71eee838fd66ccfa4285d"
+    },
+    "adapter": {
+      "id": "codegraph-1.6",
+      "revision": 1
+    },
+    "admission": "blocked",
+    "admissionReason": "R2: noninteractive Claude prompt hook and private launcher require a decision. No native lifecycle target is qualified.",
+    "capabilities": ["code-graph"],
+    "downloadBase": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/",
+    "artifacts": {
+      "win-x64": {
+        "file": "codegraph-win32-x64.zip",
+        "bytes": 54260850,
+        "integrity": "sha256:7455e817ee8032666867a1badeb799b8a884c5f4fea9b444e088a02069b6deea",
+        "archive": "zip",
+        "stripComponents": 1
+      },
+      "win-arm64": {
+        "file": "codegraph-win32-arm64.zip",
+        "bytes": 50258514,
+        "integrity": "sha256:308f7bf92e7886f4d5f767a4755d703e92d5cae78ac042b8907f1e99db0fc071",
+        "archive": "zip",
+        "stripComponents": 1
+      },
+      "osx-x64": {
+        "file": "codegraph-darwin-x64.tar.gz",
+        "bytes": 59393903,
+        "integrity": "sha256:53d1a4d1a9af31d6cec11b346df2ae792087081e13f623f583e27783c1e7f9bc",
+        "archive": "tar.gz",
+        "stripComponents": 1
+      },
+      "osx-arm64": {
+        "file": "codegraph-darwin-arm64.tar.gz",
+        "bytes": 58280485,
+        "integrity": "sha256:d74d1bfb4060db63ec3c2b72c4e17f76c31978af3bad6ace4370d1501ac0662e",
+        "archive": "tar.gz",
+        "stripComponents": 1
+      },
+      "linux-x64": {
+        "file": "codegraph-linux-x64.tar.gz",
+        "bytes": 63433974,
+        "integrity": "sha256:ef0af416092128fb1ccc723786000b7edf4a6971fe604acd08bf966e4f37b828",
+        "archive": "tar.gz",
+        "stripComponents": 1
+      },
+      "linux-arm64": {
+        "file": "codegraph-linux-arm64.tar.gz",
+        "bytes": 63017097,
+        "integrity": "sha256:c8c6be292be21d00dea26bad8b28d434731cf612fb8cc475dc10f5b3038b5b64",
+        "archive": "tar.gz",
+        "stripComponents": 1
+      }
+    },
+    "targets": {
+      "win-x64": {
+        "state": "blocked",
+        "artifacts": ["win-x64"],
+        "entry": "node.exe",
+        "lock": null,
+        "reason": "R2: noninteractive Claude prompt hook and private launcher require a decision. No native lifecycle target is qualified."
+      },
+      "win-arm64": {
+        "state": "blocked",
+        "artifacts": ["win-arm64"],
+        "entry": "node.exe",
+        "lock": null,
+        "reason": "R2: noninteractive Claude prompt hook and private launcher require a decision. No native lifecycle target is qualified."
+      },
+      "osx-x64": {
+        "state": "blocked",
+        "artifacts": ["osx-x64"],
+        "entry": "node",
+        "lock": null,
+        "reason": "R2: noninteractive Claude prompt hook and private launcher require a decision. No native lifecycle target is qualified."
+      },
+      "osx-arm64": {
+        "state": "blocked",
+        "artifacts": ["osx-arm64"],
+        "entry": "node",
+        "lock": null,
+        "reason": "R2: noninteractive Claude prompt hook and private launcher require a decision. No native lifecycle target is qualified."
+      },
+      "linux-x64": {
+        "state": "blocked",
+        "artifacts": ["linux-x64"],
+        "entry": "node",
+        "lock": null,
+        "reason": "R2: noninteractive Claude prompt hook and private launcher require a decision. No native lifecycle target is qualified."
+      },
+      "linux-arm64": {
+        "state": "blocked",
+        "artifacts": ["linux-arm64"],
+        "entry": "node",
+        "lock": null,
+        "reason": "R2: noninteractive Claude prompt hook and private launcher require a decision. No native lifecycle target is qualified."
+      }
+    },
+    "runtime": {
+      "kind": "bundled",
+      "version": "24.16.0",
+      "notes": "Official portable release bundles Node 24.16.0. Admission under the official Node plus npm ci supply policy is pending. Installer writes a bare codegraph command without the declared process environment.",
+      "extraDownloads": [],
+      "installScripts": "forbidden"
+    },
+    "configuration": {
+      "template": "codegraph-manual-v1",
+      "codeRoot": "workspace-relative",
+      "documents": "none",
+      "settings": {
+        "excludeToolState": true,
+        "telemetryEnabled": false
+      },
+      "files": [],
+      "actions": []
+    },
+    "processes": {
+      "telemetry": "off",
+      "updateChecks": "off",
+      "daemon": "off",
+      "watcher": "off",
+      "autoIndex": "off",
+      "hooks": "blocked",
+      "consent": "none",
+      "coordination": "worktree",
+      "environment": {
+        "DO_NOT_TRACK": "1",
+        "CODEGRAPH_NO_DAEMON": "1",
+        "CODEGRAPH_NO_WATCH": "1",
+        "CODEGRAPH_DIR": "${indexDirName}",
+        "GIT_CONFIG_PARAMETERS": "",
+        "GIT_CONFIG_COUNT": "1",
+        "GIT_CONFIG_KEY_0": "core.hooksPath",
+        "GIT_CONFIG_VALUE_0": "${hookSink}",
+        "CODEGRAPH_NO_UPDATE_CHECK": "1"
+      }
+    },
+    "index": {
+      "location": "project-directory",
+      "path": "${codeRoot}/${indexDirName}",
+      "perWorktree": true,
+      "sharedContentCache": "none",
+      "freshness": "manual-sync",
+      "rebuildOnVersionChange": true
+    },
+    "mcp": {
+      "transport": "stdio",
+      "command": "target-entry",
+      "args": ["${install}/lib/dist/bin/codegraph.js", "serve", "--mcp", "--path", "${codeRoot}"],
+      "cwd": "worktree",
+      "environment": {},
+      "hosts": {
+        "claude-code": {
+          "path": ".mcp.json",
+          "selector": "/mcpServers/codegraph"
+        },
+        "codex": {
+          "path": ".codex/config.toml",
+          "selector": "mcp_servers.codegraph"
+        }
+      }
+    },
+    "skill": {
+      "template": "code-graph-usage-v1",
+      "optional": false,
+      "defaultEnabled": true
+    },
+    "checks": ["artifact-hash", "installed-files", "native-settings", "host-members", "index-state", "process-policy", "source-membership", "usage-skill", "hook-policy"],
+    "qualification": {
+      "attestation": "release-evidence-required",
+      "workflow": ".github/workflows/release.yml",
+      "targets": [],
+      "accuracy": "three-languages-2026-11-12"
+    },
+    "lifecycle": null
+  },
+  "lifecycleDraft": {
+    "install": {
+      "state": "pending",
+      "args": null,
+      "scope": "workspace",
+      "workspaceOutputs": [".mcp.json", ".claude/settings.json", ".claude/CLAUDE.md", ".codex/config.toml", "AGENTS.md", ".claude.json"],
+      "timeoutSeconds": null,
+      "pending": "R2: noninteractive Claude prompt hook and private launcher require a decision."
+    },
+    "uninstall": {
+      "state": "source-reviewed",
+      "args": ["${install}/lib/dist/bin/codegraph.js", "uninstall", "--location", "local", "--target", "claude,codex", "--yes", "--keep-cli"],
+      "scope": "workspace",
+      "workspaceOutputs": [".mcp.json", ".claude/settings.json", ".claude/CLAUDE.md", ".codex/config.toml", "AGENTS.md", ".claude.json"],
+      "timeoutSeconds": null,
+      "pending": "Native verification and execution timeout pending."
+    },
+    "indexCleanup": {
+      "state": "source-reviewed",
+      "args": ["${install}/lib/dist/bin/codegraph.js", "uninit", "${codeRoot}", "--force"],
+      "scope": "workspace",
+      "workspaceOutputs": ["${codeRoot}/.codegraph"],
+      "timeoutSeconds": null,
+      "pending": "Native verification and execution timeout pending."
+    },
+    "ignorePaths": [".codegraph/"]
+  },
+  "releaseEvidence": {
+    "verifiedOn": "2026-11-13",
+    "checksumFile": "SHA256SUMS",
+    "checksumSha256": "4e6fc8b6b0478c76c3a10ff48323c715b030b8faecb3826210c50a5863549cb5",
+    "assets": {
+      "win-x64": {
+        "url": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/codegraph-win32-x64.zip",
+        "bytes": 54260850,
+        "sha256": "7455e817ee8032666867a1badeb799b8a884c5f4fea9b444e088a02069b6deea",
+        "checksumUrl": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/SHA256SUMS",
+        "signatureKind": "github-build-attestation",
+        "bundleUrl": null,
+        "signerIdentity": "https://github.com/colbymchenry/codegraph/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "win-arm64": {
+        "url": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/codegraph-win32-arm64.zip",
+        "bytes": 50258514,
+        "sha256": "308f7bf92e7886f4d5f767a4755d703e92d5cae78ac042b8907f1e99db0fc071",
+        "checksumUrl": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/SHA256SUMS",
+        "signatureKind": "github-build-attestation",
+        "bundleUrl": null,
+        "signerIdentity": "https://github.com/colbymchenry/codegraph/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "osx-x64": {
+        "url": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/codegraph-darwin-x64.tar.gz",
+        "bytes": 59393903,
+        "sha256": "53d1a4d1a9af31d6cec11b346df2ae792087081e13f623f583e27783c1e7f9bc",
+        "checksumUrl": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/SHA256SUMS",
+        "signatureKind": "github-build-attestation",
+        "bundleUrl": null,
+        "signerIdentity": "https://github.com/colbymchenry/codegraph/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "osx-arm64": {
+        "url": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/codegraph-darwin-arm64.tar.gz",
+        "bytes": 58280485,
+        "sha256": "d74d1bfb4060db63ec3c2b72c4e17f76c31978af3bad6ace4370d1501ac0662e",
+        "checksumUrl": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/SHA256SUMS",
+        "signatureKind": "github-build-attestation",
+        "bundleUrl": null,
+        "signerIdentity": "https://github.com/colbymchenry/codegraph/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "linux-x64": {
+        "url": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/codegraph-linux-x64.tar.gz",
+        "bytes": 63433974,
+        "sha256": "ef0af416092128fb1ccc723786000b7edf4a6971fe604acd08bf966e4f37b828",
+        "checksumUrl": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/SHA256SUMS",
+        "signatureKind": "github-build-attestation",
+        "bundleUrl": null,
+        "signerIdentity": "https://github.com/colbymchenry/codegraph/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "linux-arm64": {
+        "url": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/codegraph-linux-arm64.tar.gz",
+        "bytes": 63017097,
+        "sha256": "c8c6be292be21d00dea26bad8b28d434731cf612fb8cc475dc10f5b3038b5b64",
+        "checksumUrl": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/SHA256SUMS",
+        "signatureKind": "github-build-attestation",
+        "bundleUrl": null,
+        "signerIdentity": "https://github.com/colbymchenry/codegraph/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      }
+    },
+    "verificationCommands": [
+      [
+        "gh",
+        "attestation",
+        "verify",
+        "<archive>",
+        "--repo",
+        "colbymchenry/codegraph",
+        "--cert-identity",
+        "https://github.com/colbymchenry/codegraph/.github/workflows/release.yml@refs/heads/main",
+        "--format",
+        "json"
+      ]
+    ],
+    "attestedSourceCommit": "0f0af7bf22a5083a47e34fcb1e1bf67355174ef8",
+    "sourceNote": "The attested workflow source is main at 0f0af7bf22a5083a47e34fcb1e1bf67355174ef8. The tag resolves to 6560052a6f856855d3f71eee838fd66ccfa4285d. The release workflow makes commits before publishing. No equivalence is asserted."
+  },
+  "guidance": {
+    "path": "skills/open-forge-codegraph/SKILL.md",
+    "required": true,
+    "delivery": "pending-tool-owned-installer",
+    "sha256": "e1fa24ebfaab2beec772a8b2432a0a63becba35772b4771274ab788f9427585d"
+  },
+  "consent": {
+    "source": "../../../docs/tools/codegraph-consent.md",
+    "scope": "project",
+    "pending": ["R2"]
+  },
+  "passiveObservationProposal": {
+    "serverName": "codegraph",
+    "implementation": "pending",
+    "noHostWrites": true,
+    "noTomlParser": true,
+    "defaultPaths": {
+      "claude-code": ".mcp.json",
+      "codex": ".codex/config.toml"
+    },
+    "pathNote": "Project destinations relative to the physical workspace."
+  }
+}
