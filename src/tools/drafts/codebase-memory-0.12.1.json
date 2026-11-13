@@ -1,0 +1,321 @@
+{
+  "$schema": "../../../schemas/tools/drafts/v1/definition.schema.json",
+  "schemaVersion": 1,
+  "status": "draft",
+  "definition": {
+    "schema": 1,
+    "id": "codebase-memory",
+    "name": "Codebase Memory",
+    "version": "0.12.1",
+    "license": "MIT",
+    "source": {
+      "repository": "https://github.com/DeusData/codebase-memory-mcp",
+      "tag": "v0.12.1",
+      "commit": "a7158ac2f48ca646b4527341b76f930f2aeff87e"
+    },
+    "adapter": {
+      "id": "cbm-0.12",
+      "revision": 1
+    },
+    "admission": "blocked",
+    "admissionReason": "R1: no hook or instruction opt-out, no project scope and account-wide uninstall. No native lifecycle target is qualified.",
+    "capabilities": ["code-graph"],
+    "downloadBase": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/",
+    "artifacts": {
+      "win-x64": {
+        "file": "codebase-memory-mcp-windows-amd64.zip",
+        "bytes": 48508123,
+        "integrity": "sha256:4e4e0f16b45233af5c757a1fcbe3c3b16e9056375b1fbe2ce020b6de75dedcc0",
+        "archive": "zip",
+        "stripComponents": 0
+      },
+      "win-arm64": {
+        "file": "codebase-memory-mcp-windows-arm64.zip",
+        "bytes": 47934918,
+        "integrity": "sha256:934ab6bd67a76c6ebd9e110d87b7090ffd629919bedaeddabe5a19175038b063",
+        "archive": "zip",
+        "stripComponents": 0
+      },
+      "osx-x64": {
+        "file": "codebase-memory-mcp-darwin-amd64.tar.gz",
+        "bytes": 50555159,
+        "integrity": "sha256:ca6e64397a8ae80cec898a8205a6aa16750ac798acc05a0c3ed983837944a581",
+        "archive": "tar.gz",
+        "stripComponents": 0
+      },
+      "osx-arm64": {
+        "file": "codebase-memory-mcp-darwin-arm64.tar.gz",
+        "bytes": 49875423,
+        "integrity": "sha256:9bfcbe38414b47969a3e1d1c1999f5357409387c86fa3d24221b5458267660d2",
+        "archive": "tar.gz",
+        "stripComponents": 0
+      },
+      "linux-x64": {
+        "file": "codebase-memory-mcp-linux-amd64-portable.tar.gz",
+        "bytes": 48920994,
+        "integrity": "sha256:8c3d0341064301e78ecc84cf7348d4e2c6562a0f57448243ea560aaa34de36c1",
+        "archive": "tar.gz",
+        "stripComponents": 0
+      },
+      "linux-arm64": {
+        "file": "codebase-memory-mcp-linux-arm64-portable.tar.gz",
+        "bytes": 48466763,
+        "integrity": "sha256:ed0f1f548cd79b121c401c2e9f7841c189a001af26d3768368088c24f6a53533",
+        "archive": "tar.gz",
+        "stripComponents": 0
+      }
+    },
+    "targets": {
+      "win-x64": {
+        "state": "blocked",
+        "artifacts": ["win-x64"],
+        "entry": "codebase-memory-mcp.exe",
+        "lock": null,
+        "reason": "R1: no hook or instruction opt-out, no project scope and account-wide uninstall. No native lifecycle target is qualified."
+      },
+      "win-arm64": {
+        "state": "blocked",
+        "artifacts": ["win-arm64"],
+        "entry": "codebase-memory-mcp.exe",
+        "lock": null,
+        "reason": "R1: no hook or instruction opt-out, no project scope and account-wide uninstall. No native lifecycle target is qualified."
+      },
+      "osx-x64": {
+        "state": "blocked",
+        "artifacts": ["osx-x64"],
+        "entry": "codebase-memory-mcp",
+        "lock": null,
+        "reason": "R1: no hook or instruction opt-out, no project scope and account-wide uninstall. No native lifecycle target is qualified."
+      },
+      "osx-arm64": {
+        "state": "blocked",
+        "artifacts": ["osx-arm64"],
+        "entry": "codebase-memory-mcp",
+        "lock": null,
+        "reason": "R1: no hook or instruction opt-out, no project scope and account-wide uninstall. No native lifecycle target is qualified."
+      },
+      "linux-x64": {
+        "state": "blocked",
+        "artifacts": ["linux-x64"],
+        "entry": "codebase-memory-mcp",
+        "lock": null,
+        "reason": "R1: no hook or instruction opt-out, no project scope and account-wide uninstall. No native lifecycle target is qualified."
+      },
+      "linux-arm64": {
+        "state": "blocked",
+        "artifacts": ["linux-arm64"],
+        "entry": "codebase-memory-mcp",
+        "lock": null,
+        "reason": "R1: no hook or instruction opt-out, no project scope and account-wide uninstall. No native lifecycle target is qualified."
+      }
+    },
+    "runtime": {
+      "kind": "native",
+      "version": null,
+      "notes": "Native binary. Static portable Linux assets. Installer configures account-level clients, hooks and profiles. No hook or instruction opt-out exists in 0.12.1.",
+      "extraDownloads": [],
+      "installScripts": "forbidden"
+    },
+    "configuration": {
+      "template": "cbm-manual-v1",
+      "codeRoot": "workspace-relative",
+      "documents": "none",
+      "settings": {
+        "auto_index": false,
+        "auto_watch": false,
+        "watcher_enabled": false,
+        "ui_enabled": false
+      },
+      "files": [],
+      "actions": []
+    },
+    "processes": {
+      "telemetry": "absent",
+      "updateChecks": "absent",
+      "daemon": "session-required",
+      "watcher": "off",
+      "autoIndex": "off",
+      "hooks": "blocked",
+      "consent": "session-daemon",
+      "coordination": "account-build-cache",
+      "environment": {
+        "CBM_CACHE_DIR": "${cache}"
+      }
+    },
+    "index": {
+      "location": "native-account-cache",
+      "path": "${cache}/${projectId}.db",
+      "perWorktree": true,
+      "sharedContentCache": "none",
+      "freshness": "full-rebuild-after-delete",
+      "rebuildOnVersionChange": true
+    },
+    "mcp": {
+      "transport": "stdio",
+      "command": "target-entry",
+      "args": ["--ui=false"],
+      "cwd": "worktree",
+      "environment": {},
+      "hosts": {
+        "claude-code": {
+          "path": ".mcp.json",
+          "selector": "/mcpServers/codebase-memory-mcp"
+        },
+        "codex": {
+          "path": ".codex/config.toml",
+          "selector": "mcp_servers.codebase-memory-mcp"
+        }
+      }
+    },
+    "skill": {
+      "template": "code-graph-usage-v1",
+      "optional": false,
+      "defaultEnabled": true
+    },
+    "checks": ["artifact-hash", "installed-files", "native-settings", "host-members", "index-state", "process-policy", "source-membership", "usage-skill", "cache-permissions"],
+    "qualification": {
+      "attestation": "release-evidence-required",
+      "workflow": ".github/workflows/release.yml",
+      "targets": [],
+      "accuracy": "three-languages-2026-11-12"
+    },
+    "lifecycle": null
+  },
+  "lifecycleDraft": {
+    "install": {
+      "state": "pending",
+      "args": null,
+      "scope": "account",
+      "workspaceOutputs": [],
+      "timeoutSeconds": null,
+      "pending": "R1: no hook or instruction opt-out, no project scope and account-wide uninstall."
+    },
+    "uninstall": {
+      "state": "pending",
+      "args": null,
+      "scope": "account",
+      "workspaceOutputs": [],
+      "timeoutSeconds": null,
+      "pending": "R1: no hook or instruction opt-out, no project scope and account-wide uninstall."
+    },
+    "indexCleanup": {
+      "state": "source-reviewed",
+      "args": ["cli", "--quiet", "--json", "delete_project", "--project", "${projectId}"],
+      "scope": "workspace",
+      "workspaceOutputs": [],
+      "timeoutSeconds": null,
+      "pending": "Native verification and execution timeout pending."
+    },
+    "ignorePaths": []
+  },
+  "releaseEvidence": {
+    "verifiedOn": "2026-11-13",
+    "checksumFile": "checksums.txt",
+    "checksumSha256": "103ddf75ccbe4e4de9faa57f074ee5f16b88edab6fd2f7dfd34e50d147dddffe",
+    "assets": {
+      "win-x64": {
+        "url": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/codebase-memory-mcp-windows-amd64.zip",
+        "bytes": 48508123,
+        "sha256": "4e4e0f16b45233af5c757a1fcbe3c3b16e9056375b1fbe2ce020b6de75dedcc0",
+        "checksumUrl": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/checksums.txt",
+        "signatureKind": "sigstore-blob-bundle",
+        "bundleUrl": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/codebase-memory-mcp-windows-amd64.zip.bundle",
+        "signerIdentity": "https://github.com/DeusData/codebase-memory-mcp/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "win-arm64": {
+        "url": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/codebase-memory-mcp-windows-arm64.zip",
+        "bytes": 47934918,
+        "sha256": "934ab6bd67a76c6ebd9e110d87b7090ffd629919bedaeddabe5a19175038b063",
+        "checksumUrl": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/checksums.txt",
+        "signatureKind": "sigstore-blob-bundle",
+        "bundleUrl": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/codebase-memory-mcp-windows-arm64.zip.bundle",
+        "signerIdentity": "https://github.com/DeusData/codebase-memory-mcp/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "osx-x64": {
+        "url": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/codebase-memory-mcp-darwin-amd64.tar.gz",
+        "bytes": 50555159,
+        "sha256": "ca6e64397a8ae80cec898a8205a6aa16750ac798acc05a0c3ed983837944a581",
+        "checksumUrl": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/checksums.txt",
+        "signatureKind": "sigstore-blob-bundle",
+        "bundleUrl": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/codebase-memory-mcp-darwin-amd64.tar.gz.bundle",
+        "signerIdentity": "https://github.com/DeusData/codebase-memory-mcp/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "osx-arm64": {
+        "url": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/codebase-memory-mcp-darwin-arm64.tar.gz",
+        "bytes": 49875423,
+        "sha256": "9bfcbe38414b47969a3e1d1c1999f5357409387c86fa3d24221b5458267660d2",
+        "checksumUrl": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/checksums.txt",
+        "signatureKind": "sigstore-blob-bundle",
+        "bundleUrl": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/codebase-memory-mcp-darwin-arm64.tar.gz.bundle",
+        "signerIdentity": "https://github.com/DeusData/codebase-memory-mcp/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "linux-x64": {
+        "url": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/codebase-memory-mcp-linux-amd64-portable.tar.gz",
+        "bytes": 48920994,
+        "sha256": "8c3d0341064301e78ecc84cf7348d4e2c6562a0f57448243ea560aaa34de36c1",
+        "checksumUrl": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/checksums.txt",
+        "signatureKind": "sigstore-blob-bundle",
+        "bundleUrl": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/codebase-memory-mcp-linux-amd64-portable.tar.gz.bundle",
+        "signerIdentity": "https://github.com/DeusData/codebase-memory-mcp/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "linux-arm64": {
+        "url": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/codebase-memory-mcp-linux-arm64-portable.tar.gz",
+        "bytes": 48466763,
+        "sha256": "ed0f1f548cd79b121c401c2e9f7841c189a001af26d3768368088c24f6a53533",
+        "checksumUrl": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/checksums.txt",
+        "signatureKind": "sigstore-blob-bundle",
+        "bundleUrl": "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.12.1/codebase-memory-mcp-linux-arm64-portable.tar.gz.bundle",
+        "signerIdentity": "https://github.com/DeusData/codebase-memory-mcp/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      }
+    },
+    "verificationCommands": [
+      [
+        "cosign",
+        "verify-blob",
+        "--bundle",
+        "<archive>.bundle",
+        "--certificate-identity",
+        "https://github.com/DeusData/codebase-memory-mcp/.github/workflows/release.yml@refs/heads/main",
+        "--certificate-oidc-issuer",
+        "https://token.actions.githubusercontent.com",
+        "<archive>"
+      ]
+    ],
+    "attestedSourceCommit": null,
+    "sourceNote": "Sigstore blob signatures bind asset bytes and workflow identity. They do not supply a source-build provenance statement."
+  },
+  "guidance": {
+    "path": "skills/open-forge-codebase-memory/SKILL.md",
+    "required": true,
+    "delivery": "pending-tool-owned-installer",
+    "sha256": "9a77965175aa5ce834af5864c169d32a2fae6c5dcd5f8fb8a23e82e3d6fbc8b3"
+  },
+  "consent": {
+    "source": "../../../docs/tools/codebase-memory-consent.md",
+    "scope": "account",
+    "pending": ["R1"]
+  },
+  "passiveObservationProposal": {
+    "serverName": "codebase-memory-mcp",
+    "implementation": "pending",
+    "noHostWrites": true,
+    "noTomlParser": true,
+    "defaultPaths": {
+      "claude-code": "~/.claude.json",
+      "codex": "~/.codex/config.toml"
+    },
+    "pathNote": "Definition host paths are the requested workspace profile. Actual installer destinations and environment overrides are recorded in the consent inventory. R1 blocks the account installer from satisfying this profile."
+  }
+}
