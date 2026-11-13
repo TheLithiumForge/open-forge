@@ -849,6 +849,9 @@ Consume shared ordinary-file completion eligibility, root-chain eligibility and 
 
 For missing references, evaluate all strong identity evidence before cardinality. One unique candidate forms `reference.target-renamed` and an exact proposal. Two strong candidates or weak-only matches remain guided. No candidate remains manual. Optional unavailable Git evidence does not prevent other checks and creates no persistent state. Current or HEAD stale Entries may prove former metadata identity but never define current topology. See the [evidence model](../../technical-designs/forgiving-maintenance.md#rename-and-move-evidence).
 
+Shared comment-link history adds suggestions. It doesn't replace a retained unique
+rename proof or change that proof's safe-exact resolution.
+
 Deduplicate malformed metadata findings by physical source and retain the precise edit-and-index action. Select one Next in the Interface's order. Keep domain coverage distinct from findings, and verify the stated continuation through a clean Doctor. New and changed exact text, codes and additive evidence values are defined by the Interface and [wire inventory](../../technical-designs/forgiving-maintenance.md#safety-and-wire-inventory).
 
 Doctor uses the same current Entries records, candidate admission and identity interpretation as Repair. Do not attach one occurrence's weak reason to another link. Managed and native package sources or targets retain their protected boundary. A Git timeout suppresses missing-target findings without manual-edit advice, marks reference coverage incomplete and makes Next repeat the complete request, including its workspace. Other unavailable optional Git evidence does not block independent diagnosis.

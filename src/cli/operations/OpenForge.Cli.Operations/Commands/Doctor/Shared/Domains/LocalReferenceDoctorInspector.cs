@@ -147,7 +147,8 @@ internal static class LocalReferenceDoctorInspector
             yield break;
         }
         if (target.Resolution == SourceLinkTargetResolution.Missing && target.Path is not null && renames is not null
-            && !observations.Any(candidate => candidate.Bases.Any(basis => basis.Kind == LocalReferenceCandidateBasisKind.GitRename)))
+            && (renames.Find(target.Path)?.Proven is not null
+                || !observations.Any(candidate => candidate.Bases.Any(basis => basis.Kind == LocalReferenceCandidateBasisKind.GitRename))))
         {
             yield return DoctorRenameFindingFactory.Create(observation, renames, candidateScanComplete ? observations : [], candidateFilter);
             yield break;

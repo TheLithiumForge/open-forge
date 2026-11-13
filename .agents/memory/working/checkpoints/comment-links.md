@@ -182,3 +182,58 @@ Git heading-diff candidate. Missing or changed snapshot baselines were reviewed
 before acceptance. No full local suite, native gate, Unix run or push was used.
 There are no deviations or open maintainer questions. The maintainer controls the
 later rebase onto PR 25 and the CI gate.
+
+## EndToEnd CI Fix
+
+The maintainer selected the default-layout fixture and F08 proven-rename failures
+from run `43420481673`. The two named EndToEnd methods are the local test scope.
+The same local authored-file safety and recovery limits apply. The fixes use the
+existing install capture, rename facts and Doctor classification. No dependency,
+runtime or new exceptional machinery is needed. CI runs full managed and native
+suites. The next CI run on `223c977f7` is `43426798966`.
+
+The default-layout capture changes only the CLI Skill's `common.md` and
+`discovery.md` bytes. All other twenty captured files match. The fixture keeps its
+format and original output and ownership expectations. Issue 29 still covers its
+later replacement.
+
+Doctor skipped a retained proven rename when the shared comment-link reader also
+offered Git evidence. The fix gives the retained proof precedence and keeps the
+original exact-repair expectation. The completed Linux logs also report both
+ambiguous-successor cases because their old literal reason arrays omit the new
+Git and section evidence. Their choice and effect requirements stay unchanged.
+
+The two named methods pass on the fresh Windows managed publication: four cases,
+zero skips. The new ambiguity snapshot keeps both candidate paths and all reasons.
+It comes from the previous Linux CLI receipt, with Git and section-content labels
+updated to the distinct evidence kinds from `223c977f7`. Only the fixture's known
+Git HEAD is replaced. The ambiguous cases haven't run locally because the
+maintainer limited local EndToEnd execution to the two named methods.
+
+Run `43426798966` also reports four Status snapshot failures. The Skill prose grew
+by 280 characters and bytes, which adds 70 estimated routed tokens. The accepted
+54 Status views change only those totals and the corresponding startup-share
+percentages. The share uses current startup bytes divided by routed bytes. All
+other structured fields stay equal. The four affected Status Integration cases
+pass locally with zero skips.
+
+The downloaded diagnostics from all six platforms match all 960 Status views
+through the existing platform comparer. The Windows x64 receipts gave the reviewed
+shared baselines. No comparer or platform-specific expectation was added.
+
+The prior run is completed with a cancelled conclusion. Its retained failures on
+Linux and Windows are the same fixture, proven-rename and ambiguous-reason cases.
+The new run completed with failure. All six platform jobs report only the same
+four Status failures, including macOS Intel. These stop the run before its
+EndToEnd stage. Documentation run `43426798812` passed. Both completed Build runs
+were read again through `gh run view`, including their failed logs.
+
+The solution build includes a fresh managed development publication and uses the
+existing command-only NU1903 override. EndToEnd source compilation also passes.
+Both formatting checks pass. `git diff --check` and LF checks pass. No flakes
+occurred. No full local suite, native build, Unix execution or push was used.
+The fixes restore the existing exact-repair contract. There is no product scope
+deviation. The ambiguous-successor snapshot is compiled and reviewed against the
+retained Linux receipt and current evidence labels. Its execution stays with CI
+because the maintainer selected only the two named EndToEnd methods locally.
+The maintainer controls the push and next CI run.
