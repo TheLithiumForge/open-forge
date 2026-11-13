@@ -15,6 +15,8 @@ internal sealed partial class ToolBackupSession
     private readonly PlannedFileChange[] _changes;
     private readonly FileExpectationValidator _validator = new(new PhysicalPathResolver());
     private readonly Dictionary<string, FileStateSnapshot> _backups = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, FileStateSnapshot> _priors = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, UnixFileMode> _priorModes = new(StringComparer.Ordinal);
     private readonly HashSet<string> _attempted = new(StringComparer.Ordinal);
     private bool _closed;
 
@@ -24,11 +26,14 @@ internal sealed partial class ToolBackupSession
         _changes = changes;
     }
 
+    internal ToolBackupMode Mode { get; private set; }
+
     internal static async ValueTask<ToolBackupSession> PrepareAsync(
         WorkspaceLockLease lease, IReadOnlyList<PlannedFileChange> changes, CancellationToken token)
     {
         var session = new ToolBackupSession(lease, [.. changes]);
         session.RequireLease();
+        session.Mode = ToolGitRecoveryReader.Read(lease.Request.Workspace, token);
         var targets = new HashSet<string>(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
         foreach (var change in session._changes)
         {
@@ -49,6 +54,9 @@ internal sealed partial class ToolBackupSession
                 var prior = await ToolFileReader.ReadAsync(lease.Request.Workspace, change.LogicalPath, token).ConfigureAwait(false);
                 await session.CheckAsync(change.Expectation, token).ConfigureAwait(false);
                 var target = prior.PhysicalPath ?? throw new IOException("The prior file has no physical path.");
+                session._priors.Add(change.LogicalPath, prior);
+                if (!OperatingSystem.IsWindows()) session._priorModes.Add(change.LogicalPath, File.GetUnixFileMode(target));
+                if (session.Mode == ToolBackupMode.Git) continue;
                 var backup = ToolBackupPaths.Beside(target);
                 File.Copy(target, backup, overwrite: false);
                 var saved = await ToolFileReader.ReadAsync(lease.Request.Workspace, ToolBackupPaths.Beside(change.LogicalPath), CancellationToken.None).ConfigureAwait(false);

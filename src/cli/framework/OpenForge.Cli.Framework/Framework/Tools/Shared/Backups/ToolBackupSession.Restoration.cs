@@ -26,7 +26,10 @@ internal sealed partial class ToolBackupSession
                             await CheckAsync(saved.Expectation, CancellationToken.None).ConfigureAwait(false);
                             await WriteAsync(Intended(change, physical), physical, saved.Bytes.AsMemory(), CancellationToken.None).ConfigureAwait(false);
                         }
+                        else if (_priors.TryGetValue(change.LogicalPath, out var prior))
+                            await WriteAsync(Intended(change, physical), physical, prior.Bytes.AsMemory(), CancellationToken.None).ConfigureAwait(false);
                         else File.Delete(physical);
+                        if (!OperatingSystem.IsWindows() && _priorModes.TryGetValue(change.LogicalPath, out var mode)) File.SetUnixFileMode(physical, mode);
                         await CheckAsync(change.Expectation, CancellationToken.None).ConfigureAwait(false);
                     }
                 }

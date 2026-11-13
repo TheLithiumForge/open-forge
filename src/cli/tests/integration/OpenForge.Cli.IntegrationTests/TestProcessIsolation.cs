@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using OpenForge.Cli.IntegrationTests.Commands.Cleanup.Shared.Processes;
 using OpenForge.Cli.IntegrationTests.Framework.Mutation.Locking.Shared.Processes;
 using OpenForge.Cli.TestSupport.Isolation;
+using OpenForge.Cli.IntegrationTests.Framework.Tools.Shared.Execution;
 
 namespace OpenForge.Cli.IntegrationTests;
 
@@ -16,6 +17,10 @@ internal static class TestProcessIsolation
     internal static void Redirect()
     {
         var arguments = Environment.GetCommandLineArgs().Skip(1).ToArray();
+        if (arguments.FirstOrDefault() == ToolCommandProbe.ChildArgument)
+        {
+            Environment.Exit(ToolCommandProbe.RunAsync(arguments).GetAwaiter().GetResult());
+        }
         if (arguments.FirstOrDefault() is WorkspaceLockProbe.ChildArgument or CleanupStorageProbe.ChildArgument)
         {
             try

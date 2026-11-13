@@ -302,3 +302,15 @@ The Linux CS0246 failure came from three local model files under `Models/Artifac
 The fresh managed Unit build passed with zero warnings and errors. The focused `ToolManifestTests` and `ToolLifecycleTests` selection passed 48 tests, with zero failures and skips. Exact commands and reports are under `artifacts/tool-command/restart-ci-fix-*`. Both required formatting checks passed. CI still supplies clean Linux and Native AOT evidence.
 
 Continue by restoring only the new restart stash, gate its mechanics, then update the supply contracts for the maintainer's verified-download model. Repeated Install must repair and rerun the pinned installer. Node uses the official pinned private runtime and frozen npm lock. Telemetry defaults off with a visible opt-in. Tool Exec is proposed only. The five writers are still pending.
+
+## Generic mechanics
+
+The restart checkpoint is restored and gated. Tool process requests verify the executable hash, keep separate argument positions, apply child-local environment overrides and reap the child before pipe disposal on cancellation or timeout. The HTTPS capability bounds transfer length and redirects. It isn't wired to a writer yet.
+
+Git metadata selects no sibling backup for every managed file in a Git workspace. Non-Git writes keep the existing sibling-backup flow. A live invocation can restore its own changed managed bytes from memory in Git mode. Interrupted Git writes create no `.bak`. Unknown Git metadata blocks before file effects.
+
+Tool and Library now share the existing byte-preserving ignore-section mechanism. Family markers and policy stay separate. All former Library path and escaping consumers use the shared owner.
+
+Fresh managed Unit and Integration builds passed with zero warnings and errors. The focused Unit run passed 18 cases. The focused Integration run passed 79 cases. Both runs had zero failures and skips. Both required formatting checks passed. No snapshots changed. Logs and exact filtered reports are under `artifacts/tool-command/restart-mechanics-*`. The initial Integration compile caught one xUnit analyzer violation, corrected before the final build. No flake was observed.
+
+Supply-contract updates are being prepared separately. The five writer leaves, artifact stores and extraction, backup reporting and Repair restoration are still pending. Choose's effect on agent integration is awaiting the maintainer's answer. Concrete tool definitions stay on the next branch.

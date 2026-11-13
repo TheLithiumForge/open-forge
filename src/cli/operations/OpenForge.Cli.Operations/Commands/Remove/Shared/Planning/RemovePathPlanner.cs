@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.GitIgnore;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Libraries.Models.GitIgnore;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.GitIgnore;
@@ -332,7 +333,7 @@ internal sealed class RemovePathPlanner
         RemovePathMetadataChange? gitIgnore = null;
         var releasesIgnoredPaths = registrations.Record?.Libraries.Any(library => library.GitIgnore
             && libraryPaths.Any(release => release.LibraryId == library.Id.Value)) == true;
-        if (normalized != LibraryGitIgnoreSection.Path && releasesIgnoredPaths && ownershipChange is not null)
+        if (normalized != ManagedGitIgnoreSection.Path && releasesIgnoredPaths && ownershipChange is not null)
         {
             var intended = WorkspaceOwnershipCodec.Read(ownershipChange.Change.IntendedBytes.ToArray()).Document
                 ?? throw new InvalidOperationException("The planned ownership release requires an interpretable document.");
@@ -341,7 +342,7 @@ internal sealed class RemovePathPlanner
                 Workspace = request.Workspace,
                 Current = registrations.Record,
                 Intended = LibraryRegistrationReader.ReadRegistrations(intended),
-                IsExcluded = WorkspaceRemovals.IsPathRemoved(layout, LibraryGitIgnoreSection.Path, settings.Document),
+                IsExcluded = WorkspaceRemovals.IsPathRemoved(layout, ManagedGitIgnoreSection.Path, settings.Document),
                 IsRemoval = true,
             }, cancellationToken).ConfigureAwait(false);
             if (ignore.State != LibraryGitIgnoreReadState.Complete)
@@ -413,7 +414,7 @@ internal sealed class RemovePathPlanner
         }
         if (plan.GitIgnore is { } ignore)
         {
-            effects.Add(new RemoveEffect(LibraryGitIgnoreSection.Path, "file", "persist", dryRun ? "planned" : "done"));
+            effects.Add(new RemoveEffect(ManagedGitIgnoreSection.Path, "file", "persist", dryRun ? "planned" : "done"));
         }
         if (plan.OwnershipChange is not null)
         {

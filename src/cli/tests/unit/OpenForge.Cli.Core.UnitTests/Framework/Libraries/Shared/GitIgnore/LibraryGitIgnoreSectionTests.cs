@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.GitIgnore;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.GitIgnore;
 
@@ -11,7 +12,7 @@ public sealed class LibraryGitIgnoreSectionTests
     [InlineData("shared/a[1]*?.md", "/shared/a\\[1\\]\\*\\?.md")]
     [InlineData("notes/a #!.md ", "/notes/a\\ \\#\\!.md\\ ")]
     public void ExactLeafPattern(string path, string expected)
-        => Assert.Equal(expected, LibraryGitIgnoreSection.Pattern(path));
+        => Assert.Equal(expected, ManagedGitIgnoreSection.Pattern(path));
 
     [Fact(DisplayName = "Library section preserves BOM authored bytes Install section and sibling rules")]
     public void PreservesAuthoredBytesAndInstall()

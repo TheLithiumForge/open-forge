@@ -3,6 +3,8 @@ using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Backups;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Filesystem;
+using OpenForge.Cli.Core.Framework.Tools.Models.Backups;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.IntegrationTests.TestSupport;
 using OpenForge.Cli.TestSupport;
@@ -17,6 +19,53 @@ public sealed class ToolBackupSessionTests
     private static readonly byte[] Original = [0, 127, 255, 13, 10];
     private static readonly byte[] Changed = Encoding.UTF8.GetBytes("changed\n");
     private static CancellationToken Token => TestContext.Current.CancellationToken;
+
+    [Theory(DisplayName = "Git recovery keeps no sibling backup and restores managed bytes after a failed write"), InlineData(false), InlineData(true)]
+    public async Task UsesGitWithoutSiblingBackups(bool delete)
+    {
+        using var temporary = TemporaryWorkspace.Create("tool-git-backup");
+        using var locks = WorkspaceLockTestStore.Create("tool-git-backup-lock");
+        temporary.WriteText(WorkspaceLayoutNames.GitMetadataDirectoryName + "/" + ToolGitRecoveryReader.Head, "ref: refs/heads/fixture\n");
+        temporary.WriteBytes(First, Original);
+        var workspace = Selected(temporary);
+        await using var lease = await LeaseAsync(locks, workspace);
+        var before = await ToolFileReader.ReadAsync(workspace, temporary.Combine(First), Token);
+        var change = delete ? PlannedFileChange.Delete(before.Expectation) : PlannedFileChange.Replace(before.Expectation, Changed);
+        var session = await ToolBackupSession.PrepareAsync(lease, [change], Token);
+        Assert.Equal(ToolBackupMode.Git, session.Mode);
+        Assert.False(File.Exists(ToolBackupPaths.Beside(temporary.Combine(First))));
+        await session.ApplyAsync(Token);
+        Assert.Empty(await session.RestoreAsync());
+        Assert.Equal(Original, await File.ReadAllBytesAsync(temporary.Combine(First), Token));
+        Assert.False(File.Exists(ToolBackupPaths.Beside(temporary.Combine(First))));
+    }
+
+    [Theory(DisplayName = "Git recovery recognizes an ordinary worktree pointer or ancestor repository without launching a process"), InlineData(false), InlineData(true)]
+    public void ReadsWorktreeMetadata(bool pointer)
+    {
+        using var temporary = TemporaryWorkspace.Create("tool-git-mode");
+        if (pointer) temporary.WriteText(WorkspaceLayoutNames.GitMetadataDirectoryName, ToolGitRecoveryReader.GitDirectoryPrefix + "fixture-metadata\n");
+        else temporary.WriteText(WorkspaceLayoutNames.GitMetadataDirectoryName + "/" + ToolGitRecoveryReader.Head, "ref: refs/heads/fixture\n");
+        var nested = temporary.CreateDirectory("nested");
+        var before = temporary.SnapshotHashes();
+        Assert.Equal(ToolBackupMode.Git, ToolGitRecoveryReader.Read(new(nested, nested, CliWorkspaceSelectionMethod.ExplicitWorkspace), Token));
+        Assert.Equal(before, temporary.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "Unavailable Git metadata blocks backup preparation without changing files")]
+    public async Task RejectsAmbiguousGitMetadata()
+    {
+        using var temporary = TemporaryWorkspace.Create("tool-git-unknown");
+        using var locks = WorkspaceLockTestStore.Create("tool-git-backup-lock");
+        temporary.WriteText(WorkspaceLayoutNames.GitMetadataDirectoryName, "invalid fixture metadata\n");
+        temporary.WriteBytes(First, Original);
+        var workspace = Selected(temporary);
+        await using var lease = await LeaseAsync(locks, workspace);
+        var before = await ToolFileReader.ReadAsync(workspace, temporary.Combine(First), Token);
+        var hashes = temporary.SnapshotHashes();
+        await Assert.ThrowsAsync<IOException>(async () => await ToolBackupSession.PrepareAsync(lease, [PlannedFileChange.Replace(before.Expectation, Changed)], Token));
+        Assert.Equal(hashes, temporary.SnapshotHashes());
+    }
 
     [Theory(DisplayName = "Tool sibling backups protect replacement, deletion and empty prior files until validation"), InlineData(false, false), InlineData(true, false), InlineData(false, true)]
     public async Task ProtectsExistingFiles(bool delete, bool empty)

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.GitIgnore;
 using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -20,11 +21,11 @@ internal static class LibraryGitIgnorePlanner
         if (current.IsEmpty && intended.IsEmpty) return new(LibraryGitIgnoreReadState.Complete, null, null);
         if ((request.Current?.Libraries ?? []).Concat(request.Intended?.Libraries ?? [])
             .SelectMany(library => LibraryPathIdentity.Mappings(library)).Any(mapping =>
-                PortableWorkspacePath.CreatePortableKey(mapping.DestinationPath.Value) == PortableWorkspacePath.CreatePortableKey(LibraryGitIgnoreSection.Path)))
+                PortableWorkspacePath.CreatePortableKey(mapping.DestinationPath.Value) == PortableWorkspacePath.CreatePortableKey(ManagedGitIgnoreSection.Path)))
         {
             return Blocked("A projected Library link overlaps the required .gitignore file. Attach that Library with --git-ignore false.");
         }
-        var logical = System.IO.Path.Combine(request.Workspace.LexicalRoot, LibraryGitIgnoreSection.Path);
+        var logical = System.IO.Path.Combine(request.Workspace.LexicalRoot, ManagedGitIgnoreSection.Path);
         var resolver = new PhysicalPathResolver();
         var leaf = NoFollowLeafObserver.Observe(resolver, request.Workspace, logical, cancellationToken);
         if (leaf.State == NoFollowLeafState.Inaccessible
@@ -42,7 +43,7 @@ internal static class LibraryGitIgnorePlanner
         }
         try
         {
-            var physical = System.IO.Path.Combine(request.Workspace.PhysicalRoot, LibraryGitIgnoreSection.Path);
+            var physical = System.IO.Path.Combine(request.Workspace.PhysicalRoot, ManagedGitIgnoreSection.Path);
             var before = leaf.State == NoFollowLeafState.Missing
                 ? FileStateSnapshot.Missing(logical)
                 : FileStateSnapshot.File(logical, physical, await File.ReadAllBytesAsync(physical, cancellationToken).ConfigureAwait(false));
