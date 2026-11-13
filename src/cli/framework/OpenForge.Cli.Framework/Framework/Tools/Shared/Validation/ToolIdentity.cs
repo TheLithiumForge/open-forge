@@ -13,6 +13,12 @@ internal static partial class ToolIdentity
     internal static bool IsVersion(string? value) => value is not null && Version().IsMatch(value);
     internal static bool IsSha256(string? value) => value is not null && LowerHash().IsMatch(value);
     internal static bool IsRelativePath(string? value) => PortableWorkspacePath.TryNormalize(value, out _);
+    internal static bool IsIgnorePath(string value) => !value.Contains("${", StringComparison.Ordinal) && IsRelativePath(value.EndsWith('/') ? value[..^1] : value);
+    internal static bool IsWorkspaceOutputTemplate(string value)
+    {
+        var relative = value.StartsWith(ToolVocabulary.CodeRootPrefix, StringComparison.Ordinal) ? value[ToolVocabulary.CodeRootPrefix.Length..] : value;
+        return !relative.Contains("${", StringComparison.Ordinal) && IsRelativePath(relative);
+    }
 
     [GeneratedRegex(IdPattern, RegexOptions.CultureInvariant)] private static partial Regex Id();
     [GeneratedRegex(VersionPattern, RegexOptions.CultureInvariant)] private static partial Regex Version();

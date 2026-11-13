@@ -52,6 +52,7 @@ internal static class WorkspaceSettingsDefinitions
     internal const string RootsProperty = "roots";
     internal const string OutsideRoutesProperty = "outsideRoutes";
     internal const string ToolsProperty = "tools";
+    internal const string ToolRunsProperty = "toolRuns";
     internal const string GitMetadataDirectoryName = WorkspaceLayoutNames.GitMetadataDirectoryName;
 
     internal static string ReadFrontmatterName(FrontmatterForm form)

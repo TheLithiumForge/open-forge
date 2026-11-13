@@ -72,6 +72,7 @@ internal static partial class ToolManifestValidator
         }
         Require(manifest.Configuration.Files.Select(file => file.Path).Distinct(StringComparer.Ordinal).Count() == manifest.Configuration.Files.Length, "duplicate configuration file");
         ValidateExecution(manifest);
+        if (manifest.Lifecycle is { } lifecycle) ToolLifecycleValidator.Validate(lifecycle);
         if (manifest.Skill is { } skill) Require(ToolVocabulary.Skills.Contains(skill.Template), "unknown usage Skill");
         if (manifest.Capabilities.Contains(ToolVocabulary.CodeGraphCapability, StringComparer.Ordinal))
             Require(manifest.Skill is { Optional: false, DefaultEnabled: true }, "V1 graph definitions require enabled mandatory guidance");

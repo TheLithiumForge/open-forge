@@ -222,7 +222,6 @@ public sealed class ToolReadCommandsTests
         Hosts = [],
         Bindings = [],
         Files = [],
-        Members = [],
         RuntimeDirectories = [],
         NativeProjects = [],
     };

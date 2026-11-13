@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using OpenForge.Cli.Core.Framework.Tools.Models.Artifacts;
 using OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
+using OpenForge.Cli.Core.Framework.Tools.Models.Lifecycle;
 using OpenForge.Cli.Core.Framework.Tools.Models.Execution;
 
 namespace OpenForge.Cli.Core.Framework.Tools.Models.Manifest;
@@ -49,4 +50,7 @@ internal sealed record ToolManifest
     public required string[] Checks { get; init; }
 
     public required ToolQualification Qualification { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ToolLifecycle? Lifecycle { get; init; }
 }

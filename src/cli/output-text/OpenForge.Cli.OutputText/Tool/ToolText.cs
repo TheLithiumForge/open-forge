@@ -11,7 +11,7 @@ public static class ToolText
     public static string[] InspectExamples() => ["open-forge tool inspect example-tool --source ./manifest.json",
         "open-forge tool inspect example-tool --source ./manifest.json --tool-version 1.0.0"];
     public static string[] StatusExamples() => ["open-forge tool status --format json", "open-forge tool status example-tool"];
-    public static string[] ReadBehavior() => ["Reads local facts without downloads, child processes or writes.", "Unavailable observations keep their cause and independently readable facts."];
+    public static string[] ReadBehavior() => ["Reads local facts without downloads, child processes or writes.", "Unavailable observations keep their cause and independently readable facts.", "Tool-owned installers handle agent configuration."];
     public static string ListHeadline() => "Read available definitions and recorded tool installs.";
     public static string InspectHeadline() => "Read the selected tool definition and its requirements.";
     public static string StatusHeadline() => "Read passive tool installation and configuration evidence.";

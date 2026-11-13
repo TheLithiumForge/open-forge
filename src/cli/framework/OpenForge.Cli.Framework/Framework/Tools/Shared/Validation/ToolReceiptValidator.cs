@@ -10,7 +10,7 @@ internal static class ToolReceiptValidator
     internal static void ValidateJson(ReadOnlyMemory<byte> bytes)
     {
         using var json = JsonDocument.Parse(bytes);
-        foreach (var name in new[] { "tools" })
+        foreach (var name in new[] { "tools", "toolRuns" })
         {
             ToolManifestValidator.Require(json.RootElement.EnumerateObject().Count(property => property.NameEquals(name)) <= 1, "duplicate lock section");
             if (json.RootElement.TryGetProperty(name, out var value))
@@ -33,8 +33,10 @@ internal static class ToolReceiptValidator
             ToolManifestValidator.Require(receipt.CodeRoot == "." || ToolIdentity.IsRelativePath(receipt.CodeRoot), "invalid recorded code root");
             ToolManifestValidator.Distinct(receipt.Hosts, "receipt hosts");
             ToolManifestValidator.Require(receipt.Hosts.All(ToolVocabulary.Hosts.Contains), "invalid receipt host");
-            ToolManifestValidator.Require(receipt.Bindings is not null && receipt.Files is not null && receipt.Members is not null
+            ToolManifestValidator.Require(receipt.Bindings is not null && receipt.Files is not null
                 && receipt.RuntimeDirectories is not null && receipt.NativeProjects is not null, "tool receipt coverage cannot be null");
+            ToolManifestValidator.Distinct(receipt.IgnorePaths, "receipt ignore paths");
+            ToolManifestValidator.Require(receipt.IgnorePaths.All(ToolIdentity.IsIgnorePath), "invalid receipt ignore path");
             var bindings = new HashSet<string>(StringComparer.Ordinal);
             foreach (var binding in receipt.Bindings)
                 ToolManifestValidator.Require(binding is not null && ToolIdentity.IsId(binding.Id) && bindings.Add(binding.Id)
@@ -43,10 +45,6 @@ internal static class ToolReceiptValidator
             foreach (var file in receipt.Files)
                 ToolManifestValidator.Require(file is not null && (file.StoreId is null || bindings.Contains(file.StoreId))
                     && ToolIdentity.IsRelativePath(file.Path) && ToolIdentity.IsSha256(file.Sha256), "invalid written file receipt");
-            foreach (var member in receipt.Members)
-                ToolManifestValidator.Require(member is not null && ToolIdentity.IsRelativePath(member.Path)
-                    && member.Format is ToolVocabulary.JsonMembers or ToolVocabulary.TomlTable or "native-settings" or "native-collections"
-                    && !string.IsNullOrWhiteSpace(member.Selector) && member.Value.ValueKind != JsonValueKind.Undefined, "invalid written member receipt");
             foreach (var directory in receipt.RuntimeDirectories)
             {
                 ToolManifestValidator.Require(directory is not null && bindings.Contains(directory.StoreId)

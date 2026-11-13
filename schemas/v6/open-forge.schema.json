@@ -178,6 +178,12 @@
           }
         }
       }
+    },
+    "toolRuns": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/toolRunSummary"
+      }
     }
   },
   "examples": [
@@ -216,5 +222,93 @@
         "docs/team/_team.md"
       ]
     }
-  ]
+  ],
+  "$defs": {
+    "toolCommandSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action",
+        "host",
+        "state",
+        "exitCode"
+      ],
+      "properties": {
+        "action": {
+          "enum": [
+            "install",
+            "uninstall",
+            "index-cleanup"
+          ]
+        },
+        "host": {
+          "anyOf": [
+            {
+              "enum": [
+                "claude-code",
+                "codex"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "planned",
+            "started",
+            "exited",
+            "failed",
+            "interrupted"
+          ]
+        },
+        "exitCode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "toolRunSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action",
+        "state",
+        "commands"
+      ],
+      "properties": {
+        "action": {
+          "enum": [
+            "install",
+            "configure",
+            "update",
+            "remove",
+            "choose"
+          ]
+        },
+        "state": {
+          "enum": [
+            "planned",
+            "started",
+            "exited",
+            "failed",
+            "interrupted"
+          ]
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/toolCommandSummary"
+          }
+        }
+      }
+    }
+  }
 }

@@ -16,7 +16,7 @@ internal sealed record ToolReceipt
     public required string[] Hosts { get; init; }
     public required ToolStoreReference[] Bindings { get; init; }
     public required ToolFileReceipt[] Files { get; init; }
-    public required ToolMemberReceipt[] Members { get; init; }
     public required ToolDirectoryReceipt[] RuntimeDirectories { get; init; }
     public required Dictionary<string, string> NativeProjects { get; init; }
+    public string[] IgnorePaths { get; init; } = [];
 }

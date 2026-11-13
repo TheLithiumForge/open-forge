@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Text;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Evidence;
 using OpenForge.Cli.Core.Commands.Tool.Shared.Observation;
@@ -20,21 +19,19 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Tool;
 [Trait("Feature", "tool-read"), Trait("Evidence", "Integration")]
 public sealed class ToolHostStatusTests
 {
-    [Theory(DisplayName = "Passive status reads persisted JSON and TOML member receipts and active guidance")]
-    [InlineData(ToolVocabulary.JsonMembers, "matching", (int)ToolEvidenceState.Matching)]
-    [InlineData(ToolVocabulary.TomlTable, "matching", (int)ToolEvidenceState.Matching)]
-    [InlineData(ToolVocabulary.JsonMembers, "missing", (int)ToolEvidenceState.Missing)]
-    [InlineData(ToolVocabulary.JsonMembers, "changed", (int)ToolEvidenceState.Changed)]
-    [InlineData(ToolVocabulary.JsonMembers, "excluded", (int)ToolEvidenceState.Excluded)]
-    [InlineData(ToolVocabulary.JsonMembers, "inactive", (int)ToolEvidenceState.Inactive)]
-    public async Task ReadsPersistedHostMembers(string format, string guidanceState, int expectedGuidance)
+    [Theory(DisplayName = "Passive status keeps tool-owned host files unchanged and checks recorded guidance")]
+    [InlineData("matching", (int)ToolEvidenceState.Matching)]
+    [InlineData("missing", (int)ToolEvidenceState.Missing)]
+    [InlineData("changed", (int)ToolEvidenceState.Changed)]
+    [InlineData("excluded", (int)ToolEvidenceState.Excluded)]
+    [InlineData("inactive", (int)ToolEvidenceState.Inactive)]
+    public async Task KeepsToolOwnedHosts(string guidanceState, int expectedGuidance)
     {
         using var workspace = TemporaryWorkspace.Create("tool-host-status");
         var bytes = ToolFixtureSource.ManifestBytes();
         var definition = new ToolCatalogueReader().Definition(bytes, ToolFixtureSource.ManifestName, false);
-        var host = definition.Manifest.Mcp.Hosts[format == ToolVocabulary.JsonMembers ? "claude-code" : "codex"];
+        var host = definition.Manifest.Mcp.Hosts["claude-code"];
         const string guidance = "Fixture usage guidance\n";
-        using var value = JsonDocument.Parse("{\"command\":\"fixture\"}");
         var receipt = new ToolReceipt
         {
             Id = ToolFixtureSource.Id,
@@ -45,10 +42,9 @@ public sealed class ToolHostStatusTests
             ManifestFormat = "json",
             AdapterRevision = definition.Manifest.Adapter.Revision,
             CodeRoot = ".",
-            Hosts = [format == ToolVocabulary.JsonMembers ? "claude-code" : "codex"],
+            Hosts = ["claude-code"],
             Bindings = [],
             Files = [new(null, ToolPassiveStatusReader.GuidancePath, ToolCatalogueReader.Hash(Encoding.UTF8.GetBytes(guidance)), false)],
-            Members = [new(host.Path, format, host.Selector, value.RootElement.Clone(), false)],
             RuntimeDirectories = [],
             NativeProjects = [],
         };
@@ -66,14 +62,7 @@ public sealed class ToolHostStatusTests
         workspace.WriteText(WorkspaceSettingsDefinitions.RelativePath, settings.ToJsonString());
         if (guidanceState is not ("missing" or "inactive"))
             workspace.WriteText(ToolPassiveStatusReader.GuidancePath, guidanceState == "changed" ? "Changed fixture guidance\n" : guidance);
-        workspace.WriteText(host.Path, format == ToolVocabulary.JsonMembers
-            ? new JsonObject
-            {
-                ["unrelated"] = true,
-                ["mcpServers"] = new JsonObject
-                { ["open-forge-" + ToolFixtureSource.Id] = new JsonObject { ["command"] = "fixture" } }
-            }.ToJsonString()
-            : $"# unrelated comment\nunrelated = true\n[{host.Selector}]\ncommand = 'fixture'\n");
+        workspace.WriteText(host.Path, "The tool owns this file, even if it isn't JSON.\n");
         var before = workspace.SnapshotHashes();
 
         var result = await new ToolStatusOperation().ExecuteAsync(

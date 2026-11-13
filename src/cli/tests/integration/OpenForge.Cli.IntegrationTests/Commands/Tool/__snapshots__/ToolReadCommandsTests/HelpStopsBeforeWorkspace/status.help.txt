@@ -10,6 +10,7 @@ Examples:
 Behavior:
   Reads local facts without downloads, child processes or writes.
   Unavailable observations keep their cause and independently readable facts.
+  Tool-owned installers handle agent configuration.
 
 Arguments:
   <id>  One exact tool ID.

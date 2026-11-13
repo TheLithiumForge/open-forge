@@ -62,15 +62,6 @@ internal static class ToolPassiveStatusReader
             if (setting.CodeRoot is { } codeRoot && codeRoot != receipt.CodeRoot
                 || setting.Hosts is { } hosts && !hosts.Order(StringComparer.Ordinal).SequenceEqual(receipt.Hosts.Order(StringComparer.Ordinal)))
                 configuration = new(ToolEvidenceState.Drifted, "The settings root or hosts differ from the receipt.");
-            foreach (var member in receipt.Members)
-            {
-                var read = await ReadWorkspaceFileAsync(workspace, member.Path, token).ConfigureAwait(false);
-                if (read.State == ToolEvidenceState.Missing) configuration = Worse(configuration, new(ToolEvidenceState.Drifted, member.Path));
-                else if (read.State == ToolEvidenceState.Unavailable) configuration = Worse(configuration, new(ToolEvidenceState.Unavailable, read.Cause));
-                else if (read.Bytes is { } bytes) configuration = Worse(configuration, ToolHostMemberReader.Compare(member, bytes));
-            }
-            if (receipt.Members.Length == 0 && receipt.Hosts.Length != 0)
-                configuration = Worse(configuration, new(ToolEvidenceState.Unavailable, "The desired hosts have no recorded generated members."));
         }
 
         var guidance = new ToolObservation(ToolEvidenceState.Inactive);
