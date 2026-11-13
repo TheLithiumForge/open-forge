@@ -263,3 +263,15 @@ Next: Complete named and team Install plans and effects, then Configure, Choose,
 Blocker: None for this increment. Store staging keeps its exact created paths available for partial-effect reporting. The full writers and both lane integrations are pending. There is no concrete production definition.
 
 The managed Release Unit and Integration builds pass with zero warnings and errors. The 11 new component-choice Unit cases pass. The 13 new supply and permission Integration cases pass. Both runs have zero skips. Select `*ToolWriterComponentsTests.*` in Unit and `*ToolWriterSupplyTests.*` plus `*ToolWriterPermissionsTests.*` in Integration with the standard runner flags under Verification. Evidence is under `artifacts/tool-command/writers-components-*` and `writers-foundation-*`. The first supply run rejected an incomplete enabled fixture qualification. A later build caught an incorrect test reference to the native Skill path. Both are corrected before final qualification. No flake or snapshot change was observed.
+
+## Sequential managed edits
+
+Done: `40e61aa9e` commits native supply and writer preparation. The backup session now supports a later edit to a target covered by the original file group. Entry rewrites and role lines can change one agent file while keeping its first backup until all validation passes. Continuation rejects new targets, duplicate targets, changed bytes and an incomplete initial group. Restoration checks the latest successful write and restores the original bytes. New files can be removed through the same checked group.
+
+Now: The backup increment is qualified separately from the unfinished Install draft. That draft is saved in stash `3540d599df9db9a3138b75eb6b5bd36bba2cd070` for immediate restoration after this commit. Existing recovery v1 and the frozen lane models are unchanged. No public output or command binding changes in this increment.
+
+Next: Restore the Install draft and continue named and team planning, consent and application. Complete Configure, Choose, Update and Remove afterwards. Keep unrelated lane folders unchanged until integration is authorized.
+
+Blocker: None. The full writer and integration work is pending.
+
+The isolated managed Release Integration build passes with zero warnings and errors. All 20 selected Integration cases pass with zero skips. Select `*ToolBackupContinuationTests.*`, `*ToolBackupSessionTests.UsesGitWithoutSiblingBackups`, `*ToolBackupSessionTests.ProtectsExistingFiles`, `*ToolBackupSessionTests.RestoresAfterValidationFailure`, `*ToolBackupSessionTests.KeepsUnknownChanges`, `*ToolBackupSessionTests.RestoresPartialGroup` and `*ToolBackupSessionTests.RejectsReleasedLease` with the standard runner flags under Verification and a minimum of 20 tests. Both required format checks pass. No snapshot changed or flake was observed. Evidence is under `artifacts/tool-command/writers-continuation-*-isolated*` and `writers-continuation-tests-final*`.

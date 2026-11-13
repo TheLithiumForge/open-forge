@@ -19,6 +19,9 @@ internal sealed partial class ToolBackupSession
     private readonly Dictionary<string, FileStateSnapshot> _priors = new(StringComparer.Ordinal);
     private readonly Dictionary<string, UnixFileMode> _priorModes = new(StringComparer.Ordinal);
     private readonly HashSet<string> _attempted = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, PlannedFileChange> _latest = new(StringComparer.Ordinal);
+    private bool _started;
+    private bool _applied;
     private bool _closed;
 
     private ToolBackupSession(WorkspaceLockLease lease, PlannedFileChange[] changes)
@@ -76,6 +79,8 @@ internal sealed partial class ToolBackupSession
     internal async ValueTask ApplyAsync(CancellationToken token, Action<PlannedFileChange>? completed = null)
     {
         RequireLease();
+        if (_started) throw new InvalidOperationException("The initial tool file plan has already started.");
+        _started = true;
         foreach (var change in _changes)
         {
             var check = await CheckAsync(change.Expectation, token).ConfigureAwait(false);
@@ -88,6 +93,38 @@ internal sealed partial class ToolBackupSession
             await CheckAsync(Intended(change, target), token).ConfigureAwait(false);
             completed?.Invoke(change);
         }
+        _applied = true;
+    }
+
+    // Registration and role-line planners can edit the same file in sequence.
+    // Keep its first backup and record the latest checked write for restoration.
+    internal async ValueTask ContinueAsync(IReadOnlyList<PlannedFileChange> changes, CancellationToken token)
+    {
+        RequireLease();
+        if (!_applied) throw new InvalidOperationException("Continuation requires the initial tool file plan.");
+        var selected = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var change in changes)
+        {
+            var initial = _changes.SingleOrDefault(item => item.LogicalPath == change.LogicalPath);
+            if (initial is null || !_attempted.Contains(change.LogicalPath) || !selected.Add(change.LogicalPath))
+                throw new ArgumentException("Continuation can change each previously written target at most once.", nameof(changes));
+            var current = await CheckAsync(change.Expectation, token).ConfigureAwait(false);
+            var physical = current.PhysicalPath ?? throw new IOException("The continuation target has no physical path.");
+            await CheckAsync(Intended(initial, physical), token).ConfigureAwait(false);
+            if (_backups.TryGetValue(change.LogicalPath, out var backup))
+                await CheckAsync(backup.Expectation, token).ConfigureAwait(false);
+        }
+        foreach (var change in changes)
+        {
+            var current = await CheckAsync(change.Expectation, token).ConfigureAwait(false);
+            var physical = current.PhysicalPath ?? throw new IOException("The continuation target has no physical path.");
+            if (_backups.TryGetValue(change.LogicalPath, out var backup))
+                await CheckAsync(backup.Expectation, token).ConfigureAwait(false);
+            if (change.Kind == PlannedFileChangeKind.Delete) File.Delete(physical);
+            else await WriteAsync(change.Expectation, change.IntendedBytes.AsMemory(), token).ConfigureAwait(false);
+            _latest[change.LogicalPath] = change;
+            await CheckAsync(Intended(change, physical), token).ConfigureAwait(false);
+        }
     }
 
     internal async ValueTask<ToolBackupResidual[]> CompleteAsync(CancellationToken token)
@@ -96,7 +133,8 @@ internal sealed partial class ToolBackupSession
         foreach (var change in _changes)
         {
             var physical = change.Expectation.PhysicalPath ?? _validator.ResolvePath(_lease.Request.Workspace, change.LogicalPath).ResolvedPhysicalPath;
-            if (change.Kind != PlannedFileChangeKind.Delete && physical is null) throw new IOException("The written file is unavailable.");
+            var latest = _latest.GetValueOrDefault(change.LogicalPath) ?? change;
+            if (latest.Kind != PlannedFileChangeKind.Delete && physical is null) throw new IOException("The written file is unavailable.");
             await CheckAsync(Intended(change, physical ?? change.LogicalPath), token).ConfigureAwait(false);
         }
         var residuals = await DeleteBackupsAsync().ConfigureAwait(false);
@@ -118,9 +156,12 @@ internal sealed partial class ToolBackupSession
         if (_closed || !_lease.IsHeldFor(_lease.Request.Workspace)) throw new InvalidOperationException("Tool file changes require their live workspace lease.");
     }
 
-    private static FileExpectation Intended(PlannedFileChange change, string physicalPath)
-        => change.Kind == PlannedFileChangeKind.Delete ? FileExpectation.Missing(change.LogicalPath)
+    private FileExpectation Intended(PlannedFileChange change, string physicalPath)
+    {
+        if (_latest.TryGetValue(change.LogicalPath, out var latest)) change = latest;
+        return change.Kind == PlannedFileChangeKind.Delete ? FileExpectation.Missing(change.LogicalPath)
             : FileExpectation.File(change.LogicalPath, physicalPath, FileExpectation.Hash(change.IntendedBytes.AsSpan()));
+    }
 
     private ValueTask WriteAsync(FileExpectation expected, ReadOnlyMemory<byte> bytes, CancellationToken token)
     {
