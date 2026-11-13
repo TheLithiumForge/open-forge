@@ -32,6 +32,8 @@ The host sections point to the selected loader. `CLAUDE.md` retains its `@AGENTS
 
 ## Settings v4
 
+Tool settings, lock receipts, native Skills, `.mcp.json`, `.codex/config.toml` and `.open-forge-state/` keep their fixed paths when `mainRoot` changes. Tool code roots are separate contained workspace roots. CBM's future V1 adapter accepts only `.`. The [external-tools design](external-tools.md#workspace-records) defines settings v6 and lock v2 without relocating controls or changing loader behavior.
+
 The optional `mainRoot` string introduced in settings schema v4 names the canonical workspace-relative context folder. Absence means `.agents`. An absent default value is never inserted. Unrelated rewrites preserve existing schema declarations, unknown values and property order. New settings files and explicit custom-root changes declare the current settings version. Published schemas v1 through v4 remain unchanged, and CLI JSON results remain schema 3.
 
 `WorkspaceMainRootPath.IsCanonical` rejects empty or noncanonical paths, absolute paths, traversal, the workspace root, Git metadata, host filenames and their descendants, `.open-forge-state/` and its descendants, and descendants or case aliases of `.agents`. Exactly `.agents` remains valid. Physical observation separately rejects unsafe ancestry and collisions.

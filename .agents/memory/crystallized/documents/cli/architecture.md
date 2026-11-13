@@ -675,3 +675,11 @@ maintainer decision.
 ## Workspace Runtime Storage
 
 Writing commands acquire `.open-forge-state/workspace.lock` for the selected physical workspace. They prepare new recovery bundles at `.open-forge-state/recovery/v1/<workspace key>/`. The live handle owns the lock. A leftover or nonempty sentinel does not block a writer. Dry runs, refusals, observers and verified no-ops create no runtime state. The legacy per-user lock bridge ends at 1.0. `OPENFORGE_DATA_HOME` controls only that bridge and old bundles. See the mutation and recovery design for the bridge gap and typed failures.
+
+## External Tools
+
+The V1 core adds the contracted Tool family with compiled adapters and an exact reviewed catalogue. This branch carries no concrete production definition or adapter. Root composition registers each leaf directly. Host capabilities bound exact artifact transfers and finite version or settings processes. Manifests import no executable code. The [external-tools design](technical-designs/external-tools.md) defines placement, stores, process profiles, host members and the pending TOML dependency decision.
+
+Tool facts, settings, receipts and recovery remain in their existing Framework responsibilities. Tool commands keep plans and policy in Operations. Static serialization and Native AOT rules apply to every new model. Shared member and ignore editing mechanisms keep each family's policy separate.
+
+Tool writers require recovery v2 for external coordinates, directory effects and native settings snapshots. The current v1 runtime path above continues to describe existing writers. The [recovery v2 proposal](technical-designs/recovery-v2.md) must be confirmed with simultaneous Status, Doctor and Cleanup reader rollout before tool writer implementation.

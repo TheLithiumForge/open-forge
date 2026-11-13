@@ -62,7 +62,7 @@ actually put in the workspace, not a projection of what a payload says it would
 put there. None of that is derivable from the workspace afterwards, so it must be
 stored. Nothing else must.
 
-Ownership has two kinds, and the lock keeps them distinct because removal treats
+Framework, Extension and Library ownership has two kinds, and the lock keeps them distinct because removal treats
 them differently. A **path** entry means the CLI created the whole file or link
 and may delete it. A **region** entry means the CLI generated a named block
 inside a file somebody else authored; the region may be rewritten and the file
@@ -79,7 +79,7 @@ result, so it never matched what install wrote. The fingerprint-free
 `GeneratedRegions[]` entry — path and region name, nothing else — is exactly the
 region ownership the lock must keep, and it survives unchanged.
 
-Directories are **not** recorded. `library detach` already plans no directory
+Framework, Extension and Library directories are **not** recorded. `library detach` already plans no directory
 effects and leaves the directories `attach` created in place. Recording them
 would buy a cleanup behaviour the CLI does not have and has not been asked for.
 
@@ -197,6 +197,14 @@ destination declaration. The maintainer confirmed this interpretation during A4.
 
 A stale or missing lock therefore fails toward a **missed** deletion rather than
 an over-deletion: no claims means nothing to delete, and the command says so.
+
+## Tool records
+
+Issue #23 adds installed pins and active role assignments to the authored `tools` map. Each tool ID records its version and roles. Inactive installs keep an empty role list. Optional hosts and code root record configuration choices. At most one tool lists a given role.
+
+The lock separately records verified Tool artifacts, installed-file hashes, manifest snapshots and digests, adapter revisions, generated files, semantic host member values, runtime-directory coverage, native mappings and recovery bundle records. Exact prior-byte payloads stay in recovery bundles. These Tool-specific receipts don't restore document baselines or a workspace integrity gate. Existing Framework, Extension and Library records keep their meanings.
+
+The [Tool Manifest interface](../../documents/cli/contracts/shared/tool-manifest/interface.md#workspace-settings) defines the settings and lock split. Recovery v2 confirmation remains separate from receipt acceptance.
 
 ## Consequences
 

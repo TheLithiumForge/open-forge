@@ -115,3 +115,7 @@ Evidence must prove:
 - [Shared CLI Result Coordinates Interface Contract](interface.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)
 - [CLI Architecture](../../../architecture.md)
+
+## Tool conformance
+
+Exercise every Tool leaf through one formed result and both renderers. Check all seven status exits and primary streams. Preview and apply use equal requests, observations and preflight decisions before effects. Projection doesn't launch external instructions, repeat checks or change consent. Partial work retains verified effects and every unfinished requested part. The [shared Tool rules](../../../shared-operation-contract.md#writer-results) define payload facts and precedence.

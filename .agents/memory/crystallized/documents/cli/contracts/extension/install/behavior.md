@@ -518,3 +518,7 @@ prove source-generated serialization, fixed Markdig where used, real
 ## Recovery History
 
 Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.
+
+## Tool coexistence
+
+Include Tool-required guidance and receipts in Install destination collision checks. See [shared coexistence rules](../../../shared-operation-contract.md#content-coexistence).

@@ -22,6 +22,8 @@ command can link to one accepted definition.
 
 ## Shared Native Report
 
+The [`tool` family](tool/_tool.md) adds contracted `list`, `inspect`, `install`, `configure`, `status`, `update`, `remove` and `choose` leaves in that help order. These contracts precede implementation. The core ships no concrete tool catalogue entries or adapters.
+
 Every retained command uses the shared native report. `--format <text|json>`
 selects text or one schema-3 JSON envelope; `--detail
 <minimal|standard|full|debug>` selects the detail level; and repeatable
@@ -77,4 +79,5 @@ active development records track execution without replacing these contracts.
 - [Routing-only group entrypoint for the `route` command family](route/_route.md) - #Memory #Crystallized #CLI #Release #Command #Route #Contract #CurrentTruth
 - [Permanent route for accepted shared CLI contract sets](shared/_shared.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #CurrentTruth
 - [Current Crystallized contract set for workspace status, context-size comparison, root customization, managed Extensions, and recognized recovery bundles](status/_status.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Status #CurrentTruth
+- [Route the tool command contracts for external program installation and workspace configuration](tool/_tool.md) - #Memory #Document #CLI #Contract #Tool #CurrentTruth
 - [Route the accepted current root Framework update contracts for trusted managed reconciliation](update/_update.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Update #Framework #Lifecycle #CurrentTruth

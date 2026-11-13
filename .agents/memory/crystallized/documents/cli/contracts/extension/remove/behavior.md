@@ -277,3 +277,7 @@ Run the supported managed and Native AOT verification gates.
 ## Recovery History
 
 Drafts, damaged or invalid bundles, and unavailable recovery coverage produce warnings. Verified final bundles from earlier runs are normal retained evidence and produce no warning in writing commands. Historical artifacts never veto unrelated work. Current target, ownership, permission, plan and expected-state checks still apply. The current operation must prepare and verify its own required recovery bundle before effects. Historical paths remain separate from that preparation and remain unchanged.
+
+## Tool coexistence
+
+Release only selected Extension receipts and keep content still required by a Tool role or registration. See [shared coexistence rules](../../../shared-operation-contract.md#content-coexistence).

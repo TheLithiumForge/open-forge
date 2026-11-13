@@ -102,6 +102,8 @@ complete detailed source set remains under [`contracts/`](contracts/_contracts.m
 
 ## Current topology
 
+The [`tool` group](contracts/tool/_tool.md) has eight contracted leaves in help order: `list`, `inspect`, `install`, `configure`, `status`, `update`, `remove` and `choose`. Every leaf has its own Interface and Behavior pair. The core precedes concrete production definitions and adapters. The shared Tool Manifest contracts define source selection and separate settings and receipt records.
+
 Direct commands keep their detailed files in one local scope:
 
 | Command      | Interface                                                             | Behavior                                                            | Technical Design                                                          |

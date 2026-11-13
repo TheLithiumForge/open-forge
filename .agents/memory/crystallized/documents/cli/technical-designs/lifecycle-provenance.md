@@ -60,10 +60,13 @@ source-relative paths. Each receipt corresponds to effects that actually
 verified. A whole-path receipt may support deletion within its admitted physical
 boundary; a region receipt cannot authorize deletion of its host file.
 
-The lock stores no target baseline, fingerprint kind, fingerprint policy,
-workspace binding, per-target source asset provenance, command history or
-recovery evidence. Generated Entries region ownership survives; the duplicate
-stored fingerprint of generated content does not.
+Framework, Extension and Library records store no target baseline, fingerprint kind, fingerprint policy, workspace binding, source asset origins for each target, command history or recovery evidence. Generated Entries region receipts survive. The duplicate stored fingerprint of generated content doesn't.
+
+## Tool Receipts
+
+Tool, member-value and runtime-directory receipts are decided additions in lock v2. They record verified artifact and installed-file hashes, manifest snapshots and digests, adapter revisions, exact generated files, last generated semantic member values, native mappings and recovery bundle records. Prior-byte payloads stay in recovery bundles. These tool-specific records don't restore document baselines or make the lock a workspace integrity gate.
+
+Installed pins and active roles stay in the separate settings tool-ID map. Account-local bindings, shared references and process consent supplement workspace receipts. The [Tool Manifest interface](../contracts/shared/tool-manifest/interface.md#lock-records) defines the split and paired-write behavior. Recovery v2 format acceptance remains a separate implementation gate.
 
 ## Install User-Adoption Targets
 
