@@ -9,7 +9,7 @@ open-forge:
 
 Only an active provider receives launchable MCP members and its required usage Skill. Removing a host releases only matching managed members. Configure downloads nothing.
 
-Status: V1 core contract decided. Writer implementation requires recovery v2 confirmation.
+Status: V1 core contract decided.
 
 ## Syntax
 

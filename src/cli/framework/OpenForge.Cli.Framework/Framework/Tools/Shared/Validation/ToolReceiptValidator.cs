@@ -10,21 +10,12 @@ internal static class ToolReceiptValidator
     internal static void ValidateJson(ReadOnlyMemory<byte> bytes)
     {
         using var json = JsonDocument.Parse(bytes);
-        foreach (var name in new[] { "tools", "recovery" })
+        foreach (var name in new[] { "tools" })
         {
             ToolManifestValidator.Require(json.RootElement.EnumerateObject().Count(property => property.NameEquals(name)) <= 1, "duplicate lock section");
             if (json.RootElement.TryGetProperty(name, out var value))
                 JsonDuplicatePropertyValidator.ValidateNoDuplicateProperties(Encoding.UTF8.GetBytes(value.GetRawText()));
         }
-    }
-
-    internal static void ValidateRecovery(IReadOnlyList<ToolRecoveryRecord> records)
-    {
-        var ids = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var record in records)
-            ToolManifestValidator.Require(record is not null && ToolIdentity.IsId(record.Id) && ids.Add(record.Id)
-                && ToolIdentity.IsRelativePath(record.Location) && ToolIdentity.IsSha256(record.Digest)
-                && !string.IsNullOrWhiteSpace(record.State), "invalid recovery record");
     }
 
     internal static void Validate(IReadOnlyDictionary<string, ToolReceipt> receipts)

@@ -34,9 +34,9 @@ Install and Update need separate `--allow-download` consent for exact transfer d
 
 ## Records
 
-`.agents/open-forge.json` records installed pins and active roles. The generated lock keeps receipts, hashes, written members and recovery records. An inactive tool keeps `roles:[]`. Missing receipts don't hide a readable settings entry or establish a verified installation. Settings edits alone don't install or activate a tool.
+`.agents/open-forge.json` records installed pins and active roles. The generated lock keeps receipts, hashes, written members and runtime coverage. Tool backups stay in sibling `.bak` files until changed content validates. Status and Doctor report leftovers and Repair can restore them. An inactive tool keeps `roles:[]`. Missing receipts don't hide a readable settings entry or establish a verified installation. Settings edits alone don't install or activate a tool.
 
-Active providers need verified usage guidance before launchable host members are published. Keep unrelated host entries, comments and native host trust policy. A tracked host file blocks managed account paths until the shared-file arrangement is resolved or that host is left out.
+Active providers need verified usage guidance before launchable host members are published. Keep unrelated host entries and native host trust policy. Claude Code writes use `.mcp.json`. Codex writes are on hold behind the existing host seam. A tracked host file blocks managed account paths until the shared-file arrangement is resolved or that host is left out.
 
 ## Removal exclusions
 

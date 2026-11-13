@@ -999,4 +999,4 @@ Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and
 
 Root Status adds passive installed-tool, active-role, member, required-guidance and index-evidence facts from settings and receipts. It launches no external probe and doesn't infer running activity. A missing lock never hides a readable settings entry. Missing active guidance warns. Inactive guidance needs no file. Tool details follow the [Tool Status interface](../tool/status/interface.md).
 
-The tools release reports workspace v1, workspace v2 and retained legacy recovery coverage separately. Unavailable coverage isn't empty. It validates bounded metadata and prior-byte hashes without following target coordinates. Recovery v1 stays unchanged. The proposed reader rollout is a prerequisite to tool writes.
+Root Status reports leftover Tool sibling `.bak` paths without disclosing saved contents. Discovery works when current settings or lock bytes are invalid. Existing recovery v1 and legacy observation stays unchanged. The [Tool backups design](../../technical-designs/tool-backups.md#read-backups) defines the checks.

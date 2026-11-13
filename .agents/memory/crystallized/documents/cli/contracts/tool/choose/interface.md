@@ -9,7 +9,7 @@ open-forge:
 
 A switch replaces recognized role members and required guidance in one checked plan. It keeps both installs and their separate indexes. Installation order, language and scores never choose a provider.
 
-Status: V1 core contract decided. Writer implementation requires recovery v2 confirmation.
+Status: V1 core contract decided.
 
 ## Syntax
 

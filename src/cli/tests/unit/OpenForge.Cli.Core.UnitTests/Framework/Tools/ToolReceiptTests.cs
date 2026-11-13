@@ -41,7 +41,6 @@ public sealed class ToolReceiptTests
             new(new("fixture-framework", "1.0.0"), [], []), [], [])
         {
             Tools = ImmutableDictionary<string, ToolReceipt>.Empty.Add(ToolFixtureSource.Id, receipt),
-            Recovery = [new("fixture-recovery", ".open-forge-state/recovery/v2/fixture/operation.zip", new string('1', 64), "prepared")],
         };
         var bytes = WorkspaceOwnershipCodec.Write(document);
         var read = Assert.IsType<WorkspaceOwnershipDocument>(WorkspaceOwnershipCodec.Read(bytes).Document);
@@ -51,7 +50,6 @@ public sealed class ToolReceiptTests
         Assert.Empty(framework.Regions);
         Assert.Equal(receipt.ManifestBytes, read.Tools[ToolFixtureSource.Id].ManifestBytes);
         Assert.Equal(receipt.ManifestSha256, read.Tools[ToolFixtureSource.Id].ManifestSha256);
-        Assert.Equal(document.Recovery.ToArray(), read.Recovery.ToArray());
         using var json = JsonDocument.Parse(bytes);
         Assert.Equal(WorkspaceOwnershipDefinitions.SchemaVersion, json.RootElement.GetProperty("schemaVersion").GetInt32());
     }

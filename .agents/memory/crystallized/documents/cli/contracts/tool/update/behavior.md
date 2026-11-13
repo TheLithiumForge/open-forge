@@ -9,7 +9,7 @@ open-forge:
 
 The old install stays usable until the new reference is published and verified. Shared deletion requires a complete current reference set.
 
-Status: V1 core contract decided. Writer implementation requires recovery v2 confirmation.
+Status: V1 core contract decided.
 
 ## Flow
 
@@ -21,13 +21,13 @@ The operation follows these steps:
 4. Resolve separate transfer consent, process consent, grants and final confirmation.
 5. Stage and verify approved immutable bytes outside held writing leases.
 6. Acquire user-store then workspace leases and revalidate all required facts.
-7. Prepare and verify recovery v2 before covered changes.
+7. Prepare and verify sibling backups before changing existing files.
 8. Apply the replacement settings and content, then publish and verify the new reference and paired workspace records.
 9. Release the old reference. Recheck the complete reference set before deleting recognized unreferenced bytes.
 10. Verify remaining artifacts and child shutdown, then report rebuild instructions and recovery disposition.
 
 ## Failure
 
-Stop new effects after a failure. Keep verified changes and the immutable recovery bundle. A new invocation plans from current files. It doesn't resume a saved plan or roll back completed effects.
+Stop new effects after a failure and restore changed existing files from their sibling backups. Report failed restoration and every unfinished part. A new invocation plans from current files. It doesn't replay a saved plan.
 
 The [interface](interface.md) defines caller input and output.

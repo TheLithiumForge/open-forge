@@ -1201,4 +1201,4 @@ Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and
 
 Doctor reports passive Tool installation, configuration, required-guidance and index-evidence findings. It doesn't launch external probes, start daemons, repair members or activate retrieved content. Missing active guidance warns. The [Tool Status interface](../tool/status/interface.md) defines the evidence states.
 
-The tools release separately reports workspace v1, workspace v2 and retained legacy recovery coverage. Validate metadata and prior-byte hashes without following external coordinates. Unknown schemas stay unsupported. The proposed recovery v2 rollout must precede tool writes.
+Report leftover Tool sibling `.bak` paths through passive findings, even when the current settings or lock is invalid. Keep saved contents out of output and keep unavailable coverage with its cause. The [Tool backups design](../../technical-designs/tool-backups.md#read-backups) defines discovery. Existing v1 and legacy recovery observation stays unchanged.

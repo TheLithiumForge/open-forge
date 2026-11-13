@@ -20,5 +20,3 @@ internal sealed record ToolReceipt
     public required ToolDirectoryReceipt[] RuntimeDirectories { get; init; }
     public required Dictionary<string, string> NativeProjects { get; init; }
 }
-
-internal sealed record ToolRecoveryRecord(string Id, string Location, string Digest, string State);

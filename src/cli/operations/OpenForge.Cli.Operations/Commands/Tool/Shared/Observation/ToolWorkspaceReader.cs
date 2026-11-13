@@ -14,8 +14,6 @@ namespace OpenForge.Cli.Core.Commands.Tool.Shared.Observation;
 
 internal static class ToolWorkspaceReader
 {
-    internal const string RecoveryStore = "recovery";
-
     internal static async ValueTask<ToolWorkspaceRead> ReadAsync(CliWorkspace workspace, CancellationToken token)
     {
         var paths = new PhysicalPathResolver();
@@ -37,12 +35,6 @@ internal static class ToolWorkspaceReader
             new("settings", settingsComplete ? ToolEvidenceState.Complete : ToolEvidenceState.Unavailable, settings.Cause),
             new("lock", lockComplete ? ToolEvidenceState.Complete : ToolEvidenceState.Unavailable, receipt.Cause),
         };
-        if (!receipt.Document.Recovery.IsEmpty)
-        {
-            const string cause = "The v2 tool recovery store needs its safe bundle reader before prior bytes can be verified.";
-            coverage.Add(new(RecoveryStore, ToolEvidenceState.Unavailable, cause));
-            issues.Add(new(ToolReadIssueCode.ReadUnavailable, CliSemanticStatus.Incomplete, receipt.LogicalPath, cause));
-        }
         return new(settings, receipt, [.. coverage], [.. issues]);
     }
 }

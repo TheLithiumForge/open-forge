@@ -57,7 +57,6 @@ internal sealed record WorkspaceOwnershipDocument(
     ImmutableArray<LibraryOwnership> Libraries)
 {
     internal ImmutableDictionary<string, ToolReceipt> Tools { get; init; } = ImmutableDictionary<string, ToolReceipt>.Empty;
-    internal ImmutableArray<ToolRecoveryRecord> Recovery { get; init; } = [];
     /// <summary>
     /// No recorded ownership. An absent, unreadable, or unintelligible lock reads
     /// as this, so a caller always has a document to act on and reports the state

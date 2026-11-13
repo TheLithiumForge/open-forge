@@ -202,9 +202,9 @@ an over-deletion: no claims means nothing to delete, and the command says so.
 
 Issue #23 adds installed pins and active role assignments to the authored `tools` map. Each tool ID records its version and roles. Inactive installs keep an empty role list. Optional hosts and code root record configuration choices. At most one tool lists a given role.
 
-The lock separately records verified Tool artifacts, installed-file hashes, manifest snapshots and digests, adapter revisions, generated files, semantic host member values, runtime-directory coverage, native mappings and recovery bundle records. Exact prior-byte payloads stay in recovery bundles. These Tool-specific receipts don't restore document baselines or a workspace integrity gate. Existing Framework, Extension and Library records keep their meanings.
+The lock separately records verified Tool artifacts, installed-file hashes, manifest snapshots and digests, adapter revisions, generated files, semantic host member values, runtime-directory coverage, native mappings. Exact prior bytes stay in sibling `.bak` files until changed content validates. These Tool-specific receipts don't restore document baselines or a workspace integrity gate. Existing Framework, Extension and Library records keep their meanings.
 
-The [Tool Manifest interface](../../documents/cli/contracts/shared/tool-manifest/interface.md#workspace-settings) defines the settings and lock split. Recovery v2 confirmation remains separate from receipt acceptance.
+The [Tool Manifest interface](../../documents/cli/contracts/shared/tool-manifest/interface.md#workspace-settings) defines the settings and lock split. The [Tool backups design](../../documents/cli/technical-designs/tool-backups.md) defines sibling restoration without lock records.
 
 ## Consequences
 

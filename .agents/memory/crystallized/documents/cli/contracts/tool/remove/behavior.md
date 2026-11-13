@@ -9,7 +9,7 @@ open-forge:
 
 It inventories all selected members and runtime output before destructive effects. Unknown content prevents a complete destructive plan.
 
-Status: V1 core contract decided. Writer implementation requires recovery v2 confirmation.
+Status: V1 core contract decided.
 
 ## Flow
 
@@ -21,7 +21,7 @@ The operation follows these steps:
 4. Check stopped sessions, exact generated values, directory membership, grants and recovery space.
 5. Form one complete removal plan, then resolve grants and final confirmation.
 6. Acquire user-store then workspace leases and revalidate every required fact.
-7. Prepare and verify recovery v2 before the first covered deletion.
+7. Prepare and verify sibling backups before changing or deleting existing files.
 8. Remove recognized role members, guidance, worktree state, native settings and managed ignore rules.
 9. Verify selected removal, then release the workspace registration and paired records.
 10. Recheck all references. Delete recognized shared files only with complete empty references, then delete covered empty directories from children to parents.
@@ -29,6 +29,6 @@ The operation follows these steps:
 
 ## Failure
 
-A new child or changed member stops new effects. There is no recursive directory delete or automatic rollback. Keep prior bytes and report every verified change and unfinished requested part.
+A new child or changed member stops new effects. Restore changed existing files from their sibling backups. Keep a backup if restoration fails and report every unfinished requested part. Delete directories only after their covered children are gone.
 
 The [interface](interface.md) defines caller input and output.
