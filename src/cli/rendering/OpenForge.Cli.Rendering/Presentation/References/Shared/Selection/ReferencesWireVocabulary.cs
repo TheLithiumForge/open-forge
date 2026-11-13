@@ -46,7 +46,7 @@ internal static class ReferencesWireVocabulary
 
     /// <summary>
     /// A row-state finding repeats a fact the `out` row already prints inline, so text lists it
-    /// only at `full` and above. JSON keeps every finding at every level, which is why this
+    /// from `standard` onward, or at `minimal` when it carries an action. JSON keeps every finding at every level, which is why this
     /// selects text rather than trimming the report.
     /// </summary>
     internal static bool IsRowState(ReferencesFindingCode code) => code switch
