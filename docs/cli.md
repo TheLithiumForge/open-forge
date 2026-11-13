@@ -29,6 +29,8 @@ The primary content locations are the selected context folder and native Skills 
 
 The external Tool family provides `tool list`, `tool inspect` and `tool status`. The [external tool reference](tools.md) describes these read commands, the pending writers, consent, Git or sibling-backup recovery and workspace records. The decided supply model downloads verified official artifacts and uses tool-owned installers for agent configuration. Node tools use a private pinned runtime and frozen npm lock. Tools never self-update and the visible `tools.<id>.telemetry` setting defaults to `false`. Same-pin Install repairs bytes and reruns the installer. Tool Run is required in V1 and its implementation is pending.
 
+The registration contract selects hooks by exact command within their declared event and keeps pre-existing user hooks and groups. Platform declarations handle Windows, macOS and Linux spellings.
+
 Choose a task, then follow its command link. Each operation has the same shape:
 purpose, common examples, options, behavior notes, and next step. Read-only
 examples need no preview. Mutation examples show a preview before application.

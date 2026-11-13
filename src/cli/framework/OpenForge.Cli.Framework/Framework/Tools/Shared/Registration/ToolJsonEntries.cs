@@ -56,6 +56,12 @@ internal sealed class ToolJsonEntries : IDisposable
 
     internal ToolEntrySpan Rewrite(ToolHookCommandRewrite rewrite)
     {
+        if (rewrite.MatchCommand)
+        {
+            var match = ToolHookEntries.Find(this, rewrite.Pointer, rewrite.Expected)
+                ?? throw new InvalidDataException("The declared hook command is missing from its event.");
+            return ReplaceValue(match.EntryPointer + "/" + Command, JsonSerializer.SerializeToUtf8Bytes(rewrite.Replacement, ToolJsonContext.Default.String));
+        }
         if (Value(rewrite.Pointer) is not { ValueKind: JsonValueKind.String } command || command.GetString() != rewrite.Expected)
             throw new InvalidDataException("The hook command differs from its declared original.");
         return ReplaceValue(rewrite.Pointer, JsonSerializer.SerializeToUtf8Bytes(rewrite.Replacement, ToolJsonContext.Default.String));
@@ -63,6 +69,13 @@ internal sealed class ToolJsonEntries : IDisposable
 
     internal void RequireOriginal(ToolJsonEntryRemoval removal)
     {
+        if (removal.MatchCommand)
+        {
+            var match = ToolHookEntries.Find(this, removal.Pointer, ToolHookEntries.ExpectedCommand(removal))
+                ?? throw new InvalidDataException("The declined hook is missing from its event.");
+            if (!JsonElement.DeepEquals(match.Entry, removal.Expected)) throw new InvalidDataException("The declined hook differs from its complete declared original.");
+            return;
+        }
         if (removal.Expected.ValueKind == JsonValueKind.Undefined || Value(removal.Pointer) is not { } value || !JsonElement.DeepEquals(value, removal.Expected))
             throw new InvalidDataException("The declined entry differs from its complete declared original.");
         var parent = Parent(removal.Pointer);
@@ -73,6 +86,9 @@ internal sealed class ToolJsonEntries : IDisposable
 
     internal bool IsAbsent(ToolJsonEntryRemoval removal)
     {
+        if (removal.MatchCommand)
+            return new[] { ToolHookEntries.ExpectedCommand(removal) }.Concat(removal.AbsentCommands ?? [])
+                .All(command => ToolHookEntries.Find(this, removal.Pointer, command) is null);
         // Removing an array member shifts its siblings. Absence concerns the complete declared entry.
         var parent = Value(Parent(removal.Pointer));
         if (parent is { ValueKind: JsonValueKind.Array } array)
@@ -82,9 +98,10 @@ internal sealed class ToolJsonEntries : IDisposable
         return Value(removal.Pointer) is null;
     }
 
-    internal ToolEntrySpan[] Remove(ToolJsonEntryRemoval[] removals)
+    internal ToolEntrySpan[] Remove(ToolJsonEntryRemoval[] removals, ToolEntryRewriteRequest? request = null)
     {
         foreach (var removal in removals) RequireOriginal(removal);
+        if (removals.Any(removal => removal.MatchCommand)) removals = ToolHookEntries.ResolveRemovals(this, removals, request);
         var pointers = removals.Select(removal => removal.Pointer).ToHashSet(StringComparer.Ordinal);
         if (pointers.Count != removals.Length) throw new InvalidDataException("The declined entry selector is duplicated.");
         var changes = new List<ToolEntrySpan>();
@@ -103,6 +120,13 @@ internal sealed class ToolJsonEntries : IDisposable
             }
         }
         return [.. changes];
+    }
+
+    internal bool Matches(ToolHookCommandRewrite rewrite)
+    {
+        if (!rewrite.MatchCommand) return Value(rewrite.Pointer) is { ValueKind: JsonValueKind.String } value && value.GetString() == rewrite.Replacement;
+        return ToolHookEntries.Find(this, rewrite.Pointer, rewrite.Replacement) is not null
+            && (rewrite.Expected == rewrite.Replacement || ToolHookEntries.Find(this, rewrite.Pointer, rewrite.Expected) is null);
     }
 
     private ToolEntrySpan ReplaceValue(string pointer, byte[] value)

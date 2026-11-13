@@ -92,6 +92,8 @@ Bare `open-forge tool install` restores every declared pin against the lock with
 
 Tools create their own host entries. After Install, Configure or Update, Open Forge applies only the declared command rewrites to JSON command and argument members, TOML command and argument lines, a hook command or a line in a marked block. Unexpected shapes stop the write. Names, markers and unrelated content stay. No TOML parser or independent host entry is added.
 
+Hook rewrites select one exact command inside the declared Claude event, across all matcher groups. Platform declarations distinguish Windows command spellings from macOS and Linux. Declining a hook keeps user hooks and pre-existing groups. An installer-created group is removed only when it is empty and its creation evidence still matches. Replacements keep the substring the tool's own uninstaller needs.
+
 Definitions declare first-party or third-party origin. List groups by origin and shows it in a column. Inspect shows the origin, installer entries, rewrites and optional components. Third-party consent identifies upstream software, its repository, licence, official release and authors.
 
 Choose switches recognized role integrations and the required Skill while keeping both installs and indexes. Each active role adds one conditional line in Open Forge's managed `AGENTS.md` and `CLAUDE.md` block. Clearing the role removes that line. No additional help pointer is added.

@@ -1,0 +1,40 @@
+{
+  "rewrites": [
+    {
+      "kind": "hook-command",
+      "id": "fixture-prompt-hook",
+      "host": "claude-code",
+      "file": ".claude/settings.json",
+      "component": "prompt-hook",
+      "pointer": "/hooks/UserPromptSubmit",
+      "matchCommand": true,
+      "expected": "codegraph prompt-hook",
+      "replacement": "\"${openForge}\" tool run codegraph prompt-hook",
+      "requiredReplacementSubstring": "codegraph prompt-hook",
+      "platformOverrides": { "windows": { "expected": "codegraph.cmd prompt-hook", "replacement": "\"${openForge}\" tool run codegraph prompt-hook" } }
+    }
+  ],
+  "components": [
+    {
+      "id": "prompt-hook",
+      "flag": "prompt-hook",
+      "description": "Add local graph context to structural prompts.",
+      "defaultEnabled": true,
+      "declinedEntries": [
+        {
+          "host": "claude-code",
+          "file": ".claude/settings.json",
+          "pointer": "/hooks/UserPromptSubmit",
+          "matchCommand": true,
+          "removeCreatedEmptyGroup": true,
+          "expected": { "type": "command", "command": "codegraph prompt-hook" },
+          "platformOverrides": { "windows": { "type": "command", "command": "codegraph.cmd prompt-hook" } },
+          "absentCommands": ["codegraph prompt-hook", "codegraph.cmd prompt-hook", "\"${openForge}\" tool run codegraph prompt-hook"]
+        }
+      ]
+    }
+  ],
+  "roleGuidance": [],
+  "activate": null,
+  "deactivate": null
+}

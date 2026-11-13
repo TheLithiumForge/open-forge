@@ -1043,7 +1043,7 @@ Tool-owned outputs use the normal existing-file and ownership rules. Tool comman
 
 ### Managed files
 
-Open Forge edits its settings, lock, managed `.gitignore` section, required active Skills and conditional lines in its managed agent blocks. Its only edits to installer-owned agent entries are the declared command rewrites and removal of declined optional entries. Tools create and remove their own registrations. No independent MCP member, TOML block or TOML parser is added. Open Forge doesn't adopt those outputs as files it generated or promise to restore their bytes after a failed child command.
+Open Forge edits its settings, lock, managed `.gitignore` section, required active Skills and conditional lines in its managed agent blocks. Its only edits to installer-owned agent entries are the declared command rewrites and removal of declined optional entries. Hook removal keeps user hooks and pre-existing matcher groups. A verified installer-created group can be removed when it becomes empty and its creation receipt still matches. Tools create and remove their own registrations. No independent MCP member, TOML block or TOML parser is added. Open Forge doesn't adopt those outputs as files it generated or promise to restore their bytes after a failed child command.
 
 ### Ignore entries
 

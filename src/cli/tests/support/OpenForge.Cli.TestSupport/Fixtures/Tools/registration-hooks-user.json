@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      { "matcher": "user-first", "hooks": [{ "type": "command", "command": "fixture-user-first", "timeout": 17 }] },
+      { "matcher": "", "hooks": [{ "type": "command", "command": "fixture-user-second" }] }
+    ],
+    "SessionStart": [{ "hooks": [{ "type": "command", "command": "fixture-session-hook" }] }]
+  },
+  "fixture-authored": true
+}

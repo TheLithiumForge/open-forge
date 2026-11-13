@@ -25,8 +25,8 @@
       "file": ".claude/settings.json",
       "component": "prompt-hook",
       "pointer": "/hooks/UserPromptSubmit/0/hooks/0/command",
-      "expected": "codegraph hooks prompt",
-      "replacement": "\"${openForge}\" tool run codegraph hooks prompt"
+      "expected": "codegraph prompt-hook",
+      "replacement": "\"${openForge}\" tool run codegraph prompt-hook"
     },
     {
       "kind": "marked-line",
@@ -50,7 +50,7 @@
           "host": "claude-code",
           "file": ".claude/settings.json",
           "pointer": "/hooks/UserPromptSubmit/0/hooks/0",
-          "expected": { "type": "command", "command": "codegraph hooks prompt" }
+          "expected": { "type": "command", "command": "codegraph prompt-hook" }
         }
       ]
     }

@@ -1,7 +1,7 @@
 {
   "hooks": {
     "UserPromptSubmit": [
-      { "matcher": "", "hooks": [{ "type": "command", "command": "codegraph hooks prompt" }] },
+      { "matcher": "", "hooks": [{ "type": "command", "command": "codegraph prompt-hook" }] },
       { "hooks": [{ "type": "command", "command": "fixture-custom-hook" }] }
     ],
     "SessionStart": [{ "hooks": [{ "type": "command", "command": "fixture-session-hook" }] }]

@@ -84,7 +84,7 @@ internal sealed class ToolEntryPlanner
                         _ => throw new InvalidDataException("The entry format is unavailable."),
                     });
                 }
-                if (json is not null) changes.AddRange(json.Remove([.. removals.Select(removal => removal.Entry)]));
+                if (json is not null) changes.AddRange(json.Remove([.. removals.Select(removal => removal.Entry)], request));
                 var after = ToolRegistrationBytes.Replace(before, changes);
                 var validation = Evaluate(request with
                 {
@@ -111,7 +111,7 @@ internal sealed class ToolEntryPlanner
         var matching = rewrite switch
         {
             ToolJsonCommandRewrite command => json?.Matches(command.Pointer, command.Replacement) == true,
-            ToolHookCommandRewrite hook => json?.Value(hook.Pointer) is { ValueKind: System.Text.Json.JsonValueKind.String } value && value.GetString() == hook.Replacement,
+            ToolHookCommandRewrite hook => json?.Matches(hook) == true,
             ToolTomlCommandRewrite toml => ToolTextEntries.Matches(bytes, toml, replacement: true),
             ToolMarkedLineRewrite line => ToolTextEntries.Matches(bytes, line, replacement: true),
             _ => throw new InvalidDataException("The entry format is unavailable."),

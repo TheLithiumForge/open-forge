@@ -28,12 +28,35 @@ internal static class ToolEntryDeclarations
             return file;
         }
         ToolCommandValue Command(ToolCommandValue value) => new(Render(value.Command), [.. value.Args.Select(Render)]);
+        ToolHookCommandRewrite Hook(ToolHookCommandRewrite hook, string file)
+        {
+            var chosen = ToolHookPlatformValues.Resolve(new ToolHookCommandValue(hook.Expected, hook.Replacement), hook.PlatformOverrides, request.Values);
+            var result = hook with
+            {
+                File = file,
+                Expected = Render(chosen.Expected),
+                Replacement = Render(chosen.Replacement),
+                PlatformOverrides = null,
+                RequiredReplacementSubstring = hook.RequiredReplacementSubstring is null ? null : Render(hook.RequiredReplacementSubstring),
+            };
+            if (result.MatchCommand && result.Host != ToolVocabulary.ClaudeCodeHost)
+                throw new InvalidDataException("Event command matching requires the Claude hook format.");
+            if (result.RequiredReplacementSubstring is { } required && (string.IsNullOrWhiteSpace(required) || !result.Replacement.Contains(required, StringComparison.Ordinal)))
+                throw new InvalidDataException("The hook replacement is missing its required uninstaller substring.");
+            return result;
+        }
         if (values.TryGetValue(ToolVocabulary.OpenForgeVariable, out var launch)
             && launch != PathCommand && (launch is null || !Path.IsPathFullyQualified(launch)))
             throw new InvalidDataException("The host must supply the PATH command or an absolute running executable.");
         var declined = request.DeclinedComponents.Select(component => component with
         {
-            DeclinedEntries = [.. component.DeclinedEntries.Select(entry => entry with { File = FileName(entry.File), Expected = RenderJson(entry.Expected, Render) })],
+            DeclinedEntries = [.. component.DeclinedEntries.Select(entry => entry with
+            {
+                File = FileName(entry.File),
+                Expected = RenderJson(ToolHookPlatformValues.Resolve(entry.Expected, entry.PlatformOverrides, request.Values), Render),
+                PlatformOverrides = null,
+                AbsentCommands = entry.AbsentCommands is null ? null : [.. entry.AbsentCommands.Select(Render)],
+            })],
         }).ToArray();
         var skipped = declined.Select(component => component.Id).ToHashSet(StringComparer.Ordinal);
         var rewrites = request.Rewrites.Where(rewrite => rewrite.Component is null || !skipped.Contains(rewrite.Component)).Select(rewrite =>
@@ -43,7 +66,7 @@ internal static class ToolEntryDeclarations
             {
                 ToolJsonCommandRewrite json => json with { File = file, Expected = Command(json.Expected), Replacement = Command(json.Replacement) },
                 ToolTomlCommandRewrite toml => toml with { File = file, Expected = Command(toml.Expected), Replacement = Command(toml.Replacement) },
-                ToolHookCommandRewrite hook => hook with { File = file, Expected = Render(hook.Expected), Replacement = Render(hook.Replacement) },
+                ToolHookCommandRewrite hook => Hook(hook, file),
                 ToolMarkedLineRewrite line => (ToolEntryRewrite)(line with { File = file, Expected = Render(line.Expected), Replacement = Render(line.Replacement) }),
                 _ => throw new InvalidDataException("The registration rewrite kind is unavailable."),
             };
@@ -58,6 +81,9 @@ internal static class ToolEntryDeclarations
         var files = rewrites.Select(rewrite => rewrite.File).Concat(declined.SelectMany(component => component.DeclinedEntries.Select(entry => entry.File))).Distinct(StringComparer.Ordinal).ToArray();
         if (files.Select(PortableWorkspacePath.CreatePortableKey).Distinct(StringComparer.Ordinal).Count() != files.Length)
             throw new InvalidDataException("Registration file paths contain portable aliases.");
+        if (declined.SelectMany(component => component.DeclinedEntries).Any(entry =>
+            entry.MatchCommand && entry.Host != ToolVocabulary.ClaudeCodeHost || !entry.MatchCommand && (entry.RemoveCreatedEmptyGroup || entry.AbsentCommands is not null)))
+            throw new InvalidDataException("Hook-group removal and absence spellings require an event command selector.");
         return request with { Rewrites = rewrites, DeclinedComponents = declined };
     }
 
