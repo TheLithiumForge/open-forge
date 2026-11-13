@@ -2,7 +2,6 @@
   "install": ["install", "--location", "local", "--target", "claude,codex", "--yes", "--no-permissions"],
   "uninstall": ["uninstall", "--location", "local", "--target", "claude,codex", "--yes", "--keep-cli"],
   "indexCleanup": ["uninit", "${codeRoot}", "--force"],
-  "telemetry": ["telemetry", "off"],
   "claude": {
     "type": "stdio",
     "command": "codegraph",
@@ -11,5 +10,15 @@
   },
   "codex": ["[mcp_servers.codegraph]", "command = \"codegraph\"", "args = [\"serve\", \"--mcp\"]"],
   "hook": ["codegraph.cmd prompt-hook", "codegraph prompt-hook"],
-  "shell": "codegraph explore \"<symbol names or question>\""
+  "shell": "codegraph explore \"<symbol names or question>\"",
+  "telemetryOff": ["telemetry", "off"],
+  "telemetryOn": ["telemetry", "on"],
+  "launcher": {
+    "windows": "node.exe",
+    "unix": "node",
+    "entry": "lib/dist/bin/codegraph.js",
+    "args": ["--liftoff-only", "--disable-warning=ExperimentalWarning", "${install}/lib/dist/bin/codegraph.js"]
+  },
+  "markedLine": "- **Shell** (always works): `codegraph explore \"<symbol names or question>\"` prints the same output.",
+  "runPrefix": ["tool", "run", "codegraph"]
 }

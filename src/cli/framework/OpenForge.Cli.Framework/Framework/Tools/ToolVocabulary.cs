@@ -1,13 +1,11 @@
 using System.Collections.Frozen;
+using OpenForge.Cli.Core.Framework.Tools.Models.Registration;
 
 namespace OpenForge.Cli.Core.Framework.Tools;
 
 internal static class ToolVocabulary
 {
     internal const int ManifestSchema = 1;
-    internal const string FirstPartyOrigin = "first-party";
-    internal const string ThirdPartyOrigin = "third-party";
-    internal static readonly FrozenSet<string> Origins = Set(FirstPartyOrigin, ThirdPartyOrigin);
     internal const string CodeNavigationRole = "code-navigation";
     internal const string CodeGraphCapability = "code-graph";
     internal const string JsonMembers = "json-members";
@@ -55,8 +53,8 @@ internal static class ToolVocabulary
 
     internal static int OriginOrder(string? origin) => origin switch
     {
-        FirstPartyOrigin => 0,
-        ThirdPartyOrigin => 1,
+        ToolOrigin.FirstParty => 0,
+        ToolOrigin.ThirdParty => 1,
         _ => 2,
     };
 

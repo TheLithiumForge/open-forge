@@ -11,25 +11,25 @@ Use it to find code before an edit, then confirm call sites in source. Our C# tr
 
 ## Availability
 
-CodeGraph `1.6.2` is the V1 tool. All six official release archives pass byte-size, published SHA-256 and GitHub build-attestation checks. The definition stays a blocked draft until the core writers and native journeys are ready. The [draft record](../../../../src/tools/drafts/codegraph-1.6.2.json) gives all pins, exact installer originals and rewrites.
+CodeGraph `1.6.2` is the V1 tool. All six official release archives pass byte-size, published SHA-256 and GitHub build-attestation checks. The definition uses the shared lifecycle, launcher and registration types. It stays a blocked draft until the core lanes and native journeys are ready. The current hook selector also needs platform spelling and appended-array binding from Registration. The [draft record](../../../../src/tools/drafts/codegraph-1.6.2.json) gives all pins, exact installer originals and rewrites.
 
 CodeGraph is third-party software from `colbymchenry/codegraph`, under MIT, downloaded from its official release and maintained by its authors. Its archive launcher uses bundled Node. System Node, npm and PATH changes aren't needed.
 
 ## Project setup
 
-CodeGraph's own installer configures Claude Code and Codex locally. It writes MCP server `codegraph` in `.mcp.json` and `.codex/config.toml`, instruction blocks in `.claude/CLAUDE.md` and `AGENTS.md` and an optional Claude prompt hook. Open Forge rewrites only the command parts to `open-forge tool run codegraph`. It keeps names and markers so CodeGraph's own uninstall recognizes them.
+CodeGraph's own installer configures Claude Code and Codex with `install --location local --target claude,codex --yes --no-permissions`. Its shared launcher runs bundled Node directly with `--liftoff-only`, `--disable-warning=ExperimentalWarning` and `lib/dist/bin/codegraph.js`, without a shell. It writes MCP server `codegraph` in `.mcp.json` and `.codex/config.toml`, instruction blocks in `.claude/CLAUDE.md` and `AGENTS.md` and an optional Claude prompt hook. Open Forge rewrites only the command parts to `open-forge tool run codegraph`. It keeps names and markers so CodeGraph's own uninstall recognizes them.
 
 If Open Forge isn't on PATH, generated commands use its running executable's absolute path. An unexpected original entry stops the rewrite and reports its file. The [consent inventory](../../../../docs/tools/codegraph-consent.md) lists every output and rewrite. It also describes legacy cleanup and account telemetry state.
 
 ## Teammate setup
 
-Bare `open-forge tool install` installs every tool declared by the workspace. After cloning, a teammate can run it to prepare the local pins. If CodeGraph is declared but missing locally, `tool run` tells you to run that command. It doesn't install silently. Normal consent and hook choice still apply.
+Bare `open-forge tool install` installs every tool declared by the workspace. After cloning, a teammate can run it to prepare the local pins. If CodeGraph is declared but missing locally, `tool run` tells you to run that command. Interactive Run offers normal Install consent. Non-interactive Run never installs silently. Normal consent and hook choice still apply.
 
 ## Prompt hook
 
 The Claude `UserPromptSubmit` hook adds context from the local index on structural prompts. Nothing leaves the machine. Open Forge asks whether to keep it. Defaults to yes. Non-interactive installs take `--prompt-hook yes|no`. Choosing no removes only that hook entry. `CODEGRAPH_NO_PROMPT_HOOK=1` disables it at runtime.
 
-Telemetry defaults to off through CodeGraph's own command and is a visible setting. Update checks stay off. Watchers and automatic indexing don't run during Open Forge writes.
+Telemetry defaults to off through `telemetry off`. The visible `tools.codegraph.telemetry` setting opts in with `true`, which uses `telemetry on`. Update checks stay off. Watchers and automatic indexing don't run during Open Forge writes.
 
 ## Index use
 
@@ -48,7 +48,11 @@ After indexing, choose the code-navigation role. The required `open-forge-codegr
 
 ## Remove
 
-Removal runs CodeGraph's local uninstall with `--keep-cli`, then `uninit <root> --force`. It removes recognized project entries and the index. Open Forge removes its required Skill, role line and ignore entry and releases unused store references. Other workspace versions and unrelated host content stay in place.
+Removal runs `uninstall --location local --target claude,codex --yes --keep-cli`, then `uninit <root> --force`, through Tool Run in that declared order. It removes recognized project entries and the index. Open Forge removes its required Skill, role line and ignore entry and releases unused store references. Other workspace versions and unrelated host content stay in place.
+
+## Upstream controls
+
+The definition trust notes record a launch-command option, or an absolute launcher path when CodeGraph is off PATH, and a non-interactive `--no-prompt-hook` option. These controls would remove the corresponding Open Forge rewrites and hook cleanup.
 
 ## Language limits
 

@@ -1,7 +1,10 @@
 using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.Core.Framework.Tools;
+using OpenForge.Cli.Core.Framework.Tools.Models.Execution;
+using OpenForge.Cli.Core.Framework.Tools.Models.Lifecycle;
 using OpenForge.Cli.Core.Framework.Tools.Models.Manifest;
+using OpenForge.Cli.Core.Framework.Tools.Models.Registration;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Serialization;
 using OpenForge.Cli.TestSupport.Tools;
 
@@ -10,11 +13,10 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Tools;
 [Trait("Feature", "tool-draft"), Trait("Evidence", "Unit")]
 public sealed class ToolDraftDefinitionTests
 {
-    [Theory(DisplayName = "CodeGraph drafts pin all six assets against the published local checksum fixture")]
-    [InlineData(ToolDraftSource.CodeGraph)]
-    public void AssetsMatchPublishedChecksums(string pin)
+    [Fact(DisplayName = "CodeGraph pins all six verified assets against published local checksums")]
+    public void AssetsMatchPublishedChecksums()
     {
-        using var document = Read(pin);
+        using var document = Read();
         var root = document.RootElement;
         var manifest = Manifest(root);
         var evidence = root.GetProperty("releaseEvidence");
@@ -37,41 +39,32 @@ public sealed class ToolDraftDefinitionTests
             Assert.Equal(artifact.Bytes, proof.GetProperty("bytes").GetInt64());
             Assert.Equal(manifest.DownloadBase + artifact.File, proof.GetProperty("url").GetString());
             Assert.True(proof.GetProperty("verified").GetBoolean());
-            Assert.Equal(manifest.Source.Repository + "/.github/workflows/release.yml@refs/heads/main",
-                proof.GetProperty("signerIdentity").GetString());
+            Assert.Equal(manifest.Source.Repository + "/.github/workflows/release.yml@refs/heads/main", proof.GetProperty("signerIdentity").GetString());
         }
     }
 
-    [Theory(DisplayName = "Draft commands cannot invent pending arguments or qualify a native install")]
-    [InlineData(ToolDraftSource.CodeGraph)]
-    public void PendingCommandsStayUnlaunchable(string pin)
+    [Fact(DisplayName = "Typed CodeGraph commands remain outside release and native admission")]
+    public void TypedDefinitionStaysUnadmitted()
     {
-        using var document = Read(pin);
-        var root = document.RootElement;
-        var manifest = Manifest(root);
-        Assert.Equal(ToolVocabulary.ThirdPartyOrigin, manifest.Origin);
+        using var document = Read();
+        var manifest = Manifest(document.RootElement);
+        Assert.Equal(ToolOrigin.ThirdParty, manifest.Origin);
         Assert.Equal(ToolDraftSource.Blocked, manifest.Admission);
         Assert.Empty(manifest.Qualification.Targets);
-        Assert.Null(manifest.Lifecycle);
-        Assert.NotNull(new ToolReleaseSupport([], []).Blocker(manifest, ToolCatalogueReader.Hash(ToolDraftSource.ReadDraft(typeof(ToolCatalogueReader).Assembly, pin))));
-        foreach (var action in ToolVocabulary.LifecycleActions)
-        {
-            var draftKey = action == ToolVocabulary.IndexCleanupAction ? "indexCleanup" : action;
-            var command = root.GetProperty("lifecycleDraft").GetProperty(draftKey);
-            if (command.GetProperty("state").GetString() == ToolDraftSource.Pending)
-                Assert.Equal(JsonValueKind.Null, command.GetProperty("args").ValueKind);
-            else Assert.NotEmpty(command.GetProperty("args").EnumerateArray());
-            Assert.Equal(JsonValueKind.Null, command.GetProperty("timeoutSeconds").ValueKind);
-        }
+        Assert.NotNull(manifest.Lifecycle);
+        Assert.NotNull(manifest.Registration);
+        var bytes = JsonSerializer.SerializeToUtf8Bytes(manifest, ToolJsonContext.Default.ToolManifest);
+        var decoded = new ToolCatalogueReader().Definition(bytes, ToolDraftSource.DefinitionExtension, false);
+        Assert.False(decoded.Reviewed);
+        Assert.NotNull(decoded.Blocker);
         Assert.Throws<JsonException>(() => new ToolCatalogueReader().Definition(
-            ToolDraftSource.ReadDraft(typeof(ToolCatalogueReader).Assembly, pin), pin + ToolDraftSource.DefinitionExtension, true));
+            ToolDraftSource.ReadDraft(typeof(ToolCatalogueReader).Assembly, ToolDraftSource.CodeGraph), ToolDraftSource.DefinitionExtension, true));
     }
 
-    [Theory(DisplayName = "CodeGraph drafts require packaged guidance and keep upstream server names")]
-    [InlineData(ToolDraftSource.CodeGraph)]
-    public void GuidanceAndNamesAreBound(string pin)
+    [Fact(DisplayName = "CodeGraph requires packaged guidance and its native MCP names")]
+    public void GuidanceAndNamesAreBound()
     {
-        using var document = Read(pin);
+        using var document = Read();
         var root = document.RootElement;
         var manifest = Manifest(root);
         Assert.NotNull(manifest.Skill);
@@ -82,46 +75,101 @@ public sealed class ToolDraftDefinitionTests
         var skill = ToolDraftSource.Read(typeof(ToolCatalogueReader).Assembly,
             guidance.GetProperty("path").GetString() ?? throw new InvalidDataException());
         Assert.Equal(guidance.GetProperty("sha256").GetString(), ToolCatalogueReader.Hash(skill));
-        var registration = root.GetProperty("registrationDraft");
-        var server = registration.GetProperty("serverName").GetString();
-        Assert.Equal(4, registration.GetProperty("rewrites").GetArrayLength());
-        Assert.Equal("/mcpServers/" + server, manifest.Mcp.Hosts["claude-code"].Selector);
-        Assert.Equal("mcp_servers." + server, manifest.Mcp.Hosts["codex"].Selector);
+        var registration = Assert.IsType<ToolRegistration>(manifest.Registration);
+        var json = Assert.Single(registration.Rewrites.OfType<ToolJsonCommandRewrite>());
+        var toml = Assert.Single(registration.Rewrites.OfType<ToolTomlCommandRewrite>());
+        Assert.Equal(manifest.Mcp.Hosts[ToolVocabulary.ClaudeCodeHost].Selector, json.Pointer);
+        Assert.Equal(manifest.Mcp.Hosts[ToolVocabulary.CodexHost].Selector, toml.Table);
+        Assert.Equal(ToolVocabulary.CodeNavigationRole, Assert.Single(registration.RoleGuidance).Role);
         Assert.Empty(manifest.Configuration.Files);
         Assert.Empty(manifest.Configuration.Actions);
     }
 
-    [Fact(DisplayName = "CodeGraph lifecycle and rewrite originals match the pinned-source fixture")]
+    [Fact(DisplayName = "CodeGraph registration round trips all four shared rewrite forms")]
+    public void RegistrationUsesSharedTypes()
+    {
+        using var document = Read();
+        var manifest = Manifest(document.RootElement);
+        var bytes = JsonSerializer.SerializeToUtf8Bytes(manifest, ToolJsonContext.Default.ToolManifest);
+        var decoded = Assert.IsType<ToolManifest>(JsonSerializer.Deserialize(bytes, ToolJsonContext.Default.ToolManifest));
+        var registration = Assert.IsType<ToolRegistration>(decoded.Registration);
+        Assert.Equal(5, registration.Rewrites.Length);
+        Assert.Single(registration.Rewrites.OfType<ToolJsonCommandRewrite>());
+        Assert.Single(registration.Rewrites.OfType<ToolTomlCommandRewrite>());
+        var hook = Assert.Single(registration.Rewrites.OfType<ToolHookCommandRewrite>());
+        Assert.Equal(2, registration.Rewrites.OfType<ToolMarkedLineRewrite>().Count());
+        var component = Assert.Single(registration.Components);
+        Assert.Equal(ToolComponentFlags.PromptHook, component.Flag);
+        Assert.True(component.DefaultEnabled);
+        Assert.Equal(component.Id, hook.Component);
+        var removal = Assert.Single(component.DeclinedEntries);
+        Assert.Equal(hook.Expected, removal.Expected.GetProperty("command").GetString());
+        Assert.Equal(hook.File, removal.File);
+        Assert.NotNull(registration.Activate);
+        Assert.NotNull(registration.Deactivate);
+    }
+
+    [Fact(DisplayName = "CodeGraph lifecycle commands and rewrite originals match its pinned source fixture")]
     public void MatchesInstallerOriginals()
     {
-        using var draft = Read(ToolDraftSource.CodeGraph);
+        using var draft = Read();
         using var fixture = JsonDocument.Parse(ToolFixtureSource.CodeGraphInstallerBytes());
         var original = fixture.RootElement;
-        var lifecycle = draft.RootElement.GetProperty("lifecycleDraft");
-        foreach (var action in new[] { "install", "uninstall", "indexCleanup", "telemetry" })
-            Assert.Equal(original.GetProperty(action).EnumerateArray().Select(value => value.GetString()),
-                lifecycle.GetProperty(action).GetProperty("args").EnumerateArray().Select(value => value.GetString()));
-        var rewrites = draft.RootElement.GetProperty("registrationDraft").GetProperty("rewrites");
-        Assert.True(JsonElement.DeepEquals(original.GetProperty("claude"), rewrites[0].GetProperty("expected")));
-        Assert.True(JsonElement.DeepEquals(original.GetProperty("codex"), rewrites[1].GetProperty("expected")));
-        Assert.True(JsonElement.DeepEquals(original.GetProperty("hook"), rewrites[2].GetProperty("expected")));
-        Assert.Equal(original.GetProperty("shell").GetString(), rewrites[3].GetProperty("expected").GetString());
+        var manifest = Manifest(draft.RootElement);
+        var lifecycle = Assert.IsType<ToolLifecycle>(manifest.Lifecycle);
+        var commands = new Dictionary<string, string[]>
+        {
+            ["install"] = lifecycle.Install.Args,
+            ["uninstall"] = lifecycle.Uninstall.Args,
+            ["indexCleanup"] = lifecycle.IndexCleanup.Args,
+            ["telemetryOff"] = Assert.IsType<ToolLifecycleCommand>(lifecycle.TelemetryOff).Args,
+            ["telemetryOn"] = Assert.IsType<ToolLifecycleCommand>(lifecycle.TelemetryOn).Args,
+        };
+        foreach (var (action, arguments) in commands)
+            Assert.Equal(original.GetProperty(action).EnumerateArray().Select(value => value.GetString()), arguments);
+        Assert.Equal(new[] { ToolVocabulary.UninstallAction, ToolVocabulary.IndexCleanupAction }, lifecycle.RemovalOrder);
+        var registration = Assert.IsType<ToolRegistration>(manifest.Registration);
+        var json = Assert.Single(registration.Rewrites.OfType<ToolJsonCommandRewrite>());
+        Assert.Equal(original.GetProperty("claude").GetProperty("command").GetString(), json.Expected.Command);
+        Assert.Equal(original.GetProperty("claude").GetProperty("args").EnumerateArray().Select(value => value.GetString()), json.Expected.Args);
+        var runPrefix = original.GetProperty("runPrefix").EnumerateArray().Select(value => value.GetString()).ToArray();
+        foreach (var rewrite in registration.Rewrites.OfType<ToolJsonCommandRewrite>())
+        {
+            Assert.Equal("${" + ToolVocabulary.OpenForgeVariable + "}", rewrite.Replacement.Command);
+            Assert.Equal(runPrefix.Concat(rewrite.Expected.Args), rewrite.Replacement.Args);
+        }
+        foreach (var rewrite in registration.Rewrites.OfType<ToolTomlCommandRewrite>())
+        {
+            Assert.Equal(json.Expected.Command, rewrite.Expected.Command);
+            Assert.Equal(json.Expected.Args, rewrite.Expected.Args);
+            Assert.Equal(json.Replacement.Command, rewrite.Replacement.Command);
+            Assert.Equal(json.Replacement.Args, rewrite.Replacement.Args);
+        }
+        foreach (var marked in registration.Rewrites.OfType<ToolMarkedLineRewrite>())
+            Assert.Equal(original.GetProperty("markedLine").GetString(), marked.Expected);
+        var hook = Assert.Single(registration.Rewrites.OfType<ToolHookCommandRewrite>());
+        Assert.Contains(hook.Expected, original.GetProperty("hook").EnumerateArray().Select(value => value.GetString()));
+        Assert.Equal(lifecycle.Install.Args, registration.Activate?.Args);
+        Assert.Equal(lifecycle.Uninstall.Args, registration.Deactivate?.Args);
     }
 
-    [Fact(DisplayName = "CodeGraph MCP rewrites forward native arguments after the declared Run prefix")]
-    public void RewritesUseDeclaredRunPrefix()
+    [Fact(DisplayName = "Every target runs the verified bundled Node and fixed script with the archive launcher's arguments")]
+    public void UsesBundledLauncher()
     {
-        using var draft = Read(ToolDraftSource.CodeGraph);
-        var registration = draft.RootElement.GetProperty("registrationDraft");
-        var prefix = registration.GetProperty("runPrefix").EnumerateArray().Select(value => value.GetString()).ToArray();
-        var rewrites = registration.GetProperty("rewrites");
-        var nativeArguments = rewrites[0].GetProperty("expected").GetProperty("args").EnumerateArray().Select(value => value.GetString());
-        var expected = prefix.Concat(nativeArguments).ToArray();
-        foreach (var rewrite in rewrites.EnumerateArray().Where(value => value.TryGetProperty("args", out _)))
-            Assert.Equal(expected, rewrite.GetProperty("args").EnumerateArray().Select(value => value.GetString()));
+        using var draft = Read();
+        using var fixture = JsonDocument.Parse(ToolFixtureSource.CodeGraphInstallerBytes());
+        var expected = fixture.RootElement.GetProperty("launcher");
+        foreach (var (rid, target) in Manifest(draft.RootElement).Targets)
+        {
+            var launcher = Assert.IsType<ToolLauncher>(target.Launcher);
+            var platform = rid.StartsWith("win-", StringComparison.Ordinal) ? "windows" : "unix";
+            Assert.Equal(expected.GetProperty(platform).GetString(), launcher.Executable);
+            Assert.Equal(expected.GetProperty("entry").GetString(), target.Entry);
+            Assert.Equal(expected.GetProperty("args").EnumerateArray().Select(value => value.GetString()), launcher.Args);
+        }
     }
 
-    private static JsonDocument Read(string pin) => JsonDocument.Parse(ToolDraftSource.ReadDraft(typeof(ToolCatalogueReader).Assembly, pin));
+    private static JsonDocument Read() => JsonDocument.Parse(ToolDraftSource.ReadDraft(typeof(ToolCatalogueReader).Assembly, ToolDraftSource.CodeGraph));
 
     private static ToolManifest Manifest(JsonElement root) => root.GetProperty("definition").Deserialize(ToolJsonContext.Default.ToolManifest)
         ?? throw new InvalidDataException();

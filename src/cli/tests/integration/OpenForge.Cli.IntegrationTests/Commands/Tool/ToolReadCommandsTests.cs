@@ -18,6 +18,7 @@ using OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Tools;
+using OpenForge.Cli.Core.Framework.Tools.Models.Registration;
 using OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Tools.Models.Receipts;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -101,9 +102,9 @@ public sealed class ToolReadCommandsTests
         var firstParty = ToolFixtureSource.Manifest();
         const string firstPartyId = "z-first-party";
         firstParty["id"] = firstPartyId;
-        firstParty["origin"] = ToolVocabulary.FirstPartyOrigin;
-        firstParty["mcp"]!["hosts"]!["claude-code"]!["selector"] = "/mcpServers/open-forge-" + firstPartyId;
-        firstParty["mcp"]!["hosts"]!["codex"]!["selector"] = "mcp_servers.open-forge-" + firstPartyId;
+        firstParty["origin"] = ToolOrigin.FirstParty;
+        firstParty["mcp"]!["hosts"]![ToolVocabulary.ClaudeCodeHost]!["selector"] = "/mcpServers/open-forge-" + firstPartyId;
+        firstParty["mcp"]!["hosts"]![ToolVocabulary.CodexHost]!["selector"] = "mcp_servers.open-forge-" + firstPartyId;
         var firstBytes = Encoding.UTF8.GetBytes(firstParty.ToJsonString());
         var thirdBytes = Encoding.UTF8.GetBytes(thirdParty.ToJsonString());
         workspace.WriteBytes("first.json", firstBytes);
@@ -143,7 +144,7 @@ public sealed class ToolReadCommandsTests
         Assert.Equal(new[] { firstPartyId, ToolFixtureSource.Id }, result.Available.Select(row => row.Id));
         Assert.Equal(result.Available.Select(row => row.Id), result.Installed.Select(row => row.Id));
         Assert.Equal(result.Available.Select(row => row.Origin), result.Installed.Select(row => row.Origin));
-        Assert.Equal(new[] { ToolVocabulary.FirstPartyOrigin, ToolVocabulary.ThirdPartyOrigin }, result.Available.Select(row => row.Origin));
+        Assert.Equal(new[] { ToolOrigin.FirstParty, ToolOrigin.ThirdParty }, result.Available.Select(row => row.Origin));
     }
 
     [Fact(DisplayName = "Cancelled Tool readers return cancellation before opening sources")]

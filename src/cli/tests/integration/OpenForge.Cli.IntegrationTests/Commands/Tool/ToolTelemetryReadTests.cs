@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Tools;
 using OpenForge.Cli.Core.Framework.Tools.Models.Lifecycle;
 using OpenForge.Cli.Core.Framework.Tools.Models.Receipts;
+using OpenForge.Cli.Core.Framework.Tools.Models.Registration;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.Hosting;
@@ -72,7 +73,7 @@ public sealed class ToolTelemetryReadTests
         workspace.WriteBytes(WorkspaceOwnershipDefinitions.RelativePath, WorkspaceOwnershipCodec.Write(WorkspaceOwnershipDocument.Empty with
         { Tools = ImmutableDictionary<string, ToolReceipt>.Empty.Add(ToolFixtureSource.Id, receipt) }));
         var before = workspace.SnapshotHashes();
-        var row = new ToolInstalledRow(ToolFixtureSource.Id, ToolFixtureSource.Version, [ToolVocabulary.CodeNavigationRole], null, new(ToolEvidenceState.Matching));
+        var row = new ToolInstalledRow(ToolFixtureSource.Id, ToolFixtureSource.Version, ToolOrigin.ThirdParty, [ToolVocabulary.CodeNavigationRole], null, new(ToolEvidenceState.Matching));
         var result = await ToolPassiveStatusReader.ReadAsync(Selected(workspace), settings, row, receipt, Token);
         Assert.Equal((ToolEvidenceState)state, result.Configuration.State);
         Assert.Equal(before, workspace.SnapshotHashes());

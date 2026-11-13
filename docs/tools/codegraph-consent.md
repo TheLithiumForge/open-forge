@@ -16,7 +16,7 @@ The prompt-hook question is separate:
 
 "Keep CodeGraph's Claude prompt hook? On structural prompts it adds context from the local index. Nothing leaves the machine. CODEGRAPH_NO_PROMPT_HOOK=1 disables it. Defaults to yes."
 
-Non-interactive installation takes `--prompt-hook yes|no`. A choice of `no` removes only the recognized CodeGraph prompt-hook command and prunes empty containers. A visible `telemetryEnabled` setting defaults to false. Turning it on uses CodeGraph's own `telemetry on` command and keeps the update-check opt-out.
+Non-interactive installation takes `--prompt-hook yes|no`. A choice of `no` removes only the complete matching CodeGraph hook entry and keeps its containing group. A visible `tools.codegraph.telemetry` setting defaults to false. Turning it on uses CodeGraph's own `telemetry on` command and keeps the update-check opt-out.
 
 ## Project writes
 
@@ -45,11 +45,11 @@ After every install, configure or update, rewrite only the entries the reviewed 
 
 MCP command and arguments become `open-forge` and `[tool,run,codegraph,serve,--mcp]`. The hook becomes `open-forge tool run codegraph prompt-hook`. Keep the literal substring `codegraph prompt-hook`, because upstream uninstall matches it. The marked shell example becomes `open-forge tool run codegraph explore "<symbol names or question>"`.
 
-One resolver chooses `open-forge` when it is on PATH. Otherwise it gives the absolute path of the running Open Forge executable. Quote that path for the destination's syntax. JSON uses the existing serializer. Codex edits only the expected command and args lines in the exact named table, with no TOML parser. An already recorded matching rewritten hook stays unchanged because native reinstall can keep it. An unexpected or ambiguous shape stops the operation and reports the path. It never broadens the rewrite.
+One resolver chooses `open-forge` when it is on PATH. Otherwise it gives the absolute path of the running Open Forge executable. Quote that path for the destination's syntax. JSON uses the existing serializer. Codex edits only the expected command and args lines in the exact named table, with no TOML parser. An already recorded matching rewritten hook stays unchanged because native reinstall can keep it. An unexpected or ambiguous shape stops the operation and reports the path. It never broadens the rewrite. The current draft has a pristine Windows hook selector. Registration must resolve platform spelling and the appended array position before qualification, as the maintenance procedure records.
 
 ## Account state
 
-The archive contains `bin/codegraph.cmd` on Windows and `bin/codegraph` elsewhere. These launch bundled Node 24.16.0. The installer invocation is `install --location local --target claude,codex --yes --no-permissions`. Its `--yes` skips global npm installation and the PATH prompt. System Node and npm aren't needed.
+The archive contains `bin/codegraph.cmd` on Windows and `bin/codegraph` elsewhere. These launch bundled Node 24.16.0. The shared launcher binding runs that contained runtime directly with the same flags and `lib/dist/bin/codegraph.js`, so Windows needs no command shell. The installer invocation is `install --location local --target claude,codex --yes --no-permissions`. Its `--yes` skips global npm installation and the PATH prompt. System Node and npm aren't needed.
 
 Run with telemetry suppressed before other commands, then run the disclosed `telemetry off` unless the saved user setting enables telemetry. That command saves `~/.codegraph/telemetry.json` through temporary `telemetry.json.<pid>.<uuid>.tmp` and deletes buffered `telemetry-queue.jsonl` and `telemetry-queue.sending.<pid>.jsonl` files from that account directory. The temporary file is removed after the write attempt. When enabled, telemetry can write `telemetry-queue.jsonl` and `telemetry-queue.sending.<pid>.jsonl` under the same directory. `CODEGRAPH_NO_UPDATE_CHECK=1` prevents `~/.codegraph/update-check.json` activity. No PATH or registry edits are part of this lifecycle.
 

@@ -15,7 +15,7 @@ The V1 contract defines `list`, `inspect`, `install`, `configure`, `status`, `up
 
 ## Read tools
 
-[CodeGraph](codegraph.md) `1.6.2` and [Codebase Memory](codebase-memory.md) `0.12.1` have drafts with verified releases for all six targets. Both are blocked on installer decisions and native qualification. Draft wrappers aren't accepted `--source` inputs. Required Skills and consent inventories are prepared for review. No installer runs while those decisions are pending.
+[CodeGraph](codegraph.md) `1.6.2` is the V1 candidate. Its six official archives have verified sizes, published SHA-256 and build attestations. Its definition uses the shared lifecycle, launcher and registration types. Admission stays blocked until registration integration and native qualification finish. Draft wrappers aren't accepted `--source` inputs. Codebase Memory is unsupported in V1.
 
 Run `open-forge tool list --format json` to read the catalogue and recorded installs. With no tool records, the empty core catalogue returns `completed` with empty `available` and `installed` arrays. `tool inspect <id> --source <path>` explains one local definition. Unreviewed pins return `blocked` with the readable definition.
 

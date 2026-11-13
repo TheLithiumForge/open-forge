@@ -79,3 +79,9 @@ Definitions declare first-party or third-party origin. List groups by origin and
 Choose switches recognized role integrations and the required Skill while keeping both installs and indexes. Each active role adds one conditional line in Open Forge's managed `AGENTS.md` and `CLAUDE.md` block. Clearing the role removes that line. No additional help pointer is added.
 
 Tool Run accepts only a declared installed and verified tool ID. It resolves the recorded executable in the verified store and passes the remaining arguments as an array without a shell. It checks recorded size and timestamp on each run. Status re-hashes the files. Paths, shell strings, unknown IDs and changed or missing bytes are refused. Run forwards streams, signals and exit code without successful-run output. Put `--workspace <dir>` before the ID, or use `CLAUDE_PROJECT_DIR`, when the host starts outside the workspace. Otherwise Run searches upward from the current directory.
+
+## CodeGraph draft
+
+CodeGraph `1.6.2` is the V1 candidate with six verified official archives. Its shared definition declares bundled Node, native project installation, bounded command rewrites, optional `--prompt-hook yes|no`, telemetry commands and uninstall before index cleanup. Admission stays blocked until registration and native qualification finish. Use its required `open-forge-codegraph` Skill for index and query commands, then confirm call sites in source. CodeGraph's native MCP server name is `codegraph`.
+
+After cloning a workspace that declares CodeGraph, bare `open-forge tool install` prepares every declared pin with consent. Run reports this next step when a declared pin is missing. Interactive Run offers normal Install consent. Non-interactive Run never installs silently.

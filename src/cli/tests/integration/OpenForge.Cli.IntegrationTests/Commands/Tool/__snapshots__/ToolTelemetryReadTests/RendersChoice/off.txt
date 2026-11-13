@@ -7,6 +7,7 @@ Workspace: <workspace>
   Warning  fixture-tool  Tool observation
          A matching tool receipt isn't recorded.
 fixture-tool 1.0.0  <native-target>
+Origin: third-party
 Telemetry setting: off
   The exact definition is not reviewed by this CLI release.
   artifact-hash

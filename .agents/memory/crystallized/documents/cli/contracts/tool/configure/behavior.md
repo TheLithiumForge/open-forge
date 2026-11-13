@@ -23,7 +23,7 @@ The operation follows these steps:
 5. Plan removed-host uninstall commands, desired-host installation, ignore changes and paired records. Workspace-scoped profiles replace their complete host set.
 6. Resolve process consent, grants and final confirmation using that complete plan.
 7. Under user-store then workspace leases, revalidate files, references and process scope.
-8. Run declared configuration commands and record results. Stop after a failed or interrupted command. Apply and verify the declared command rewrites, hook choice and telemetry setting before publishing configuration.
+8. Run declared configuration commands and record results. Stop after a failed or interrupted command.
 9. Use Git recovery or sibling backups for managed files, publish matching settings and lock records and report external rebuild instructions when the root changes.
 
 ## Repetition

@@ -15,7 +15,9 @@
   },
   "admission": "candidate",
   "admissionReason": "Test-only definition",
-  "capabilities": ["code-graph"],
+  "capabilities": [
+    "code-graph"
+  ],
   "downloadBase": "https://fixture.invalid/artifacts/",
   "artifacts": {
     "package": {
@@ -29,7 +31,9 @@
   "targets": {
     "win-x64": {
       "state": "available",
-      "artifacts": ["package"],
+      "artifacts": [
+        "package"
+      ],
       "entry": "fixture.bin",
       "lock": null,
       "reason": null
@@ -126,7 +130,13 @@
     "optional": false,
     "defaultEnabled": true
   },
-  "checks": ["artifact-hash", "installed-files", "host-members", "process-policy", "usage-skill"],
+  "checks": [
+    "artifact-hash",
+    "installed-files",
+    "host-members",
+    "process-policy",
+    "usage-skill"
+  ],
   "qualification": {
     "attestation": "release-evidence-required",
     "workflow": null,

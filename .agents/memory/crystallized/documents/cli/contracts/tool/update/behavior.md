@@ -22,7 +22,7 @@ The operation follows these steps:
 4. Resolve separate transfer consent, process consent, grants and final confirmation.
 5. Stage and verify approved immutable bytes outside writing leases.
 6. Acquire user-store then workspace leases and revalidate all required facts.
-7. Run the new pin's declared installer with the recorded hosts and root. Record each result. Apply and verify the declared command rewrites, hook choice and telemetry setting before publishing configuration.
+7. Run the new pin's declared installer with the recorded hosts and root. Record each result.
 8. Use Git recovery or sibling backups for managed files, then publish and verify the new reference and paired records.
 9. Release the old immutable reference. Recheck complete references before deleting unused bytes. Don't run an old uninstaller against the new configuration.
 10. Verify child shutdown and report rebuild instructions when extraction or version changes invalidate the index.

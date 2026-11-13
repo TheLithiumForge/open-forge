@@ -3,7 +3,7 @@
   "title": "CodeGraph review draft",
   "type": "object",
   "additionalProperties": false,
-  "required": ["$schema", "schemaVersion", "status", "definition", "lifecycleDraft", "releaseEvidence", "guidance", "consent", "passiveObservationProposal", "registrationDraft"],
+  "required": ["$schema", "schemaVersion", "status", "definition", "releaseEvidence", "guidance", "consent", "trustNotes", "review"],
   "properties": {
     "$schema": {
       "type": "string"
@@ -25,7 +25,13 @@
               "const": "blocked"
             },
             "lifecycle": {
-              "type": "null"
+              "type": "object",
+              "required": ["removalOrder", "telemetryOff", "telemetryOn"],
+              "properties": {
+                "removalOrder": {
+                  "const": ["uninstall", "index-cleanup"]
+                }
+              }
             },
             "qualification": {
               "properties": {
@@ -33,35 +39,29 @@
                   "maxItems": 0
                 }
               }
+            },
+            "registration": {
+              "type": "object",
+              "required": ["rewrites", "components", "roleGuidance", "activate", "deactivate"],
+              "properties": {
+                "rewrites": {
+                  "minItems": 5,
+                  "maxItems": 5
+                },
+                "components": {
+                  "minItems": 1,
+                  "maxItems": 1
+                },
+                "roleGuidance": {
+                  "minItems": 1,
+                  "maxItems": 1
+                }
+              }
             }
-          }
+          },
+          "required": ["registration", "lifecycle"]
         }
       ]
-    },
-    "lifecycleDraft": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["install", "uninstall", "indexCleanup", "ignorePaths", "telemetry"],
-      "properties": {
-        "install": {
-          "$ref": "#/$defs/LifecycleDraftCommand"
-        },
-        "uninstall": {
-          "$ref": "#/$defs/LifecycleDraftCommand"
-        },
-        "indexCleanup": {
-          "$ref": "#/$defs/LifecycleDraftCommand"
-        },
-        "ignorePaths": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "telemetry": {
-          "$ref": "#/$defs/LifecycleDraftCommand"
-        }
-      }
     },
     "releaseEvidence": {
       "type": "object",
@@ -142,290 +142,39 @@
         }
       }
     },
-    "passiveObservationProposal": {
+    "trustNotes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 2
+    },
+    "review": {
       "type": "object",
-      "required": ["serverName", "implementation", "noHostWrites", "noTomlParser", "defaultPaths", "pathNote"],
       "additionalProperties": false,
+      "required": ["state", "qualification", "registrationGaps", "hookFixture"],
       "properties": {
-        "serverName": {
-          "type": "string"
+        "state": {
+          "const": "source-reviewed"
         },
-        "implementation": {
-          "const": "pending"
+        "qualification": {
+          "const": "pending-native-lanes"
         },
-        "noHostWrites": {
-          "const": true
-        },
-        "noTomlParser": {
-          "const": true
-        },
-        "defaultPaths": {
-          "type": "object",
-          "required": ["claude-code", "codex"],
-          "additionalProperties": {
+        "registrationGaps": {
+          "type": "array",
+          "items": {
             "type": "string"
-          },
-          "minProperties": 2,
-          "maxProperties": 2
+          }
         },
-        "pathNote": {
+        "hookFixture": {
           "type": "string"
         }
       }
-    },
-    "registrationDraft": {
-      "type": "object",
-      "required": ["mode", "serverName", "launcher", "runPrefix", "rewrites", "promptHook", "telemetry", "trustNotes"],
-      "properties": {
-        "mode": {
-          "const": "tool-installer-with-command-rewrites"
-        },
-        "serverName": {
-          "const": "codegraph"
-        },
-        "runPrefix": {
-          "const": ["tool", "run", "codegraph"]
-        },
-        "rewrites": {
-          "type": "array",
-          "minItems": 4,
-          "maxItems": 4,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["format", "expected"],
-            "properties": {
-              "path": {
-                "type": "string"
-              },
-              "selector": {
-                "type": "string"
-              },
-              "suffix": {
-                "type": "string"
-              },
-              "removalMatch": {
-                "type": "string"
-              },
-              "start": {
-                "type": "string"
-              },
-              "end": {
-                "type": "string"
-              },
-              "replacementSuffix": {
-                "type": "string"
-              },
-              "format": {
-                "enum": ["json-members", "exact-table-lines", "marked-shell-line"]
-              },
-              "paths": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "minItems": 1
-              },
-              "replace": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "minItems": 1
-              },
-              "args": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "minItems": 1
-              },
-              "expected": {
-                "type": ["object", "array", "string"]
-              },
-              "expectedHook": {
-                "type": "object"
-              }
-            }
-          }
-        },
-        "trustNotes": {
-          "type": "array",
-          "minItems": 2
-        },
-        "launcher": {
-          "type": "string",
-          "minLength": 1
-        },
-        "runDelimiter": {
-          "type": "string",
-          "minLength": 1
-        },
-        "commandResolver": {
-          "type": "string",
-          "minLength": 1
-        },
-        "managedRoleLine": {
-          "type": "string",
-          "minLength": 1
-        },
-        "backups": {
-          "type": "string",
-          "minLength": 1
-        },
-        "onUnexpectedShape": {
-          "type": "string",
-          "minLength": 1
-        },
-        "alreadyRewritten": {
-          "type": "string",
-          "minLength": 1
-        },
-        "after": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "minItems": 1,
-          "uniqueItems": true
-        },
-        "managedRolePaths": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "minItems": 1,
-          "uniqueItems": true
-        },
-        "promptHook": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["setting", "option", "values", "default", "event", "explanation", "optOut"],
-          "properties": {
-            "setting": {
-              "type": "string",
-              "minLength": 1
-            },
-            "option": {
-              "type": "string",
-              "minLength": 1
-            },
-            "default": {
-              "type": "string",
-              "minLength": 1
-            },
-            "event": {
-              "type": "string",
-              "minLength": 1
-            },
-            "explanation": {
-              "type": "string",
-              "minLength": 1
-            },
-            "optOut": {
-              "type": "string",
-              "minLength": 1
-            },
-            "values": {
-              "const": ["yes", "no"]
-            }
-          }
-        },
-        "telemetry": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["setting", "default", "offArgs", "onArgs", "accountPath"],
-          "properties": {
-            "setting": {
-              "type": "string"
-            },
-            "default": {
-              "const": false
-            },
-            "offArgs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "minItems": 1
-            },
-            "onArgs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "minItems": 1
-            },
-            "accountPath": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "additionalProperties": false
     }
   },
   "$id": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/tools/drafts/v1/definition.schema.json",
   "$defs": {
-    "LifecycleDraftCommand": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["state", "args", "scope", "workspaceOutputs", "timeoutSeconds", "pending"],
-      "properties": {
-        "state": {
-          "enum": ["pending", "source-reviewed"]
-        },
-        "args": {
-          "type": ["array", "null"],
-          "items": {
-            "type": "string"
-          }
-        },
-        "scope": {
-          "enum": ["workspace", "account"]
-        },
-        "workspaceOutputs": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "uniqueItems": true
-        },
-        "timeoutSeconds": {
-          "type": "null"
-        },
-        "pending": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "state": {
-                "const": "pending"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "args": {
-                "type": "null"
-              }
-            }
-          },
-          "else": {
-            "properties": {
-              "args": {
-                "type": "array",
-                "minItems": 1
-              }
-            }
-          }
-        }
-      ]
-    },
     "VerifiedAsset": {
       "type": "object",
       "additionalProperties": false,
