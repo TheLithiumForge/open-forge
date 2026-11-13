@@ -24,4 +24,4 @@ The draft schema references the production manifest schema. Native qualification
 
 All six CodeGraph archives were downloaded on 2026-11-13. Each length and SHA-256 matched the official release and published checksums. Each GitHub build attestation verified against its exact workflow identity. No upstream program bytes are redistributed here. After editing the Skill, update its guidance hash.
 
-Codebase Memory is unsupported in V1. Its verified metadata and missing upstream controls are kept in [maintenance research](../../docs/tools/codebase-memory-research.md), outside the packaged catalogue and Skills. The [maintenance checklist](../../docs/tool-maintenance.md) defines promotion and native journey gates.
+Codebase Memory is unsupported in V1. Its draft and research are preserved on `feature/tool-codebase-memory` at `7c76ca5fb`. This branch keeps CodeGraph only. The [maintenance checklist](../../docs/tool-maintenance.md) defines promotion and native journey gates.

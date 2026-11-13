@@ -108,6 +108,19 @@ public sealed class ToolDraftDefinitionTests
         Assert.Equal(original.GetProperty("shell").GetString(), rewrites[3].GetProperty("expected").GetString());
     }
 
+    [Fact(DisplayName = "CodeGraph MCP rewrites forward native arguments after the declared Run prefix")]
+    public void RewritesUseDeclaredRunPrefix()
+    {
+        using var draft = Read(ToolDraftSource.CodeGraph);
+        var registration = draft.RootElement.GetProperty("registrationDraft");
+        var prefix = registration.GetProperty("runPrefix").EnumerateArray().Select(value => value.GetString()).ToArray();
+        var rewrites = registration.GetProperty("rewrites");
+        var nativeArguments = rewrites[0].GetProperty("expected").GetProperty("args").EnumerateArray().Select(value => value.GetString());
+        var expected = prefix.Concat(nativeArguments).ToArray();
+        foreach (var rewrite in rewrites.EnumerateArray().Where(value => value.TryGetProperty("args", out _)))
+            Assert.Equal(expected, rewrite.GetProperty("args").EnumerateArray().Select(value => value.GetString()));
+    }
+
     private static JsonDocument Read(string pin) => JsonDocument.Parse(ToolDraftSource.ReadDraft(typeof(ToolCatalogueReader).Assembly, pin));
 
     private static ToolManifest Manifest(JsonElement root) => root.GetProperty("definition").Deserialize(ToolJsonContext.Default.ToolManifest)

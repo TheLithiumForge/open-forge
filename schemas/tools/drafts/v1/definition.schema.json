@@ -175,7 +175,7 @@
     },
     "registrationDraft": {
       "type": "object",
-      "required": ["mode", "serverName", "launcher", "execPrefix", "rewrites", "promptHook", "telemetry", "trustNotes"],
+      "required": ["mode", "serverName", "launcher", "runPrefix", "rewrites", "promptHook", "telemetry", "trustNotes"],
       "properties": {
         "mode": {
           "const": "tool-installer-with-command-rewrites"
@@ -183,8 +183,8 @@
         "serverName": {
           "const": "codegraph"
         },
-        "execPrefix": {
-          "const": ["tool", "exec", "codegraph"]
+        "runPrefix": {
+          "const": ["tool", "run", "codegraph"]
         },
         "rewrites": {
           "type": "array",
@@ -257,7 +257,7 @@
           "type": "string",
           "minLength": 1
         },
-        "execDelimiter": {
+        "runDelimiter": {
           "type": "string",
           "minLength": 1
         },

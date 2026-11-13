@@ -317,7 +317,7 @@
     "path": "skills/open-forge-codegraph/SKILL.md",
     "required": true,
     "delivery": "open-forge-required-skill",
-    "sha256": "4b9243b76c89989efa3193cf16368ddd4a13b23737ad47d2544e67b818eb2e26"
+    "sha256": "e34f1d7b1303d675bdeb2ebe52866021e0537816c715697ff88b33141e45e753"
   },
   "consent": {
     "source": "../../../docs/tools/codegraph-consent.md",
@@ -339,8 +339,8 @@
     "mode": "tool-installer-with-command-rewrites",
     "serverName": "codegraph",
     "launcher": "target-entry",
-    "execPrefix": ["tool", "exec", "codegraph"],
-    "execDelimiter": "optional",
+    "runPrefix": ["tool", "run", "codegraph"],
+    "runDelimiter": "optional",
     "commandResolver": "open-forge on PATH when available, otherwise the absolute path of the running open-forge executable",
     "rewrites": [
       {
@@ -354,7 +354,7 @@
           "alwaysLoad": true
         },
         "replace": ["command", "args"],
-        "args": ["tool", "exec", "codegraph", "serve", "--mcp"]
+        "args": ["tool", "run", "codegraph", "serve", "--mcp"]
       },
       {
         "path": ".codex/config.toml",
@@ -362,7 +362,7 @@
         "format": "exact-table-lines",
         "expected": ["[mcp_servers.codegraph]", "command = \"codegraph\"", "args = [\"serve\", \"--mcp\"]"],
         "replace": ["command", "args"],
-        "args": ["tool", "exec", "codegraph", "serve", "--mcp"]
+        "args": ["tool", "run", "codegraph", "serve", "--mcp"]
       },
       {
         "path": ".claude/settings.json",
@@ -370,7 +370,7 @@
         "format": "json-members",
         "expected": ["codegraph.cmd prompt-hook", "codegraph prompt-hook"],
         "replace": ["command"],
-        "suffix": "tool exec codegraph prompt-hook",
+        "suffix": "tool run codegraph prompt-hook",
         "removalMatch": "codegraph prompt-hook",
         "expectedHook": {
           "hooks": [
@@ -387,7 +387,7 @@
         "start": "<!-- CODEGRAPH_START -->",
         "end": "<!-- CODEGRAPH_END -->",
         "expected": "codegraph explore \"<symbol names or question>\"",
-        "replacementSuffix": "tool exec codegraph explore \"<symbol names or question>\""
+        "replacementSuffix": "tool run codegraph explore \"<symbol names or question>\""
       }
     ],
     "promptHook": {
@@ -406,16 +406,26 @@
       "onArgs": ["telemetry", "on"],
       "accountPath": "~/.codegraph/telemetry.json"
     },
-    "managedRoleLine": "Code navigation: CodeGraph is active. Use `codegraph_explore` or `open-forge tool exec codegraph explore \"<question>\"` before grep, see the open-forge-codegraph Skill.",
+    "managedRoleLine": "Code navigation: CodeGraph is active. Use `codegraph_explore` or `open-forge tool run codegraph explore \"<question>\"` before grep, see the open-forge-codegraph Skill.",
     "backups": "git-or-sibling-bak",
     "onUnexpectedShape": "stop-and-report",
     "after": ["install", "configure", "update"],
     "trustNotes": [
+      "CodeGraph is third-party software from colbymchenry/codegraph under MIT, downloaded from its official release and maintained by its authors. Open Forge maintains this integration. V1 supports CodeGraph only.",
+      "Use the verified official archive in the per-user versioned store. Its bin/codegraph(.cmd) launcher runs bundled Node 24.16.0. Run install --location local --target claude,codex --yes --no-permissions from that launcher. --yes skips npm and PATH setup. No system Node, npm, PATH or registry changes are needed.",
+      "The local installer writes mcpServers.codegraph in .mcp.json, [mcp_servers.codegraph] in .codex/config.toml, a Claude UserPromptSubmit hook in .claude/settings.json and CODEGRAPH_START to CODEGRAPH_END instruction blocks in .claude/CLAUDE.md and root AGENTS.md. --no-permissions suppresses Claude auto-allow permissions, not the prompt hook. Report recognized legacy cleanup and transient files as listed in the consent inventory.",
+      "After install, configure and update, rewrite only the declared command parts. MCP entries use open-forge with [tool,run,codegraph,serve,--mcp]. The hook uses open-forge tool run codegraph prompt-hook. The marked shell example uses open-forge tool run codegraph explore \"<symbol names or question>\". Keep names, markers, type, alwaysLoad and unrelated content. Use the existing JSON serializer and exact Codex command and args line edits without a TOML parser. Stop and report unexpected or ambiguous shapes. An exact recorded matching rewritten hook is unchanged on rerun.",
+      "One resolver uses open-forge on PATH, or the absolute running Open Forge executable when it is not on PATH. Quote for each destination. Keep the literal substring codegraph prompt-hook so the native uninstaller recognizes it. tool run forwards all following arguments, optionally after --, and forwards streams, exit code and signals without success output. It selects the workspace pin using explicit --workspace before the tool name, CLAUDE_PROJECT_DIR or an upward walk from CWD.",
+      "Ask whether to keep the Claude UserPromptSubmit hook, default yes. It adds context from the local index on structural prompts. Nothing leaves the machine. CODEGRAPH_NO_PROMPT_HOOK=1 disables it. Non-interactive installs take --prompt-hook yes|no. On no, remove only recognized CodeGraph prompt-hook commands and prune empty containers as upstream opt-out does.",
+      "Run the native telemetry off command unless the visible telemetryEnabled setting enables it. Disclose ~/.codegraph/telemetry.json, its temporary file and deletion of buffered telemetry files. Suppress telemetry before other invocations. Keep update checks, daemon startup, watchers and automatic indexing off during Open Forge writes. Use the declared private Git hook sink without changing real hooks or Git configuration files.",
+      "Removal runs open-forge tool run codegraph uninstall --location local --target claude,codex --yes --keep-cli, then open-forge tool run codegraph uninit <root> --force. Native removal keeps the CLI and removes recognized project entries and this project index. Remove the required Open Forge Skill, conditional active-role line and managed .codegraph/ ignore entry. Release a store version only when no workspace uses it. Report agreed leftovers and keep unrelated content.",
+      "Git is the backup in Git workspaces. Without Git, prepare sibling .bak files before changing existing files. Keep native file names and instruction markers unchanged for uninstall. The complete write inventory is docs/tools/codegraph-consent.md.",
+      "Keep the native CodeGraph instruction block with its corrected shell example. Ship the short required open-forge-codegraph Skill. Add one conditional line to Open Forge managed AGENTS.md and CLAUDE.md blocks only while the code-navigation role is active, and remove the line when the role is cleared or moved. Status and Inspect use native server name codegraph.",
+      "For teammates, bare open-forge tool install installs every tool declared by the workspace. When CodeGraph is declared but not installed locally, tool run fails with a clear instruction to run open-forge tool install. It does not install silently. Existing consent, artifact verification and hook choice still apply.",
+      "Indexing is external and needs agreement. init --yes builds the first index, index --quiet rebuilds an initialized index and sync refreshes changes. C# call recall was 41% in the trial. Confirm call sites in source.",
       "Upstream needs an installer option to set the launch command or write the absolute launcher path when it is not on PATH. That would remove Open Forge command rewrites.",
-      "Upstream needs --no-prompt-hook for non-interactive installs. --no-permissions only suppresses Claude permissions.",
-      "C# call recall was 41% in the trial. Confirm call sites in source.",
-      "The Claude instruction destination is .claude/CLAUDE.md, as pinned source specifies. Entry names and CODEGRAPH markers stay unchanged for native removal.",
-      "The telemetry command persists an account preference. Suppress telemetry before all other invocations, then apply the disclosed preference."
+      "Upstream needs --no-prompt-hook for non-interactive installs. Do not contact upstream unasked.",
+      "The definition trust notes and maintenance CodeGraph worked example record these decisions. Issue comments are discussion, not the specification."
     ],
     "alreadyRewritten": "Keep an exact recorded matching rewrite unchanged. Native reinstall recognizes and can keep the rewritten prompt hook.",
     "managedRolePaths": ["AGENTS.md", "CLAUDE.md"]

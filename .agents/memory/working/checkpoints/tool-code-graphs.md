@@ -8,13 +8,13 @@ open-forge:
 
 CodeGraph V1 is the issue 23 task that prepares the verified CodeGraph pin, required Skill, consent and agent integration for Open Forge.
 
-The maintainer's final 2026-11-13 decisions replace all earlier graph-installer decisions. Codebase Memory is unsupported in V1. No installer is applied before the incoming core writers are rebased.
+The 2026-11-13 addendum renames the pinned launcher command to `tool run` and adds teammate setup. CodeGraph-specific decisions live in the definition trust notes, maintenance CodeGraph worked example and public tools page. Codebase Memory is unsupported in V1. No installer is applied before the incoming core writers are rebased.
 
 Status: Definitions, origin readers, contracts and guidance prepared. Core writer integration and native qualification pending.
 
 ## Current scope
 
-Work uses `feature/tool-code-graphs` from `feature/tool-command`. This base has List, Inspect and Status, lifecycle models and an empty production catalogue. It lacks the five writers, Exec and concrete production adapters. We don't create competing implementations while waiting for the rebase. Local commits are authorized. Pushes, merges, upstream contact, full local suites and native builds aren't authorized. CI is the full-suite gate.
+Work uses `feature/tool-code-graphs` from `feature/tool-command`. This base has List, Inspect and Status, lifecycle models and an empty production catalogue. It lacks the five writers, Run and concrete production adapters. We don't create competing implementations while waiting for the rebase. Local commits are authorized. Pushes, merges, upstream contact, full local suites and native builds aren't authorized. CI is the full-suite gate.
 
 Commit `e4534e27a` records CodeGraph-only V1, its draft, required Skill, consent, maintenance research, origin schema and read output, contracts and site pages. The documentation step updates both CLI Skill copies, `docs/cli.md` and the affected Status snapshots. Earlier commits `e6ad8d24a` and `7c76ca5fb` keep the original twelve-asset verification history.
 
@@ -24,24 +24,26 @@ This is local developer tooling that can change project agent files and account-
 
 The [maintenance checklist](../../../../docs/tool-maintenance.md) defines pin review, process settings, verification and native gates. The [CodeGraph draft](../../../../src/tools/drafts/codegraph-1.6.2.json) records all six official archive sizes, SHA-256 values, verified attestation identity, source commits, own-launcher lifecycle arguments and four bounded rewrite locations. Native qualifications are empty and admission stays blocked. The production reader rejects the wrapper.
 
-The [consent inventory](../../../../docs/tools/codegraph-consent.md) lists files, blocks, optional prompt hook, telemetry account state, legacy cleanup and removal. The [CodeGraph V1 design](../../crystallized/documents/cli/technical-designs/codegraph-v1.md) defines command resolution, rewrites and conditional role guidance. The [Exec contract](../../crystallized/documents/cli/contracts/tool/exec/interface.md) defines workspace selection and transparent streams, arguments, exit and signals.
+The [consent inventory](../../../../docs/tools/codegraph-consent.md) lists files, blocks, optional prompt hook, telemetry account state, legacy cleanup and removal. The maintenance CodeGraph worked example defines command resolution, rewrites and conditional role guidance. The [Run contract](../../crystallized/documents/cli/contracts/tool/run/interface.md) defines workspace selection and transparent streams, arguments, exit and signals.
 
-The required Skill is 228 words including metadata. It gives MCP and shell use, first init, rebuild, sync and the C# recall warning. Installation internals moved to contracts and maintenance docs. Codebase Memory has no packaged definition, Skill or public tools page. Its [maintenance research](../../../../docs/tools/codebase-memory-research.md) keeps the six verified archives, Sigstore evidence, account write inventory and missing project-scope and hook controls.
+The required Skill stays short and practical. It gives MCP and shell use, teammate install, first init, rebuild, sync and the C# recall warning. Installation internals live in the definition trust notes and maintenance worked example. Codebase Memory has no packaged definition, Skill or public tools page. The maintainer preserved its draft, verified research and missing upstream controls on `feature/tool-codebase-memory` at `7c76ca5fb`. This branch removes the separate research copy.
 
 ## Verification
 
+The addendum renames the launcher command to Run, records bare installation for teammates and moves CodeGraph-specific policy into branch-owned files. Core contracts keep generic behavior. The separate Codebase Memory research copy is removed because the maintainer preserved its branch.
+
 The managed Release build passes with zero warnings and errors. Focused evidence passes:
 
-- 32 Unit cases in the touched draft and manifest classes.
-- 25 Tool Integration cases in the touched read and draft-isolation classes.
+- 5 Unit cases in the touched draft class, including Run-prefix composition.
+- 2 Tool Integration cases for help and draft isolation.
 - 4 affected Status cases for the shipped CLI Skill payload.
 - Docusaurus production build, with the existing Node localStorage experimental warning.
-- Offline schema validation and four rejected mutations for admission, origin, rewrite count and hook shape.
+- Offline schema validation rejects the old launcher prefix, enabled admission and a missing rewrite.
 - Skill validator, exact CLI-copy parity, changed Markdown file links and Git whitespace.
 
-Accepted 19 Tool snapshots for origin, wrapped columns and CodeGraph-only help. Accepted 49 Status snapshots because the shipped CLI Skill package shrank by 125 bytes. Only routed byte, character, token and startup-share values changed. Startup counts and behavior stayed unchanged. Rejected the initial stacked table captures and accepted the wrapped-column form after review. The final selected runs have no skips or flakes.
+Accepted 3 help snapshots for Run and teammate setup. Accepted 49 Status snapshots because the shipped CLI Skill package grew by 293 bytes. Only routed byte, character, token and startup-share values changed. Startup counts and behavior stayed unchanged. The selected runs have no skips or flakes. A read-only snapshot-review shell stalled between scripts. Running that helper from a file completed the review.
 
-Both required .NET formatting checks pass before each commit. Three test-initializer layout fixes corrected the first failed checks. The earlier restore used the base lane's local `-p:NuGetAudit=false` workaround for the existing ILCompiler 10.0.1 NU1903 advisory. No package pin changed.
+Both required .NET formatting checks pass before the addendum commit. The earlier restore used the base lane's local `-p:NuGetAudit=false` workaround for the existing ILCompiler 10.0.1 NU1903 advisory. No package pin changed. Scoped Index and changed-file links pass. Global Repair preview reports existing unrelated corrections and unresolved choices. It was left unapplied.
 
 The verified Windows archive launcher ran only help for Install, Uninstall, Init, Index, Sync, Uninit, Telemetry and Explore, plus local `--print-config claude` and `--print-config codex`. The initial print-config call omitted its required target argument and was corrected. No installer, index builder or telemetry-setting command was applied. No temporary native journey repository was created. PATH and registry were unchanged.
 
@@ -51,8 +53,8 @@ From the repository root, run these focused commands:
 
 ```powershell
 dotnet build OpenForge.Cli.slnx --configuration Release --no-restore -p:OpenForgeSkipDevelopmentPublish=true
-dotnet artifacts/bin/OpenForge.Cli.Core.UnitTests/release/OpenForge.Cli.Core.UnitTests.dll --filter-class OpenForge.Cli.Core.UnitTests.Framework.Tools.ToolDraftDefinitionTests OpenForge.Cli.Core.UnitTests.Framework.Tools.ToolManifestTests --minimum-expected-tests 32 --fail-warns on --fail-skips on --no-ansi --progress off
-dotnet artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.dll --filter-class OpenForge.Cli.IntegrationTests.Framework.Tools.ToolDraftIsolationTests OpenForge.Cli.IntegrationTests.Commands.Tool.ToolReadCommandsTests --minimum-expected-tests 25 --fail-warns on --fail-skips on --no-ansi --progress off
+dotnet artifacts/bin/OpenForge.Cli.Core.UnitTests/release/OpenForge.Cli.Core.UnitTests.dll --filter-class OpenForge.Cli.Core.UnitTests.Framework.Tools.ToolDraftDefinitionTests --minimum-expected-tests 5 --fail-warns on --fail-skips on --no-ansi --progress off
+dotnet artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.dll --filter-method OpenForge.Cli.IntegrationTests.Commands.Tool.ToolReadCommandsTests.HelpStopsBeforeWorkspace OpenForge.Cli.IntegrationTests.Framework.Tools.ToolDraftIsolationTests.DraftSourcesCannotActivate --minimum-expected-tests 2 --fail-warns on --fail-skips on --no-ansi --progress off
 dotnet artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.dll --filter-method OpenForge.Cli.IntegrationTests.Commands.Status.StatusBeforeOutputSnapshotTests.HealthyWithExtension OpenForge.Cli.IntegrationTests.Commands.Status.StatusBeforeOutputSnapshotTests.InstalledWorkspace OpenForge.Cli.IntegrationTests.Commands.Status.StatusBeforeOutputSnapshotTests.RecoveryBundlePresent --minimum-expected-tests 4 --fail-warns on --fail-skips on --no-ansi --progress off
 npm --prefix src/docusaurus run build
 npm run check:dotnet:whitespace
@@ -74,6 +76,7 @@ assert.equal(validate(draft), true);
 for (const change of [
   (value) => (value.definition.admission = "enabled"),
   (value) => (value.definition.origin = "other"),
+  (value) => (value.registrationDraft.runPrefix[1] = "unknown-command"),
   (value) => value.registrationDraft.rewrites.pop(),
   (value) => (value.registrationDraft.promptHook.default = false),
 ]) {
@@ -83,10 +86,10 @@ for (const change of [
 }
 ```
 
-This prints no output on success and rejects the four invalid mutations. Local disposable reports are under `artifacts/tool-code-graphs/`. They aren't required shipped inputs.
+This prints no output on success and rejects the invalid mutations. Local disposable reports are under `artifacts/tool-code-graphs/`. They aren't required shipped inputs.
 
 ## Next work
 
-After the maintainer rebases the core writers, port the reviewed draft metadata into their typed definition model and compiled adapter. Implement the one launch-command resolver, exact command rewrites, hook choice, telemetry command, required Skill and conditional active-role line. Use native server name `codegraph` for passive checks. Keep all unrelated members and markers.
+After the maintainer rebases the core writers, port the reviewed draft metadata into their typed definition model and compiled adapter. Implement the one launch-command resolver, `tool run`, bare declared-tool installation, exact command rewrites, hook choice, telemetry command, required Skill and conditional active-role line. A declared but uninstalled tool directs teammates to `open-forge tool install`. Use native server name `codegraph` for passive checks. Keep all unrelated members and markers.
 
 Then choose bounded timeouts from native evidence and run the temporary Windows x64 Git journey under D:, with project-only Claude Code and Codex. Verify download, hashes, installation, Status, first Init, refresh and removal. Check that native uninstall recognizes the rewritten hook. Inventory every agreed leftover. The other five targets need CI journeys before activation. All product decisions are resolved. No new maintainer choice is requested.

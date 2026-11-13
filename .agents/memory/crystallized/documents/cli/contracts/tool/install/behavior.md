@@ -16,10 +16,10 @@ Status: V1 core contract decided.
 
 The operation follows these steps:
 
-1. Validate the complete request and resolve its exact source and pin.
+1. Validate the complete request. With an ID, select that tool. Without an ID, select every workspace declaration and keep its exact pin.
 2. Read settings, lock receipts, store bindings, references and process consent.
 3. Validate release admission, native target, contained roots, declared command outputs, grants and exclusions.
-4. Form all transfers, installer invocations, managed ignore rules, references and control-file changes in one ordered plan.
+4. Form all selected tools' transfers, installer invocations, managed ignore rules, references and control-file changes in one ordered plan.
 5. Resolve separate artifact consent, daemon consent, destination grants and final confirmation.
 6. For apply, stage and hash approved artifacts outside writing leases. Reject unsafe archive members before extraction or execution.
 7. Acquire the user-store lease, then the workspace lease, and revalidate every required fact.

@@ -11,8 +11,10 @@ Behavior:
   Reads local facts without downloads, child processes or writes.
   Unavailable observations keep their cause and independently readable facts.
   CodeGraph V1 uses its own installer and declared Open Forge command rewrites.
-  V1 pinned execution: open-forge tool exec <tool> <args...>. Check installed
+  V1 pinned execution: open-forge tool run <tool> <args...>. Check installed
   help for availability.
+  Bare open-forge tool install installs every declared tool. A declared
+  CodeGraph pin missing locally points teammates to that command.
 
 Options:
   --source <path>  Read one exact local manifest or catalogue.

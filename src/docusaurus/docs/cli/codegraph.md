@@ -17,9 +17,13 @@ CodeGraph is third-party software from `colbymchenry/codegraph`, under MIT, down
 
 ## Project setup
 
-CodeGraph's own installer configures Claude Code and Codex locally. It writes MCP server `codegraph` in `.mcp.json` and `.codex/config.toml`, instruction blocks in `.claude/CLAUDE.md` and `AGENTS.md` and an optional Claude prompt hook. Open Forge rewrites only the command parts to `open-forge tool exec codegraph`. It keeps names and markers so CodeGraph's own uninstall recognizes them.
+CodeGraph's own installer configures Claude Code and Codex locally. It writes MCP server `codegraph` in `.mcp.json` and `.codex/config.toml`, instruction blocks in `.claude/CLAUDE.md` and `AGENTS.md` and an optional Claude prompt hook. Open Forge rewrites only the command parts to `open-forge tool run codegraph`. It keeps names and markers so CodeGraph's own uninstall recognizes them.
 
 If Open Forge isn't on PATH, generated commands use its running executable's absolute path. An unexpected original entry stops the rewrite and reports its file. The [consent inventory](../../../../docs/tools/codegraph-consent.md) lists every output and rewrite. It also describes legacy cleanup and account telemetry state.
+
+## Teammate setup
+
+Bare `open-forge tool install` installs every tool declared by the workspace. After cloning, a teammate can run it to prepare the local pins. If CodeGraph is declared but missing locally, `tool run` tells you to run that command. It doesn't install silently. Normal consent and hook choice still apply.
 
 ## Prompt hook
 
@@ -29,13 +33,13 @@ Telemetry defaults to off through CodeGraph's own command and is a visible setti
 
 ## Index use
 
-After a qualified install and your agreement to indexing, run from the workspace root. These commands wait for core Exec integration:
+After a qualified install and your agreement to indexing, run from the workspace root. These commands wait for core Run integration:
 
 ```sh
-open-forge tool exec codegraph init --yes
-open-forge tool exec codegraph index --quiet
-open-forge tool exec codegraph sync
-open-forge tool exec codegraph explore "Where is the catalogue loaded?"
+open-forge tool run codegraph init --yes
+open-forge tool run codegraph index --quiet
+open-forge tool run codegraph sync
+open-forge tool run codegraph explore "Where is the catalogue loaded?"
 ```
 
 `init --yes` builds the first index. `index --quiet` rebuilds an initialized index. `sync` refreshes changed files. The final command queries the index. With MCP, use `codegraph_explore` for the same purpose. Installation doesn't build an index.

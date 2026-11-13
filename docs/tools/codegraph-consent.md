@@ -10,7 +10,7 @@ Status: Final V1 decisions recorded. Native journey waits for the core writers.
 
 Proposed core display:
 
-"Install third-party software CodeGraph 1.6.2 from colbymchenry/codegraph under MIT, downloaded from its official release and maintained by its authors. Open Forge will keep the verified archive's launcher and bundled Node in your per-user versioned store. It will run CodeGraph's local installer for Claude Code and Codex. This writes the codegraph MCP entries in .mcp.json and .codex/config.toml, CodeGraph instruction blocks in .claude/CLAUDE.md and AGENTS.md and a Claude UserPromptSubmit hook in .claude/settings.json. Open Forge rewrites only their launch commands to open-forge tool exec codegraph. It adds the required open-forge-codegraph Skill and .codegraph/ ignore entry. While the code-navigation role is active, its managed agent block adds one CodeGraph usage line. It runs telemetry off by default, which saves the account preference in ~/.codegraph/telemetry.json. Update checks, watchers and automatic indexing are off. Installation doesn't build an index or choose a role. Git is the backup in a Git workspace. Elsewhere, existing edited files get sibling .bak backups."
+"Install third-party software CodeGraph 1.6.2 from colbymchenry/codegraph under MIT, downloaded from its official release and maintained by its authors. Open Forge will keep the verified archive's launcher and bundled Node in your per-user versioned store. It will run CodeGraph's local installer for Claude Code and Codex. This writes the codegraph MCP entries in .mcp.json and .codex/config.toml, CodeGraph instruction blocks in .claude/CLAUDE.md and AGENTS.md and a Claude UserPromptSubmit hook in .claude/settings.json. Open Forge rewrites only their launch commands to open-forge tool run codegraph. It adds the required open-forge-codegraph Skill and .codegraph/ ignore entry. While the code-navigation role is active, its managed agent block adds one CodeGraph usage line. It runs telemetry off by default, which saves the account preference in ~/.codegraph/telemetry.json. Update checks, watchers and automatic indexing are off. Installation doesn't build an index or choose a role. Git is the backup in a Git workspace. Elsewhere, existing edited files get sibling .bak backups."
 
 The prompt-hook question is separate:
 
@@ -43,7 +43,7 @@ The pinned [Claude target](https://github.com/colbymchenry/codegraph/blob/656005
 
 After every install, configure or update, rewrite only the entries the reviewed installer wrote. Keep every server name, marker, unrelated member, hook and instruction line.
 
-MCP command and arguments become `open-forge` and `[tool,exec,codegraph,serve,--mcp]`. The hook becomes `open-forge tool exec codegraph prompt-hook`. Keep the literal substring `codegraph prompt-hook`, because upstream uninstall matches it. The marked shell example becomes `open-forge tool exec codegraph explore "<symbol names or question>"`.
+MCP command and arguments become `open-forge` and `[tool,run,codegraph,serve,--mcp]`. The hook becomes `open-forge tool run codegraph prompt-hook`. Keep the literal substring `codegraph prompt-hook`, because upstream uninstall matches it. The marked shell example becomes `open-forge tool run codegraph explore "<symbol names or question>"`.
 
 One resolver chooses `open-forge` when it is on PATH. Otherwise it gives the absolute path of the running Open Forge executable. Quote that path for the destination's syntax. JSON uses the existing serializer. Codex edits only the expected command and args lines in the exact named table, with no TOML parser. An already recorded matching rewritten hook stays unchanged because native reinstall can keep it. An unexpected or ambiguous shape stops the operation and reports the path. It never broadens the rewrite.
 
@@ -57,7 +57,7 @@ Every supplied launch disables daemon startup, watching and automatic indexing d
 
 ## Removal
 
-Run `open-forge tool exec codegraph uninstall --location local --target claude,codex --yes --keep-cli`, then `open-forge tool exec codegraph uninit <root> --force`. Native uninstall removes recognized MCP entries, CodeGraph instruction blocks, permissions and prompt hooks. Uninit deletes this project's `.codegraph` and checks Git sync hooks through the private hook sink.
+Run `open-forge tool run codegraph uninstall --location local --target claude,codex --yes --keep-cli`, then `open-forge tool run codegraph uninit <root> --force`. Native uninstall removes recognized MCP entries, CodeGraph instruction blocks, permissions and prompt hooks. Uninit deletes this project's `.codegraph` and checks Git sync hooks through the private hook sink.
 
 Then remove the required Skill, the conditional Open Forge role line and its managed ignore entry. Release store bytes only after no workspace references that version. Report any empty JSON files, empty directories or native temporary files the commands leave behind. Don't delete unrelated content. The future Windows journey must verify that the rewritten hook is recognized by native uninstall and list every agreed leftover.
 
