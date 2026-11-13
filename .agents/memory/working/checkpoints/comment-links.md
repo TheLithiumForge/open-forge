@@ -340,3 +340,85 @@ dotnet artifacts/bin/OpenForge.Cli.EndToEndTests/release/OpenForge.Cli.EndToEndT
 npm run check:dotnet:whitespace
 npm run check:dotnet:style
 ```
+
+## Parity Rebase
+
+The maintainer requested a rebase onto `45d9d7970` to keep finding parity at
+standard detail. The local backup branch
+`backup/comment-links-pre-parity-rebase-20261113` keeps the clean predecessor
+`e88725f9c`. All nine commits replayed without conflicts. `git range-diff` marks
+each replayed patch equal. The rebased head before this receipt is `2a68600c3`.
+
+The previous rebase's local CLI, recovery and threat limits apply. This change
+restores the existing report contract through References presentation. There is
+no dependency, runtime, architecture, payload or mutation-safety change.
+Exceptional machinery: none. Full managed and native gates stay with CI.
+
+The imported fix keeps all findings in text from standard detail onward, in the
+same order as JSON. Minimal text still uses outgoing rows for findings without
+actions. The imported `broken-outgoing.standard.txt` adds the missing finding's
+heading and location. Fresh References captures match it. No snapshot conflict
+or existing expectation regeneration is needed. Contracts, public docs
+and both CLI Skill copies keep their previous combined behavior.
+
+The solution build with fresh managed publication passes with four existing
+NU1903 warnings under the command-only override. The final Integration build
+passes with two existing NU1903 warnings. All 28 selected Integration cases pass
+with zero failures and skips. These cover the requested parity invariant, all
+19 References snapshot cases, both Doctor successor counts and six controlled
+timeout or cancellation cases. Both formatting checks pass with the existing
+workspace-loading warning. No full local suite, native build or Unix execution
+was used.
+
+CI run `43438819994` belongs to `e88725f9c`. Its shared checks pass and
+Documentation run `43438819564` passed. The Build run completed with failure.
+Every platform reports the parity invariant failure for
+`Direction_broken-outgoing/broken-outgoing.standard.txt`. macOS Intel also reports
+`DoctorMaintenanceGuidanceIntegrationTests.GitSuccessors(count: 1)`. All six
+`diagnostics-<rid>` artifacts, job logs and final failed-step logs were read.
+The machine reports confirm these are the only failed tests. No Unix expectation
+needs a platform-specific change.
+
+The Doctor case expected automatic Repair after Index but received a Doctor
+retry. Its Git fixture borrowed the repository's whole HEAD, deleted the working
+content and substituted a few notes. Git still had to read the repository-sized
+committed inventory under the existing five-second budgets. The retry on the slow
+runner is consistent with a bounded evidence timeout. The CI receipt doesn't
+retain the intermediate Doctor JSON, so that timeout is inferred from its retry
+and the fixture's work, rather than recorded as a typed observation.
+
+The case now starts with an empty owned Git repository and commits only its small
+authored scenario. It still calls the composed Doctor and Index commands with
+real Git and unchanged deadlines. Both successor counts keep their original
+safe-exact or guided-choice requirements before and after Index. The duplicate
+case also directly checks both candidates before Index. Existing controlled Git,
+content-deadline and Doctor retry cases cover the timeout behavior separately.
+
+The old literal ambiguity-message assertion becomes a direct candidate-count
+assertion. Both cases keep their original continuation checks. No production
+implementation, deadline, test retry, skip or runner parallelism change is needed
+for this fixture correction. Trial partial guidance snapshots were removed
+because the command corpus requires complete reports. No new snapshots are
+accepted in this correction.
+
+The monitor stopped on a GitHub HTTP 502 while its saved log still contained an
+active job table. Reading that table gave stale progress. The final direct run
+view and downloaded test reports establish completion and the full failure set.
+Future monitoring must check the watch process result before trusting an old
+table.
+
+The local final run has no flakes. The Intel CI fixture exposed load-sensitive
+work under a real deadline. The corrected fixture keeps the same continuation
+requirements and leaves production timeout behavior unchanged. There is no
+product deviation or open maintainer question. The branch is left for the
+maintainer's force-push and next full CI run.
+
+Reproduce the focused managed test gate:
+
+```powershell
+dotnet build OpenForge.Cli.slnx --configuration Release --no-restore -p:WarningsNotAsErrors=NU1903
+dotnet build src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-restore -p:OpenForgeSkipDevelopmentPublish=true -p:BuildProjectReferences=false -p:WarningsNotAsErrors=NU1903
+dotnet artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.dll --filter-method '*CliReportInvariantsTests.NativeSnapshotsSatisfyLaddersDebugStdoutAndCrossFormatParity' '*ReferencesBeforeOutputSnapshotTests.*' '*CodeLinkFragmentSnapshotTests.*' '*CommentLinkOutputSnapshotTests.*' '*DoctorMaintenanceGuidanceIntegrationTests.GitSuccessors' '*DoctorRenameAgreementIntegrationTests.GitTimeout' '*RenameGitFailureIntegrationTests.TimeoutAndCancellation' '*RenameEvidencePerformanceIntegrationTests.ContentDeadline' --minimum-expected-tests 28 --fail-warns on --fail-skips on --no-ansi --progress off
+npm run check:dotnet:whitespace
+npm run check:dotnet:style
+```
