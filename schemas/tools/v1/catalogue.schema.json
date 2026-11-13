@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/tools/v1/catalogue.schema.json",
+  "$ref": "#/$defs/ToolCatalogue",
+  "$defs": {
+    "ToolCatalogue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "tools"
+      ],
+      "properties": {
+        "schema": {
+          "const": 1
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ToolCatalogueEntry"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "ToolCatalogueEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "defaultVersion",
+        "versions"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,127}$(?![\\s\\S])",
+          "not": {
+            "const": "none"
+          }
+        },
+        "defaultVersion": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$(?![\\s\\S])"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ToolCatalogueVersion"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        }
+      }
+    },
+    "ToolCatalogueVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$(?![\\s\\S])"
+        },
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+        }
+      }
+    }
+  }
+}

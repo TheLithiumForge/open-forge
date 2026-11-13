@@ -21,27 +21,7 @@ internal sealed class InstallOperationWorkspace : IDisposable
         encoderShouldEmitUTF8Identifier: false,
         throwOnInvalidBytes: true);
 
-    internal static readonly IReadOnlyList<string> EmbeddedPayloadPaths =
-    [
-        ".agents/README.md",
-        ".agents/directives/_directives.md",
-        ".agents/guidance/_guidance.md",
-        ".agents/loader.md",
-        ".agents/maps/_maps.md",
-        ".agents/memory/_memory.md",
-        ".agents/memory/archived/_archived.md",
-        ".agents/memory/crystallized/_crystallized.md",
-        ".agents/memory/emerging/_emerging.md",
-        ".agents/memory/working/_working.md",
-        ".agents/patterns/_patterns.md",
-        ".agents/skills/_skills.md",
-        ".agents/skills/open-forge-cli/SKILL.md",
-        ".agents/skills/open-forge-cli/references/common.md",
-        ".agents/skills/open-forge-cli/references/discovery.md",
-        ".agents/skills/open-forge-cli/references/packages.md",
-        ".agents/skills/open-forge-cli/references/routes.md",
-        ".agents/templates/_templates.md",
-    ];
+    internal static IReadOnlyList<string> EmbeddedPayloadPaths => FrameworkPayloadSource.InstalledPaths;
 
     private const string LifecyclePath = ".agents/open-forge.lifecycle.json";
     internal const string OwnershipPath = ".agents/open-forge.lock.json";

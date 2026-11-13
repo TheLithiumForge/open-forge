@@ -34,6 +34,8 @@ internal sealed record WorkspaceSettingsDocument(
 
     internal ImmutableArray<string> RemovedLibraries { get; init; } = [];
 
+    internal ImmutableDictionary<string, WorkspaceToolSetting> Tools { get; init; } = ImmutableDictionary<string, WorkspaceToolSetting>.Empty;
+
     /// <summary>
     /// Files outside the content locations that `route include` registered. The loader's Entries decide what
     /// loads, so a path here without a loader line is registered and switched off.

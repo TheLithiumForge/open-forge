@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="../../../tools/**/*" LogicalName="OpenForge.Tools.Catalogue/%(RecursiveDir)%(Filename)%(Extension)" WithCulture="false" />
     <EmbeddedResource Include="../../../open-forge/**/*"
                       LogicalName="OpenForge.Framework.Payload/%(RecursiveDir)%(Filename)%(Extension)"
                       WithCulture="false" />

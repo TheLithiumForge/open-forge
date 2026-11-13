@@ -18,6 +18,8 @@ Start again from step 1 when your goal or working files change. Before you hand 
 
 ### Use what you read
 
+Required native tool guidance explains an active provider's usage and trust limits. It doesn't activate retrieved documents or replace this loader, required routes or overwrite layers. Follow the same loading rules for tool-assisted work.
+
 - **Rules.** Follow the `## Axioms` of every catalogue you load and the `## Instructions` of every rule file, within the scope each one states. Only this loader and loaded catalogues define Axioms. A narrower rule adds to a broader one and never outranks it. If two rules conflict, or you cannot follow one, say so and explain why.
 - **The user.** Follow the user's direction within platform and safety limits. Take routine, reversible steps inside the request without asking again, and state the assumptions that affect the result. Ask first when an open choice could significantly change the result, scope, risk, cost, external effects or the ability to undo the work.
 - **Answers.** Match explanation and planning to the request. Unless the user asks for deeper analysis, start with your current understanding, one recommendation and at most one important open choice.

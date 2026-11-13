@@ -1,7 +1,7 @@
-using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.MainRoot;
 using OpenForge.Cli.TestSupport.Contracts;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.EndToEndTests;
 
@@ -20,12 +20,14 @@ public sealed class PublishedMainRootDefaultCompatibilityProcessTests
         Assert.Equal(PublishedTokens.Statuses.CompleteExitCode, installed.ExitCode);
         Assert.Empty(installed.StandardError);
         workspace.AssertBytes(baseline.Files);
-        Assert.Equal(baseline.Text, Encoding.UTF8.GetBytes(workspace.Normalize(installed.StandardOutput)));
         var noOp = await workspace.RunRaw([.. arguments, PublishedTokens.Syntax.FormatOption, PublishedTokens.Syntax.JsonFormat]);
         Assert.Equal(PublishedTokens.Statuses.CompleteExitCode, noOp.ExitCode);
         Assert.Empty(noOp.StandardError);
-        using var json = JsonDocument.Parse(workspace.Normalize(noOp.StandardOutput));
-        Assert.True(JsonElement.DeepEquals(baseline.Json, json.RootElement));
+        CommandOutputSnapshot.MatchDetailSnapshot(new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["installed"] = workspace.Normalize(installed.StandardOutput),
+            ["no-op.json.minimal"] = workspace.Normalize(noOp.StandardOutput),
+        });
         workspace.AssertBytes(baseline.Files);
         using var settings = JsonDocument.Parse(workspace.Read(PublishedTokens.Settings.RelativePath));
         Assert.False(settings.RootElement.TryGetProperty(PublishedTokens.Settings.MainRootProperty, out _));
