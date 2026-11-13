@@ -29,7 +29,9 @@ internal static class ToolStatusBinding
         ToolStatusSymbols symbols, CliHelpContent help, ToolStatusOperation operation)
         => new()
         {
-            Command = symbols.Command, Help = help, WorkspaceRequirement = CliWorkspaceRequirement.Required,
+            Command = symbols.Command,
+            Help = help,
+            WorkspaceRequirement = CliWorkspaceRequirement.Required,
             Binder = (parse, invocation) => Bind(symbols, parse, invocation),
             InvalidResultFactory = input => new ToolStatusResult
             {
@@ -54,7 +56,8 @@ internal static class ToolStatusBinding
     private static CliBindResult<ToolStatusRequest, ToolStatusResult> Invalid(CliInvocation invocation, string cause)
         => CliBindResult<ToolStatusRequest, ToolStatusResult>.Invalid(new()
         {
-            Status = CliSemanticStatus.Invalid, Workspace = invocation.Workspace,
+            Status = CliSemanticStatus.Invalid,
+            Workspace = invocation.Workspace,
             Issues = [new(ToolReadIssueCode.InvalidInput, CliSemanticStatus.Invalid, "tool status", cause)],
         });
 }

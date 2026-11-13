@@ -30,7 +30,8 @@ internal static class ToolReadPresentation
         {
             Code = command.Replace(' ', '-') + "." + ToolReadIssueCodes.Suffix(issue.Code),
             Severity = Severity(issue.Status),
-            Title = ToolText.FindingTitle(), Message = issue.Cause,
+            Title = ToolText.FindingTitle(),
+            Message = issue.Cause,
             Subject = new(CliSubjectKind.Identifier, Id: issue.Subject),
         }).OrderBy(finding => finding.Severity).ToArray();
 

@@ -31,7 +31,9 @@ internal static class ToolListBinding
         ToolListSymbols symbols, CliHelpContent help, ToolListOperation operation)
         => new()
         {
-            Command = symbols.Command, Help = help, WorkspaceRequirement = CliWorkspaceRequirement.Required,
+            Command = symbols.Command,
+            Help = help,
+            WorkspaceRequirement = CliWorkspaceRequirement.Required,
             Binder = (parse, invocation) => Bind(symbols, parse, invocation),
             InvalidResultFactory = input => new ToolListResult
             {
@@ -67,7 +69,8 @@ internal static class ToolListBinding
     private static CliBindResult<ToolListRequest, ToolListResult> Invalid(CliInvocation invocation, string cause)
         => CliBindResult<ToolListRequest, ToolListResult>.Invalid(new()
         {
-            Status = CliSemanticStatus.Invalid, Workspace = invocation.Workspace,
+            Status = CliSemanticStatus.Invalid,
+            Workspace = invocation.Workspace,
             Issues = [new(ToolReadIssueCode.InvalidInput, CliSemanticStatus.Invalid, "tool list", cause)],
         });
 }

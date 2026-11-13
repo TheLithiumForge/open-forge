@@ -16,13 +16,21 @@ internal sealed class ToolListOperation(ToolCatalogueReader reader)
         try { return await ReadAsync(request, token).ConfigureAwait(false); }
         catch (OperationCanceledException) when (token.IsCancellationRequested)
         {
-            return new() { Workspace = request.Workspace, Status = CliSemanticStatus.Interrupted,
-                Issues = [new(ToolReadIssueCode.Cancelled, CliSemanticStatus.Interrupted, "tool list", "The read was cancelled.")] };
+            return new()
+            {
+                Workspace = request.Workspace,
+                Status = CliSemanticStatus.Interrupted,
+                Issues = [new(ToolReadIssueCode.Cancelled, CliSemanticStatus.Interrupted, "tool list", "The read was cancelled.")]
+            };
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
         {
-            return new() { Workspace = request.Workspace, Status = CliSemanticStatus.Incomplete,
-                Issues = [new(ToolReadIssueCode.ReadUnavailable, CliSemanticStatus.Incomplete, "tool list", "A required local observation couldn't be read.")] };
+            return new()
+            {
+                Workspace = request.Workspace,
+                Status = CliSemanticStatus.Incomplete,
+                Issues = [new(ToolReadIssueCode.ReadUnavailable, CliSemanticStatus.Incomplete, "tool list", "A required local observation couldn't be read.")]
+            };
         }
     }
 
@@ -46,11 +54,14 @@ internal sealed class ToolListOperation(ToolCatalogueReader reader)
                 definition.Manifest.Admission, definition.Reviewed, definition.Blocker)).ToArray();
         return new()
         {
-            Workspace = request.Workspace, Status = CliStatusDefinitions.Collapse(issues.Select(issue => issue.Status)),
-            Available = available, Installed = workspace.Installed(request.Role),
+            Workspace = request.Workspace,
+            Status = CliStatusDefinitions.Collapse(issues.Select(issue => issue.Status)),
+            Available = available,
+            Installed = workspace.Installed(request.Role),
             Catalogue = new(catalogue.Source, catalogue.State.ToString().ToLowerInvariant(), catalogue.Cause),
             Coverage = [.. workspace.Coverage, new("catalogue", catalogue.State == ToolSourceState.Complete ? ToolEvidenceState.Complete : ToolEvidenceState.Unavailable, catalogue.Cause)],
-            RoleFilter = request.Role, Issues = [.. issues],
+            RoleFilter = request.Role,
+            Issues = [.. issues],
         };
     }
 }

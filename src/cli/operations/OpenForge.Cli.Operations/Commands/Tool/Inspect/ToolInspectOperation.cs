@@ -18,13 +18,21 @@ internal sealed class ToolInspectOperation(ToolCatalogueReader reader)
         try { return await ReadAsync(request, token).ConfigureAwait(false); }
         catch (OperationCanceledException) when (token.IsCancellationRequested)
         {
-            return new() { Workspace = request.Workspace, Status = CliSemanticStatus.Interrupted,
-                Issues = [new(ToolReadIssueCode.Cancelled, CliSemanticStatus.Interrupted, "tool inspect", "The read was cancelled.")] };
+            return new()
+            {
+                Workspace = request.Workspace,
+                Status = CliSemanticStatus.Interrupted,
+                Issues = [new(ToolReadIssueCode.Cancelled, CliSemanticStatus.Interrupted, "tool inspect", "The read was cancelled.")]
+            };
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
         {
-            return new() { Workspace = request.Workspace, Status = CliSemanticStatus.Incomplete,
-                Issues = [new(ToolReadIssueCode.ReadUnavailable, CliSemanticStatus.Incomplete, "tool inspect", "A required local observation couldn't be read.")] };
+            return new()
+            {
+                Workspace = request.Workspace,
+                Status = CliSemanticStatus.Incomplete,
+                Issues = [new(ToolReadIssueCode.ReadUnavailable, CliSemanticStatus.Incomplete, "tool inspect", "A required local observation couldn't be read.")]
+            };
         }
     }
 
@@ -57,12 +65,18 @@ internal sealed class ToolInspectOperation(ToolCatalogueReader reader)
         }
         return new()
         {
-            Workspace = request.Workspace, Status = CliStatusDefinitions.Collapse(issues.Select(issue => issue.Status)),
-            Id = request.Id, Version = manifest?.Version, Definition = manifest is null ? null : JsonSerializer.SerializeToElement(manifest, ToolJsonContext.Default.ToolManifest),
-            Target = ToolNativeTarget.Current, Installed = Installed(workspace, request.Id),
-            Requirements = [.. requirements], Limitations = manifest is null ? [] : [manifest.Runtime.Notes, manifest.Index.Freshness, manifest.Qualification.Accuracy],
+            Workspace = request.Workspace,
+            Status = CliStatusDefinitions.Collapse(issues.Select(issue => issue.Status)),
+            Id = request.Id,
+            Version = manifest?.Version,
+            Definition = manifest is null ? null : JsonSerializer.SerializeToElement(manifest, ToolJsonContext.Default.ToolManifest),
+            Target = ToolNativeTarget.Current,
+            Installed = Installed(workspace, request.Id),
+            Requirements = [.. requirements],
+            Limitations = manifest is null ? [] : [manifest.Runtime.Notes, manifest.Index.Freshness, manifest.Qualification.Accuracy],
             Instructions = new(null, null, null, null, "A verified installation and local store bindings are needed to resolve external commands."),
-            Issues = [.. issues], Coverage = workspace.Coverage,
+            Issues = [.. issues],
+            Coverage = workspace.Coverage,
         };
     }
 
