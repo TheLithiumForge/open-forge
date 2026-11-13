@@ -27,5 +27,7 @@ internal sealed record ToolReceipt
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public ToolRewriteReceipt[]? Rewrites { get; init; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ToolComponentDeclineReceipt[]? DeclinedComponents { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public ToolGuidanceReceipt[]? Guidance { get; init; }
 }

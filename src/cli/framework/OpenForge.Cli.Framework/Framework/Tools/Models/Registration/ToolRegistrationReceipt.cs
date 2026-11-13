@@ -12,6 +12,11 @@ internal sealed record ToolRewriteReceipt
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+internal sealed record ToolComponentDeclineReceipt(
+    [property: JsonRequired] string Id,
+    [property: JsonRequired] ToolJsonEntryRemoval[] AbsentEntries);
+
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 internal sealed record ToolGuidanceReceipt(
     [property: JsonRequired] string Role,
     [property: JsonRequired] string SkillPath,
