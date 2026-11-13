@@ -14,13 +14,21 @@ internal sealed class ToolStatusOperation
         try { return await ReadAsync(request, token).ConfigureAwait(false); }
         catch (OperationCanceledException) when (token.IsCancellationRequested)
         {
-            return new() { Workspace = request.Workspace, Status = CliSemanticStatus.Interrupted,
-                Issues = [new(ToolReadIssueCode.Cancelled, CliSemanticStatus.Interrupted, "tool status", "The read was cancelled.")] };
+            return new()
+            {
+                Workspace = request.Workspace,
+                Status = CliSemanticStatus.Interrupted,
+                Issues = [new(ToolReadIssueCode.Cancelled, CliSemanticStatus.Interrupted, "tool status", "The read was cancelled.")]
+            };
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
         {
-            return new() { Workspace = request.Workspace, Status = CliSemanticStatus.Incomplete,
-                Issues = [new(ToolReadIssueCode.ReadUnavailable, CliSemanticStatus.Incomplete, "tool status", "A required local observation couldn't be read.")] };
+            return new()
+            {
+                Workspace = request.Workspace,
+                Status = CliSemanticStatus.Incomplete,
+                Issues = [new(ToolReadIssueCode.ReadUnavailable, CliSemanticStatus.Incomplete, "tool status", "A required local observation couldn't be read.")]
+            };
         }
     }
 
@@ -52,8 +60,11 @@ internal sealed class ToolStatusOperation
         }
         return new()
         {
-            Workspace = request.Workspace, Status = CliStatusDefinitions.Collapse(issues.Select(issue => issue.Status)),
-            Tools = [.. rows], Coverage = workspace.Coverage, Issues = [.. issues],
+            Workspace = request.Workspace,
+            Status = CliStatusDefinitions.Collapse(issues.Select(issue => issue.Status)),
+            Tools = [.. rows],
+            Coverage = workspace.Coverage,
+            Issues = [.. issues],
         };
     }
 

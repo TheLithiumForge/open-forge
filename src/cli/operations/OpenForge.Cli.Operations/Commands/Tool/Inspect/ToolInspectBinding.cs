@@ -32,7 +32,9 @@ internal static class ToolInspectBinding
         ToolInspectSymbols symbols, CliHelpContent help, ToolInspectOperation operation)
         => new()
         {
-            Command = symbols.Command, Help = help, WorkspaceRequirement = CliWorkspaceRequirement.Required,
+            Command = symbols.Command,
+            Help = help,
+            WorkspaceRequirement = CliWorkspaceRequirement.Required,
             Binder = (parse, invocation) => Bind(symbols, parse, invocation),
             InvalidResultFactory = input => new ToolInspectResult
             {
@@ -70,7 +72,8 @@ internal static class ToolInspectBinding
     private static CliBindResult<ToolInspectRequest, ToolInspectResult> Invalid(CliInvocation invocation, string cause)
         => CliBindResult<ToolInspectRequest, ToolInspectResult>.Invalid(new()
         {
-            Status = CliSemanticStatus.Invalid, Workspace = invocation.Workspace,
+            Status = CliSemanticStatus.Invalid,
+            Workspace = invocation.Workspace,
             Issues = [new(ToolReadIssueCode.InvalidInput, CliSemanticStatus.Invalid, "tool inspect", cause)],
         });
 }

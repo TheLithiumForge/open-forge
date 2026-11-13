@@ -37,11 +37,20 @@ public sealed class ToolHostStatusTests
         using var value = JsonDocument.Parse("{\"command\":\"fixture\"}");
         var receipt = new ToolReceipt
         {
-            Id = ToolFixtureSource.Id, Version = ToolFixtureSource.Version, Target = "win-x64",
-            ManifestSha256 = definition.Sha256, ManifestBytes = bytes, ManifestFormat = "json", AdapterRevision = definition.Manifest.Adapter.Revision,
-            CodeRoot = ".", Hosts = [format == ToolVocabulary.JsonMembers ? "claude-code" : "codex"], Bindings = [],
+            Id = ToolFixtureSource.Id,
+            Version = ToolFixtureSource.Version,
+            Target = "win-x64",
+            ManifestSha256 = definition.Sha256,
+            ManifestBytes = bytes,
+            ManifestFormat = "json",
+            AdapterRevision = definition.Manifest.Adapter.Revision,
+            CodeRoot = ".",
+            Hosts = [format == ToolVocabulary.JsonMembers ? "claude-code" : "codex"],
+            Bindings = [],
             Files = [new(null, ToolPassiveStatusReader.GuidancePath, ToolCatalogueReader.Hash(Encoding.UTF8.GetBytes(guidance)), false)],
-            Members = [new(host.Path, format, host.Selector, value.RootElement.Clone(), false)], RuntimeDirectories = [], NativeProjects = [],
+            Members = [new(host.Path, format, host.Selector, value.RootElement.Clone(), false)],
+            RuntimeDirectories = [],
+            NativeProjects = [],
         };
         workspace.WriteBytes(WorkspaceOwnershipDefinitions.RelativePath, WorkspaceOwnershipCodec.Write(WorkspaceOwnershipDocument.Empty with
         { Tools = ImmutableDictionary<string, ToolReceipt>.Empty.Add(ToolFixtureSource.Id, receipt) }));
@@ -58,8 +67,12 @@ public sealed class ToolHostStatusTests
         if (guidanceState is not ("missing" or "inactive"))
             workspace.WriteText(ToolPassiveStatusReader.GuidancePath, guidanceState == "changed" ? "Changed fixture guidance\n" : guidance);
         workspace.WriteText(host.Path, format == ToolVocabulary.JsonMembers
-            ? new JsonObject { ["unrelated"] = true, ["mcpServers"] = new JsonObject
-                { ["open-forge-" + ToolFixtureSource.Id] = new JsonObject { ["command"] = "fixture" } } }.ToJsonString()
+            ? new JsonObject
+            {
+                ["unrelated"] = true,
+                ["mcpServers"] = new JsonObject
+                { ["open-forge-" + ToolFixtureSource.Id] = new JsonObject { ["command"] = "fixture" } }
+            }.ToJsonString()
             : $"# unrelated comment\nunrelated = true\n[{host.Selector}]\ncommand = 'fixture'\n");
         var before = workspace.SnapshotHashes();
 

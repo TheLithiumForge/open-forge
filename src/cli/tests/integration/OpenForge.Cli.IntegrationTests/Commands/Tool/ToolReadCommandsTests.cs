@@ -211,8 +211,19 @@ public sealed class ToolReadCommandsTests
     }.ToJsonString();
     private static ToolReceipt Receipt(byte[] manifest) => new()
     {
-        Id = ToolFixtureSource.Id, Version = ToolFixtureSource.Version, Target = "win-x64",
-        ManifestSha256 = ToolCatalogueReader.Hash(manifest), ManifestBytes = manifest, ManifestFormat = "json", AdapterRevision = 1,
-        CodeRoot = ".", Hosts = [], Bindings = [], Files = [], Members = [], RuntimeDirectories = [], NativeProjects = [],
+        Id = ToolFixtureSource.Id,
+        Version = ToolFixtureSource.Version,
+        Target = "win-x64",
+        ManifestSha256 = ToolCatalogueReader.Hash(manifest),
+        ManifestBytes = manifest,
+        ManifestFormat = "json",
+        AdapterRevision = 1,
+        CodeRoot = ".",
+        Hosts = [],
+        Bindings = [],
+        Files = [],
+        Members = [],
+        RuntimeDirectories = [],
+        NativeProjects = [],
     };
 }

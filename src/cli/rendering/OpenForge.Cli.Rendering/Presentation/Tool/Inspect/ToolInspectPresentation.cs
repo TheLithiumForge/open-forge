@@ -20,7 +20,8 @@ internal static class ToolInspectPresentation
         Shape = CliCommandShape.Data,
         Selector = (result, selection) => new CliReport<ToolInspectData>
         {
-            Command = result.Command, Status = result.Status,
+            Command = result.Command,
+            Status = result.Status,
             Headline = new(ToolText.InspectHeadline(), ToolReadPresentation.Headline(result.Status)),
             Workspace = result.WorkspacePath is { } path ? new CliWorkspaceEcho(path, result.WorkspaceExplicit) : null,
             Findings = ToolReadPresentation.Findings(result.Command, result.Issues),
