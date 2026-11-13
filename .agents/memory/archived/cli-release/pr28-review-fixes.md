@@ -70,6 +70,41 @@ npm run check:dotnet:whitespace
 npm run check:dotnet:style
 ```
 
+## Bootstrap follow-up
+
+CI run `43430339232`, job `checks`, reported the dependency-free help test failure at `4ee52f90f`. `git ls-files` confirms that `option-names.ts` and `ci/smoke-checks.ts` are committed. The test copies a fixed subset of delivery files into a temporary workspace. Its list omitted both modules after the named option definitions introduced those imports.
+
+The fixture now copies both modules. Production code, public behavior and contracts stay unchanged. The same selected test first reproduces `ERR_MODULE_NOT_FOUND`, then passes its top-level help, every command's help, offline npx and `ci:prepare` checks. It discovers and executes one Integration test with zero failures, skips or cancellations in 28.010 seconds. No snapshots change.
+
+`npm ci --ignore-scripts --no-audit --no-fund` and `npm run check:delivery` pass. The delivery check runs TypeScript, ESLint and Prettier. The source is this worktree on `feature/package-aliases`, based on `4ee52f90f`, using the Windows x64 toolchain recorded above. The test log is `artifacts/pr28-bootstrap-final.log`, SHA-256 `cdafb9cc7ca232d34240df8108deea0ce488a92f4714ede092c2b4ab9526427e`. The pre-fix log is `artifacts/pr28-bootstrap-before.log`, SHA-256 `ffa3b8069b8dc625391a45263e5c540c4b2c1c91331602fdd56d02c9d5ba108e`.
+
+The fresh managed Release build passes with zero warnings and errors in 4 minutes 33.62 seconds. Both required .NET formatting checks exit zero before commit. The fresh gate logs have these SHA-256 identities:
+
+| Log                                           | SHA-256                                                            |
+| --------------------------------------------- | ------------------------------------------------------------------ |
+| `artifacts/pr28-bootstrap-delivery-check.log` | `f2efe4420eaf33dd13e6565bcf499ccdf91f1c99666986476dfaa43bb95ca9e2` |
+| `artifacts/pr28-bootstrap-build.log`          | `024badd3c767520d5bf144ca467d5ecf19c4497e3bf53ed8a5ec654440e4846e` |
+| `artifacts/pr28-bootstrap-whitespace.log`     | `174c8dc9cf17ac48ea197665f70e728d3d82e72ff83f44c9a8fb05253aab811e` |
+| `artifacts/pr28-bootstrap-style.log`          | `ed051c48f8852dfbf01bf04e86486f6fe1353732a5077134c81268a673b2d17f` |
+
+An outer `npm exec --call` invocation caused a separate nested npx usage error during local verification. Direct Node execution with npm's CLI path fixes that invocation. The final test has no runtime flake. Full suites stay in CI.
+
+To reproduce the focused test from PowerShell, give its child processes npm's CLI path:
+
+```powershell
+$savedNpmExecpath = $env:npm_execpath
+try {
+  $env:npm_execpath = Join-Path (Split-Path (Get-Command node).Source) 'node_modules/npm/bin/npm-cli.js'
+  node --test --test-name-pattern=bootstrap scripts/delivery/__tests__/cli.integration.test.ts
+} finally {
+  $env:npm_execpath = $savedNpmExecpath
+}
+npm run check:delivery
+npm run build -- --no-restore --log artifacts/pr28-bootstrap-build.log
+npm run check:dotnet:whitespace
+npm run check:dotnet:style
+```
+
 ## Not decided yet
 
 - Should delivery gain an Imprint bridge for independent Python launcher diagnostic and recovery-preview wording baselines? This revision uses the maintainer-authorized semantic assertion fallback.
