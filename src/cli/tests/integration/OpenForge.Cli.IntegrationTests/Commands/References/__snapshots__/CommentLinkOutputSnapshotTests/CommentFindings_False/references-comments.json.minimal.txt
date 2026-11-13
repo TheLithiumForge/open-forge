@@ -22,7 +22,10 @@
         "kind": "file",
         "path": "src/Order.cs",
         "id": "src/Order.cs",
-        "location": null
+        "location": {
+          "line": 2,
+          "column": 4
+        }
       },
       "category": null,
       "actions": []

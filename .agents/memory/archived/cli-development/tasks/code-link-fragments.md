@@ -6,7 +6,7 @@ open-forge:
 # Code-link fragments
 Code-link fragments is a record that keeps the issue #22 fix and its completed code-link audit.
 
-It began as a handoff from `fix/code-link-fragments` to `feature/comment-links`. Earlier checks keeps the results recorded at that handoff.
+It began as a handoff from `fix/code-link-fragments` to `feature/comment-links`. The earlier checks keep the results recorded at that handoff.
 
 `File.cs#L111-L125` checks file lines, and `File.cs#Type.Member` checks each dotted part as an identifier token. Markdown targets keep heading checks. The [source-reference contract](../../../crystallized/documents/cli/contracts/shared/source-references/interface.md#local-fragments) defines the accepted behavior.
 

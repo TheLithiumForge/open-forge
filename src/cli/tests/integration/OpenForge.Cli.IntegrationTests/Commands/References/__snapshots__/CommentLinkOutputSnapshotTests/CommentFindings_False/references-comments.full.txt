@@ -1,6 +1,6 @@
 ./src/Order.cs
 Workspace: <workspace>
-  Warning  src/Order.cs  This comment uses a legacy source ID. Choose a file path. [references.legacy-anchor]
+  Warning  src/Order.cs:2:4  This comment uses a legacy source ID. Choose a file path. [references.legacy-anchor]
          src/Order.cs:2:4  This comment uses a legacy source ID. Choose a file path.
          .agents/docs/reference.md: matches the same automatic ID
   out  :1:4   .agents/docs/guide.md#rules -> .agents/docs/guide.md   base

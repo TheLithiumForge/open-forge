@@ -1,0 +1,52 @@
+  Warning  .agents/docs/guide.overwrite.md:8:6  Link line range is out of range
+         The link at .agents/docs/guide.overwrite.md:8:6 selects an invalid line range in Code.cs: Code.cs#L4-L5. It was not followed.
+         Fix Code.cs#L4-L5 by hand at .agents/docs/guide.overwrite.md:8:6.
+=== AGENTS.md ===
+# Workspace
+
+Read `.agents/loader.md`.
+
+=== .agents/loader.md (loader) ===
+# Open Forge Loader
+
+## Axioms
+
+- inherited - Follow the workspace instructions.
+
+## Entries
+
+- [Documents](docs/_docs.md) - #Docs
+
+=== .agents/docs/_docs.md (docs) ===
+---
+open-forge:
+  description: Documents
+  tags: [Docs]
+---
+# Documents
+
+## Entries
+
+- [Guide](guide.md) - #Docs #Guide
+- [Reference](reference.md) - #Docs
+
+=== .agents/docs/guide.md (docs/guide) ===
+---
+open-forge:
+  description: Guide
+  tags: [Docs, Guide]
+---
+# Guide
+
+=== .agents/docs/guide.overwrite.md (docs/guide, overwrite) ===
+---
+open-forge:
+  description: Guide
+  tags: [Docs, Guide]
+---
+# Guide
+
+<!-- @open-forge Code.cs#L4-L5 explains the code -->
+Context counts are unavailable. The followed Context links could not be resolved
+completely.
+Next: Fix Code.cs#L4-L5 by hand at .agents/docs/guide.overwrite.md:8:6.

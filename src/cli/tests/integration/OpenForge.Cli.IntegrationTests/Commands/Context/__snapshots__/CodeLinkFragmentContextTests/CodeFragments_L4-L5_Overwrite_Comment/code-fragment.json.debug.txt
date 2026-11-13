@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 3,
+  "command": "context",
+  "status": "incomplete",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Context could not be read completely.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "context.line-out-of-range",
+      "title": "Link line range is out of range",
+      "message": "The link at .agents/docs/guide.overwrite.md:8:6 selects an invalid line range in Code.cs: Code.cs#L4-L5. It was not followed.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/docs/guide.overwrite.md",
+        "id": "docs/guide",
+        "location": {
+          "line": 8,
+          "column": 6
+        }
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Fix Code.cs#L4-L5 by hand at .agents/docs/guide.overwrite.md:8:6.",
+          "reason": "Fix Code.cs#L4-L5 by hand at .agents/docs/guide.overwrite.md:8:6."
+        }
+      ],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "sources": null,
+    "tokens": null,
+    "bytes": null,
+    "linksFollowed": null,
+    "linksNotFollowed": null,
+    "warnings": 1
+  },
+  "limitations": [
+    {
+      "what": "sources",
+      "why": "The followed Context links could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "tokens",
+      "why": "The followed Context links could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "bytes",
+      "why": "The followed Context links could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "links followed",
+      "why": "The followed Context links could not be resolved completely.",
+      "subject": null
+    },
+    {
+      "what": "links not followed",
+      "why": "The followed Context links could not be resolved completely.",
+      "subject": null
+    }
+  ],
+  "data": {
+    "sources": [
+      {
+        "path": "AGENTS.md",
+        "id": null,
+        "layer": "base",
+        "includedBecause": [
+          "workspace entry"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 1,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Workspace\n\nRead `.agents/loader.md`.\n"
+          }
+        ]
+      },
+      {
+        "path": ".agents/loader.md",
+        "id": "loader",
+        "layer": "base",
+        "includedBecause": [
+          "Loader"
+        ],
+        "route": null,
+        "scope": null,
+        "order": 2,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "state": "missing"
+          },
+          {
+            "part": "body",
+            "text": "# Open Forge Loader\n\n## Axioms\n\n- inherited - Follow the workspace instructions.\n\n## Entries\n\n- [Documents](docs/_docs.md) - #Docs\n"
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/_docs.md",
+        "id": "docs",
+        "layer": "base",
+        "includedBecause": [
+          "ancestor required from .agents/docs/guide.md for docs/guide"
+        ],
+        "route": "docs",
+        "scope": null,
+        "order": 3,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Documents\n  tags: [Docs]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Documents\n\n## Entries\n\n- [Guide](guide.md) - #Docs #Guide\n- [Reference](reference.md) - #Docs\n"
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/guide.md",
+        "id": "docs/guide",
+        "layer": "base",
+        "includedBecause": [
+          "selected source for docs/guide"
+        ],
+        "route": "docs/guide",
+        "scope": null,
+        "order": 4,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Guide\n  tags: [Docs, Guide]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Guide\n"
+          }
+        ]
+      },
+      {
+        "path": ".agents/docs/guide.overwrite.md",
+        "id": "docs/guide",
+        "layer": "overwrite",
+        "includedBecause": [
+          "selected source for docs/guide",
+          "overwrite companion from .agents/docs/guide.md"
+        ],
+        "route": "docs/guide",
+        "scope": null,
+        "order": 5,
+        "parts": [
+          {
+            "part": "frontmatter",
+            "text": "---\nopen-forge:\n  description: Guide\n  tags: [Docs, Guide]\n---"
+          },
+          {
+            "part": "body",
+            "text": "# Guide\n\n<!-- @open-forge Code.cs#L4-L5 explains the code -->\n"
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "from": ".agents/docs/guide.overwrite.md",
+        "location": {
+          "line": 8,
+          "column": 6
+        },
+        "destination": "Code.cs#L4-L5",
+        "resolvedPath": "Code.cs",
+        "resolution": "line-out-of-range",
+        "followed": false
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "sentence",
+    "command": "Fix Code.cs#L4-L5 by hand at .agents/docs/guide.overwrite.md:8:6.",
+    "reason": "Fix Code.cs#L4-L5 by hand at .agents/docs/guide.overwrite.md:8:6."
+  }
+}

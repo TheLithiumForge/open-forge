@@ -1,0 +1,12 @@
+.agents/docs/guide.md
+Workspace: <workspace>
+  Warning  .agents/docs/guide.md:8:6  Symbol was not found [references.symbol-missing]
+         .agents/docs/guide.md:8:6  symbol not found
+         Fix Code.cs#Type.Missing by hand at .agents/docs/guide.md:8:6.
+  Warning  .agents/docs/guide.md:9:6  Line range is out of range [references.line-out-of-range]
+         .agents/docs/guide.md:9:6  line range out of range
+         Fix ../../Code.cs#L4-L5 by hand at .agents/docs/guide.md:9:6.
+  out  :8:6   Code.cs#Type.Missing -> Code.cs   symbol not found   base
+  out  :9:6   ../../Code.cs#L4-L5 -> Code.cs   line range out of range   base
+0 in, 2 out
+Next: Fix ../../Code.cs#L4-L5 by hand at .agents/docs/guide.md:9:6.

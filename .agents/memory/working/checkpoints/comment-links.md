@@ -237,3 +237,106 @@ deviation. The ambiguous-successor snapshot is compiled and reviewed against the
 retained Linux receipt and current evidence labels. Its execution stays with CI
 because the maintainer selected only the two named EndToEnd methods locally.
 The maintainer controls the push and next CI run.
+
+## PR 25 Rebase
+
+The maintainer requested a rebase onto `1f7b1f906`. The clean predecessor was
+`f89b9b36f`. The local backup branch
+`backup/comment-links-pre-pr25-rebase-20261113` keeps that predecessor. All eight
+comment-link commits were replayed. The replayed head before regenerated
+expectations is `b1a5e769e`.
+
+This combines accepted behavior in a local developer CLI. Git and regeneration
+provide recovery. The supported failure and same-user threat limits stay
+unchanged. Existing typed projections, Imprint and the current fixture format
+provide the required capabilities. There is no dependency, runtime, architecture
+or mutation-safety change. Exceptional machinery: none. Full managed and native
+gates stay with CI under the lane rule.
+
+References help keeps comment syntax and the manual fragment correction. The
+archived fragment checkpoint keeps PR 25's corrections and issue 21's completed
+historical-link work. The automatic merges keep checked code links outside
+selected Context bodies, physical overwrite locations, References
+`subject.location` and manual actions in both commands. Both CLI Skill copies
+match. The merged contracts, user docs and site describe both branches' behavior.
+
+The two fragment test methods now also cover comment links. Four Context cases
+check valid ranges and symbols, invalid fragments and an overwrite source. One
+References case checks both markers, both path bases, source locations and manual
+actions. Semantic assertions pass before snapshot acceptance.
+
+Conflicting generated expectations were kept temporarily from the new base, then
+replaced with fresh received output from the complete rebased tree. The accepted
+111 views are:
+
+| Suite | Views | Review |
+| --- | --- | --- |
+| `CodeLinkFragmentContextTests` | 36 new | Valid comment targets stay complete without code bodies. Invalid targets name the authored location and manual action |
+| `CodeLinkFragmentSnapshotTests` | 10 new | Both comment findings keep `subject.location`, the exact destination and manual actions |
+| `CommentLinkOutputSnapshotTests` | 8 updated | The legacy finding now includes its existing authored coordinates in the subject and text heading |
+| `StatusBeforeOutputSnapshotTests` | 56 updated | Only routed totals and startup percentages change. The two added Skill sections add 2265 characters and bytes. Token totals use the existing rounding rule |
+| References help | 1 updated | Comment grammar and PR 25's manual-correction guidance are both present |
+
+The default-layout fixture was regenerated through a fresh install of the rebased
+managed publication. Only the two CLI Skill reference byte entries change. The
+other twenty installed files match exactly. The fixture format, text output,
+JSON output, paths and ownership expectations stay unchanged. Issue 29 still
+covers its replacement. The custom-root guidance snapshot merges both changes
+and passes without another update. No generated number or byte sequence was
+merged by hand.
+
+The Windows managed gates pass with zero failures and skips:
+
+| Gate | Result |
+| --- | --- |
+| Solution build with fresh development publication | Pass, four existing NU1903 warnings with the command-only override |
+| EndToEnd fixture compilation | Pass, two existing NU1903 warnings with the same override |
+| Unit comment scanner | 17 passed |
+| Integration affected projections, comments, inventory, Status and payload rendering | 50 passed |
+| Integration Context and References help | 2 passed |
+| Integration report catalogue and repository Markdown | 2 passed |
+| EndToEnd F08 proven and ambiguous renames, References outgoing and Context fragment journeys | 6 passed |
+| EndToEnd default-layout compatibility | 2 passed |
+| `npm run check:dotnet:whitespace` | Pass, existing workspace-loading warning |
+| `npm run check:dotnet:style` | Pass, existing workspace-loading warning |
+| Docusaurus build | Pass |
+| Scoped Context, References and archived-checkpoint Index previews | Entries current in all three parents |
+
+Both ambiguous-successor cases now run locally under the rebase selection and
+match their reviewed evidence snapshot. The earlier local execution limit no
+longer leaves those cases unexecuted. The initial verification mismatches were
+new or stale snapshots. There were no timeout failures or flakes. No full local
+suite, native build or Unix execution was used. There is no product deviation or
+open maintainer question. The maintainer controls the force-push and CI gate.
+
+Reproduce the managed build and focused tests from this worktree:
+
+```powershell
+dotnet build OpenForge.Cli.slnx --configuration Release --no-restore -p:WarningsNotAsErrors=NU1903
+dotnet build src/cli/tests/end-to-end/OpenForge.Cli.EndToEndTests/OpenForge.Cli.EndToEndTests.csproj --configuration Release --no-restore -p:OpenForgeSkipDevelopmentPublish=true -p:BuildProjectReferences=false -p:WarningsNotAsErrors=NU1903
+dotnet artifacts/bin/OpenForge.Cli.Core.UnitTests/release/OpenForge.Cli.Core.UnitTests.dll --filter-class '*SourceCommentLinkReaderTests' --minimum-expected-tests 16 --fail-warns on --fail-skips on --no-ansi --progress off
+$integrationMethods = @(
+    '*CodeLinkFragmentContextTests.CodeFragments',
+    '*CodeLinkFragmentSnapshotTests.CodeFragments',
+    '*CommentLinkIntegrationTests.*',
+    '*CommentLinkOutputSnapshotTests.*',
+    '*ContextCommentLinkTests.HtmlCommentExpansion',
+    '*ReferencesBeforeOutputSnapshotTests.Direction',
+    '*ContextOperationTests.FollowsLinksBreadthFirstWithoutFetchingOrRepeatingSources',
+    '*ContextOperationTests.MissingFragmentIsIncompleteAndUnresolved',
+    '*ContextOperationFindingTests.SameCodeLinkFindingsRetainAuthoredOrder',
+    '*ContextLinkExpansionSeedTests.ZeroReasonSeedStillSuppliesTraversalLinks',
+    '*LocalReferenceInventoryWorkTests.*',
+    '*StatusBeforeOutputSnapshotTests.HealthyWithExtension',
+    '*StatusBeforeOutputSnapshotTests.RecoveryBundlePresent',
+    '*StatusBeforeOutputSnapshotTests.InstalledWorkspace',
+    '*WorkspaceLayoutPayloadRenderingIntegrationTests.*'
+)
+dotnet artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.dll --filter-method $integrationMethods --minimum-expected-tests 50 --fail-warns on --fail-skips on --no-ansi --progress off
+dotnet artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.dll --filter-display-name '*contract(command: "context")' '*contract(command: "references")' --minimum-expected-tests 2 --fail-warns on --fail-skips on --no-ansi --progress off
+dotnet artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.dll --filter-method '*CliReportInvariantsTests.NativeJsonSnapshotsSatisfyEnvelopeMembershipScalarAndCatalogueRules' '*RepositoryMarkdownTests.RepositoryMarkdownGateHasNoDiagnostics' --minimum-expected-tests 2 --fail-warns on --fail-skips on --no-ansi --progress off
+dotnet artifacts/bin/OpenForge.Cli.EndToEndTests/release/OpenForge.Cli.EndToEndTests.dll --filter-method '*F08RepairRenamedReferenceJourneyTests.ProvenRename' '*F08RepairRenamedReferenceJourneyTests.AmbiguousSuccessors' '*PublishedReferencesProcessTests.PublishedReferencesOutgoingPreservesDirectFacts' '*PublishedContextProcessTests.PublishedContextFragmentFailureIsIncompleteAndReadOnly' --minimum-expected-tests 6 --fail-warns on --fail-skips on --no-ansi --progress off
+dotnet artifacts/bin/OpenForge.Cli.EndToEndTests/release/OpenForge.Cli.EndToEndTests.dll --filter-method '*PublishedMainRootDefaultCompatibilityProcessTests.ExactDefaultCompatibility' --minimum-expected-tests 2 --fail-warns on --fail-skips on --no-ansi --progress off
+npm run check:dotnet:whitespace
+npm run check:dotnet:style
+```

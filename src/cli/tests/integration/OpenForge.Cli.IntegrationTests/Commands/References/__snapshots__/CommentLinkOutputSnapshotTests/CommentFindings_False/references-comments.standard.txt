@@ -1,6 +1,6 @@
 ./src/Order.cs
 Workspace: <workspace>
-  Warning  src/Order.cs  This comment uses a legacy source ID. Choose a file path.
+  Warning  src/Order.cs:2:4  This comment uses a legacy source ID. Choose a file path.
          src/Order.cs:2:4  This comment uses a legacy source ID. Choose a file path.
   out  :1:4   .agents/docs/guide.md#rules -> .agents/docs/guide.md
   out  :2:4   docs/reference   not a resolvable link
