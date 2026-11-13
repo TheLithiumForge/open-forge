@@ -309,7 +309,7 @@ For example, these comments point from code to a rule and from a Markdown rule t
 Illustrative:
 
 ```csharp
-// @open-forge .agents/guidance/style.md#naming explains this choice
+// @open-forge docs/context/guidance/style.md#naming explains this choice
 ```
 
 Illustrative:

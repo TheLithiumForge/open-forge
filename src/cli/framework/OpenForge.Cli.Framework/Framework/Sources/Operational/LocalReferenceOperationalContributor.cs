@@ -103,7 +103,12 @@ internal sealed class LocalReferenceOperationalContributor(
 
         var readSession = inspection.Session ?? new SourceReadSession(inspection.Catalogue,
             new SourceDocumentReader(inspection.Catalogue.Workspace, paths), []);
-        var comments = await SourceCommentSourceReader.ReadAsync(readSession, cancellationToken).ConfigureAwait(false);
+        var retainedText = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var layer in inspection.Sources.SelectMany(source => source.Layers).Append(inspection.WorkspaceEntry))
+        {
+            if (layer.Text is { } text) retainedText.TryAdd(layer.Path, text);
+        }
+        var comments = await SourceCommentSourceReader.ReadAsync(readSession, cancellationToken, retainedText).ConfigureAwait(false);
         var commentSession = SourceCommentSourceReader.Extend(readSession, comments);
         foreach (var source in comments.Sources)
         {

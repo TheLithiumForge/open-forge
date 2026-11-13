@@ -54,7 +54,7 @@ punctuation, including `%23`, is part of the decoded path, not a fragment or que
 
 ## Local Fragment Checks
 
-Comment extraction and path interpretation follow [Comment Links](interface.md#comment-links). Keep exact occurrence and target-word spans in the shared source-reference layer. Consume the Markdown parser's opaque and HTML facts to exclude Markdown code examples. Code comment recognition handles the declared marker grammar without treating the surrounding programming language as Markdown. Read eligible files once per scan and keep read failures distinct from an empty result.
+Comment extraction and path interpretation follow [Comment Links](interface.md#comment-links). Keep exact occurrence and target-word spans in the shared source-reference layer. Consume the Markdown parser's opaque and HTML facts to exclude Markdown code examples. Code comment recognition handles the declared marker grammar without treating the surrounding programming language as Markdown. Reuse content and parsed documents from the retained diagnosis during comment discovery. Read newly discovered file content only when retained text is unavailable. Keep read failures distinct from an empty result.
 
 Resolve the contained target and classify its kind before parsing. Use the
 [local fragment rules](interface.md#local-fragments) for Markdown headings,

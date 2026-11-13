@@ -70,7 +70,7 @@ Reviewed and accepted output:
 
 Received output stays under `artifacts/command-output-snapshots/<run>/<Class>/<Group>/`. The accepted snapshots verify in ordinary runs.
 
-## CI Follow-up
+## First CI Fix
 
 The overseer opened PR #27 at `9e6b9203b5082299c259d05e57f43af9f3999c98`. Run `43401811949` reports five Integration failures in Linux job `131810132481`. Linux x64 was the only failed platform job when this follow-up started. The maintainer selected the finding catalogue and guidance snapshot failures for this fix.
 
@@ -92,7 +92,36 @@ Follow-up checks:
 
 All focused selections have zero skips. Both formatting commands report workspace-loading warnings and exit successfully. No full local suite or native suite ran. The snapshot update accepts one shared expectation for all three supported platform adapters. Local logs use the `artifacts/pr27-` prefix.
 
-The other Linux failures concern included-file Doctor output, reference parse counts and custom-guidance path checks. They are outside the two selected fixes and still need follow-up. This follow-up makes no push.
+The other Linux failures concerned included-file Doctor output, reference read counts and custom-guidance path checks. They were outside the first two selected fixes. That follow-up made no push.
+
+## Second CI Fix
+
+The next maintainer assignment selects all three remaining failures from run `43401811949`. The fix reuses the current read session, layout mapping and snapshot comparer. Git provides recovery. No dependency, runtime pin, wire shape or new platform adapter is selected. Full suites and Native AOT stay with CI.
+
+Comment discovery now reuses retained diagnosis text, including `AGENTS.md`. Parsed source documents keep their existing cache and identity. The reported five-versus-seven assertion counts file acquisitions. It does not count parses. One extra probe is necessary because the fixture contains an unseen ownership-marker file, which discovery must check for annotations. The corrected expectation is six reads, `acquiredBefore + 2`: one target read and one unseen-file probe. The parser callback stays at zero. Both retained-catalogue and parsed-document identity assertions pass. A second Integration case checks host-document reuse directly.
+
+The comment example entered the shipped CLI Skill through `references/common.md`. `WorkspaceLayoutPayloadGuidance.ExampleCommentTargetPath` now maps its context path with the selected layout. The reviewed custom-root example uses `docs/context/guidance/style.md#naming`. The existing default-byte and authored-guidance preservation checks pass.
+
+Diagnostics were downloaded with `gh run download` into `artifacts/pr27-round2/` for Linux x64, macOS x64 and macOS arm64. Their ten included-file Doctor views agree. Fresh Windows output also matches all thirty Unix receipts through the existing `PlatformSnapshotComparer`. Seven shared Doctor expectations are updated for the correct missing-target message and manual edit advice. Three other views already matched. One shared guidance expectation is updated for the mapped example. Separate platform cases are unnecessary because the existing comparer validates every received view.
+
+Final local results:
+
+| Check | Result |
+| --- | --- |
+| Managed solution build | Pass, existing NU1903 command-only override |
+| Integration `LocalReferenceInventoryWorkTests` | 2 passed |
+| Full Integration `*References*` selection | 105 passed |
+| Full Integration `*Doctor*` selection | 188 passed |
+| Integration `WorkspaceLayoutPayloadRenderingIntegrationTests` | 6 passed |
+| Integration `IncludedFileReportingIntegrationTests` | 7 passed |
+| Integration `CliReportInvariantsTests` | 9 passed |
+| Integration `RepositoryMarkdownTests` | 13 passed |
+| Unit `PlatformSnapshotComparerTests` | 7 passed |
+| `npm run check:dotnet:whitespace` | Pass |
+| `npm run check:dotnet:style` | Pass |
+| Source-reference contract Index preview | Entries current |
+
+The focused runs total 330 Integration tests and seven Unit tests, with zero skips. Both formatting commands exit successfully with workspace-loading warnings. Eight reviewed shared snapshots are accepted. No flakes were seen. Unix execution was unavailable, so Unix evidence comes from the downloaded CI receipts and comparison through the existing adapter. The follow-up makes no push.
 
 ## Handoff
 

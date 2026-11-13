@@ -14,7 +14,8 @@ internal static class SourceCommentSourceReader
 {
     internal static IReadOnlySet<string> ExcludedDirectories => SourceCommentDiscoveryPolicy.ExcludedDirectories;
 
-    internal static async ValueTask<SourceCommentScan> ReadAsync(SourceReadSession session, CancellationToken token)
+    internal static async ValueTask<SourceCommentScan> ReadAsync(SourceReadSession session, CancellationToken token,
+        IReadOnlyDictionary<string, string>? retainedText = null)
     {
         var sources = new List<SourceLogicalSource>();
         var documents = new Dictionary<string, MarkdownDocumentFacts>(StringComparer.Ordinal);
@@ -43,12 +44,17 @@ internal static class SourceCommentSourceReader
                 var path = Path.GetRelativePath(session.Catalogue.Workspace.LexicalRoot, entry.FullName).Replace(Path.DirectorySeparatorChar, '/');
                 if (session.Catalogue.FindByPath(path) is not null || !SourceWorkspaceRelativePath.IsCanonical(path)) continue;
                 var layer = new SourceLayer(path, entry.FullName, SourceDocumentForm.Markdown, SourceLayerKind.Base);
-                var read = await session.DocumentReader.ReadAsync(layer, token).ConfigureAwait(false);
-                if (read.Read?.State == FileReadState.Cancelled) token.ThrowIfCancellationRequested();
-                if (read.Read is not { State: FileReadState.Complete, Value: { } text })
+                var text = retainedText?.GetValueOrDefault(path);
+                if (text is null)
                 {
-                    if (read.Read?.State is not FileReadState.InvalidEncoding) complete = false;
-                    continue;
+                    var read = await session.DocumentReader.ReadAsync(layer, token).ConfigureAwait(false);
+                    if (read.Read?.State == FileReadState.Cancelled) token.ThrowIfCancellationRequested();
+                    if (read.Read is not { State: FileReadState.Complete, Value: { } currentText })
+                    {
+                        if (read.Read?.State is not FileReadState.InvalidEncoding) complete = false;
+                        continue;
+                    }
+                    text = currentText;
                 }
                 if (text.Contains('\0')) continue;
                 if (!SourceCommentDiscoveryPolicy.Allows(path, text)) continue;
