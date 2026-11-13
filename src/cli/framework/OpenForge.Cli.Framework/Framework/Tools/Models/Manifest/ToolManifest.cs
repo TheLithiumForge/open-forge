@@ -17,6 +17,8 @@ internal sealed record ToolManifest
 
     public required string Name { get; init; }
 
+    public required string Origin { get; init; }
+
     public required string Version { get; init; }
 
     public required string License { get; init; }

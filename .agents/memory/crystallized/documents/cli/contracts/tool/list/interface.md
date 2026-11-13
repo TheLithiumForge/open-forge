@@ -22,7 +22,7 @@ The [group input rules](../_tool.md#inputs) define flags and repetition. No oper
 
 ## Rows
 
-Available rows report ID, exact pin, capabilities, target support and admission. Installed rows come from the settings `tools` map and report ID, recorded pin, active roles and lock verification. Display IDs and versions ordinally. Apply the role capability filter consistently to rows whose capability can be determined. Keep an unavailable capability observation separate from a confirmed nonmatch. Reserved roles return no V1 providers.
+Available rows report ID, exact pin, origin, capabilities, target support and admission. Installed rows come from the settings `tools` map and report ID, recorded pin, active roles and lock verification. Show Origin as its own column. Group first-party before third-party, then sort IDs and versions ordinally. Read installed origin from its stored definition. If it is unavailable, keep the row with null origin and sort it last. Apply the role capability filter consistently to rows whose capability can be determined. Keep an unavailable capability observation separate from a confirmed nonmatch. Reserved roles return no V1 providers.
 
 An omitted `tools` map is empty. Unreadable settings are unavailable. Missing or unreadable lock details leave installed settings rows present with unavailable verification. An empty embedded catalogue is a valid complete available result.
 

@@ -69,6 +69,8 @@ public sealed class ToolManifestTests
     }
 
     [Theory(DisplayName = "Tool semantic validation rejects malformed required fields")]
+    [InlineData("origin")]
+    [InlineData("missing-origin")]
     [InlineData("target")]
     [InlineData("version")]
     [InlineData("artifact")]
@@ -85,6 +87,8 @@ public sealed class ToolManifestTests
         var json = ToolFixtureSource.Manifest();
         switch (kind)
         {
+            case "origin": json["origin"] = "unreviewed-origin"; break;
+            case "missing-origin": json.Remove("origin"); break;
             case "target": json["targets"]?.AsObject().Remove("linux-arm64"); break;
             case "version": json["version"] = "v1.0.0"; break;
             case "artifact": json["artifacts"]!["package"]!["file"] = "../escape.bin"; break;

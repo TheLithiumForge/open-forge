@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Graph tool review draft",
+  "title": "CodeGraph review draft",
   "type": "object",
   "additionalProperties": false,
-  "required": ["$schema", "schemaVersion", "status", "definition", "lifecycleDraft", "releaseEvidence", "guidance", "consent", "passiveObservationProposal"],
+  "required": ["$schema", "schemaVersion", "status", "definition", "lifecycleDraft", "releaseEvidence", "guidance", "consent", "passiveObservationProposal", "registrationDraft"],
   "properties": {
     "$schema": {
       "type": "string"
@@ -41,7 +41,7 @@
     "lifecycleDraft": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["install", "uninstall", "indexCleanup", "ignorePaths"],
+      "required": ["install", "uninstall", "indexCleanup", "ignorePaths", "telemetry"],
       "properties": {
         "install": {
           "$ref": "#/$defs/LifecycleDraftCommand"
@@ -57,6 +57,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "telemetry": {
+          "$ref": "#/$defs/LifecycleDraftCommand"
         }
       }
     },
@@ -114,7 +117,7 @@
           "const": true
         },
         "delivery": {
-          "const": "pending-tool-owned-installer"
+          "const": "open-forge-required-skill"
         },
         "sha256": {
           "type": "string",
@@ -135,10 +138,7 @@
         },
         "pending": {
           "type": "array",
-          "items": {
-            "enum": ["R1", "R2"]
-          },
-          "minItems": 1
+          "maxItems": 0
         }
       }
     },
@@ -172,6 +172,197 @@
           "type": "string"
         }
       }
+    },
+    "registrationDraft": {
+      "type": "object",
+      "required": ["mode", "serverName", "launcher", "execPrefix", "rewrites", "promptHook", "telemetry", "trustNotes"],
+      "properties": {
+        "mode": {
+          "const": "tool-installer-with-command-rewrites"
+        },
+        "serverName": {
+          "const": "codegraph"
+        },
+        "execPrefix": {
+          "const": ["tool", "exec", "codegraph"]
+        },
+        "rewrites": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["format", "expected"],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "selector": {
+                "type": "string"
+              },
+              "suffix": {
+                "type": "string"
+              },
+              "removalMatch": {
+                "type": "string"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              },
+              "replacementSuffix": {
+                "type": "string"
+              },
+              "format": {
+                "enum": ["json-members", "exact-table-lines", "marked-shell-line"]
+              },
+              "paths": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1
+              },
+              "replace": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1
+              },
+              "expected": {
+                "type": ["object", "array", "string"]
+              },
+              "expectedHook": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "trustNotes": {
+          "type": "array",
+          "minItems": 2
+        },
+        "launcher": {
+          "type": "string",
+          "minLength": 1
+        },
+        "execDelimiter": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commandResolver": {
+          "type": "string",
+          "minLength": 1
+        },
+        "managedRoleLine": {
+          "type": "string",
+          "minLength": 1
+        },
+        "backups": {
+          "type": "string",
+          "minLength": 1
+        },
+        "onUnexpectedShape": {
+          "type": "string",
+          "minLength": 1
+        },
+        "alreadyRewritten": {
+          "type": "string",
+          "minLength": 1
+        },
+        "after": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "managedRolePaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "promptHook": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["setting", "option", "values", "default", "event", "explanation", "optOut"],
+          "properties": {
+            "setting": {
+              "type": "string",
+              "minLength": 1
+            },
+            "option": {
+              "type": "string",
+              "minLength": 1
+            },
+            "default": {
+              "type": "string",
+              "minLength": 1
+            },
+            "event": {
+              "type": "string",
+              "minLength": 1
+            },
+            "explanation": {
+              "type": "string",
+              "minLength": 1
+            },
+            "optOut": {
+              "type": "string",
+              "minLength": 1
+            },
+            "values": {
+              "const": ["yes", "no"]
+            }
+          }
+        },
+        "telemetry": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["setting", "default", "offArgs", "onArgs", "accountPath"],
+          "properties": {
+            "setting": {
+              "type": "string"
+            },
+            "default": {
+              "const": false
+            },
+            "offArgs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            },
+            "onArgs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            },
+            "accountPath": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
     }
   },
   "$id": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/tools/drafts/v1/definition.schema.json",

@@ -10,7 +10,6 @@ public sealed class ToolDraftIsolationTests
 {
     [Theory(DisplayName = "Packaged review drafts cannot become a local catalogue source or create state")]
     [InlineData(ToolDraftSource.CodeGraph)]
-    [InlineData(ToolDraftSource.CodebaseMemory)]
     public async Task DraftSourcesCannotActivate(string pin)
     {
         using var workspace = TemporaryWorkspace.Create("tool-draft-source");
@@ -24,6 +23,8 @@ public sealed class ToolDraftIsolationTests
         var bundled = await reader.ReadAsync(null, TestContext.Current.CancellationToken);
         Assert.Equal(ToolSourceState.Complete, bundled.State);
         Assert.Empty(bundled.Definitions);
+        Assert.DoesNotContain(typeof(ToolCatalogueReader).Assembly.GetManifestResourceNames(),
+            name => name.Contains(ToolDraftSource.CodebaseMemory, StringComparison.Ordinal));
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 }

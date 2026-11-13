@@ -1,53 +1,71 @@
 # CodeGraph consent
 
-CodeGraph consent is the source review that lists the writes made by the pinned CodeGraph 1.6.2 installer for Claude Code and Codex.
+CodeGraph consent is the write inventory that describes the pinned CodeGraph 1.6.2 lifecycle and Open Forge's command rewrites.
 
-The reviewed scope is `install --location local --target claude,codex --yes --no-permissions`, run in the project. This describes upstream behavior. It isn't an approved Open Forge command. R2 keeps its install arguments pending in the [draft definition](../../src/tools/drafts/codegraph-1.6.2.json).
+CodeGraph is third-party software from `colbymchenry/codegraph`, under the MIT licence. Open Forge downloads its verified archive from the official GitHub release. CodeGraph is maintained by its authors. Open Forge maintains the integration.
 
-Status: Draft consent. No installer was run.
+Status: Final V1 decisions recorded. Native journey waits for the core writers.
 
 ## Consent text
 
-Proposed text for the core to show after resolving R2:
+Proposed core display:
 
-"CodeGraph 1.6.2 will configure Claude Code and Codex in this project. It will add MCP server `codegraph`, instruction blocks in `AGENTS.md` and `.claude/CLAUDE.md`, and a Claude `UserPromptSubmit` hook in `.claude/settings.json`. It can remove recognized legacy CodeGraph entries. It won't build an index. The installer writes a command resolved through PATH. Open Forge still needs a reviewed way to launch its private verified executable with the declared process settings."
+"Install third-party software CodeGraph 1.6.2 from colbymchenry/codegraph under MIT, downloaded from its official release and maintained by its authors. Open Forge will keep the verified archive's launcher and bundled Node in your per-user versioned store. It will run CodeGraph's local installer for Claude Code and Codex. This writes the codegraph MCP entries in .mcp.json and .codex/config.toml, CodeGraph instruction blocks in .claude/CLAUDE.md and AGENTS.md and a Claude UserPromptSubmit hook in .claude/settings.json. Open Forge rewrites only their launch commands to open-forge tool exec codegraph. It adds the required open-forge-codegraph Skill and .codegraph/ ignore entry. While the code-navigation role is active, its managed agent block adds one CodeGraph usage line. It runs telemetry off by default, which saves the account preference in ~/.codegraph/telemetry.json. Update checks, watchers and automatic indexing are off. Installation doesn't build an index or choose a role. Git is the backup in a Git workspace. Elsewhere, existing edited files get sibling .bak backups."
+
+The prompt-hook question is separate:
+
+"Keep CodeGraph's Claude prompt hook? On structural prompts it adds context from the local index. Nothing leaves the machine. CODEGRAPH_NO_PROMPT_HOOK=1 disables it. Defaults to yes."
+
+Non-interactive installation takes `--prompt-hook yes|no`. A choice of `no` removes only the recognized CodeGraph prompt-hook command and prunes empty containers. A visible `telemetryEnabled` setting defaults to false. Turning it on uses CodeGraph's own `telemetry on` command and keeps the update-check opt-out.
 
 ## Project writes
 
-The [pinned target implementations](https://github.com/colbymchenry/codegraph/tree/6560052a6f856855d3f71eee838fd66ccfa4285d/src/installer/targets) and their shared writer define these paths relative to the process directory:
+The pinned [Claude target](https://github.com/colbymchenry/codegraph/blob/6560052a6f856855d3f71eee838fd66ccfa4285d/src/installer/targets/claude.ts), [Codex target](https://github.com/colbymchenry/codegraph/blob/6560052a6f856855d3f71eee838fd66ccfa4285d/src/installer/targets/codex.ts) and [shared writer](https://github.com/colbymchenry/codegraph/blob/6560052a6f856855d3f71eee838fd66ccfa4285d/src/installer/targets/shared.ts) define these paths relative to the project:
 
-| Path                      | Entry or effect                                                                                            | Condition                              |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------- | -------------------------------------- |
-| `.mcp.json`               | `mcpServers.codegraph`                                                                                     | Claude selected                        |
-| `.codex/config.toml`      | `[mcp_servers.codegraph]`                                                                                  | Codex selected                         |
-| `AGENTS.md`               | `CODEGRAPH_START` to `CODEGRAPH_END` instruction block                                                     | Codex selected                         |
-| `.claude/CLAUDE.md`       | Same instruction block                                                                                     | Claude selected                        |
-| `.claude/settings.json`   | `hooks.UserPromptSubmit` command `codegraph.cmd prompt-hook` on Windows, `codegraph prompt-hook` elsewhere | `--yes` sets `promptHook=true`         |
-| `.claude/settings.json`   | Removes recognized `mark-dirty` and `sync-if-dirty` legacy hook commands                                   | Recognized old entries exist           |
-| `.claude.json`            | Removes the legacy project-local `mcpServers.codegraph` entry                                              | That legacy entry exists               |
-| `<edited-file>.tmp.<pid>` | Temporary file, renamed into the target and removed on rename failure                                      | Shared atomic writer runs              |
-| `<json-file>.backup`      | Copy before replacing unparseable JSON                                                                     | A JSON write finds unparseable content |
+| Path                                                  | Installer output                                                                                            | Open Forge change                                                           |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `.mcp.json`                                           | `mcpServers.codegraph`, `type:stdio`, `command:codegraph`, `args:[serve,--mcp]`, `alwaysLoad:true`          | Replace only command and args                                               |
+| `.codex/config.toml`                                  | `[mcp_servers.codegraph]`, `command = "codegraph"`, `args = ["serve", "--mcp"]`                             | Replace only those two lines as text                                        |
+| `.claude/settings.json`                               | `hooks.UserPromptSubmit`, command `codegraph.cmd prompt-hook` on Windows, `codegraph prompt-hook` elsewhere | Rewrite command, or remove just that entry on opt-out                       |
+| `.claude/CLAUDE.md`                                   | `<!-- CODEGRAPH_START -->` through `<!-- CODEGRAPH_END -->`                                                 | Replace only `codegraph explore "<symbol names or question>"` in that block |
+| `AGENTS.md`                                           | Same CodeGraph block                                                                                        | Same shell-line rewrite                                                     |
+| `.claude.json`                                        | Remove legacy project `mcpServers.codegraph` if present                                                     | Report native cleanup                                                       |
+| `.claude/settings.json`                               | Remove legacy CodeGraph `mark-dirty` and `sync-if-dirty` hook commands if present                           | Report native cleanup                                                       |
+| `<edited-file>.tmp.<pid>`                             | Atomic write temporary, then rename                                                                         | Inventory any leftover                                                      |
+| `<json-file>.backup`                                  | Upstream copy of unparseable JSON before replacement                                                        | Preflight rejects malformed input before installer effects                  |
+| `.agents/skills/open-forge-codegraph/SKILL.md`        | No native Skill for these targets                                                                           | Install required Open Forge usage Skill                                     |
+| `AGENTS.md` and `CLAUDE.md` Open Forge managed blocks | No Open Forge role line                                                                                     | Add one line only while CodeGraph fills code-navigation                     |
+| `.gitignore`                                          | No Open Forge ignore section                                                                                | Add managed `.codegraph/` entry                                             |
 
-The MCP command is `codegraph`, with arguments `serve --mcp`. The installer doesn't write the Open Forge child environment or an absolute private launcher. `--no-permissions` suppresses the `permissions.allow` entry `mcp__codegraph__*`. It doesn't suppress the prompt hook. Without that flag, `--yes` enables the permission entry too.
+`--no-permissions` suppresses `permissions.allow` entry `mcp__codegraph__*`. The installer creates `.claude` and `.codex` as needed. It writes no native Skill or profile for these targets. The actual Claude instruction path is `.claude/CLAUDE.md`, not root `CLAUDE.md`. Codex loads project configuration only for trusted projects.
 
-The writer creates `.claude` and `.codex` directories as needed. It can leave empty directories or empty JSON after removal. It writes no native Skill or agent profile for these targets. The required Open Forge Skill therefore still needs a tool-owned delivery decision. Codex's local configuration takes effect only in a trusted project.
+## Command rewrites
 
-## Account writes
+After every install, configure or update, rewrite only the entries the reviewed installer wrote. Keep every server name, marker, unrelated member, hook and instruction line.
 
-The reviewed explicit target and location options keep agent configuration in the project. `--yes` also skips the optional global npm install prompt. Global location, auto target discovery, `--init` and `--refresh` aren't part of this proposed invocation.
+MCP command and arguments become `open-forge` and `[tool,exec,codegraph,serve,--mcp]`. The hook becomes `open-forge tool exec codegraph prompt-hook`. Keep the literal substring `codegraph prompt-hook`, because upstream uninstall matches it. The marked shell example becomes `open-forge tool exec codegraph explore "<symbol names or question>"`.
 
-CodeGraph's telemetry state uses `~/.codegraph/telemetry.json`, `telemetry-queue.jsonl` and temporary `telemetry-queue.sending.<pid>.jsonl` files when telemetry is enabled. Its update cache is `~/.codegraph/update-check.json`. `DO_NOT_TRACK=1` and `CODEGRAPH_NO_UPDATE_CHECK=1` are required to suppress that activity. The visible draft setting `telemetryEnabled` defaults to false. Enabling it must leave the dedicated update-check opt-out set. Native verification of these effects is pending.
+One resolver chooses `open-forge` when it is on PATH. Otherwise it gives the absolute path of the running Open Forge executable. Quote that path for the destination's syntax. JSON uses the existing serializer. Codex edits only the expected command and args lines in the exact named table, with no TOML parser. An already recorded matching rewritten hook stays unchanged because native reinstall can keep it. An unexpected or ambiguous shape stops the operation and reports the path. It never broadens the rewrite.
+
+## Account state
+
+The archive contains `bin/codegraph.cmd` on Windows and `bin/codegraph` elsewhere. These launch bundled Node 24.16.0. The installer invocation is `install --location local --target claude,codex --yes --no-permissions`. Its `--yes` skips global npm installation and the PATH prompt. System Node and npm aren't needed.
+
+Run with telemetry suppressed before other commands, then run the disclosed `telemetry off` unless the saved user setting enables telemetry. That command saves `~/.codegraph/telemetry.json` through temporary `telemetry.json.<pid>.<uuid>.tmp` and deletes buffered `telemetry-queue.jsonl` and `telemetry-queue.sending.<pid>.jsonl` files from that account directory. The temporary file is removed after the write attempt. When enabled, telemetry can write `telemetry-queue.jsonl` and `telemetry-queue.sending.<pid>.jsonl` under the same directory. `CODEGRAPH_NO_UPDATE_CHECK=1` prevents `~/.codegraph/update-check.json` activity. No PATH or registry edits are part of this lifecycle.
+
+Every supplied launch disables daemon startup, watching and automatic indexing during Open Forge writes. The declared child Git environment redirects hook lookup to the private hook sink. It leaves file-level Git configuration and real hooks unchanged. The [maintenance procedure](../tool-maintenance.md) covers these process settings and the first index recipe.
 
 ## Removal
 
-The source-reviewed cleanup form is `uninstall --location local --target claude,codex --yes --keep-cli`. It removes recognized MCP entries, instruction blocks, CodeGraph permissions and hooks at those local targets. It keeps the CLI. The separate `uninit <code-root> --force` command removes that code root's `.codegraph` index and tries to remove recognized `post-commit`, `post-merge` and `post-checkout` sync hooks from Git's resolved hook directory. Every invocation therefore needs the private child hook sink too. Neither command is approved for execution by this draft.
+Run `open-forge tool exec codegraph uninstall --location local --target claude,codex --yes --keep-cli`, then `open-forge tool exec codegraph uninit <root> --force`. Native uninstall removes recognized MCP entries, CodeGraph instruction blocks, permissions and prompt hooks. Uninit deletes this project's `.codegraph` and checks Git sync hooks through the private hook sink.
 
-Open Forge's proposed managed ignore entry is `.codegraph/`. Git or sibling `.bak` handling covers Open Forge's own writes. Upstream `.backup` and `.tmp.<pid>` files are separate effects and need their own inventory in the real journey.
+Then remove the required Skill, the conditional Open Forge role line and its managed ignore entry. Release store bytes only after no workspace references that version. Report any empty JSON files, empty directories or native temporary files the commands leave behind. Don't delete unrelated content. The future Windows journey must verify that the rewritten hook is recognized by native uninstall and list every agreed leftover.
 
-## Not decided yet
+## Upstream controls
 
-- R2 must resolve the noninteractive Claude hook and private absolute launcher with process settings.
-- Decide tool-owned delivery of the required Open Forge Skill.
-- Confirm removal inventories and transient files in the real Windows journey, then through native CI on the other five targets.
+Future upstream requests are:
 
-The [tool reference](../tools.md) explains Open Forge's consent and record model.
+- An installer launch-command option, or an absolute launcher path when CodeGraph isn't on PATH. This removes Open Forge's rewrites.
+- `--no-prompt-hook` for non-interactive installation.
+
+No upstream contact is authorized.

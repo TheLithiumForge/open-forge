@@ -1,26 +1,27 @@
-# Tool drafts
+# CodeGraph draft
 
-Tool drafts are reviewed release facts and proposed setup data that prepare external tools for Open Forge admission.
+CodeGraph draft is the reviewed release and lifecycle data that prepares CodeGraph for Open Forge V1.
 
-For example, `drafts/codegraph-1.6.2.json` records verified official assets while its Install arguments stay pending. The production catalogue is still empty. A draft wrapper isn't a valid `--source` input.
+`drafts/codegraph-1.6.2.json` pins all six official archives and records the final installer and rewrite decisions. The production catalogue stays empty until the core writers and native qualification are ready. A review wrapper isn't a valid `--source` input.
 
 ## Definition fields
 
-The wrapper keeps these parts separate:
+The wrapper separates these parts:
 
-| Field                        | Meaning                                                                              |
-| ---------------------------- | ------------------------------------------------------------------------------------ |
-| `definition`                 | Production manifest field shape, blocked admission and no executable lifecycle       |
-| `lifecycleDraft`             | Source-reviewed forms and null arguments for pending decisions                       |
-| `releaseEvidence`            | Asset lengths, hashes, checksum URLs, signature identities and verification commands |
-| `guidance`                   | Required Skill source and its exact SHA-256                                          |
-| `consent`                    | Pinned-source write inventory and unresolved scope                                   |
-| `passiveObservationProposal` | Native MCP names and proposed passive destinations                                   |
+| Field                        | Meaning                                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------------------- |
+| `definition`                 | Production field shape, required origin, blocked admission and no executable lifecycle      |
+| `lifecycleDraft`             | Source-reviewed own-launcher commands, with native timeouts pending                         |
+| `registrationDraft`          | Exact installer originals, bounded command rewrites, hook choice, telemetry and trust notes |
+| `releaseEvidence`            | All asset sizes, hashes, checksum URLs, signature identities and verification commands      |
+| `guidance`                   | Required practical Skill and its exact SHA-256                                              |
+| `consent`                    | Pinned-source write inventory                                                               |
+| `passiveObservationProposal` | Native server name and passive destinations                                                 |
 
-The draft schema references the existing manifest schema without changing it. All target qualifications are empty. Pending commands and execution timeouts stay null. The desired workspace host paths in `definition` aren't a claim that an account-wide installer supports them. The consent inventory records actual upstream locations.
+The draft schema references the production manifest schema. Native qualifications stay empty. The disabled production process policy doesn't authorize the optional hook. `registrationDraft` describes the accepted integration for the incoming writers. Their typed model must carry those fields before promotion.
 
-## Release verification
+## Verification
 
-Every selected archive was downloaded and checked on 2026-11-13. CodeGraph uses GitHub build attestations. Codebase Memory uses individual Sigstore bundles and a signed checksum file. The checksum fixtures are metadata from the upstream releases. No upstream program bytes are shipped here.
+All six CodeGraph archives were downloaded on 2026-11-13. Each length and SHA-256 matched the official release and published checksums. Each GitHub build attestation verified against its exact workflow identity. No upstream program bytes are redistributed here. After editing the Skill, update its guidance hash.
 
-After changing a Skill, update its draft's guidance hash. Keep archive verification separate from native install qualification and language accuracy. Full admission steps and both worked examples are in [Tool maintenance](../../docs/tool-maintenance.md).
+Codebase Memory is unsupported in V1. Its verified metadata and missing upstream controls are kept in [maintenance research](../../docs/tools/codebase-memory-research.md), outside the packaged catalogue and Skills. The [maintenance checklist](../../docs/tool-maintenance.md) defines promotion and native journey gates.

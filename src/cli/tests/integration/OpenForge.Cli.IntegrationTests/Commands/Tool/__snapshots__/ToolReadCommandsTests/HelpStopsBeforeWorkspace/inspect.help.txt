@@ -5,12 +5,14 @@ Usage:
 
 Examples:
   open-forge tool inspect codegraph --source ./reviewed-manifest.json --tool-version 1.6.2
-  open-forge tool inspect codebase-memory --source ./reviewed-manifest.json --tool-version 0.12.1
+  open-forge tool inspect codegraph --detail full --format json
 
 Behavior:
   Reads local facts without downloads, child processes or writes.
   Unavailable observations keep their cause and independently readable facts.
-  Tool-owned installers handle agent configuration.
+  CodeGraph V1 uses its own installer and declared Open Forge command rewrites.
+  V1 pinned execution: open-forge tool exec <tool> <args...>. Check installed
+  help for availability.
 
 Arguments:
   <id>  One exact tool ID.

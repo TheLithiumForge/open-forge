@@ -21,6 +21,7 @@
       {
         "id": "fixture-tool",
         "version": "1.0.0",
+        "origin": "third-party",
         "capabilities": [
           "code-graph"
         ],

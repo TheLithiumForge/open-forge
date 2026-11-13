@@ -89,7 +89,61 @@ public sealed class ToolReadCommandsTests
         Assert.Equal(CliSemanticStatus.Invalid, result.Status);
         Assert.Equal(ToolFixtureSource.Id, Assert.Single(result.Installed).Id);
         Assert.Equal(ToolEvidenceState.Unavailable, result.Installed[0].Verification.State);
+        Assert.Null(result.Installed[0].Origin);
         Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "Tool List groups explicit origins before ordinal tool identity")]
+    public async Task GroupsOrigins()
+    {
+        using var workspace = TemporaryWorkspace.Create("tool-origin-groups");
+        var thirdParty = ToolFixtureSource.Manifest();
+        var firstParty = ToolFixtureSource.Manifest();
+        const string firstPartyId = "z-first-party";
+        firstParty["id"] = firstPartyId;
+        firstParty["origin"] = ToolVocabulary.FirstPartyOrigin;
+        firstParty["mcp"]!["hosts"]!["claude-code"]!["selector"] = "/mcpServers/open-forge-" + firstPartyId;
+        firstParty["mcp"]!["hosts"]!["codex"]!["selector"] = "mcp_servers.open-forge-" + firstPartyId;
+        var firstBytes = Encoding.UTF8.GetBytes(firstParty.ToJsonString());
+        var thirdBytes = Encoding.UTF8.GetBytes(thirdParty.ToJsonString());
+        workspace.WriteBytes("first.json", firstBytes);
+        workspace.WriteBytes("third.json", thirdBytes);
+        workspace.WriteText("catalogue.json", new JsonObject
+        {
+            ["schema"] = ToolVocabulary.ManifestSchema,
+            ["tools"] = new JsonArray(new[] { (ToolFixtureSource.Id, "third.json", thirdBytes), (firstPartyId, "first.json", firstBytes) }
+                .Select(item => (JsonNode)new JsonObject
+                {
+                    ["id"] = item.Item1,
+                    ["defaultVersion"] = ToolFixtureSource.Version,
+                    ["versions"] = new JsonArray(new JsonObject
+                    {
+                        ["version"] = ToolFixtureSource.Version,
+                        ["path"] = item.Item2,
+                        ["sha256"] = ToolCatalogueReader.Hash(item.Item3),
+                    }),
+                }).ToArray()),
+        }.ToJsonString());
+        workspace.WriteText(WorkspaceSettingsDefinitions.RelativePath, new JsonObject
+        {
+            [WorkspaceSettingsDefinitions.ToolsProperty] = new JsonObject
+            {
+                [ToolFixtureSource.Id] = new JsonObject { ["version"] = ToolFixtureSource.Version, ["roles"] = new JsonArray() },
+                [firstPartyId] = new JsonObject { ["version"] = ToolFixtureSource.Version, ["roles"] = new JsonArray() },
+            },
+        }.ToJsonString());
+        workspace.WriteBytes(WorkspaceOwnershipDefinitions.RelativePath, WorkspaceOwnershipCodec.Write(WorkspaceOwnershipDocument.Empty with
+        {
+            Tools = ImmutableDictionary<string, ToolReceipt>.Empty.Add(ToolFixtureSource.Id, Receipt(thirdBytes))
+                .Add(firstPartyId, Receipt(firstBytes) with { Id = firstPartyId }),
+        }));
+        var result = await new ToolListOperation(new()).ExecuteAsync(
+            new(Selected(workspace), workspace.Combine("catalogue.json"), null), TestContext.Current.CancellationToken);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(new[] { firstPartyId, ToolFixtureSource.Id }, result.Available.Select(row => row.Id));
+        Assert.Equal(result.Available.Select(row => row.Id), result.Installed.Select(row => row.Id));
+        Assert.Equal(result.Available.Select(row => row.Origin), result.Installed.Select(row => row.Origin));
+        Assert.Equal(new[] { ToolVocabulary.FirstPartyOrigin, ToolVocabulary.ThirdPartyOrigin }, result.Available.Select(row => row.Origin));
     }
 
     [Fact(DisplayName = "Cancelled Tool readers return cancellation before opening sources")]

@@ -5,6 +5,9 @@ namespace OpenForge.Cli.Core.Framework.Tools;
 internal static class ToolVocabulary
 {
     internal const int ManifestSchema = 1;
+    internal const string FirstPartyOrigin = "first-party";
+    internal const string ThirdPartyOrigin = "third-party";
+    internal static readonly FrozenSet<string> Origins = Set(FirstPartyOrigin, ThirdPartyOrigin);
     internal const string CodeNavigationRole = "code-navigation";
     internal const string CodeGraphCapability = "code-graph";
     internal const string JsonMembers = "json-members";
@@ -49,6 +52,13 @@ internal static class ToolVocabulary
     internal static readonly FrozenSet<string> Checks = Set("artifact-hash", "installed-files", "native-settings", "host-members", "index-state", "hook-policy", "process-policy", "cache-permissions", "dependency-lock", "source-membership", "usage-skill");
     internal static readonly FrozenSet<string> Variables = Set(InstallVariable, EntryVariable, WorktreeVariable, CodeRootVariable, StateVariable, CacheVariable, HookSinkVariable, ProjectIdVariable, IndexDirNameVariable, HostVariable, TargetVariable, OpenForgeVariable);
     internal static readonly FrozenSet<string> Hosts = Set(ClaudeCodeHost, CodexHost);
+
+    internal static int OriginOrder(string? origin) => origin switch
+    {
+        FirstPartyOrigin => 0,
+        ThirdPartyOrigin => 1,
+        _ => 2,
+    };
 
     private static FrozenSet<string> Set(params string[] values) => values.ToFrozenSet(StringComparer.Ordinal);
 }

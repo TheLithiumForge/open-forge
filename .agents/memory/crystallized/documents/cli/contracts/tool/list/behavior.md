@@ -5,6 +5,7 @@ open-forge:
 ---
 
 # tool list behavior
+
 `tool list` is a read operation that combines independent catalogue and workspace settings facts.
 
 It keeps readable installed facts when catalogue observation fails. It never substitutes an empty set for unavailable settings or receipt coverage.
@@ -20,7 +21,7 @@ The operation follows these steps:
 3. Read settings independently, then read lock details for each recorded tool.
 4. Match records by exact ID and pin. Record missing or mismatched verification separately.
 5. Apply the requested role capability filter without inventing unavailable capabilities.
-6. Sort IDs and versions ordinally and form one result with complete counts or unknown counts.
+6. Group first-party then third-party, sort unknown origin last, then sort IDs and versions ordinally and form one result with complete counts or unknown counts.
 
 ## Limits
 

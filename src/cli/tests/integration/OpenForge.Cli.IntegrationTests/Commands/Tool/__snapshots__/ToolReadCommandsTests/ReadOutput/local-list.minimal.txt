@@ -1,6 +1,8 @@
 Read available definitions and recorded tool installs.
 Available
-  fixture-tool 1.0.0  available  candidate  unreviewed  code-graph
+  ID            Version  Origin       Target     Details
+  fixture-tool  1.0.0    third-party  available  candidate, unreviewed,
+                                                 code-graph
 Installed
   None recorded.
 Coverage

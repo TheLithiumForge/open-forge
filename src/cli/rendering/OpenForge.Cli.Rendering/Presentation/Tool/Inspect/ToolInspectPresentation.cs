@@ -39,6 +39,7 @@ internal static class ToolInspectPresentation
         else
         {
             lines.Add($"{CliText.Escape(data.Id ?? string.Empty)} {CliText.Escape(data.Version ?? string.Empty)}  {data.Target}");
+            lines.Add(ToolText.OriginValue(definition.GetProperty("origin").GetString() ?? ToolText.UnknownOrigin()));
             if (selection.Detail >= CliDetail.Full)
                 lines.AddRange(definition.GetRawText().Split('\n').Select(line => CliText.Escape(line.TrimEnd('\r'))));
         }

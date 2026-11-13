@@ -19,6 +19,7 @@ public behavior that belongs to those sources.
 
 ## Entries
 
+- [Define CodeGraph V1 own-installer integration, portable exec and bounded command rewrites](codegraph-v1.md) - #Memory #Document #CLI #TechnicalDesign #Tool #CodeGraph #CurrentTruth
 - [Exact lease-bound ordinary-BCL directory-create effect design](directory-creation.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Mutation #Directory #Filesystem
 - [Define automatic embedded Framework and Extension resources, source identity, hashes, and parity evidence](embedded-payload.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Framework #Distribution #EmbeddedResource
 - [Place external tool definitions, stores, host capabilities and finite process profiles in the CLI architecture](external-tools.md) - #Memory #Document #CLI #TechnicalDesign #Tool #CurrentTruth

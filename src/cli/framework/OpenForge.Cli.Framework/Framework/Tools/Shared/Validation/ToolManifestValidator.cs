@@ -16,6 +16,7 @@ internal static class ToolManifestValidator
         Require(ToolIdentity.IsToolId(manifest.Id) && ToolIdentity.IsVersion(manifest.Version), "invalid tool ID or exact version");
         Require(!string.IsNullOrWhiteSpace(manifest.Name) && !string.IsNullOrWhiteSpace(manifest.License), "name and license are required");
         Require(Https(manifest.Source.Repository) && !string.IsNullOrWhiteSpace(manifest.Source.Tag), "invalid source repository or tag");
+        Require(manifest.Origin is not null && ToolVocabulary.Origins.Contains(manifest.Origin), "origin must be first-party or third-party");
         Choice(manifest.Admission, "admission", "candidate", "enabled", "blocked");
         Choice(manifest.Origin, "origin", ToolOrigin.FirstParty, ToolOrigin.ThirdParty);
         Require(manifest.Source.Commit is { Length: 40 } commit && commit.All(IsLowerHex)

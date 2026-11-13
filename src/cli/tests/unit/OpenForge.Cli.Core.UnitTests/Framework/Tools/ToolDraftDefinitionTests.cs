@@ -10,9 +10,8 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Tools;
 [Trait("Feature", "tool-draft"), Trait("Evidence", "Unit")]
 public sealed class ToolDraftDefinitionTests
 {
-    [Theory(DisplayName = "Graph drafts pin all six assets against the published local checksum fixture")]
+    [Theory(DisplayName = "CodeGraph drafts pin all six assets against the published local checksum fixture")]
     [InlineData(ToolDraftSource.CodeGraph)]
-    [InlineData(ToolDraftSource.CodebaseMemory)]
     public void AssetsMatchPublishedChecksums(string pin)
     {
         using var document = Read(pin);
@@ -45,12 +44,12 @@ public sealed class ToolDraftDefinitionTests
 
     [Theory(DisplayName = "Draft commands cannot invent pending arguments or qualify a native install")]
     [InlineData(ToolDraftSource.CodeGraph)]
-    [InlineData(ToolDraftSource.CodebaseMemory)]
     public void PendingCommandsStayUnlaunchable(string pin)
     {
         using var document = Read(pin);
         var root = document.RootElement;
         var manifest = Manifest(root);
+        Assert.Equal(ToolVocabulary.ThirdPartyOrigin, manifest.Origin);
         Assert.Equal(ToolDraftSource.Blocked, manifest.Admission);
         Assert.Empty(manifest.Qualification.Targets);
         Assert.Null(manifest.Lifecycle);
@@ -68,9 +67,8 @@ public sealed class ToolDraftDefinitionTests
             ToolDraftSource.ReadDraft(typeof(ToolCatalogueReader).Assembly, pin), pin + ToolDraftSource.DefinitionExtension, true));
     }
 
-    [Theory(DisplayName = "Graph drafts require packaged guidance and keep upstream server names")]
+    [Theory(DisplayName = "CodeGraph drafts require packaged guidance and keep upstream server names")]
     [InlineData(ToolDraftSource.CodeGraph)]
-    [InlineData(ToolDraftSource.CodebaseMemory)]
     public void GuidanceAndNamesAreBound(string pin)
     {
         using var document = Read(pin);
@@ -84,11 +82,30 @@ public sealed class ToolDraftDefinitionTests
         var skill = ToolDraftSource.Read(typeof(ToolCatalogueReader).Assembly,
             guidance.GetProperty("path").GetString() ?? throw new InvalidDataException());
         Assert.Equal(guidance.GetProperty("sha256").GetString(), ToolCatalogueReader.Hash(skill));
-        var server = root.GetProperty("passiveObservationProposal").GetProperty("serverName").GetString();
+        var registration = root.GetProperty("registrationDraft");
+        var server = registration.GetProperty("serverName").GetString();
+        Assert.Equal(4, registration.GetProperty("rewrites").GetArrayLength());
         Assert.Equal("/mcpServers/" + server, manifest.Mcp.Hosts["claude-code"].Selector);
         Assert.Equal("mcp_servers." + server, manifest.Mcp.Hosts["codex"].Selector);
         Assert.Empty(manifest.Configuration.Files);
         Assert.Empty(manifest.Configuration.Actions);
+    }
+
+    [Fact(DisplayName = "CodeGraph lifecycle and rewrite originals match the pinned-source fixture")]
+    public void MatchesInstallerOriginals()
+    {
+        using var draft = Read(ToolDraftSource.CodeGraph);
+        using var fixture = JsonDocument.Parse(ToolFixtureSource.CodeGraphInstallerBytes());
+        var original = fixture.RootElement;
+        var lifecycle = draft.RootElement.GetProperty("lifecycleDraft");
+        foreach (var action in new[] { "install", "uninstall", "indexCleanup", "telemetry" })
+            Assert.Equal(original.GetProperty(action).EnumerateArray().Select(value => value.GetString()),
+                lifecycle.GetProperty(action).GetProperty("args").EnumerateArray().Select(value => value.GetString()));
+        var rewrites = draft.RootElement.GetProperty("registrationDraft").GetProperty("rewrites");
+        Assert.True(JsonElement.DeepEquals(original.GetProperty("claude"), rewrites[0].GetProperty("expected")));
+        Assert.True(JsonElement.DeepEquals(original.GetProperty("codex"), rewrites[1].GetProperty("expected")));
+        Assert.True(JsonElement.DeepEquals(original.GetProperty("hook"), rewrites[2].GetProperty("expected")));
+        Assert.Equal(original.GetProperty("shell").GetString(), rewrites[3].GetProperty("expected").GetString());
     }
 
     private static JsonDocument Read(string pin) => JsonDocument.Parse(ToolDraftSource.ReadDraft(typeof(ToolCatalogueReader).Assembly, pin));

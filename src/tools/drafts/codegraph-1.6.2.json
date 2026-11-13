@@ -18,7 +18,7 @@
       "revision": 1
     },
     "admission": "blocked",
-    "admissionReason": "R2: noninteractive Claude prompt hook and private launcher require a decision. No native lifecycle target is qualified.",
+    "admissionReason": "Core writer integration and native lifecycle qualification are pending. Release assets and installer source are verified.",
     "capabilities": ["code-graph"],
     "downloadBase": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/",
     "artifacts": {
@@ -69,50 +69,50 @@
       "win-x64": {
         "state": "blocked",
         "artifacts": ["win-x64"],
-        "entry": "node.exe",
+        "entry": "bin/codegraph.cmd",
         "lock": null,
-        "reason": "R2: noninteractive Claude prompt hook and private launcher require a decision. No native lifecycle target is qualified."
+        "reason": "Core writer integration and native lifecycle qualification are pending. Release assets and installer source are verified."
       },
       "win-arm64": {
         "state": "blocked",
         "artifacts": ["win-arm64"],
-        "entry": "node.exe",
+        "entry": "bin/codegraph.cmd",
         "lock": null,
-        "reason": "R2: noninteractive Claude prompt hook and private launcher require a decision. No native lifecycle target is qualified."
+        "reason": "Core writer integration and native lifecycle qualification are pending. Release assets and installer source are verified."
       },
       "osx-x64": {
         "state": "blocked",
         "artifacts": ["osx-x64"],
-        "entry": "node",
+        "entry": "bin/codegraph",
         "lock": null,
-        "reason": "R2: noninteractive Claude prompt hook and private launcher require a decision. No native lifecycle target is qualified."
+        "reason": "Core writer integration and native lifecycle qualification are pending. Release assets and installer source are verified."
       },
       "osx-arm64": {
         "state": "blocked",
         "artifacts": ["osx-arm64"],
-        "entry": "node",
+        "entry": "bin/codegraph",
         "lock": null,
-        "reason": "R2: noninteractive Claude prompt hook and private launcher require a decision. No native lifecycle target is qualified."
+        "reason": "Core writer integration and native lifecycle qualification are pending. Release assets and installer source are verified."
       },
       "linux-x64": {
         "state": "blocked",
         "artifacts": ["linux-x64"],
-        "entry": "node",
+        "entry": "bin/codegraph",
         "lock": null,
-        "reason": "R2: noninteractive Claude prompt hook and private launcher require a decision. No native lifecycle target is qualified."
+        "reason": "Core writer integration and native lifecycle qualification are pending. Release assets and installer source are verified."
       },
       "linux-arm64": {
         "state": "blocked",
         "artifacts": ["linux-arm64"],
-        "entry": "node",
+        "entry": "bin/codegraph",
         "lock": null,
-        "reason": "R2: noninteractive Claude prompt hook and private launcher require a decision. No native lifecycle target is qualified."
+        "reason": "Core writer integration and native lifecycle qualification are pending. Release assets and installer source are verified."
       }
     },
     "runtime": {
       "kind": "bundled",
       "version": "24.16.0",
-      "notes": "Official portable release bundles Node 24.16.0. Admission under the official Node plus npm ci supply policy is pending. Installer writes a bare codegraph command without the declared process environment.",
+      "notes": "Official portable release bundles Node 24.16.0. Its bin/codegraph launcher runs that Node without a system Node or npm dependency. No PATH changes.",
       "extraDownloads": [],
       "installScripts": "forbidden"
     },
@@ -122,7 +122,8 @@
       "documents": "none",
       "settings": {
         "excludeToolState": true,
-        "telemetryEnabled": false
+        "telemetryEnabled": false,
+        "promptHook": true
       },
       "files": [],
       "actions": []
@@ -159,7 +160,7 @@
     "mcp": {
       "transport": "stdio",
       "command": "target-entry",
-      "args": ["${install}/lib/dist/bin/codegraph.js", "serve", "--mcp", "--path", "${codeRoot}"],
+      "args": ["serve", "--mcp"],
       "cwd": "worktree",
       "environment": {},
       "hosts": {
@@ -185,34 +186,43 @@
       "targets": [],
       "accuracy": "three-languages-2026-11-12"
     },
-    "lifecycle": null
+    "lifecycle": null,
+    "origin": "third-party"
   },
   "lifecycleDraft": {
     "install": {
-      "state": "pending",
-      "args": null,
+      "state": "source-reviewed",
+      "args": ["install", "--location", "local", "--target", "claude,codex", "--yes", "--no-permissions"],
       "scope": "workspace",
       "workspaceOutputs": [".mcp.json", ".claude/settings.json", ".claude/CLAUDE.md", ".codex/config.toml", "AGENTS.md", ".claude.json"],
       "timeoutSeconds": null,
-      "pending": "R2: noninteractive Claude prompt hook and private launcher require a decision."
+      "pending": "Core integration, execution timeout and native journey pending."
     },
     "uninstall": {
       "state": "source-reviewed",
-      "args": ["${install}/lib/dist/bin/codegraph.js", "uninstall", "--location", "local", "--target", "claude,codex", "--yes", "--keep-cli"],
+      "args": ["uninstall", "--location", "local", "--target", "claude,codex", "--yes", "--keep-cli"],
       "scope": "workspace",
       "workspaceOutputs": [".mcp.json", ".claude/settings.json", ".claude/CLAUDE.md", ".codex/config.toml", "AGENTS.md", ".claude.json"],
       "timeoutSeconds": null,
-      "pending": "Native verification and execution timeout pending."
+      "pending": "Core integration, execution timeout and native journey pending."
     },
     "indexCleanup": {
       "state": "source-reviewed",
-      "args": ["${install}/lib/dist/bin/codegraph.js", "uninit", "${codeRoot}", "--force"],
+      "args": ["uninit", "${codeRoot}", "--force"],
       "scope": "workspace",
       "workspaceOutputs": ["${codeRoot}/.codegraph"],
       "timeoutSeconds": null,
-      "pending": "Native verification and execution timeout pending."
+      "pending": "Core integration, execution timeout and native journey pending."
     },
-    "ignorePaths": [".codegraph/"]
+    "ignorePaths": [".codegraph/"],
+    "telemetry": {
+      "state": "source-reviewed",
+      "args": ["telemetry", "off"],
+      "scope": "account",
+      "workspaceOutputs": [],
+      "timeoutSeconds": null,
+      "pending": "Core integration and native verification pending. Native telemetry setting is account-wide and must be disclosed."
+    }
   },
   "releaseEvidence": {
     "verifiedOn": "2026-11-13",
@@ -306,13 +316,13 @@
   "guidance": {
     "path": "skills/open-forge-codegraph/SKILL.md",
     "required": true,
-    "delivery": "pending-tool-owned-installer",
-    "sha256": "e1fa24ebfaab2beec772a8b2432a0a63becba35772b4771274ab788f9427585d"
+    "delivery": "open-forge-required-skill",
+    "sha256": "4b9243b76c89989efa3193cf16368ddd4a13b23737ad47d2544e67b818eb2e26"
   },
   "consent": {
     "source": "../../../docs/tools/codegraph-consent.md",
     "scope": "project",
-    "pending": ["R2"]
+    "pending": []
   },
   "passiveObservationProposal": {
     "serverName": "codegraph",
@@ -324,5 +334,90 @@
       "codex": ".codex/config.toml"
     },
     "pathNote": "Project destinations relative to the physical workspace."
+  },
+  "registrationDraft": {
+    "mode": "tool-installer-with-command-rewrites",
+    "serverName": "codegraph",
+    "launcher": "target-entry",
+    "execPrefix": ["tool", "exec", "codegraph"],
+    "execDelimiter": "optional",
+    "commandResolver": "open-forge on PATH when available, otherwise the absolute path of the running open-forge executable",
+    "rewrites": [
+      {
+        "path": ".mcp.json",
+        "selector": "/mcpServers/codegraph",
+        "format": "json-members",
+        "expected": {
+          "type": "stdio",
+          "command": "codegraph",
+          "args": ["serve", "--mcp"],
+          "alwaysLoad": true
+        },
+        "replace": ["command", "args"],
+        "args": ["tool", "exec", "codegraph", "serve", "--mcp"]
+      },
+      {
+        "path": ".codex/config.toml",
+        "selector": "mcp_servers.codegraph",
+        "format": "exact-table-lines",
+        "expected": ["[mcp_servers.codegraph]", "command = \"codegraph\"", "args = [\"serve\", \"--mcp\"]"],
+        "replace": ["command", "args"],
+        "args": ["tool", "exec", "codegraph", "serve", "--mcp"]
+      },
+      {
+        "path": ".claude/settings.json",
+        "selector": "hooks.UserPromptSubmit[].hooks[].command",
+        "format": "json-members",
+        "expected": ["codegraph.cmd prompt-hook", "codegraph prompt-hook"],
+        "replace": ["command"],
+        "suffix": "tool exec codegraph prompt-hook",
+        "removalMatch": "codegraph prompt-hook",
+        "expectedHook": {
+          "hooks": [
+            {
+              "type": "command",
+              "command": "codegraph.cmd prompt-hook"
+            }
+          ]
+        }
+      },
+      {
+        "paths": [".claude/CLAUDE.md", "AGENTS.md"],
+        "format": "marked-shell-line",
+        "start": "<!-- CODEGRAPH_START -->",
+        "end": "<!-- CODEGRAPH_END -->",
+        "expected": "codegraph explore \"<symbol names or question>\"",
+        "replacementSuffix": "tool exec codegraph explore \"<symbol names or question>\""
+      }
+    ],
+    "promptHook": {
+      "setting": "promptHook",
+      "option": "--prompt-hook",
+      "values": ["yes", "no"],
+      "default": "yes",
+      "event": "UserPromptSubmit",
+      "explanation": "On structural prompts, adds context from the local index. Nothing leaves the machine. CODEGRAPH_NO_PROMPT_HOOK=1 disables it.",
+      "optOut": "Remove only matching CodeGraph prompt-hook commands and prune empty containers, as upstream removePromptHookEntry does."
+    },
+    "telemetry": {
+      "setting": "telemetryEnabled",
+      "default": false,
+      "offArgs": ["telemetry", "off"],
+      "onArgs": ["telemetry", "on"],
+      "accountPath": "~/.codegraph/telemetry.json"
+    },
+    "managedRoleLine": "Code navigation: CodeGraph is active. Use `codegraph_explore` or `open-forge tool exec codegraph explore \"<question>\"` before grep, see the open-forge-codegraph Skill.",
+    "backups": "git-or-sibling-bak",
+    "onUnexpectedShape": "stop-and-report",
+    "after": ["install", "configure", "update"],
+    "trustNotes": [
+      "Upstream needs an installer option to set the launch command or write the absolute launcher path when it is not on PATH. That would remove Open Forge command rewrites.",
+      "Upstream needs --no-prompt-hook for non-interactive installs. --no-permissions only suppresses Claude permissions.",
+      "C# call recall was 41% in the trial. Confirm call sites in source.",
+      "The Claude instruction destination is .claude/CLAUDE.md, as pinned source specifies. Entry names and CODEGRAPH markers stay unchanged for native removal.",
+      "The telemetry command persists an account preference. Suppress telemetry before all other invocations, then apply the disclosed preference."
+    ],
+    "alreadyRewritten": "Keep an exact recorded matching rewrite unchanged. Native reinstall recognizes and can keep the rewritten prompt hook.",
+    "managedRolePaths": ["AGENTS.md", "CLAUDE.md"]
   }
 }

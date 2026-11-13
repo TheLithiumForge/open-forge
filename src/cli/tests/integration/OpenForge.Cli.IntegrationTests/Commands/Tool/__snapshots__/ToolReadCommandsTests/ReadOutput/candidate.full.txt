@@ -3,10 +3,12 @@ Workspace: <workspace>
   Error  fixture-tool  Tool observation [tool-inspect.pin-not-supported]
          The exact definition is not reviewed by this CLI release.
 fixture-tool 1.0.0  <native-target>
+Origin: third-party
 {
   "schema": 1,
   "id": "fixture-tool",
   "name": "Synthetic fixture",
+  "origin": "third-party",
   "version": "1.0.0",
   "license": "MIT",
   "origin": "third-party",
