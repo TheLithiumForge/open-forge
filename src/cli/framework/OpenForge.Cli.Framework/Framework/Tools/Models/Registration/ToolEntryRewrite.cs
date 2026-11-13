@@ -43,6 +43,22 @@ internal sealed record ToolHookCommandRewrite : ToolEntryRewrite
     public required string Pointer { get; init; }
     public required string Expected { get; init; }
     public required string Replacement { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool MatchCommand { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Dictionary<string, ToolHookCommandValue>? PlatformOverrides { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? RequiredReplacementSubstring { get; init; }
+}
+
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+internal sealed record ToolHookCommandValue([property: JsonRequired] string Expected, [property: JsonRequired] string Replacement);
+
+internal static class ToolHookPlatforms
+{
+    internal const string Windows = "windows";
+    internal const string MacOS = "macos";
+    internal const string Linux = "linux";
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]

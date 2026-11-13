@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace OpenForge.Cli.Core.Framework.Tools.Models.Registration;
@@ -9,7 +10,15 @@ internal sealed record ToolRewriteReceipt
     public required string Id { get; init; }
     public required ToolEntryRewrite Rewrite { get; init; }
     public required bool Declined { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ToolHookGroupReceipt? CreatedHookGroup { get; init; }
 }
+
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+internal sealed record ToolHookGroupReceipt(
+    [property: JsonRequired] string File,
+    [property: JsonRequired] string EventPointer,
+    [property: JsonRequired] JsonElement EmptyGroup);
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 internal sealed record ToolComponentDeclineReceipt(

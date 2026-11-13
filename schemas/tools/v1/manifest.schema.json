@@ -865,6 +865,22 @@
         },
         "replacement": {
           "type": "string"
+        },
+        "matchCommand": {
+          "type": "boolean",
+          "default": false
+        },
+        "requiredReplacementSubstring": {
+          "type": ["string", "null"]
+        },
+        "platformOverrides": {
+          "type": ["object", "null"],
+          "propertyNames": {
+            "enum": ["windows", "macos", "linux"]
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/ToolHookCommandValue"
+          }
         }
       }
     },
@@ -939,7 +955,28 @@
         "pointer": {
           "type": "string"
         },
-        "expected": {}
+        "expected": {},
+        "matchCommand": {
+          "type": "boolean",
+          "default": false
+        },
+        "removeCreatedEmptyGroup": {
+          "type": "boolean",
+          "default": false
+        },
+        "platformOverrides": {
+          "type": ["object", "null"],
+          "propertyNames": {
+            "enum": ["windows", "macos", "linux"]
+          },
+          "additionalProperties": {}
+        },
+        "absentCommands": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "ToolOptionalComponent": {
@@ -1022,6 +1059,19 @@
               "type": "null"
             }
           ]
+        }
+      }
+    },
+    "ToolHookCommandValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expected", "replacement"],
+      "properties": {
+        "expected": {
+          "type": "string"
+        },
+        "replacement": {
+          "type": "string"
         }
       }
     }

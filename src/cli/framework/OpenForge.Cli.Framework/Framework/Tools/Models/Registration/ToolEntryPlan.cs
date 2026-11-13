@@ -6,6 +6,8 @@ internal sealed record ToolEntryRewriteRequest
     public required ToolEntryRewrite[] Rewrites { get; init; }
     public required ToolOptionalComponent[] DeclinedComponents { get; init; }
     public required IReadOnlyDictionary<string, string> Values { get; init; }
+    public IReadOnlyDictionary<string, byte[]?>? BeforeInstallerFiles { get; init; }
+    public ToolHookGroupReceipt[] CreatedHookGroups { get; init; } = [];
 }
 
 internal enum ToolEntryState { Original, Matching, Declined, Missing, Drifted, Unavailable }

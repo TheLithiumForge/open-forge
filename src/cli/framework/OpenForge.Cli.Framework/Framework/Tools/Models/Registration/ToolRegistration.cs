@@ -31,6 +31,14 @@ internal sealed record ToolJsonEntryRemoval
     public required string File { get; init; }
     public required string Pointer { get; init; }
     public required JsonElement Expected { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool MatchCommand { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool RemoveCreatedEmptyGroup { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Dictionary<string, JsonElement>? PlatformOverrides { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string[]? AbsentCommands { get; init; }
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]

@@ -534,10 +534,14 @@
       "additionalProperties": false,
       "required": ["id", "absentEntries"],
       "properties": {
-        "id": { "type": "string" },
+        "id": {
+          "type": "string"
+        },
         "absentEntries": {
           "type": "array",
-          "items": { "$ref": "#/$defs/ToolJsonEntryRemoval" }
+          "items": {
+            "$ref": "#/$defs/ToolJsonEntryRemoval"
+          }
         }
       }
     },
@@ -546,10 +550,37 @@
       "additionalProperties": false,
       "required": ["host", "file", "pointer", "expected"],
       "properties": {
-        "host": { "enum": ["claude-code", "codex"] },
-        "file": { "type": "string" },
-        "pointer": { "type": "string" },
-        "expected": {}
+        "host": {
+          "enum": ["claude-code", "codex"]
+        },
+        "file": {
+          "type": "string"
+        },
+        "pointer": {
+          "type": "string"
+        },
+        "expected": {},
+        "matchCommand": {
+          "type": "boolean",
+          "default": false
+        },
+        "removeCreatedEmptyGroup": {
+          "type": "boolean",
+          "default": false
+        },
+        "platformOverrides": {
+          "type": ["object", "null"],
+          "propertyNames": {
+            "enum": ["windows", "macos", "linux"]
+          },
+          "additionalProperties": {}
+        },
+        "absentCommands": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "ToolEntryRewrite": {
@@ -679,6 +710,22 @@
         },
         "replacement": {
           "type": "string"
+        },
+        "matchCommand": {
+          "type": "boolean",
+          "default": false
+        },
+        "requiredReplacementSubstring": {
+          "type": ["string", "null"]
+        },
+        "platformOverrides": {
+          "type": ["object", "null"],
+          "propertyNames": {
+            "enum": ["windows", "macos", "linux"]
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/ToolHookCommandValue"
+          }
         }
       }
     },
@@ -752,6 +799,16 @@
         },
         "declined": {
           "type": "boolean"
+        },
+        "createdHookGroup": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToolHookGroupReceipt"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       }
     },
@@ -772,6 +829,35 @@
         },
         "line": {
           "type": "string"
+        }
+      }
+    },
+    "ToolHookCommandValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expected", "replacement"],
+      "properties": {
+        "expected": {
+          "type": "string"
+        },
+        "replacement": {
+          "type": "string"
+        }
+      }
+    },
+    "ToolHookGroupReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "eventPointer", "emptyGroup"],
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "eventPointer": {
+          "type": "string"
+        },
+        "emptyGroup": {
+          "type": "object"
         }
       }
     }
