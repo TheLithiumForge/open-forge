@@ -229,9 +229,12 @@ Classify the authored destination before resolving it:
 - An unreadable target needed for local resolution has resolution `unreadable`
   and a `references.target-unreadable` finding.
 - A safely contained path with no existing target has resolution `missing` and a
-  `references.target-missing` finding. An existing target without the authored
-  fragment has resolution `fragment-missing` and a
-  `references.fragment-missing` finding.
+  `references.target-missing` finding. An existing Markdown target without the authored
+  heading has resolution `fragment-missing` and a
+  `references.fragment-missing` finding. Non-Markdown fragment checks use the
+  shared source-reference rules. Invalid line bounds have resolution
+  `line-out-of-range` and finding `references.line-out-of-range`. Missing lexical
+  symbol parts have resolution `symbol-missing` and finding `references.symbol-missing`.
 - An existing, safely contained, unambiguous target with an available fragment
   fact has resolution `complete`.
 
@@ -326,6 +329,8 @@ complete.
 The result builder receives already resolved selector occurrences, physical
 source-layer evidence, parsed occurrence facts, and findings. It does not rerun
 source enumeration, parsing, target resolution, or network work for a renderer.
+Link findings keep their authored destination and source location so the report
+can give a manual correction without reconstructing either value from text.
 It retains selector duplicates in `incomingSelection.supplied`, deduplicates
 logical identities only in `effectiveSources`, preserves every physical
 occurrence, and serializes all nullable members and arrays even when empty.

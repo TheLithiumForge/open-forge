@@ -116,6 +116,8 @@ internal static class RepairCoverageMapper
                 => RepairDependencyDomain.RouteAndHeading,
             DoctorFindingKind.ReferenceTargetMissing
                 or DoctorFindingKind.ReferenceFragmentMissing
+                or DoctorFindingKind.ReferenceLineOutOfRange
+                or DoctorFindingKind.ReferenceSymbolMissing
                 or DoctorFindingKind.ReferenceFragmentUnverified
                 or DoctorFindingKind.ReferenceDestinationMalformed
                 or DoctorFindingKind.ReferenceDestinationAbsolute

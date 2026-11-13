@@ -40,6 +40,26 @@ Repair writes Index's form when
 correcting other spellings. Command arguments use literal source paths.
 Images with invalid heading fragments need a manual edit.
 
+Markdown file fragments select heading slugs. Other files accept line fragments
+such as `File.cs#L111` and `File.cs#L111-L125` when every selected line exists.
+Other fragments select symbols. For `File.cs#Type.Member`, each dotted part
+needs to appear as a complete identifier token with the same letter case.
+This lexical check includes comments and strings. It does not check declarations
+or member relationships. Fix failed file fragments by hand.
+
+Context checks code-file links without adding their bodies to Markdown context.
+Valid code links keep the result complete. For failed line or symbol checks,
+Context and References name the authored destination and source location to fix
+by hand. If those are the only findings, that correction is the next step.
+
+Link checks use these finding codes:
+
+| Check                    | Doctor                        | References                     | Context                     |
+| ------------------------ | ----------------------------- | ------------------------------ | --------------------------- |
+| Missing Markdown heading | `reference.fragment-missing`  | `references.fragment-missing`  | `context.fragment-missing`  |
+| Invalid file line bounds | `reference.line-out-of-range` | `references.line-out-of-range` | `context.line-out-of-range` |
+| Missing file symbol part | `reference.symbol-missing`    | `references.symbol-missing`    | `context.symbol-missing`    |
+
 After renaming or moving files by hand, preview `open-forge repair --automatic --dry-run`. Repair fixes proven links and affected Entries. When Git retains the old file's committed content, Index and Repair work in either order. Without Git, run Repair first while old Entries still record the file's metadata. Follow Doctor's next step for any remaining choice or edit.
 
 Use `open-forge --help` for the installed command inventory and

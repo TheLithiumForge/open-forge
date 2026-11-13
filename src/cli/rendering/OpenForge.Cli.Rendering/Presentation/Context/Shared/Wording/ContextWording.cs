@@ -72,6 +72,8 @@ internal static class ContextWording
             ContextFindingCode.MarkdownUnavailable => "context.markdown-unavailable",
             ContextFindingCode.TargetMissing => "context.target-missing",
             ContextFindingCode.FragmentMissing => "context.fragment-missing",
+            ContextFindingCode.LineOutOfRange => "context.line-out-of-range",
+            ContextFindingCode.SymbolMissing => "context.symbol-missing",
             ContextFindingCode.LinkEncodingInvalid => "context.link-encoding-invalid",
             ContextFindingCode.TargetUnreadable => "context.target-unreadable",
             ContextFindingCode.SectionAmbiguous => "context.section-ambiguous",
@@ -173,6 +175,8 @@ internal static class ContextWording
             ContextFindingCode.MarkdownUnavailable => global::OpenForge.Cli.OutputText.Context.ContextText.TitleSourceMarkdownIsUnavailable(),
             ContextFindingCode.TargetMissing => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleLinkTargetIsMissing(),
             ContextFindingCode.FragmentMissing => global::OpenForge.Cli.OutputText.Context.ContextText.TitleLinkHeadingIsMissing(),
+            ContextFindingCode.LineOutOfRange => global::OpenForge.Cli.OutputText.Context.ContextText.TitleLinkLineRangeIsOutOfRange(),
+            ContextFindingCode.SymbolMissing => global::OpenForge.Cli.OutputText.Context.ContextText.TitleLinkSymbolIsMissing(),
             ContextFindingCode.LinkEncodingInvalid => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleLinkEncodingIsInvalid(),
             ContextFindingCode.TargetUnreadable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleLinkTargetCouldNotBeRead(),
             ContextFindingCode.SectionAmbiguous => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleSectionIsAmbiguous(),
@@ -195,6 +199,11 @@ internal static class ContextWording
             ? CannotRead(problem)
             : problem;
     }
+
+    internal static string ManualFragmentCorrection(ContextFinding finding)
+        => global::OpenForge.Cli.OutputText.Shared.SharedPhrases.FormatFixLinkByHand(
+            finding.Subject ?? global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTheDestination(),
+            Location(finding));
 
     internal static string FindingProblem(ContextFinding finding)
     {
@@ -226,6 +235,8 @@ internal static class ContextWording
             ContextFindingCode.MarkdownUnavailable => global::OpenForge.Cli.OutputText.Context.ContextPhrases.FormatCouldNotBeParsedAsMarkdownSoItsWasNotProduced($"{path}", $"{finding.Part?.CanonicalValue ?? "content"}"),
             ContextFindingCode.TargetMissing => global::OpenForge.Cli.OutputText.Context.ContextPhrases.FormatTheLinkAtPointsToWhichDoesNotExistItWasNotFollowed($"{Location(finding)}", $"{finding.Subject ?? "a missing file"}"),
             ContextFindingCode.FragmentMissing => global::OpenForge.Cli.OutputText.Context.ContextPhrases.FormatTheLinkAtPointsToWhichHasNoHeadingItWasNotFollowed($"{Location(finding)}", $"{path}", $"{finding.Subject ?? "the requested fragment"}"),
+            ContextFindingCode.LineOutOfRange => global::OpenForge.Cli.OutputText.Context.ContextPhrases.FormatLinkLineRangeOutOfRange($"{Location(finding)}", $"{path}", $"{finding.Subject ?? "the requested fragment"}"),
+            ContextFindingCode.SymbolMissing => global::OpenForge.Cli.OutputText.Context.ContextPhrases.FormatLinkSymbolMissing($"{Location(finding)}", $"{path}", $"{finding.Subject ?? "the requested fragment"}"),
             ContextFindingCode.LinkEncodingInvalid => global::OpenForge.Cli.OutputText.Context.ContextPhrases.FormatTheLinkAtHasAnEncodingThatCannotBeResolvedItWasNotFollowed($"{Location(finding)}"),
             ContextFindingCode.TargetUnreadable => global::OpenForge.Cli.OutputText.Context.ContextPhrases.FormatTheLinkAtPointsToWhichCouldNotBeReadItWasNotFollowed($"{Location(finding)}", $"{path}"),
             ContextFindingCode.SectionAmbiguous => global::OpenForge.Cli.OutputText.Context.ContextPhrases.FormatHasMoreThanOneSectionNamedNoneWasIncluded($"{path}", $"{finding.Part?.Name ?? finding.Subject ?? "the requested section"}"),
@@ -270,6 +281,8 @@ internal static class ContextWording
             ContextLinkResolution.Complete => "complete",
             ContextLinkResolution.Missing => "missing",
             ContextLinkResolution.FragmentMissing => "fragment-missing",
+            ContextLinkResolution.LineOutOfRange => "line-out-of-range",
+            ContextLinkResolution.SymbolMissing => "symbol-missing",
             ContextLinkResolution.CaseMismatch => "case-mismatch",
             ContextLinkResolution.Malformed => "malformed",
             ContextLinkResolution.Absolute => "absolute",
@@ -291,6 +304,7 @@ internal static class ContextWording
             ContextLinkDisposition.AlreadySelected => "already-selected",
             ContextLinkDisposition.Cycle => "cycle",
             ContextLinkDisposition.ExternalUnchecked => "external-unchecked",
+            ContextLinkDisposition.FileChecked => "file-checked",
             ContextLinkDisposition.Unresolved => "unresolved",
             _ => throw new ArgumentOutOfRangeException(nameof(disposition), disposition, "The Context link disposition is not defined."),
         };

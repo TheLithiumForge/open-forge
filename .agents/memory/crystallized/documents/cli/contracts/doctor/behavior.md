@@ -485,7 +485,10 @@ The stage realizes the complete reference catalogue:
   requires removal of the fragment. File containment and link rules remain.
 - `reference.target-missing` retains the raw occurrence and forms guided
   evidence only when bounded candidates exist. It never creates a target.
-- `reference.fragment-missing` distinguishes a missing fragment from a missing
+- `reference.line-out-of-range` and `reference.symbol-missing` report failed
+  non-Markdown fragment checks under the shared source-reference rules. Both use
+  the manual-decision lane and keep the authored destination for editing.
+- `reference.fragment-missing` distinguishes a missing Markdown heading from a missing
   target. `reference.fragment-unverified` preserves incomplete target parsing or
   coverage instead of guessing.
 - `reference.destination-malformed`, `reference.destination-absolute`, and

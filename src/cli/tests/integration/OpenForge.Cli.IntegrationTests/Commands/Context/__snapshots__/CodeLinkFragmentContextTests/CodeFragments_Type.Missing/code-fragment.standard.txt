@@ -1,0 +1,49 @@
+Workspace: <workspace>
+  Warning  .agents/docs/guide.md:8:1  Link symbol is missing
+         The link at .agents/docs/guide.md:8:1 selects a missing symbol in Code.cs: ../../Code.cs#Type.Missing. It was not followed.
+         Fix ../../Code.cs#Type.Missing by hand at .agents/docs/guide.md:8:1.
+=== AGENTS.md ===
+included because workspace entry
+# Workspace
+
+Read `.agents/loader.md`.
+
+=== .agents/loader.md (loader) ===
+included because Loader
+# Open Forge Loader
+
+## Axioms
+
+- inherited - Follow the workspace instructions.
+
+## Entries
+
+- [Documents](docs/_docs.md) - #Docs
+
+=== .agents/docs/_docs.md (docs) ===
+included because ancestor required from .agents/docs/guide.md for docs/guide
+---
+open-forge:
+  description: Documents
+  tags: [Docs]
+---
+# Documents
+
+## Entries
+
+- [Guide](guide.md) - #Docs #Guide
+- [Reference](reference.md) - #Docs
+
+=== .agents/docs/guide.md (docs/guide) ===
+included because selected source for docs/guide
+---
+open-forge:
+  description: Guide
+  tags: [Docs, Guide]
+---
+# Guide
+
+[Code](../../Code.cs#Type.Missing)
+Context counts are unavailable. The followed Context links could not be resolved
+completely.
+Next: Fix ../../Code.cs#Type.Missing by hand at .agents/docs/guide.md:8:1.

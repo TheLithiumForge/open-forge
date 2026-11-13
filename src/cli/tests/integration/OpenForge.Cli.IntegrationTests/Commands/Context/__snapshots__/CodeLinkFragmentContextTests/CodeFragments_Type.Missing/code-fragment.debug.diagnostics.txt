@@ -1,0 +1,1 @@
+At least one dotted symbol part is not an identifier token in the target file.

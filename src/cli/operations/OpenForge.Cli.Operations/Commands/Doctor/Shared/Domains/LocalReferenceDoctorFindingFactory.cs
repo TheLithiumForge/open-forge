@@ -47,7 +47,8 @@ internal static class LocalReferenceDoctorFindingFactory
         => resolution switch
         {
             SourceLinkTargetResolution.Complete => DoctorObservedState.Valid,
-            SourceLinkTargetResolution.Missing or SourceLinkTargetResolution.FragmentMissing => DoctorObservedState.Missing,
+            SourceLinkTargetResolution.Missing or SourceLinkTargetResolution.FragmentMissing
+                or SourceLinkTargetResolution.LineOutOfRange or SourceLinkTargetResolution.SymbolMissing => DoctorObservedState.Missing,
             SourceLinkTargetResolution.Unreadable or SourceLinkTargetResolution.ExternalUnchecked => DoctorObservedState.Unavailable,
             SourceLinkTargetResolution.Unsupported => DoctorObservedState.Unsupported,
             SourceLinkTargetResolution.Malformed

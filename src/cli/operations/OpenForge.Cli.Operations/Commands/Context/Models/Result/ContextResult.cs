@@ -30,6 +30,8 @@ internal enum ContextFindingCode
     MarkdownUnavailable,
     TargetMissing,
     FragmentMissing,
+    LineOutOfRange,
+    SymbolMissing,
     LinkEncodingInvalid,
     TargetUnreadable,
     SectionAmbiguous,

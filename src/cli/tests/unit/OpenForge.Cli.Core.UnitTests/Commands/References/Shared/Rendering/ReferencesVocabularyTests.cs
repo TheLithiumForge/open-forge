@@ -109,6 +109,8 @@ public sealed class ReferencesVocabularyTests
                 ReferencesFindingCode.DestinationUnsupported,
                 ReferencesFindingCode.TargetMissing,
                 ReferencesFindingCode.FragmentMissing,
+                ReferencesFindingCode.LineOutOfRange,
+                ReferencesFindingCode.SymbolMissing,
                 ReferencesFindingCode.TargetUnreadable,
             ],
             rowStates);

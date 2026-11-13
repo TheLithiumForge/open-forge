@@ -217,5 +217,16 @@ internal static class ReferencesText
 
     // @OpenForgeText references.help.details-2
     internal static string HelpBoundaryDetails()
-        => "This deterministic report does not fetch URLs, load target bodies, follow links, build an index, or repair destinations.";
+        => "Markdown fragments select headings. Other files accept existing line ranges such as #L1-L3 or lexical symbols such as #Type.Member. Line and symbol findings give the destination and source location to fix by hand. This report does not fetch URLs, expand target bodies into context, build an index or repair destinations.";
+    // @OpenForgeText references.fragment.label-line-range-out-of-range
+    internal static string LabelLineRangeOutOfRange() => "line range out of range";
+
+    // @OpenForgeText references.fragment.label-symbol-not-found
+    internal static string LabelSymbolNotFound() => "symbol not found";
+
+    // @OpenForgeText references.fragment.title-line-range-is-out-of-range
+    internal static string TitleLineRangeIsOutOfRange() => "Line range is out of range";
+
+    // @OpenForgeText references.fragment.title-symbol-was-not-found
+    internal static string TitleSymbolWasNotFound() => "Symbol was not found";
 }

@@ -34,6 +34,8 @@ internal static class ReferencesWireVocabulary
         ReferencesFindingCode.DestinationUnsupported => "references.destination-unsupported",
         ReferencesFindingCode.TargetMissing => "references.target-missing",
         ReferencesFindingCode.FragmentMissing => "references.fragment-missing",
+        ReferencesFindingCode.LineOutOfRange => "references.line-out-of-range",
+        ReferencesFindingCode.SymbolMissing => "references.symbol-missing",
         ReferencesFindingCode.TargetUnsafe => "references.target-unsafe",
         ReferencesFindingCode.TargetAmbiguous => "references.target-ambiguous",
         ReferencesFindingCode.TargetUnreadable => "references.target-unreadable",
@@ -44,7 +46,7 @@ internal static class ReferencesWireVocabulary
 
     /// <summary>
     /// A row-state finding repeats a fact the `out` row already prints inline, so text lists it
-    /// only at `full` and above. JSON keeps every finding at every level, which is why this
+    /// from `standard` onward, or at `minimal` when it carries an action. JSON keeps every finding at every level, which is why this
     /// selects text rather than trimming the report.
     /// </summary>
     internal static bool IsRowState(ReferencesFindingCode code) => code switch
@@ -53,6 +55,8 @@ internal static class ReferencesWireVocabulary
             or ReferencesFindingCode.DestinationUnsupported
             or ReferencesFindingCode.TargetMissing
             or ReferencesFindingCode.FragmentMissing
+            or ReferencesFindingCode.LineOutOfRange
+            or ReferencesFindingCode.SymbolMissing
             or ReferencesFindingCode.TargetUnreadable => true,
         _ => false,
     };
