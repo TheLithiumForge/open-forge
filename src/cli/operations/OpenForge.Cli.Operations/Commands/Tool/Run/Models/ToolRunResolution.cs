@@ -16,7 +16,10 @@ internal sealed record ToolRunFailure(ToolRunFailureCode Code, string Id, string
     public int ExitCode => ToolRunFailureCodes.ExitCode(Code);
 }
 internal abstract record ToolRunResolution;
-internal sealed record ToolRunReady(ToolDispatchRequest Dispatch) : ToolRunResolution;
+internal sealed record ToolRunReady(ToolDispatchRequest Dispatch) : ToolRunResolution
+{
+    public required CliWorkspace Workspace { get; init; }
+}
 internal sealed record ToolRunRefused(ToolRunFailure Failure) : ToolRunResolution;
 
 internal delegate ValueTask<ToolRunResolution> ToolResolveRun(ToolRunRequest request, CancellationToken token);

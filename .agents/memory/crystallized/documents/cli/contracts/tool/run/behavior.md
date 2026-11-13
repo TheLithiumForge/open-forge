@@ -22,6 +22,8 @@ The operation follows these steps:
 4. Resolve the recorded executable and fixed launcher inputs from the verified store. Never search PATH for the tool or accept another executable.
 5. Forward the remaining argument array and process streams with no shell and no successful-run output.
 
+A resolved launch keeps the selected workspace alongside its dispatch request. A start failure or cancellation before process creation carries that workspace into its typed failure. An Install offer uses the workspace from the refusal. It never repeats workspace discovery during consent.
+
 ## Missing tools
 
 Tool Status, workspace Status, Doctor and Run report declared missing tools with `open-forge tool install`. Interactive Run can offer that installation, but applies the same artifact, component, destination and final consent checks.
