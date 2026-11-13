@@ -737,3 +737,13 @@ Status observes current source metadata and generated navigation without invokin
 At full and debug detail, `data.recovery.stores` reports ordered store records with `kind`, `path`, `coverage`, `candidates` and `cause`. Existing aggregate recovery fields remain. Store kinds are `workspace` and `legacy`. Text lists candidate paths together and adds warnings for unavailable stores. Empty readable stores do not get separate text rows.
 
 Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.
+
+## Tool facts
+
+Read Tool settings independently from lock details and project only passive facts. Keep configured roles separate from verified installation. Report unavailable stores and counts with causes. Never create an index journal, launch a version probe or repair required guidance during observation. The [Tool Status behavior](../tool/status/behavior.md) defines passive checks.
+
+Report leftover Tool sibling `.bak` paths through passive findings, even when the current settings or lock is invalid. Keep saved contents out of output and keep unavailable coverage with its cause. The [Tool backups design](../../technical-designs/tool-backups.md#read-backups) defines discovery. Existing v1 and legacy recovery observation stays unchanged.
+
+## Tool declarations
+
+Report declared but locally missing Tool pins separately from unavailable verification. Give the exact next step `open-forge tool install`. Compare declared post-install command rewrites and report drift without changing entries. Check leftover sibling backups for safely identified Tool targets. These checks run no external process. The [dated Tool decisions](../../technical-designs/external-tools.md#decisions-2026-11-13) define team setup and registration.

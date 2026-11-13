@@ -1,0 +1,10 @@
+Read available definitions and recorded tool installs.
+Workspace: <workspace>
+Available
+  None recorded.
+Installed
+  None recorded.
+Coverage
+  settings: Complete
+  lock: Complete
+  catalogue: Complete

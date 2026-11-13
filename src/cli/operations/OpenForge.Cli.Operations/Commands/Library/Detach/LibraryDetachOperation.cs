@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Filesystem.Shared.GitIgnore;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Mutation;
 using OpenForge.Cli.Core.Framework.Mutation.Validation.Models;
@@ -128,7 +129,7 @@ internal sealed class LibraryDetachOperation
             SettingsObservation = observations.Settings,
             LayoutRead = observations.LayoutRead,
             Targets = plan.GitIgnore is null ? targets : targets.Add(new LibraryPermissionTarget(
-                LibraryGitIgnoreSection.Path, LibraryPermissionTargetUse.Live)
+                ManagedGitIgnoreSection.Path, LibraryPermissionTargetUse.Live)
             { Effect = LibraryPermissionEffect.WriteGitIgnore }),
             RemovalSelection = new WorkspaceRemovalSelection { Libraries = [request.LibraryId.Value] },
             ExplicitGrantPaths = request.Allow,
@@ -396,7 +397,7 @@ internal sealed class LibraryDetachOperation
                 Workspace = input.Request.Workspace,
                 Current = input.Record.Record,
                 Intended = plan.IntendedRecord,
-                IsExcluded = WorkspaceRemovals.IsPathRemoved(input.LayoutRead.Layout!, LibraryGitIgnoreSection.Path, input.Settings.Document),
+                IsExcluded = WorkspaceRemovals.IsPathRemoved(input.LayoutRead.Layout!, ManagedGitIgnoreSection.Path, input.Settings.Document),
                 IsRemoval = true,
             }, cancellationToken).ConfigureAwait(false),
         };

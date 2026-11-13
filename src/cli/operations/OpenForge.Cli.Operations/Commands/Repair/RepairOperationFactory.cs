@@ -72,7 +72,10 @@ internal static class RepairOperationFactory
             catalogueReader,
             application,
             interaction)
-        { MaintenancePlanner = maintenance };
+        {
+            MaintenancePlanner = maintenance,
+            ToolBackups = new(lockStoreRoot is null ? WorkspaceLockManager.CreateForCurrentUser() : new WorkspaceLockManager(lockStoreRoot), interaction),
+        };
     }
 
     private static RepairInteraction DisabledInteraction()

@@ -1,0 +1,9 @@
+Read available definitions and recorded tool installs.
+Available
+  fixture-tool 1.0.0  available  candidate  unreviewed  code-graph
+Installed
+  None recorded.
+Coverage
+  settings: Complete
+  lock: Complete
+  catalogue: Complete

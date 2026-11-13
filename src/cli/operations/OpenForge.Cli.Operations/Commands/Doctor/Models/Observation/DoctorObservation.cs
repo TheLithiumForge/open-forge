@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 using OpenForge.Cli.Core.Framework.Workspace.Operational.Models;
+using OpenForge.Cli.Core.Framework.Tools.Models.Backups;
 
 namespace OpenForge.Cli.Core.Commands.Doctor.Models.Observation;
 
@@ -20,6 +21,7 @@ internal sealed record DoctorObservation(
     LibraryDoctorView Libraries,
     ImmutableArray<LibraryResidualEvidence> LibraryResiduals)
 {
+    internal ToolBackupCandidate[] ToolBackups { get; init; } = [];
     internal WorkspaceLayoutRead? LayoutRead { get; init; }
 
     internal RouteOutsideRoutesObservation? OutsideRoutes { get; init; }

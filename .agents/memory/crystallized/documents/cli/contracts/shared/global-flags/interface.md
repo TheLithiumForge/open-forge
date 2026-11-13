@@ -308,3 +308,7 @@ Global flags do not replace operation-specific flag roles:
 - [Context Interface Contract](../../context/interface.md)
 - [Historical CLI Decision Agenda](../../../../../../archived/cli-release/decision-agenda-2026-08-21.md)
 - [Shared CLI Operation Contract](../../../shared-operation-contract.md)
+
+## Tool examples
+
+The contracted Tool family uses the same global meanings. For example, `tool list` can select one exact workspace and JSON output. `tool inspect` can choose full detail without launching the program. Local Tool flags remain command-specific. The [Tool group](../../tool/_tool.md) defines their matrix. These examples describe the V1 contract before implementation.

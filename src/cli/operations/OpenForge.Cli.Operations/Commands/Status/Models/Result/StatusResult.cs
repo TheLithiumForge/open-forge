@@ -59,6 +59,8 @@ internal enum StatusFindingCode
     OperationFailed,
     Interrupted,
     GeneratedNavigationMetadataInvalid,
+    ToolBackupPresent,
+    ToolBackupUnavailable,
 }
 internal sealed record StatusFinding
 {

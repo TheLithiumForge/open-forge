@@ -371,4 +371,7 @@ internal static class RepairText
     // @OpenForgeText repair.help.details-4
     internal static string HelpSafetyDetails()
         => "Replacements carry the expected file state, the version this CLI ships, exact verification, and external recovery attribution. Repair completes eligible metadata, missing navigation files, and Entries only in routes affected by selected corrections. Managed files, native Skill packages, overwrites, excluded or private contents, and unsafe leaves remain protected. Repair is stateless and local. It does not clean recovery artifacts or invoke another command.";
+
+    internal static string HelpToolBackups()
+        => "If settings, lock or .gitignore has a sibling .bak, Repair handles those backups first. Use --automatic or interactive confirmation. Preview with --dry-run. Current permission and removal exclusions still apply. Saved settings don't grant permission. Check restored files, then rerun Repair for other work. Agent files stay with the tool's installer.";
 }

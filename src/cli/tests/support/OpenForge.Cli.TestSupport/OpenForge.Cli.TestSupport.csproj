@@ -9,6 +9,10 @@
     <PackageReference Include="TheLithium.Imprint" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Fixtures/Tools/*" LogicalName="OpenForge.Tests.ToolFixture/%(Filename)%(Extension)" WithCulture="false" />
+    <EmbeddedResource Include="../../../../open-forge/**/*"
+                      LogicalName="OpenForge.Tests.FrameworkPayload/%(RecursiveDir)%(Filename)%(Extension)"
+                      WithCulture="false" />
     <EmbeddedResource Include="../../../../extensions/**/extension.json"
                       LogicalName="OpenForge.Tests.ExtensionManifests/%(RecursiveDir)%(Filename)%(Extension)"
                       WithCulture="false" />

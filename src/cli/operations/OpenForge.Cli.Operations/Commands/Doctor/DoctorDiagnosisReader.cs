@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
 using OpenForge.Cli.Core.Commands.Doctor.Shared.Maintenance;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence;
+using OpenForge.Cli.Core.Framework.Tools.Shared.Backups;
 
 namespace OpenForge.Cli.Core.Commands.Doctor;
 
@@ -69,6 +70,7 @@ internal sealed class DoctorDiagnosisReader(OperationalContributorCatalogue cont
             Maintenance = maintenance,
             LayoutRead = observation,
             OutsideRoutes = outside,
+            ToolBackups = ToolBackupReader.Read(request.Workspace, ToolBackupPaths.WorkspaceTargets, cancellationToken),
         };
         var result = DoctorResultBuilder.Build(request, resultObservation);
         return new DoctorDiagnosisRead(resultObservation, result);

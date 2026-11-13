@@ -23,6 +23,7 @@ public sealed class TestDataHome : IDisposable
 {
     /// <summary>Names an absolute directory the CLI uses instead of the user's profile.</summary>
     public const string Variable = "OPENFORGE_DATA_HOME";
+    public const string ToolVariable = "OPENFORGE_TOOL_HOME";
 
     private const string ApplicationDirectoryName = "OpenForge";
     private const string RecoveryDirectoryName = "recovery";
@@ -109,6 +110,7 @@ public sealed class TestDataHome : IDisposable
         var values = new Dictionary<string, string>(StringComparer.Ordinal)
         {
             [Variable] = Path,
+            [ToolVariable] = Path,
             ["XDG_DATA_HOME"] = Path,
             ["LOCALAPPDATA"] = Path,
         };
@@ -137,6 +139,7 @@ public sealed class TestDataHome : IDisposable
         var home = Create(purpose);
         Directory.CreateDirectory(home.Path);
         Environment.SetEnvironmentVariable(Variable, home.Path);
+        Environment.SetEnvironmentVariable(ToolVariable, home.Path);
         AppDomain.CurrentDomain.ProcessExit += (_, _) => home.Dispose();
     }
 

@@ -36,12 +36,12 @@ internal static class DoctorResultBuilder
                 observation.ExtensionLifecycle));
         var domains = new DoctorDomainReport[]
         {
-            LibraryDoctorInspector.Inspect(
+            ToolBackupDoctorInspector.Append(request.Workspace, LibraryDoctorInspector.Inspect(
                 request.Workspace,
                 WorkspaceEntryDoctorInspector.Inspect(request.Workspace, observation with { Routes = routeInputs }),
                 observation.Libraries,
                 observation.RecoveryResiduals,
-                observation.LibraryResiduals),
+                observation.LibraryResiduals), observation.ToolBackups),
             RecoveryResidualDoctorInspector.Inspect(observation.RecoveryResiduals),
             RouteDoctorInspector.Inspect(routeInputs),
             LocalReferenceDoctorInspector.Inspect(observation.LocalReferences, observation.Maintenance, retainedAuthoredMissingTargets),

@@ -1196,3 +1196,9 @@ existing fallback behavior.
 At full and debug detail, `data.recoveryStores` reports ordered store records with `kind`, `path`, `coverage`, `candidates` and `cause`. Existing diagnosis fields remain. Producer-specific target comparison keeps its existing scope. Store kinds are `workspace` and `legacy`. Text reports candidate findings and warnings for unavailable stores. It does not print a separate inventory row for every readable store.
 
 Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and the legacy per-user store separately, in that order. Reads create neither store and never probe lock writability. An absent store is an available empty catalogue. Unavailable coverage is not an empty catalogue. Keep readable candidates when the other store is unavailable. Preserve store identity, exact paths, integrity and causes. Aggregate totals remain unknown when coverage is incomplete.
+
+## Tool facts
+
+Doctor reports passive Tool installation, configuration, required-guidance and index-evidence findings. It doesn't launch external probes, start daemons, repair members or activate retrieved content. Missing active guidance warns. The [Tool Status interface](../tool/status/interface.md) defines the evidence states.
+
+Report leftover Tool sibling `.bak` paths through passive findings, even when the current settings or lock is invalid. Keep saved contents out of output and keep unavailable coverage with its cause. The [Tool backups design](../../technical-designs/tool-backups.md#read-backups) defines discovery. Existing v1 and legacy recovery observation stays unchanged.

@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 3,
+  "command": "tool status",
+  "status": "invalid-input",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Read passive tool installation and configuration evidence.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "tool-status.tool-not-installed",
+      "title": "Tool observation",
+      "message": "The tool isn't registered in this workspace.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "fixture-tool",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "tools": [],
+    "coverage": [
+      {
+        "store": "settings",
+        "state": "complete",
+        "cause": null
+      },
+      {
+        "store": "lock",
+        "state": "complete",
+        "cause": null
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge tool status --help",
+    "reason": "Resolve the reported cause, then rerun the same read command."
+  }
+}

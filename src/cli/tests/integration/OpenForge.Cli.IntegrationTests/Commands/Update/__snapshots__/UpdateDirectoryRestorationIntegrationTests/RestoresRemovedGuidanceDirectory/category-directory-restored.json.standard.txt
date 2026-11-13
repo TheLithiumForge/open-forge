@@ -45,7 +45,7 @@
     "filesCreated": 1,
     "filesDeleted": 0,
     "filesKept": 0,
-    "filesUnchanged": 18,
+    "filesUnchanged": 19,
     "sectionsUpdated": 1
   },
   "limitations": [],
@@ -101,6 +101,9 @@
       },
       {
         "path": ".agents/skills/open-forge-cli/references/routes.md"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/tools.md"
       },
       {
         "path": ".agents/templates/_templates.md"

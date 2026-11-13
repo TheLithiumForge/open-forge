@@ -1,5 +1,6 @@
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
+using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.EndToEndTests;
 
@@ -23,15 +24,8 @@ public sealed class PublishedRouteInitRestorationProcessTests
         using var previewJson = JsonDocument.Parse(preview.StandardOutput);
         Assert.Equal(3, previewJson.RootElement.GetProperty("schemaVersion").GetInt32());
         var payloadPaths = previewJson.RootElement.GetProperty("data").GetProperty("payload").EnumerateArray()
-            .Select(asset => asset.GetProperty("sourceAssetPath").GetString()).ToArray();
-        Assert.Equal(new[]
-        {
-            ".agents/skills/open-forge-cli/SKILL.md",
-            ".agents/skills/open-forge-cli/references/common.md",
-            ".agents/skills/open-forge-cli/references/discovery.md",
-            ".agents/skills/open-forge-cli/references/packages.md",
-            ".agents/skills/open-forge-cli/references/routes.md",
-        }, payloadPaths);
+            .Select(asset => Assert.IsType<string>(asset.GetProperty("sourceAssetPath").GetString())).ToArray();
+        Assert.Equal(FrameworkPayloadSource.CliSkillPaths, payloadPaths);
         Assert.DoesNotContain(previewJson.RootElement.GetProperty("data").GetProperty("entrypoints").EnumerateArray(),
             entry => entry.GetProperty("path").GetString()?.EndsWith("SKILL.md", StringComparison.Ordinal) == true);
         var applied = await PublishedProcessTestSupport.RunAsync(target, workspace.Path, arguments, workspace.ProcessEnvironment);

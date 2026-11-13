@@ -19,6 +19,8 @@ Replacement work uses the executable built in the same worktree.
 
 ## Reading Rule
 
+The contracted [`tool` group](contracts/tool/_tool.md) manages external programs through `list`, `inspect`, `install`, `configure`, `status`, `update`, `remove` and `choose`, in that order. Core contracts precede implementation and concrete adapters. They don't add search, indexing or retrieved-document activation to the CLI.
+
 This file is a route map, not a second copy of the CLI contracts. Each
 question has one narrowest authoritative owner below. Higher-level records keep
 only the short summary needed to select that owner and link to it; detailed

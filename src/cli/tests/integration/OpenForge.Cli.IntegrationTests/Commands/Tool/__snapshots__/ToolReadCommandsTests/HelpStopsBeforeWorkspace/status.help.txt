@@ -1,0 +1,83 @@
+  Passively check recorded tool installs and configuration.
+
+Usage:
+  open-forge tool status [<id>] [global flags]
+
+Examples:
+  open-forge tool status --format json
+  open-forge tool status example-tool
+
+Behavior:
+  Reads local facts without downloads, child processes or writes.
+  Unavailable observations keep their cause and independently readable facts.
+  Tool-owned installers handle agent configuration.
+
+Arguments:
+  <id>  One exact tool ID.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Tool supply: Open Forge ships reviewed recipes and never ships, mirrors or
+  rehosts tool bytes.
+  Native assets come from the project's official GitHub release with pinned
+  version, URL, size, SHA-256, source commit and build-attestation evidence
+  where published.
+  Node tools use a private official portable runtime from nodejs.org/dist,
+  pinned from signed SHASUMS256.txt.
+  Its bundled npm runs npm ci from the pinned registry lock with integrity
+  checks and package scripts disabled.
+  Every command uses absolute private runtime and package paths. Your Node and
+  PATH stay unchanged. musl/Alpine has no official Node build.
+  Missing pins or dependencies, unsafe archives, mismatched size or hashes and
+  failed required signatures or attestations block installation.
+  Upstream license conditions still apply.
+  Stores and settings: Settings record one pin per tool and active roles. The
+  lock keeps recipe snapshots, hashes, files, references and command results.
+  Physical store bindings and process consent stay account-local. Versioned tool
+  and private Node bytes stay while any workspace references them.
+  Inspect shows resolved paths or why they are unavailable. Status diagnoses
+  without repairing.
+  Tools never self-update. The tools.<id>.telemetry boolean defaults to false.
+  Inspect shows the saved choice or unavailable.
+  Status reports drift for an active tool when that choice differs from its
+  configured receipt. Pending writers apply the choice.
+  Planned writes: The five write commands are pending. Install downloads
+  verified official artifacts and runs the pinned tool's installer.
+  Repeating Install verifies and repairs bytes and reruns that installer.
+  Verified local artifacts can avoid another download.
+  Update selects reviewed catalogue pins only, including exact older pins for
+  downgrades. Previously reviewed pins stay in the catalogue.
+  Tool installers register MCP. Open Forge supplies the required short usage
+  Skill and updates its records, managed ignore section, declared command
+  rewrites and conditional role lines.
+  Definitions declare first-party or third-party origin. Consent names
+  third-party upstream software, its repository, licence, official release and
+  authors.
+  After installation, only declared command parts are rewritten. Unexpected
+  shapes stop the write. No independent host entry or TOML parser is added.
+  Optional prompt hooks use an interactive choice or --prompt-hook yes|no.
+  Declining removes only that entry.
+  Bare open-forge tool install restores every declared lock-verified pin with
+  the same consent. Choose switches role integrations and guidance while keeping
+  both installs and indexes.
+  Remove runs its stored commands in definition-declared order, removes unused
+  Tool ignore rules and releases the workspace's store references.
+  Preview starts no transfers or processes. Downloads, session processes and
+  destinations need separate consent or grants. Removal exclusions still apply.
+  Git workspaces create no sibling backup. Without Git, existing managed files
+  use sibling .bak files through write validation and restoration on failure.
+  There is no separate Tool repair or open-path command.
+  Tool Run: V1 Tool Run is pending. It runs only a declared, installed and
+  verified workspace pin by ID, forwards arguments and streams without a shell
+  and adds no success output. Missing tools require open-forge tool install.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  open-forge tool --help

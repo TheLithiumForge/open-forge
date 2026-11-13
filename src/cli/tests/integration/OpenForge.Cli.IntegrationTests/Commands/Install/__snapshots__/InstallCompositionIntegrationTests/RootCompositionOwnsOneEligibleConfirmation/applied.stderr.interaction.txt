@@ -1,0 +1,50 @@
+Where should Open Forge keep its context files? Press Enter for .agents, or
+enter a new or existing workspace-relative folder. Settings and Skills stay in
+.agents.
+Do you also want Open Forge to maintain a folder of your own docs? Enter an
+existing workspace-relative folder, such as docs, to register it as an outside
+route, or press Enter to skip. It can't be inside the context folder or
+.agents.
+Choose your Open Forge setup
+
+  1. Minimal     Recommended. Rules, accepted knowledge, your documents
+     The loader, Directives for your rules and Crystallized Memory for accepted
+     knowledge, plus the Open Forge sections in AGENTS.md and CLAUDE.md. Link
+     documents you already have from the loader.
+  2. Essentials  Minimal plus patterns, skills and working notes
+     Everything in Minimal, plus reusable patterns, skills, notes for active
+     work and findings not accepted yet. New notes for active work stay out of
+     Git.
+  3. Full Core   Every built-in folder, all shared through Git
+     Everything in Essentials, plus advice, pointers to sources, starter files
+     and archived records. All contents, including notes for active work, are
+     shared through Git.
+  4. Custom      Choose each folder on the next screen
+     Starts from your current choices, or Essentials in a new workspace, then
+     shows one list to change.
+
+Choose a number (1-4), or press Enter to cancel:
+How should Open Forge write file metadata?
+
+  1. Root keys                 description: and tags: at the top level
+     Recommended. Metadata sits at the top of each file's frontmatter.
+  2. Scoped under open-forge:  open-forge: holds description: and tags:
+     Choose this if other tools already use top-level frontmatter keys in your
+     files.
+
+Choose a number (1-2), or press Enter to cancel:
+Review changes
+Would install the Open Forge Framework.
+Workspace: <workspace>
+Setup: Full Core
+Add: directives, guidance, maps, patterns, skills, templates, memory/working,
+memory/emerging, memory/crystallized, memory/archived
+Git-ignored contents: none
+Leave out: none
+Frontmatter: scoped
+  .agents/open-forge.lock.json  would be created
+  Would create 19 files and 13 directories under .agents, plus AGENTS.md and
+  CLAUDE.md.
+  Nothing that already exists would be changed.
+
+Apply these changes? [y/N]

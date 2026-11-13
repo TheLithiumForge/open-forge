@@ -1,0 +1,5 @@
+Read passive tool installation and configuration evidence.
+None recorded.
+Coverage
+  settings: Complete
+  lock: Complete

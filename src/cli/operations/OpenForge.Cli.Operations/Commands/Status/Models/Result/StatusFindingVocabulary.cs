@@ -57,6 +57,8 @@ internal static class StatusFindingVocabulary
         Finding(StatusFindingCode.OperationFailed, "operation-failed", CliSemanticStatus.Failed),
         Finding(StatusFindingCode.Interrupted, "interrupted", CliSemanticStatus.Interrupted),
         Finding(StatusFindingCode.GeneratedNavigationMetadataInvalid, "generated-navigation-metadata-invalid", CliSemanticStatus.Attention),
+        Finding(StatusFindingCode.ToolBackupPresent, "tool-backup-present", CliSemanticStatus.Attention),
+        Finding(StatusFindingCode.ToolBackupUnavailable, "tool-backup-unavailable", CliSemanticStatus.Incomplete),
     ];
 
     internal static string ReadMachineName(StatusFindingCode code) => Read(code).MachineName;

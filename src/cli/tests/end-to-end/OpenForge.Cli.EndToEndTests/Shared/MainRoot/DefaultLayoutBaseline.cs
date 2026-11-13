@@ -8,8 +8,6 @@ internal sealed class DefaultLayoutBaseline : IDisposable
 {
     private const string ResourceName = "MainRoot.DefaultLayout";
     private const string FilesProperty = "files";
-    private const string TextProperty = "text";
-    private const string JsonProperty = "json";
     private readonly JsonDocument _document;
 
     internal DefaultLayoutBaseline()
@@ -21,8 +19,6 @@ internal sealed class DefaultLayoutBaseline : IDisposable
 
     internal Dictionary<string, byte[]> Files => _document.RootElement.GetProperty(FilesProperty).EnumerateObject()
         .ToDictionary(property => property.Name, property => FileBytes(property.Name, property.Value.GetBytesFromBase64()), StringComparer.Ordinal);
-    internal byte[] Text => HostLines(_document.RootElement.GetProperty(TextProperty).GetString()!);
-    internal JsonElement Json => _document.RootElement.GetProperty(JsonProperty);
     public void Dispose() => _document.Dispose();
 
     private static byte[] FileBytes(string path, byte[] bytes)

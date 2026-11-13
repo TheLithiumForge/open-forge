@@ -1,0 +1,9 @@
+Read available definitions and recorded tool installs.
+Available
+  None recorded.
+Installed
+  None recorded.
+Coverage
+  settings: Complete
+  lock: Complete
+  catalogue: Complete

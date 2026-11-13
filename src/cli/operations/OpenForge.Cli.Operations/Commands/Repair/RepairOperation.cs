@@ -42,6 +42,8 @@ internal sealed class RepairOperation
             cancellationToken.ThrowIfCancellationRequested();
             if (!request.HasSelectionAuthority)
                 return await BoundaryAsync(request, SelectionUnavailableFinding(), []).ConfigureAwait(false);
+            if (_components.ToolBackups is { } backups && await backups.ExecuteAsync(request, cancellationToken).ConfigureAwait(false) is { } restored)
+                return restored;
             var diagnosis = await _components.DiagnosisReader.ReadAsync(
                 new DoctorRequest(request.Workspace),
                 cancellationToken).ConfigureAwait(false);

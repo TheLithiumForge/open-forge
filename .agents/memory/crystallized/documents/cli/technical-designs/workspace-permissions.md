@@ -49,6 +49,10 @@ legacy reader or new presentation framework is introduced. Ownership, reserved
 paths, Library source containment and physical safety remain separate checks.
 ## Layout Admission
 
+The five Tool writers consume the same workspace `allowInstallPaths` list. Declared tool-command outputs and ignore files outside implicit content need exact destination grants. A grant permits the declared command destination. Open Forge doesn't edit the tool-owned file. Removal exclusions remain independent and can't be cleared by grants or role choice.
+
+Account installs, archives and runtime units use separately bounded store bindings and process consent. Workspace grants don't admit arbitrary account paths. The [external-tools design](external-tools.md#stores) defines those units and test redirection.
+
 Implicit content admission follows the main root and native Skills at `.agents/skills`, using ordinal root prefixes. A case alias receives no implicit authority. Explicit grants stay literal. Fixed settings and ownership remain protected controls, and classification as content never bypasses containment or ownership checks. Permission prompts receive projected layout facts. Revalidate the retained layout observation under the lease before publishing a grant. See [Workspace Layout](workspace-layout.md#ordinal-authority-checks).
 
 Extension and Library permission planners continue to call `IsImplicitContentDestination`, not `TryGetMaintenanceBoundary` or `InventoryRoots`. An available outside registration, its catalogue and its Loader row never replace an explicit grant or establish installed ownership.

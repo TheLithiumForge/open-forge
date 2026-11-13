@@ -102,3 +102,7 @@ See [Behavior](behavior.md) for ordering and
 ## Reserved Runtime Storage
 
 A grant never admits `.open-forge-state/` as an Extension or Library destination. Check lexical and resolved physical paths. The CLI itself uses this fixed folder for locks and recovery with ordinary workspace write access. No `--allow-path` grant is needed for runtime storage.
+
+## Tool consumers
+
+Tool Install, Configure, Update, Remove and Choose consume this same authored grant list. Required host-file, native project settings and ignore-file destinations outside implicit content need grants. Member permission admits the destination file and doesn't adopt unrelated members. Account-store bindings and local process consent are separate from workspace grants. Covering removal exclusions still block restoration. The [Tool rules](../../../shared-operation-contract.md#exclusions) define that limit.

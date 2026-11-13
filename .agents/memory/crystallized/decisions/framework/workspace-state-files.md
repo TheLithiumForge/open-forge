@@ -62,7 +62,7 @@ actually put in the workspace, not a projection of what a payload says it would
 put there. None of that is derivable from the workspace afterwards, so it must be
 stored. Nothing else must.
 
-Ownership has two kinds, and the lock keeps them distinct because removal treats
+Framework, Extension and Library ownership has two kinds, and the lock keeps them distinct because removal treats
 them differently. A **path** entry means the CLI created the whole file or link
 and may delete it. A **region** entry means the CLI generated a named block
 inside a file somebody else authored; the region may be rewritten and the file
@@ -79,7 +79,7 @@ result, so it never matched what install wrote. The fingerprint-free
 `GeneratedRegions[]` entry — path and region name, nothing else — is exactly the
 region ownership the lock must keep, and it survives unchanged.
 
-Directories are **not** recorded. `library detach` already plans no directory
+Framework, Extension and Library directories are **not** recorded. `library detach` already plans no directory
 effects and leaves the directories `attach` created in place. Recording them
 would buy a cleanup behaviour the CLI does not have and has not been asked for.
 
@@ -198,6 +198,14 @@ destination declaration. The maintainer confirmed this interpretation during A4.
 A stale or missing lock therefore fails toward a **missed** deletion rather than
 an over-deletion: no claims means nothing to delete, and the command says so.
 
+## Tool records
+
+Issue #23 adds installed pins and active role assignments to the authored `tools` map. Each tool ID records its version and roles. Inactive installs keep an empty role list. Optional hosts and code root record configuration choices. At most one tool lists a given role.
+
+The lock separately records verified Tool artifacts, installed-file hashes, manifest snapshots and digests, adapter revisions, command declarations and execution results, managed ignore paths, runtime-directory coverage and native mappings. Tools register their own agent entries. Open Forge changes only declared command parts, declined optional entries, required Skills and its conditional role lines. Git workspaces create no new backups. Without Git, exact prior managed-file bytes stay in sibling `.bak` files until changed content validates. These Tool-specific receipts don't restore document baselines or a workspace integrity gate. Existing Framework, Extension and Library records keep their meanings.
+
+The [Tool Manifest interface](../../documents/cli/contracts/shared/tool-manifest/interface.md#workspace-settings) defines the settings and lock split. The [Tool backups design](../../documents/cli/technical-designs/tool-backups.md) defines sibling restoration without lock records.
+
 ## Consequences
 
 - Separate lifecycle, Library and permission state become authored settings and
@@ -248,3 +256,9 @@ an over-deletion: no claims means nothing to delete, and the command says so.
 - [Source and packaging](source-and-packaging.md)
 - [Core primitive roles](core-primitives.md)
 - [CLI dependency policy](../cli-dependency-policy.md)
+
+## Tool decisions 2026-11-13
+
+Tool settings declare each workspace pin, roles and optional-component choices. The lock keeps verified recipe snapshots, executable and file facts, command outcomes and declared rewrite expectations. Account-local state keeps physical bindings and shared references. Settings declarations survive a teammate's clone without claiming local bytes are installed. Bare Tool Install restores those declarations against the lock. Missing local bytes produce the exact next step `open-forge tool install` in Tool Status, workspace Status, Doctor and Run.
+
+Git supplies recovery in Git workspaces. Other Tool writes use validated sibling backups. No TOML parser or independent host registration is added. Tools register themselves, then Open Forge applies only declared command rewrites and conditional role guidance. The [dated Tool decisions](../../documents/cli/technical-designs/external-tools.md#decisions-2026-11-13) define the current requirements and link each to issue #23 history.

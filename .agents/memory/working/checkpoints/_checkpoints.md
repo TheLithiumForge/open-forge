@@ -33,3 +33,4 @@ A Checkpoint records the current state, current step, and next steps for one act
 ## Entries
 
 - [Issue 21 comment-link implementation and focused verification state](comment-links.md) - #Memory #Working #Checkpoint #CLI #Contextual
+- [Resume issue 23 tool core implementation, verification and unresolved maintainer decisions](tool-command.md) - #Memory #Working #Checkpoint #Active #KeepInMind #CLI #Tool

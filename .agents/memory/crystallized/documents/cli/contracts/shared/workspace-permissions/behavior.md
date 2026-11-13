@@ -91,3 +91,7 @@ record. The only persisted authority is the authored shared list.
 ## Reserved Runtime Storage
 
 A grant never admits `.open-forge-state/` as an Extension or Library destination. Check lexical and resolved physical paths. The CLI itself uses this fixed folder for locks and recovery with ordinary workspace write access. No `--allow-path` grant is needed for runtime storage.
+
+## Tool consumers
+
+Evaluate Tool workspace destinations through the existing shared settings and allow-list capability. Keep permission decisions separate from command receipts, exclusions, store bindings and process consent. Stage supplied grants in preview without writing settings. Under apply leases, revalidate the retained settings observation and cover grant publication with the Tool operation's recovery. A grant never clears removal exclusions or permits undeclared command output. The [Tool rules](../../../shared-operation-contract.md#plans-and-consent) define consent and preview parity.

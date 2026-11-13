@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
+using OpenForge.Cli.Core.Framework.Tools.Models.Lifecycle;
 
 namespace OpenForge.Cli.Core.Framework.Settings.Models.Document;
 
@@ -33,6 +34,9 @@ internal sealed record WorkspaceSettingsDocument(
     internal ImmutableArray<string> RemovedExtensions { get; init; } = [];
 
     internal ImmutableArray<string> RemovedLibraries { get; init; } = [];
+
+    internal ImmutableDictionary<string, WorkspaceToolSetting> Tools { get; init; } = ImmutableDictionary<string, WorkspaceToolSetting>.Empty;
+    internal ImmutableDictionary<string, ToolRunSummary> ToolRuns { get; init; } = ImmutableDictionary<string, ToolRunSummary>.Empty;
 
     /// <summary>
     /// Files outside the content locations that `route include` registered. The loader's Entries decide what

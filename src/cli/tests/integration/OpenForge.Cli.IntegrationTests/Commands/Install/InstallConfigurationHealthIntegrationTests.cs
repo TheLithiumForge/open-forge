@@ -1,23 +1,18 @@
 using System.Text.Json;
-using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Models.Request;
+using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Install.Shared.Interaction;
 using OpenForge.Cli.IntegrationTests.Hosting;
+using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
 public sealed class InstallConfigurationHealthIntegrationTests
 {
     private const string SkillPath = ".agents/skills/open-forge-cli/SKILL.md";
-    private static readonly string[] SkillResources =
-    [
-        ".agents/skills/open-forge-cli/references/common.md",
-        ".agents/skills/open-forge-cli/references/discovery.md",
-        ".agents/skills/open-forge-cli/references/packages.md",
-        ".agents/skills/open-forge-cli/references/routes.md",
-    ];
+    private static IReadOnlyList<string> SkillResources => FrameworkPayloadSource.CliSkillResourcePaths;
 
     [Fact(DisplayName = "Omitted native Skill resources are not installed and existing user files remain untouched")]
     [Trait("Feature", "install-configuration"), Trait("Evidence", "Integration"), Trait("Boundary", "Host")]

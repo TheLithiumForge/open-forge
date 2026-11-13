@@ -7,6 +7,7 @@ namespace OpenForge.Cli.Core.Framework.Ownership.Shared.Serialization;
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     WriteIndented = true,
+    AllowOutOfOrderMetadataProperties = true,
     GenerationMode = JsonSourceGenerationMode.Metadata)]
 [JsonSerializable(typeof(WorkspaceOwnershipEnvelope))]
 [JsonSerializable(typeof(GitIgnoredRouteEntry[]))]

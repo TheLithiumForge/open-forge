@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
+using OpenForge.Cli.Core.Framework.Tools.Shared.Backups;
 
 namespace OpenForge.Cli.Core.Commands.Status;
 
@@ -55,6 +56,7 @@ internal sealed class StatusOperation(
             {
                 LayoutRead = observation,
                 OutsideRoutes = outside,
+                ToolBackups = ToolBackupReader.Read(request.Workspace, ToolBackupPaths.WorkspaceTargets, cancellationToken),
             };
             return StatusResultBuilder.Build(request, observations);
         }

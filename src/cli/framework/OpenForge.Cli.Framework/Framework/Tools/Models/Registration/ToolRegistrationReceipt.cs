@@ -1,0 +1,19 @@
+using System.Text.Json.Serialization;
+
+namespace OpenForge.Cli.Core.Framework.Tools.Models.Registration;
+
+// Snapshots contain command expectations only. They don't confer whole-file ownership.
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+internal sealed record ToolRewriteReceipt
+{
+    public required string Id { get; init; }
+    public required ToolEntryRewrite Rewrite { get; init; }
+    public required bool Declined { get; init; }
+}
+
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+internal sealed record ToolGuidanceReceipt(
+    [property: JsonRequired] string Role,
+    [property: JsonRequired] string SkillPath,
+    [property: JsonRequired] string SkillSha256,
+    [property: JsonRequired] string Line);

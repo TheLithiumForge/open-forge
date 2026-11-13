@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using OpenForge.Cli.Core.Framework.Tools.Models.Receipts;
+using OpenForge.Cli.Core.Framework.Tools.Models.Lifecycle;
 
 namespace OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 
@@ -26,6 +28,10 @@ internal sealed class WorkspaceOwnershipEnvelope
     public ExtensionOwnershipEntry[]? Extensions { get; init; }
 
     public LibraryOwnershipEntry[]? Libraries { get; init; }
+    public Dictionary<string, ToolReceipt>? Tools { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Dictionary<string, ToolRunRecord>? ToolRuns { get; init; }
 }
 
 internal sealed class OwnedSourceEntry

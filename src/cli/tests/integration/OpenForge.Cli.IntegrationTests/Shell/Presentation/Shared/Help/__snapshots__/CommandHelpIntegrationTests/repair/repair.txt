@@ -48,6 +48,11 @@ Details:
   without following the link, and current permission outside .agents. No
   recovery syntax or permission grant is added, restored, or widened. Source
   targets stay untouched.
+  Tool backups: If settings, lock or .gitignore has a sibling .bak, Repair
+  handles those backups first. Use --automatic or interactive confirmation.
+  Preview with --dry-run. Current permission and removal exclusions still apply.
+  Saved settings don't grant permission. Check restored files, then rerun Repair
+  for other work. Agent files stay with the tool's installer.
   Safety: Replacements carry the expected file state, the version this CLI
   ships, exact verification, and external recovery attribution. Repair completes
   eligible metadata, missing navigation files, and Entries only in routes

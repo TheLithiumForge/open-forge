@@ -1,5 +1,7 @@
 using OpenForge.Cli.Core.Framework.Sources.Models.Sharing;
 using System.Collections.Immutable;
+using OpenForge.Cli.Core.Framework.Tools.Models.Receipts;
+using OpenForge.Cli.Core.Framework.Tools.Models.Lifecycle;
 
 namespace OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 
@@ -55,6 +57,8 @@ internal sealed record WorkspaceOwnershipDocument(
     ImmutableArray<ExtensionOwnership> Extensions,
     ImmutableArray<LibraryOwnership> Libraries)
 {
+    internal ImmutableDictionary<string, ToolReceipt> Tools { get; init; } = ImmutableDictionary<string, ToolReceipt>.Empty;
+    internal ImmutableDictionary<string, ToolRunRecord> ToolRuns { get; init; } = ImmutableDictionary<string, ToolRunRecord>.Empty;
     /// <summary>
     /// No recorded ownership. An absent, unreadable, or unintelligible lock reads
     /// as this, so a caller always has a document to act on and reports the state
@@ -72,7 +76,7 @@ internal sealed record WorkspaceOwnershipDocument(
     /// not is still read for the keys this release knows; the answer is reported,
     /// never enforced.
     /// </summary>
-    internal bool IsKnownSchemaVersion => SchemaVersion == WorkspaceOwnershipDefinitions.SchemaVersion;
+    internal bool IsKnownSchemaVersion => SchemaVersion is >= 1 and <= WorkspaceOwnershipDefinitions.SchemaVersion;
 
     internal bool HasManagedPath(string path)
     {

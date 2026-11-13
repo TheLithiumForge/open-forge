@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 3,
+  "command": "repair",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Preview restoring Tool control files from sibling backups.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "file",
+      "action": "restored",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/open-forge.json.bak",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null,
+      "before": "<sha256>",
+      "after": null
+    }
+  ],
+  "counts": {},
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "selection": "automatic",
+    "repairs": [],
+    "remaining": [],
+    "toolBackups": [
+      {
+        "target": ".agents/open-forge.json",
+        "backup": ".agents/open-forge.json.bak",
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "written": false,
+        "verified": false,
+        "backupRemoved": false,
+        "cause": null
+      }
+    ],
+    "renames": [],
+    "navigation": [],
+    "metadata": [],
+    "entrypoints": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge repair --automatic --workspace <workspace>",
+    "reason": "Review the preview, then apply the shown backup restoration."
+  }
+}

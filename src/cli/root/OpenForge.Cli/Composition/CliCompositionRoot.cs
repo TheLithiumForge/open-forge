@@ -89,18 +89,19 @@ internal static class CliCompositionRoot
             interaction,
             inputs.LockStoreRoot);
         var library = CliLibraryComposer.Compose(interaction);
+        var tool = CliToolComposer.Compose(inputs.ToolSupport);
         var rootRemove = CliRootRemoveComposer.Compose(interaction, inputs.LockStoreRoot);
         var tree = CliCommandTree.Create(
             CreateRootHelp(
             [
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingSetUpAndManage(),
-                    [standalone.InstallBinding.Command, standalone.UpdateBinding.Command, rootRemove.Command, extension.Branch.Command, library.Branch.Command]),
+                    [standalone.InstallBinding.Command, standalone.UpdateBinding.Command, rootRemove.Command, extension.Branch.Command, library.Branch.Command, tool.Branch.Command]),
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingReadAndDiscover(),
                     [standalone.HelpBinding.Command, standalone.StatusBinding.Command, standalone.ContextBinding.Command, standalone.FindBinding.Command, standalone.ReferencesBinding.Command, route.Branch.Command]),
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingCheckAndMaintain(),
                     [standalone.DoctorBinding.Command, standalone.IndexBinding.Command, standalone.RepairBinding.Command, standalone.CleanupBinding.Command]),
             ]),
-            [route.Branch, extension.Branch, library.Branch],
+            [route.Branch, extension.Branch, library.Branch, tool.Branch],
             [
                 route.ListBinding,
                 route.InspectBinding,
@@ -128,6 +129,9 @@ internal static class CliCompositionRoot
                 extension.InstallBinding,
                 extension.UpdateBinding,
                 extension.RemoveBinding,
+                tool.ListBinding,
+                tool.InspectBinding,
+                tool.StatusBinding,
                 library.ListBinding,
                 library.InspectBinding,
                 library.AttachBinding,

@@ -1,0 +1,6 @@
+Read passive tool installation and configuration evidence.
+Workspace: <workspace>
+None recorded.
+Coverage
+  settings: Complete
+  lock: Complete

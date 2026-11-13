@@ -22,7 +22,7 @@ internal static class WorkspaceSettingsDefinitions
     /// gains keys over releases, so a version that could refuse one would make a
     /// newer file unusable by an older CLI for no safety gained.
     /// </summary>
-    internal const int SchemaVersion = 5;
+    internal const int SchemaVersion = 6;
 
     /// <summary>
     /// The schema an editor uses for completion and validation. The CLI never
@@ -32,7 +32,7 @@ internal static class WorkspaceSettingsDefinitions
     internal const string SchemaDirectoryName = "schemas";
     internal const string SchemaFileName = "open-forge.schema.json";
     internal const string SchemaUrl =
-        "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/" + SchemaDirectoryName + "/v5/" + SchemaFileName;
+        "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/" + SchemaDirectoryName + "/v6/" + SchemaFileName;
 
     internal const string SchemaProperty = "$schema";
     internal const string SchemaVersionProperty = "schemaVersion";
@@ -51,6 +51,8 @@ internal static class WorkspaceSettingsDefinitions
     internal const string RemovedLibrariesProperty = "removedLibraries";
     internal const string RootsProperty = "roots";
     internal const string OutsideRoutesProperty = "outsideRoutes";
+    internal const string ToolsProperty = "tools";
+    internal const string ToolRunsProperty = "toolRuns";
     internal const string GitMetadataDirectoryName = WorkspaceLayoutNames.GitMetadataDirectoryName;
 
     internal static string ReadFrontmatterName(FrontmatterForm form)

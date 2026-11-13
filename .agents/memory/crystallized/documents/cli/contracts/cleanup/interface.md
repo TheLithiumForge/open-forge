@@ -524,3 +524,7 @@ CLI help syntax: [`cleanup.help.syntax`](../../../../../../../src/cli/output-tex
 ## Recovery Stores
 
 At full and debug detail, `data.stores` reports ordered store records with kind, path, coverage, candidates, cause and `safety`, `revalidation` and `verification`. Candidate rows carry their integrity and outcome. Existing aggregate fields remain. Each store has a frozen plan and deletion session. Local deletion can complete when legacy coverage or matching legacy lock authority is unavailable. The result reports completed effects and retained or unknown items even when its aggregate status is incomplete or blocked. Store kinds are `workspace` and `legacy`. Text reports planned or completed deletions, retained items and findings. The separate store records are JSON data.
+
+## Tool backups
+
+Cleanup leaves Tool sibling `.bak` files unchanged. Status and Doctor report them and Repair can restore them. Existing v1 and legacy recovery cleanup keeps its behavior.

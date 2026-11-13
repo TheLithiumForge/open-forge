@@ -199,3 +199,7 @@ Removing generated accents must recover the plain result exactly. JSON must be
 byte-identical with colour capability enabled or disabled. Verify both formats,
 independent stream capabilities, terminal fallback and selected-content/preview
 preservation.
+
+## Tool conformance
+
+Apply the unchanged terminal, workspace and projection rules to every Tool leaf. Test missing and repeated global values, `--help` and `--version` conflicts, domain input in terminal forms and JSON noninteractive behavior. Detail and format don't repeat resolution or effects. The [Tool group](../../tool/_tool.md) defines local inputs and command order.

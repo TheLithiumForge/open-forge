@@ -44,7 +44,7 @@ Bootstrap creates or repairs an ordinary `.gitignore` containing `*` before
 creating any other runtime file. The folder ignores itself in Git. Git clean
 with `-x` or `-X` can delete it, including recovery evidence.
 
-New bundles always use the local store. `RecoveryStoreLocator` constructs typed
+New v1 bundles always use the local store. `RecoveryStoreLocator` constructs typed
 workspace and legacy locations without creating storage. The legacy location
 uses the existing per-user `OpenForge/recovery/v1` layout. An absolute
 `OPENFORGE_DATA_HOME` selects only that legacy data root and its `OpenForge/locks/v1`
@@ -514,3 +514,7 @@ operation; existing single-candidate callers retain their guard policy.
 - [Ownership And Source Alignment Technical Design](lifecycle-provenance.md)
 - [Workspace Libraries Technical Design](workspace-libraries.md)
 - [Cleanup Contract](../contracts/cleanup/_cleanup.md)
+
+## Tool backups
+
+Tool writers save existing files in sibling `.bak` files before changes. They validate the new content and delete backups after success. On failure, they restore saved bytes. Status and Doctor report leftovers and Repair can restore them. The [Tool backups design](tool-backups.md) defines the checks. Existing recovery v1 shapes and readers stay unchanged.

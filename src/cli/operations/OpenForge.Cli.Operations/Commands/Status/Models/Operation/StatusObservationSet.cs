@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Recovery.Operational.Models;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.Routes;
 using OpenForge.Cli.Core.Framework.Settings.Models.Observation;
 using OpenForge.Cli.Core.Framework.Workspace.Operational.Models;
+using OpenForge.Cli.Core.Framework.Tools.Models.Backups;
 
 namespace OpenForge.Cli.Core.Commands.Status.Models.Operation;
 
@@ -18,6 +19,7 @@ internal sealed record StatusObservationSet(
     ExtensionLifecycleStatusView ExtensionLifecycle,
     LibraryStatusView Libraries)
 {
+    internal ToolBackupCandidate[] ToolBackups { get; init; } = [];
     internal WorkspaceLayoutRead? LayoutRead { get; init; }
 
     internal RouteOutsideRoutesObservation? OutsideRoutes { get; init; }

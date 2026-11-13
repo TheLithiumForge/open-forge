@@ -15,12 +15,13 @@ using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Presentation.Repair.Shared.Selection;
 
-internal static class RepairReportSelector
+internal static partial class RepairReportSelector
 {
     internal static CliReport<RepairData> Select(RepairResult result, CliSelection selection)
     {
         ArgumentNullException.ThrowIfNull(result);
         ArgumentNullException.ThrowIfNull(selection);
+        if (result.ToolBackups is not null) return SelectToolBackups(result);
 
         var repairs = ReadRepairs(result, selection.Detail >= CliDetail.Full);
         var remaining = ReadRemaining(result, selection.Detail);
@@ -626,6 +627,8 @@ internal static class RepairReportSelector
                 or "PlanConflict"
                 or "WorkspaceLockUnavailable"
                 or "RecoveryConflict" => CliResolution.BlockedRepair,
+            "ToolBackupConflict" => CliResolution.BlockedRepair,
+            "ToolBackupRetained" => CliResolution.TargetedOperation,
             _ => (CliResolution?)null,
         };
         IReadOnlyList<CliFindingTextChoice> choices = finding.Code == global::OpenForge.Cli.Core.Commands.Repair.RepairFindingCode.GuidedFindingRemaining

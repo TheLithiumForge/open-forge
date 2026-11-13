@@ -2,6 +2,9 @@ namespace OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 
 internal static class CliCommandText
 {
+    internal static string InWorkspace(string command, string workspacePath)
+        => $"{command} {CliSyntaxDefinitions.Workspace.Name} {Quote(workspacePath)}";
+
     internal static string Quote(string value)
         => Quote(value, OperatingSystem.IsWindows());
 

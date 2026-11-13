@@ -6,7 +6,9 @@ using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Invocation.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
+using OpenForge.Cli.Hosting;
 using OpenForge.Cli.IntegrationTests.TestSupport;
+using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Install;
 
@@ -81,13 +83,6 @@ public sealed class InstallCompositionIntegrationTests
 
         Assert.Equal(0, applied.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, applied.Status);
-        Assert.EndsWith(
-            ConfirmationSentence + Environment.NewLine,
-            applied.StandardError,
-            StringComparison.Ordinal);
-        Assert.Contains("Would install the Open Forge Framework", applied.StandardError, StringComparison.Ordinal);
-        Assert.StartsWith("Installed the Open Forge Framework", applied.StandardOutput, StringComparison.Ordinal);
-        Assert.Contains("Created 18 files and 13 directories under .agents", applied.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("remaining", applied.RemainingInput);
         Assert.True(workspace.AgentsDirectoryExists());
         Assert.True(applied.LockInfrastructureExists);
@@ -103,10 +98,18 @@ public sealed class InstallCompositionIntegrationTests
         Assert.Equal(0, noOp.ExitCode);
         Assert.Equal(CliSemanticStatus.Complete, noOp.Status);
         Assert.Equal(string.Empty, noOp.StandardError);
-        Assert.Contains("Open Forge is already installed and current. Nothing to do.", noOp.StandardOutput, StringComparison.Ordinal);
         Assert.Equal("unused", noOp.RemainingInput);
         Assert.Equal(afterApply, workspace.SnapshotHashes());
         Assert.False(noOp.LockInfrastructureExists);
+        CommandOutputSnapshot.MatchDetailSnapshot(new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["applied.stdout.interaction"] = CommandOutputNormalization.Normalize(
+                applied.StandardOutput, workspace.PhysicalPath, CliBuildVersion.InformationalVersion, normalizeTextPaths: true),
+            ["applied.stderr.interaction"] = CommandOutputNormalization.Normalize(
+                applied.StandardError, workspace.PhysicalPath, CliBuildVersion.InformationalVersion, normalizeTextPaths: true),
+            ["no-op.stdout.interaction"] = CommandOutputNormalization.Normalize(
+                noOp.StandardOutput, workspace.PhysicalPath, CliBuildVersion.InformationalVersion, normalizeTextPaths: true),
+        });
     }
 
     [Trait("Boundary", "Host")]

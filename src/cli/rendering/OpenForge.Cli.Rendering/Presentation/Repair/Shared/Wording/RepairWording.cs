@@ -66,6 +66,9 @@ internal static class RepairWording
 
     internal static string FindingTitle(string code) => code switch
     {
+        "ToolBackupConflict" => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupUnavailableTitle(),
+        "ToolBackupRetained" => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupTitle(),
+        "ToolBackupWriteFailed" => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupRestoreFailedTitle(),
         "RenameProven" => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.ProofTitle(),
         "MetadataSkipped" => global::OpenForge.Cli.OutputText.Repair.RepairMaintenanceText.MalformedTitle(),
         "InvalidInput" => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleInvalidInput(),

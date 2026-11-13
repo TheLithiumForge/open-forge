@@ -13,4 +13,5 @@ internal sealed record RepairOperationComponents(
     RepairInteraction Interaction)
 {
     internal RepairMaintenancePlanner? MaintenancePlanner { get; init; }
+    internal RepairToolBackupOperation? ToolBackups { get; init; }
 }
