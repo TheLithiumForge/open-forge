@@ -292,3 +292,13 @@ Stage 4 still needs these parts:
 6. Replace unavailable local-store and recovery observations with verified facts when those capabilities exist, and resolve external instructions. Native adapter completion readers and concrete CodeGraph and Codebase Memory definitions stay on the next stacked branch.
 
 The provisional assumptions are Tomlyn 2.10.2 and the spec's recommended v2 ZIP and manifest format. The digest publication rule is still unimplemented. No writer behavior or new recovery effect has been committed. No push, merge or new PR is authorized.
+
+## Linux source fix
+
+The 2026-11-13 restart kept the generic execution, ignore and Git-backup increment in a separate stash named `restart checkpoint for generic execution ignore and Git backup mechanics`. The earlier stashes are untouched.
+
+The Linux CS0246 failure came from three local model files under `Models/Artifacts` excluded by the repository's case-insensitive artifact ignore on Windows. They now live in tracked `Models/Supply`, with both consuming imports updated. No Tomlyn source or package reference survives.
+
+The fresh managed Unit build passed with zero warnings and errors. The focused `ToolManifestTests` and `ToolLifecycleTests` selection passed 48 tests, with zero failures and skips. Exact commands and reports are under `artifacts/tool-command/restart-ci-fix-*`. Both required formatting checks passed. CI still supplies clean Linux and Native AOT evidence.
+
+Continue by restoring only the new restart stash, gate its mechanics, then update the supply contracts for the maintainer's verified-download model. Repeated Install must repair and rerun the pinned installer. Node uses the official pinned private runtime and frozen npm lock. Telemetry defaults off with a visible opt-in. Tool Exec is proposed only. The five writers are still pending.
