@@ -172,6 +172,16 @@
         },
         "qualification": {
           "$ref": "#/$defs/ToolQualification"
+        },
+        "lifecycle": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToolLifecycle"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "allOf": [
@@ -795,6 +805,70 @@
             "three-languages-2026-11-12",
             "pending"
           ]
+        }
+      }
+    },
+    "ToolLifecycleCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "args",
+        "scope",
+        "workspaceOutputs",
+        "timeoutSeconds"
+      ],
+      "properties": {
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scope": {
+          "enum": [
+            "workspace",
+            "host"
+          ]
+        },
+        "workspaceOutputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "timeoutSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600
+        }
+      }
+    },
+    "ToolLifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "install",
+        "uninstall",
+        "indexCleanup",
+        "ignorePaths"
+      ],
+      "properties": {
+        "install": {
+          "$ref": "#/$defs/ToolLifecycleCommand"
+        },
+        "uninstall": {
+          "$ref": "#/$defs/ToolLifecycleCommand"
+        },
+        "indexCleanup": {
+          "$ref": "#/$defs/ToolLifecycleCommand"
+        },
+        "ignorePaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
         }
       }
     }

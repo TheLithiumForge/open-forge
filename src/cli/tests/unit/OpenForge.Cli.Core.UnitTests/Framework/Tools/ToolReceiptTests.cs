@@ -91,7 +91,6 @@ public sealed class ToolReceiptTests
         Hosts = [],
         Bindings = [],
         Files = [],
-        Members = [],
         RuntimeDirectories = [],
         NativeProjects = [],
     };

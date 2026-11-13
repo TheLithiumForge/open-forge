@@ -65,6 +65,7 @@ internal static partial class WorkspaceSettingsCodec
                     Roots = ReadRoots(root, mainRoot ?? WorkspaceLayout.DefaultMainRoot),
                     OutsideRoutes = ReadOutsideRoutes(root, mainRoot ?? WorkspaceLayout.DefaultMainRoot),
                     Tools = ReadTools(root),
+                    ToolRuns = ReadToolRuns(root),
                 },
                 Cause: null);
         }

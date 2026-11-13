@@ -49,7 +49,7 @@ V1 graph definitions require a non-null Skill with `optional:false` and `default
 
 ## Lifecycle commands
 
-A definition declares `install`, `uninstall` and `indexCleanup` commands. Each has an argument array, a `workspace` or `host` scope and a bounded timeout. The executable is always the verified target entry. Repeated argument values are allowed because each position has its own meaning. Output paths and managed ignore paths are declared data and stay inside the workspace. Tool-owned outputs are used for permission and exclusion checks, not as permission for Open Forge to edit them.
+A definition declares `install`, `uninstall` and `indexCleanup` commands. Each has an argument array, a `workspace` or `host` scope and a bounded timeout. The executable is always the verified target entry. Repeated argument values are allowed because each position has its own meaning. Output paths and managed ignore paths are declared data and stay inside the workspace. A leading `${codeRoot}/` resolves from the selected contained code root. Other path templates are rejected. Tool-owned outputs are used for permission and exclusion checks, not as permission for Open Forge to edit them.
 
 The [shared Tool rules](../../../shared-operation-contract.md#tool-commands) define when each command runs and how its result is recorded. A missing lifecycle declaration permits inspection but blocks writes. Production support still requires the exact reviewed manifest hash and adapter revision.
 

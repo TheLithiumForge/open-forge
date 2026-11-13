@@ -37,6 +37,12 @@
       "additionalProperties": {
         "$ref": "#/$defs/toolReceipt"
       }
+    },
+    "toolRuns": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/toolRunRecord"
+      }
     }
   },
   "$defs": {
@@ -212,7 +218,6 @@
         "hosts",
         "bindings",
         "files",
-        "members",
         "runtimeDirectories",
         "nativeProjects"
       ],
@@ -277,12 +282,6 @@
             "$ref": "#/$defs/toolFile"
           }
         },
-        "members": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/toolMember"
-          }
-        },
         "runtimeDirectories": {
           "type": "array",
           "items": {
@@ -294,6 +293,13 @@
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "ignorePaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
         }
       }
     },
@@ -352,37 +358,6 @@
         }
       }
     },
-    "toolMember": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "path",
-        "format",
-        "selector",
-        "value",
-        "createdFile"
-      ],
-      "properties": {
-        "path": {
-          "type": "string"
-        },
-        "format": {
-          "enum": [
-            "json-members",
-            "toml-table",
-            "native-settings",
-            "native-collections"
-          ]
-        },
-        "selector": {
-          "type": "string"
-        },
-        "value": {},
-        "createdFile": {
-          "type": "boolean"
-        }
-      }
-    },
     "toolDirectory": {
       "type": "object",
       "additionalProperties": false,
@@ -409,6 +384,217 @@
           "type": "array",
           "items": {
             "type": "string"
+          }
+        }
+      }
+    },
+    "toolCommandSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action",
+        "host",
+        "state",
+        "exitCode"
+      ],
+      "properties": {
+        "action": {
+          "enum": [
+            "install",
+            "uninstall",
+            "index-cleanup"
+          ]
+        },
+        "host": {
+          "anyOf": [
+            {
+              "enum": [
+                "claude-code",
+                "codex"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "planned",
+            "started",
+            "exited",
+            "failed",
+            "interrupted"
+          ]
+        },
+        "exitCode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "toolCommandReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action",
+        "host",
+        "state",
+        "exitCode",
+        "entry",
+        "entrySha256",
+        "args",
+        "environment",
+        "cause"
+      ],
+      "properties": {
+        "action": {
+          "enum": [
+            "install",
+            "uninstall",
+            "index-cleanup"
+          ]
+        },
+        "host": {
+          "anyOf": [
+            {
+              "enum": [
+                "claude-code",
+                "codex"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "planned",
+            "started",
+            "exited",
+            "failed",
+            "interrupted"
+          ]
+        },
+        "exitCode": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "entry": {
+          "type": "string"
+        },
+        "entrySha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "environment": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "cause": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "toolRunRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "target",
+        "manifestSha256",
+        "action",
+        "state",
+        "commands",
+        "manifestBytes",
+        "manifestFormat",
+        "codeRoot",
+        "hosts"
+      ],
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "manifestSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "action": {
+          "enum": [
+            "install",
+            "configure",
+            "update",
+            "remove",
+            "choose"
+          ]
+        },
+        "state": {
+          "enum": [
+            "planned",
+            "started",
+            "exited",
+            "failed",
+            "interrupted"
+          ]
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/toolCommandReceipt"
+          }
+        },
+        "manifestBytes": {
+          "type": "string",
+          "contentEncoding": "base64"
+        },
+        "manifestFormat": {
+          "enum": [
+            "json",
+            "yaml"
+          ]
+        },
+        "codeRoot": {
+          "type": "string"
+        },
+        "hosts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "claude-code",
+              "codex"
+            ]
           }
         }
       }

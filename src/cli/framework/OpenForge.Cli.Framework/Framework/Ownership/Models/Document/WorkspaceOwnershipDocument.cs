@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Framework.Sources.Models.Sharing;
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Framework.Tools.Models.Receipts;
+using OpenForge.Cli.Core.Framework.Tools.Models.Lifecycle;
 
 namespace OpenForge.Cli.Core.Framework.Ownership.Models.Document;
 
@@ -57,6 +58,7 @@ internal sealed record WorkspaceOwnershipDocument(
     ImmutableArray<LibraryOwnership> Libraries)
 {
     internal ImmutableDictionary<string, ToolReceipt> Tools { get; init; } = ImmutableDictionary<string, ToolReceipt>.Empty;
+    internal ImmutableDictionary<string, ToolRunRecord> ToolRuns { get; init; } = ImmutableDictionary<string, ToolRunRecord>.Empty;
     /// <summary>
     /// No recorded ownership. An absent, unreadable, or unintelligible lock reads
     /// as this, so a caller always has a document to act on and reports the state
