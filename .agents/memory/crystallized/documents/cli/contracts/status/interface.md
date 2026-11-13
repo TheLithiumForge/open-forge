@@ -7,6 +7,11 @@ open-forge:
 
 # Status Interface Contract
 
+## Planned tool checks
+
+The planned tool summary reports declared but missing tools with `open-forge tool install` as the next step. It also reports self-updated versions, profile drift, missing guidance and unavailable local facts. The bin folder and PATH readiness use the same observations as Tool Status. No summary starts installation.
+The [Tool contracts](../tool/_tool.md) define setup and removal. These additions wait for the implementation lanes.
+
 ## Workspace Layout
 
 Status names the context folder for a custom root. Its optional `data.layout` contains `mainRoot` and `loaderPath`, and is omitted for the default layout.

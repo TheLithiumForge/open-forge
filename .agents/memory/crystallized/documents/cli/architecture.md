@@ -89,6 +89,14 @@ against an actor outside it. A stronger later threat model requires a new
 Architecture decision covering platform, portability, Native AOT, maintenance,
 and evidence costs.
 
+## Tool setup
+
+The planned [Tool setup design](technical-designs/tool-setup.md) adds typed catalogue facts and shared service shapes to Framework.
+Operations keeps command requests, consent, plans and results.
+The root hosts processes, transfers and platform PATH changes.
+Tools run through their own direct commands after setup. Open Forge takes no part at run time.
+Step 0 adds data types only. It registers no commands or service implementations.
+
 ## Layer Model
 
 The CLI has four layers. Each answers exactly one question, and the question is

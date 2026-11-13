@@ -18,4 +18,5 @@ The Writing Standard and internal helpers support consistent authoring and revie
 
 - [Repository-only helpers for consistent Open Forge terminology and knowledge placement during maintenance](helpers/_helpers.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Helper #Internal
 - [Current maintenance boundary and contracts for reviewed Core and Extension installation files](payload/_payload.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Governance #Payload
+- [Check catalogue entries before adding supported tool versions](tools.md) - #Memory #Document #CLI #Tool #CurrentTruth
 - [How Open Forge maintainers write clear, consistent, and easy-to-read prose](writing.md) - #Memory #Document #CurrentTruth #Evergreen #Maintenance #Writing #Documentation #Voice #Clarity #Internal

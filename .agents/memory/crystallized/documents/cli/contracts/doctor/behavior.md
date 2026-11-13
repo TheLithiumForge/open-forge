@@ -7,6 +7,11 @@ open-forge:
 
 # Doctor Behavior Contract
 
+## Planned tool checks
+
+The planned tool findings reuse Tool Status observations and the catalogue's declared config targets. Version probes stay bounded. Never run setup, reapply configuration or install a tool. Keep unknown local history distinct from an empty record. Offer backup restoration only when target identity, backup bytes and saved applied state can be checked.
+The [Tool contracts](../tool/_tool.md) define setup and removal. These additions wait for the implementation lanes.
+
 The local-reference domain includes [comment links](../shared/source-references/interface.md#comment-links). It reports missing targets, failed fragments and legacy ID targets with exact source locations. Moved-target suggestions keep their Git evidence and confidence separate from weak matches.
 
 An unrecognized authored settings version produces one informational

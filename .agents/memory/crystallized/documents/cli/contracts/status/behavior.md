@@ -7,6 +7,11 @@ open-forge:
 
 # Status Behavior Contract
 
+## Planned tool checks
+
+The planned tool summary consumes the same read-only facts as Tool Status. Keep missing, unsupported, drifted and unavailable states distinct. Don't acquire a lease or create machine or workspace edit state. A known missing declaration gets bare Tool Install as its next step.
+The [Tool contracts](../tool/_tool.md) define setup and removal. These additions wait for the implementation lanes.
+
 ## Workspace Layout
 
 Distribute one layout observation to source, route and lifecycle contributors. Retain the layout when valid settings supply it. If settings cannot supply it, keep every domain and report layout-dependent domains unavailable with the settings cause.

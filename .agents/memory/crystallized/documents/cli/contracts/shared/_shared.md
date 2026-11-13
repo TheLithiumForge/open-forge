@@ -67,4 +67,5 @@ Behavior file for technology-neutral resolution and conformance.
 - [Accepted shared CLI result envelope, source-location, status, exit, stream, and compatibility contracts](result-coordinates/_result-coordinates.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #Result #JSON #Status #CurrentTruth
 - [Accepted current shared source-reference Interface and Behavior contract set](source-references/_source-references.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Source #Reference #CurrentTruth
 - [Permanent route for the shared operation-specific source-universe filter contracts](source-universe-filters/_source-universe-filters.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #Source #Universe #Filter #CurrentTruth
+- [Route portable declarations and local tool setup records](tool-records/_tool-records.md) - #Memory #Document #CLI #Tool #CurrentTruth
 - [Route the accepted shared authored destination permission contracts](workspace-permissions/_workspace-permissions.md) - #Memory #Crystallized #CLI #Contract #Shared #Permission #CurrentTruth
