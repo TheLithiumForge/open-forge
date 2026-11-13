@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using OpenForge.Cli.Core.Framework.Tools.Models.Registration;
 
 namespace OpenForge.Cli.Core.Framework.Tools;
 
@@ -49,6 +50,13 @@ internal static class ToolVocabulary
     internal static readonly FrozenSet<string> Checks = Set("artifact-hash", "installed-files", "native-settings", "host-members", "index-state", "hook-policy", "process-policy", "cache-permissions", "dependency-lock", "source-membership", "usage-skill");
     internal static readonly FrozenSet<string> Variables = Set(InstallVariable, EntryVariable, WorktreeVariable, CodeRootVariable, StateVariable, CacheVariable, HookSinkVariable, ProjectIdVariable, IndexDirNameVariable, HostVariable, TargetVariable, OpenForgeVariable);
     internal static readonly FrozenSet<string> Hosts = Set(ClaudeCodeHost, CodexHost);
+
+    internal static int OriginOrder(string? origin) => origin switch
+    {
+        ToolOrigin.FirstParty => 0,
+        ToolOrigin.ThirdParty => 1,
+        _ => 2,
+    };
 
     private static FrozenSet<string> Set(params string[] values) => values.ToFrozenSet(StringComparer.Ordinal);
 }

@@ -10,6 +10,7 @@ public static class ToolFixtureSource
     public const string ArtifactName = "artifact.bin";
 
     public static byte[] ManifestBytes() => Read(ManifestName);
+    public static byte[] CodeGraphInstallerBytes() => Read("codegraph-installer.json");
     public static byte[] ArtifactBytes() => Read(ArtifactName);
     public static JsonObject Manifest() => JsonNode.Parse(ManifestBytes())?.AsObject() ?? throw new InvalidDataException("The fixture manifest is missing.");
 

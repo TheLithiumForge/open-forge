@@ -5,6 +5,7 @@ Workspace: <workspace>
   Warning  <workspace>/.agents/open-forge.json  Tool observation
          Expected depth to be zero at the end of the JSON payload. There is an open JSON object or array that should be closed. LineNumber: 0 | BytePositionInLine: 1.
 fixture-tool 1.0.0  <native-target>
+Origin: third-party
 Telemetry setting: unavailable
   The exact definition is not reviewed by this CLI release.
   artifact-hash

@@ -4,8 +4,8 @@ Usage:
   open-forge tool inspect <id> [--source <path>] [--tool-version <exact>] [global flags]
 
 Examples:
-  open-forge tool inspect example-tool --source ./manifest.json
-  open-forge tool inspect example-tool --source ./manifest.json --tool-version 1.0.0
+  open-forge tool inspect codegraph --source ./reviewed-manifest.json --tool-version 1.6.2
+  open-forge tool inspect codegraph --detail full --format json
 
 Behavior:
   Reads local facts without downloads, child processes or writes.

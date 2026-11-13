@@ -28,6 +28,10 @@ Run `open-forge tool list --format json` to read the catalogue and recorded inst
 
 Run `open-forge tool status` to compare recorded files and configuration with passive evidence. It starts no process or database session. An index file without validated completion evidence reports `present-unverified`. A missing receipt reports unavailable verification.
 
+## CodeGraph
+
+CodeGraph `1.6.2` is the V1 candidate. All six official archives have verified sizes, published SHA-256 and build attestations. Its definition uses the shared lifecycle, launcher and registration records. Admission stays blocked until registration integration and native qualification finish. The [CodeGraph page](../src/docusaurus/docs/cli/codegraph.md) gives setup, the optional hook, telemetry, index commands, teammate installation and removal. Codebase Memory is unsupported in V1.
+
 ## Consent
 
 The five write commands preview the same plan with `--dry-run`. Preview writes nothing and starts no transfers or processes. `--automatic` gives final confirmation only. Downloads need separate `--allow-download` consent for exact artifacts. Declared session daemons need `--allow-session-daemon` or matching account-local consent. Declared tool outputs and `.gitignore` changes need the shared destination grants shown by the plan.

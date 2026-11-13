@@ -35,15 +35,25 @@ internal static class ToolListPresentation
     {
         var lines = new List<string>();
         lines.Add(ToolText.Available());
-        foreach (var row in data.Available)
-        {
-            var identity = $"{CliText.Escape(row.Id)} {CliText.Escape(row.Version)}";
-            var capabilities = string.Join(", ", row.Capabilities);
-            lines.Add($"  {identity}  {row.TargetSupport}  {row.Admission}  {ToolText.Reviewed(row.Reviewed)}  {capabilities}");
-        }
         if (data.Available.Length == 0) lines.Add("  " + ToolText.Empty());
+        else
+        {
+            IReadOnlyList<string>[] rows = [ToolText.AvailableColumns(), .. data.Available.Select(row => new string[]
+            {
+                row.Id, row.Version, row.Origin, row.TargetSupport,
+                $"{row.Admission}, {ToolText.Reviewed(row.Reviewed)}, {string.Join(", ", row.Capabilities)}",
+            })];
+            lines.Add(string.Concat(CliTable.RenderRows(rows, width: style.Width, stackOverflow: false)).TrimEnd('\n'));
+        }
         lines.Add(ToolText.Installed());
-        lines.AddRange(data.Installed.Select(row => $"  {CliText.Escape(row.Id)} {CliText.Escape(row.Version)}  {row.Verification.State}"));
+        if (data.Installed.Length > 0)
+        {
+            IReadOnlyList<string>[] rows = [ToolText.InstalledColumns(), .. data.Installed.Select(row => new string[]
+            {
+                row.Id, row.Version, row.Origin ?? ToolText.UnknownOrigin(), row.Verification.State.ToString(),
+            })];
+            lines.Add(string.Concat(CliTable.RenderRows(rows, width: style.Width, stackOverflow: false)).TrimEnd('\n'));
+        }
         if (selection.Detail >= CliDetail.Full)
             lines.AddRange(data.Installed.Select(row => $"  {CliText.Escape(row.Id)} {ToolText.Roles()}: {string.Join(", ", row.Roles)}"));
         if (data.Installed.Length == 0) lines.Add("  " + ToolText.Empty());

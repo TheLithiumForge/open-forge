@@ -8,8 +8,8 @@ public static class ToolText
     public static string InspectUsage() => "open-forge tool inspect <id> [--source <path>] [--tool-version <exact>] [global flags]";
     public static string StatusUsage() => "open-forge tool status [<id>] [global flags]";
     public static string[] ListExamples() => ["open-forge tool list", "open-forge tool list --role code-navigation --format json"];
-    public static string[] InspectExamples() => ["open-forge tool inspect example-tool --source ./manifest.json",
-        "open-forge tool inspect example-tool --source ./manifest.json --tool-version 1.0.0"];
+    public static string[] InspectExamples() => ["open-forge tool inspect codegraph --source ./reviewed-manifest.json --tool-version 1.6.2",
+        "open-forge tool inspect codegraph --detail full --format json"];
     public static string[] StatusExamples() => ["open-forge tool status --format json", "open-forge tool status example-tool"];
     public static string[] ReadBehavior() => ["Reads local facts without downloads, child processes or writes.", "Unavailable observations keep their cause and independently readable facts.", "Tool-owned installers handle agent configuration."];
     public static string SupplyHeading() => "Tool supply";
@@ -63,6 +63,11 @@ public static class ToolText
     public static string BackupApplyNext() => "Review the preview, then apply the shown backup restoration.";
     public static string BackupBlockedNext() => "Resolve the reported cause, then preview the backup restoration again.";
     public static string BackupRestoreFailedTitle() => "Backup restoration failed";
+    public static string Origin() => "Origin";
+    public static string UnknownOrigin() => "unavailable";
+    public static string[] AvailableColumns() => ["ID", "Version", Origin(), "Target", "Details"];
+    public static string[] InstalledColumns() => ["ID", "Version", Origin(), "Verification"];
+    public static string OriginValue(string origin) => $"{Origin()}: {origin}";
     public static string Available() => "Available";
     public static string Installed() => "Installed";
     public static string Empty() => "None recorded.";

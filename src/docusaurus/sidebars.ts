@@ -39,7 +39,7 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Using the CLI",
       link: { type: "doc", id: "cli/index" },
-      items: ["cli/flows"],
+      items: ["cli/flows", "cli/tools", "cli/codegraph"],
     },
     {
       type: "category",

@@ -46,9 +46,10 @@ internal sealed class ToolListOperation(ToolCatalogueReader reader)
                 catalogue.Source, catalogue.Cause ?? "The catalogue isn't available."));
         var available = catalogue.Definitions.Where(definition => request.Role is null
                 || request.Role == ToolVocabulary.CodeNavigationRole && definition.Manifest.Capabilities.Contains(ToolVocabulary.CodeGraphCapability, StringComparer.Ordinal))
-            .OrderBy(definition => definition.Manifest.Id, StringComparer.Ordinal)
+            .OrderBy(definition => ToolVocabulary.OriginOrder(definition.Manifest.Origin))
+            .ThenBy(definition => definition.Manifest.Id, StringComparer.Ordinal)
             .ThenBy(definition => definition.Manifest.Version, StringComparer.Ordinal)
-            .Select(definition => new ToolAvailableRow(definition.Manifest.Id, definition.Manifest.Version,
+            .Select(definition => new ToolAvailableRow(definition.Manifest.Id, definition.Manifest.Version, definition.Manifest.Origin,
                 definition.Manifest.Capabilities, ToolNativeTarget.Current,
                 definition.Manifest.Targets.GetValueOrDefault(ToolNativeTarget.Current)?.State ?? "unsupported",
                 definition.Manifest.Admission, definition.Reviewed, definition.Blocker)).ToArray();

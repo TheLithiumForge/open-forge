@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CodeGraph review draft",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "status", "definition", "releaseEvidence", "guidance", "consent", "trustNotes", "review"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "status": {
+      "const": "draft"
+    },
+    "definition": {
+      "allOf": [
+        {
+          "$ref": "../../v1/manifest.schema.json"
+        },
+        {
+          "properties": {
+            "admission": {
+              "const": "blocked"
+            },
+            "lifecycle": {
+              "type": "object",
+              "required": ["removalOrder", "telemetryOff", "telemetryOn"],
+              "properties": {
+                "removalOrder": {
+                  "const": ["uninstall", "index-cleanup"]
+                }
+              }
+            },
+            "qualification": {
+              "properties": {
+                "targets": {
+                  "maxItems": 0
+                }
+              }
+            },
+            "registration": {
+              "type": "object",
+              "required": ["rewrites", "components", "roleGuidance", "activate", "deactivate"],
+              "properties": {
+                "rewrites": {
+                  "minItems": 5,
+                  "maxItems": 5
+                },
+                "components": {
+                  "minItems": 1,
+                  "maxItems": 1
+                },
+                "roleGuidance": {
+                  "minItems": 1,
+                  "maxItems": 1
+                }
+              }
+            }
+          },
+          "required": ["registration", "lifecycle"]
+        }
+      ]
+    },
+    "releaseEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verifiedOn", "checksumFile", "checksumSha256", "assets", "verificationCommands", "attestedSourceCommit", "sourceNote"],
+      "properties": {
+        "verifiedOn": {
+          "type": "string"
+        },
+        "checksumFile": {
+          "type": "string"
+        },
+        "checksumSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "assets": {
+          "type": "object",
+          "required": ["win-x64", "win-arm64", "osx-x64", "osx-arm64", "linux-x64", "linux-arm64"],
+          "additionalProperties": {
+            "$ref": "#/$defs/VerifiedAsset"
+          },
+          "minProperties": 6,
+          "maxProperties": 6
+        },
+        "verificationCommands": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "minItems": 1
+        },
+        "attestedSourceCommit": {
+          "type": ["string", "null"]
+        },
+        "sourceNote": {
+          "type": "string"
+        }
+      }
+    },
+    "guidance": {
+      "type": "object",
+      "required": ["path", "required", "delivery", "sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "required": {
+          "const": true
+        },
+        "delivery": {
+          "const": "open-forge-required-skill"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "consent": {
+      "type": "object",
+      "required": ["source", "scope", "pending"],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "scope": {
+          "enum": ["project", "account"]
+        },
+        "pending": {
+          "type": "array",
+          "maxItems": 0
+        }
+      }
+    },
+    "trustNotes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 2
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "qualification", "registrationGaps", "hookFixture"],
+      "properties": {
+        "state": {
+          "const": "source-reviewed"
+        },
+        "qualification": {
+          "const": "pending-native-lanes"
+        },
+        "registrationGaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hookFixture": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$id": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/tools/drafts/v1/definition.schema.json",
+  "$defs": {
+    "VerifiedAsset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "bytes", "sha256", "checksumUrl", "signatureKind", "bundleUrl", "signerIdentity", "issuer", "verified"],
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "checksumUrl": {
+          "type": "string"
+        },
+        "signatureKind": {
+          "enum": ["github-build-attestation", "sigstore-blob-bundle"]
+        },
+        "bundleUrl": {
+          "type": ["string", "null"]
+        },
+        "signerIdentity": {
+          "type": "string"
+        },
+        "issuer": {
+          "const": "https://token.actions.githubusercontent.com"
+        },
+        "verified": {
+          "const": true
+        }
+      }
+    }
+  }
+}

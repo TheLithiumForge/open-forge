@@ -1,0 +1,474 @@
+{
+  "$schema": "../../../schemas/tools/drafts/v1/definition.schema.json",
+  "schemaVersion": 1,
+  "status": "draft",
+  "definition": {
+    "schema": 1,
+    "id": "codegraph",
+    "name": "CodeGraph",
+    "version": "1.6.2",
+    "license": "MIT",
+    "source": {
+      "repository": "https://github.com/colbymchenry/codegraph",
+      "tag": "v1.6.2",
+      "commit": "6560052a6f856855d3f71eee838fd66ccfa4285d"
+    },
+    "adapter": {
+      "id": "codegraph-1.6",
+      "revision": 1
+    },
+    "admission": "blocked",
+    "admissionReason": "Native qualification and shared Registration hook binding are pending. All six official assets are verified.",
+    "capabilities": ["code-graph"],
+    "downloadBase": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/",
+    "artifacts": {
+      "win-x64": {
+        "file": "codegraph-win32-x64.zip",
+        "bytes": 54260850,
+        "integrity": "sha256:7455e817ee8032666867a1badeb799b8a884c5f4fea9b444e088a02069b6deea",
+        "archive": "zip",
+        "stripComponents": 1
+      },
+      "win-arm64": {
+        "file": "codegraph-win32-arm64.zip",
+        "bytes": 50258514,
+        "integrity": "sha256:308f7bf92e7886f4d5f767a4755d703e92d5cae78ac042b8907f1e99db0fc071",
+        "archive": "zip",
+        "stripComponents": 1
+      },
+      "osx-x64": {
+        "file": "codegraph-darwin-x64.tar.gz",
+        "bytes": 59393903,
+        "integrity": "sha256:53d1a4d1a9af31d6cec11b346df2ae792087081e13f623f583e27783c1e7f9bc",
+        "archive": "tar.gz",
+        "stripComponents": 1
+      },
+      "osx-arm64": {
+        "file": "codegraph-darwin-arm64.tar.gz",
+        "bytes": 58280485,
+        "integrity": "sha256:d74d1bfb4060db63ec3c2b72c4e17f76c31978af3bad6ace4370d1501ac0662e",
+        "archive": "tar.gz",
+        "stripComponents": 1
+      },
+      "linux-x64": {
+        "file": "codegraph-linux-x64.tar.gz",
+        "bytes": 63433974,
+        "integrity": "sha256:ef0af416092128fb1ccc723786000b7edf4a6971fe604acd08bf966e4f37b828",
+        "archive": "tar.gz",
+        "stripComponents": 1
+      },
+      "linux-arm64": {
+        "file": "codegraph-linux-arm64.tar.gz",
+        "bytes": 63017097,
+        "integrity": "sha256:c8c6be292be21d00dea26bad8b28d434731cf612fb8cc475dc10f5b3038b5b64",
+        "archive": "tar.gz",
+        "stripComponents": 1
+      }
+    },
+    "targets": {
+      "win-x64": {
+        "state": "blocked",
+        "artifacts": ["win-x64"],
+        "entry": "lib/dist/bin/codegraph.js",
+        "lock": null,
+        "reason": "Native registration and lifecycle qualification wait for Writers, Dispatch and Registration integration. Hook variants and array-position binding need the shared Registration lane.",
+        "launcher": {
+          "executable": "node.exe",
+          "args": ["--liftoff-only", "--disable-warning=ExperimentalWarning", "${install}/lib/dist/bin/codegraph.js"]
+        }
+      },
+      "win-arm64": {
+        "state": "blocked",
+        "artifacts": ["win-arm64"],
+        "entry": "lib/dist/bin/codegraph.js",
+        "lock": null,
+        "reason": "Native registration and lifecycle qualification wait for Writers, Dispatch and Registration integration. Hook variants and array-position binding need the shared Registration lane.",
+        "launcher": {
+          "executable": "node.exe",
+          "args": ["--liftoff-only", "--disable-warning=ExperimentalWarning", "${install}/lib/dist/bin/codegraph.js"]
+        }
+      },
+      "osx-x64": {
+        "state": "blocked",
+        "artifacts": ["osx-x64"],
+        "entry": "lib/dist/bin/codegraph.js",
+        "lock": null,
+        "reason": "Native registration and lifecycle qualification wait for Writers, Dispatch and Registration integration. Hook variants and array-position binding need the shared Registration lane.",
+        "launcher": {
+          "executable": "node",
+          "args": ["--liftoff-only", "--disable-warning=ExperimentalWarning", "${install}/lib/dist/bin/codegraph.js"]
+        }
+      },
+      "osx-arm64": {
+        "state": "blocked",
+        "artifacts": ["osx-arm64"],
+        "entry": "lib/dist/bin/codegraph.js",
+        "lock": null,
+        "reason": "Native registration and lifecycle qualification wait for Writers, Dispatch and Registration integration. Hook variants and array-position binding need the shared Registration lane.",
+        "launcher": {
+          "executable": "node",
+          "args": ["--liftoff-only", "--disable-warning=ExperimentalWarning", "${install}/lib/dist/bin/codegraph.js"]
+        }
+      },
+      "linux-x64": {
+        "state": "blocked",
+        "artifacts": ["linux-x64"],
+        "entry": "lib/dist/bin/codegraph.js",
+        "lock": null,
+        "reason": "Native registration and lifecycle qualification wait for Writers, Dispatch and Registration integration. Hook variants and array-position binding need the shared Registration lane.",
+        "launcher": {
+          "executable": "node",
+          "args": ["--liftoff-only", "--disable-warning=ExperimentalWarning", "${install}/lib/dist/bin/codegraph.js"]
+        }
+      },
+      "linux-arm64": {
+        "state": "blocked",
+        "artifacts": ["linux-arm64"],
+        "entry": "lib/dist/bin/codegraph.js",
+        "lock": null,
+        "reason": "Native registration and lifecycle qualification wait for Writers, Dispatch and Registration integration. Hook variants and array-position binding need the shared Registration lane.",
+        "launcher": {
+          "executable": "node",
+          "args": ["--liftoff-only", "--disable-warning=ExperimentalWarning", "${install}/lib/dist/bin/codegraph.js"]
+        }
+      }
+    },
+    "runtime": {
+      "kind": "bundled",
+      "version": "24.16.0",
+      "notes": "Official portable release bundles Node 24.16.0. Its bin/codegraph launcher runs that Node without a system Node or npm dependency. No PATH changes.",
+      "extraDownloads": [],
+      "installScripts": "forbidden"
+    },
+    "configuration": {
+      "template": "codegraph-manual-v1",
+      "codeRoot": "workspace-relative",
+      "documents": "none",
+      "settings": {
+        "excludeToolState": true
+      },
+      "files": [],
+      "actions": []
+    },
+    "processes": {
+      "telemetry": "off",
+      "updateChecks": "off",
+      "daemon": "off",
+      "watcher": "off",
+      "autoIndex": "off",
+      "hooks": "blocked",
+      "consent": "none",
+      "coordination": "worktree",
+      "environment": {
+        "DO_NOT_TRACK": "1",
+        "CODEGRAPH_NO_DAEMON": "1",
+        "CODEGRAPH_NO_WATCH": "1",
+        "CODEGRAPH_DIR": "${indexDirName}",
+        "GIT_CONFIG_PARAMETERS": "",
+        "GIT_CONFIG_COUNT": "1",
+        "GIT_CONFIG_KEY_0": "core.hooksPath",
+        "GIT_CONFIG_VALUE_0": "${hookSink}",
+        "CODEGRAPH_NO_UPDATE_CHECK": "1"
+      }
+    },
+    "index": {
+      "location": "project-directory",
+      "path": "${codeRoot}/${indexDirName}",
+      "perWorktree": true,
+      "sharedContentCache": "none",
+      "freshness": "manual-sync",
+      "rebuildOnVersionChange": true
+    },
+    "mcp": {
+      "transport": "stdio",
+      "command": "target-entry",
+      "args": ["serve", "--mcp"],
+      "cwd": "worktree",
+      "environment": {},
+      "hosts": {
+        "claude-code": {
+          "path": ".mcp.json",
+          "selector": "/mcpServers/codegraph"
+        },
+        "codex": {
+          "path": ".codex/config.toml",
+          "selector": "mcp_servers.codegraph"
+        }
+      }
+    },
+    "skill": {
+      "template": "code-graph-usage-v1",
+      "optional": false,
+      "defaultEnabled": true
+    },
+    "checks": ["artifact-hash", "installed-files", "native-settings", "host-members", "index-state", "process-policy", "source-membership", "usage-skill", "hook-policy"],
+    "qualification": {
+      "attestation": "release-evidence-required",
+      "workflow": ".github/workflows/release.yml",
+      "targets": [],
+      "accuracy": "three-languages-2026-11-12"
+    },
+    "lifecycle": {
+      "install": {
+        "args": ["install", "--location", "local", "--target", "claude,codex", "--yes", "--no-permissions"],
+        "scope": "workspace",
+        "workspaceOutputs": [".mcp.json", ".claude/settings.json", ".claude/CLAUDE.md", ".codex/config.toml", "AGENTS.md", ".claude.json"],
+        "timeoutSeconds": 120
+      },
+      "uninstall": {
+        "args": ["uninstall", "--location", "local", "--target", "claude,codex", "--yes", "--keep-cli"],
+        "scope": "workspace",
+        "workspaceOutputs": [".mcp.json", ".claude/settings.json", ".claude/CLAUDE.md", ".codex/config.toml", "AGENTS.md", ".claude.json"],
+        "timeoutSeconds": 120
+      },
+      "indexCleanup": {
+        "args": ["uninit", "${codeRoot}", "--force"],
+        "scope": "workspace",
+        "workspaceOutputs": ["${codeRoot}/.codegraph"],
+        "timeoutSeconds": 120
+      },
+      "ignorePaths": [".codegraph/"],
+      "removalOrder": ["uninstall", "index-cleanup"],
+      "telemetryOff": {
+        "args": ["telemetry", "off"],
+        "scope": "workspace",
+        "workspaceOutputs": [],
+        "timeoutSeconds": 30
+      },
+      "telemetryOn": {
+        "args": ["telemetry", "on"],
+        "scope": "workspace",
+        "workspaceOutputs": [],
+        "timeoutSeconds": 30
+      }
+    },
+    "origin": "third-party",
+    "registration": {
+      "rewrites": [
+        {
+          "kind": "json-command",
+          "id": "claude-mcp",
+          "host": "claude-code",
+          "file": ".mcp.json",
+          "pointer": "/mcpServers/codegraph",
+          "expected": {
+            "command": "codegraph",
+            "args": ["serve", "--mcp"]
+          },
+          "replacement": {
+            "command": "${openForge}",
+            "args": ["tool", "run", "codegraph", "serve", "--mcp"]
+          }
+        },
+        {
+          "kind": "toml-command",
+          "id": "codex-mcp",
+          "host": "codex",
+          "file": ".codex/config.toml",
+          "table": "mcp_servers.codegraph",
+          "expected": {
+            "command": "codegraph",
+            "args": ["serve", "--mcp"]
+          },
+          "replacement": {
+            "command": "${openForge}",
+            "args": ["tool", "run", "codegraph", "serve", "--mcp"]
+          }
+        },
+        {
+          "kind": "hook-command",
+          "id": "claude-prompt-hook",
+          "host": "claude-code",
+          "file": ".claude/settings.json",
+          "component": "prompt-hook",
+          "pointer": "/hooks/UserPromptSubmit/0/hooks/0/command",
+          "expected": "codegraph.cmd prompt-hook",
+          "replacement": "\"${openForge}\" tool run codegraph prompt-hook"
+        },
+        {
+          "kind": "marked-line",
+          "id": "claude-code-instructions",
+          "host": "claude-code",
+          "file": ".claude/CLAUDE.md",
+          "startMarker": "<!-- CODEGRAPH_START -->",
+          "endMarker": "<!-- CODEGRAPH_END -->",
+          "expected": "- **Shell** (always works): `codegraph explore \"<symbol names or question>\"` prints the same output.",
+          "replacement": "- **Shell** (always works): `\"${openForge}\" tool run codegraph explore \"<symbol names or question>\"` prints the same output."
+        },
+        {
+          "kind": "marked-line",
+          "id": "codex-instructions",
+          "host": "codex",
+          "file": "AGENTS.md",
+          "startMarker": "<!-- CODEGRAPH_START -->",
+          "endMarker": "<!-- CODEGRAPH_END -->",
+          "expected": "- **Shell** (always works): `codegraph explore \"<symbol names or question>\"` prints the same output.",
+          "replacement": "- **Shell** (always works): `\"${openForge}\" tool run codegraph explore \"<symbol names or question>\"` prints the same output."
+        }
+      ],
+      "components": [
+        {
+          "id": "prompt-hook",
+          "flag": "prompt-hook",
+          "description": "On structural prompts, adds context from the local index. Nothing leaves the machine. CODEGRAPH_NO_PROMPT_HOOK=1 disables it.",
+          "defaultEnabled": true,
+          "declinedEntries": [
+            {
+              "host": "claude-code",
+              "file": ".claude/settings.json",
+              "pointer": "/hooks/UserPromptSubmit/0/hooks/0",
+              "expected": {
+                "type": "command",
+                "command": "codegraph.cmd prompt-hook"
+              }
+            }
+          ]
+        }
+      ],
+      "roleGuidance": [
+        {
+          "role": "code-navigation",
+          "line": "Code navigation: CodeGraph is active. Use `codegraph_explore` or `open-forge tool run codegraph explore \"<question>\"` before grep, see the open-forge-codegraph Skill."
+        }
+      ],
+      "activate": {
+        "args": ["install", "--location", "local", "--target", "claude,codex", "--yes", "--no-permissions"],
+        "scope": "workspace",
+        "workspaceOutputs": [".mcp.json", ".claude/settings.json", ".claude/CLAUDE.md", ".codex/config.toml", "AGENTS.md", ".claude.json"],
+        "timeoutSeconds": 120
+      },
+      "deactivate": {
+        "args": ["uninstall", "--location", "local", "--target", "claude,codex", "--yes", "--keep-cli"],
+        "scope": "workspace",
+        "workspaceOutputs": [".mcp.json", ".claude/settings.json", ".claude/CLAUDE.md", ".codex/config.toml", "AGENTS.md", ".claude.json"],
+        "timeoutSeconds": 120
+      }
+    }
+  },
+  "releaseEvidence": {
+    "verifiedOn": "2026-11-13",
+    "checksumFile": "SHA256SUMS",
+    "checksumSha256": "4e6fc8b6b0478c76c3a10ff48323c715b030b8faecb3826210c50a5863549cb5",
+    "assets": {
+      "win-x64": {
+        "url": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/codegraph-win32-x64.zip",
+        "bytes": 54260850,
+        "sha256": "7455e817ee8032666867a1badeb799b8a884c5f4fea9b444e088a02069b6deea",
+        "checksumUrl": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/SHA256SUMS",
+        "signatureKind": "github-build-attestation",
+        "bundleUrl": null,
+        "signerIdentity": "https://github.com/colbymchenry/codegraph/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "win-arm64": {
+        "url": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/codegraph-win32-arm64.zip",
+        "bytes": 50258514,
+        "sha256": "308f7bf92e7886f4d5f767a4755d703e92d5cae78ac042b8907f1e99db0fc071",
+        "checksumUrl": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/SHA256SUMS",
+        "signatureKind": "github-build-attestation",
+        "bundleUrl": null,
+        "signerIdentity": "https://github.com/colbymchenry/codegraph/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "osx-x64": {
+        "url": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/codegraph-darwin-x64.tar.gz",
+        "bytes": 59393903,
+        "sha256": "53d1a4d1a9af31d6cec11b346df2ae792087081e13f623f583e27783c1e7f9bc",
+        "checksumUrl": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/SHA256SUMS",
+        "signatureKind": "github-build-attestation",
+        "bundleUrl": null,
+        "signerIdentity": "https://github.com/colbymchenry/codegraph/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "osx-arm64": {
+        "url": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/codegraph-darwin-arm64.tar.gz",
+        "bytes": 58280485,
+        "sha256": "d74d1bfb4060db63ec3c2b72c4e17f76c31978af3bad6ace4370d1501ac0662e",
+        "checksumUrl": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/SHA256SUMS",
+        "signatureKind": "github-build-attestation",
+        "bundleUrl": null,
+        "signerIdentity": "https://github.com/colbymchenry/codegraph/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "linux-x64": {
+        "url": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/codegraph-linux-x64.tar.gz",
+        "bytes": 63433974,
+        "sha256": "ef0af416092128fb1ccc723786000b7edf4a6971fe604acd08bf966e4f37b828",
+        "checksumUrl": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/SHA256SUMS",
+        "signatureKind": "github-build-attestation",
+        "bundleUrl": null,
+        "signerIdentity": "https://github.com/colbymchenry/codegraph/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      },
+      "linux-arm64": {
+        "url": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/codegraph-linux-arm64.tar.gz",
+        "bytes": 63017097,
+        "sha256": "c8c6be292be21d00dea26bad8b28d434731cf612fb8cc475dc10f5b3038b5b64",
+        "checksumUrl": "https://github.com/colbymchenry/codegraph/releases/download/v1.6.2/SHA256SUMS",
+        "signatureKind": "github-build-attestation",
+        "bundleUrl": null,
+        "signerIdentity": "https://github.com/colbymchenry/codegraph/.github/workflows/release.yml@refs/heads/main",
+        "issuer": "https://token.actions.githubusercontent.com",
+        "verified": true
+      }
+    },
+    "verificationCommands": [
+      [
+        "gh",
+        "attestation",
+        "verify",
+        "<archive>",
+        "--repo",
+        "colbymchenry/codegraph",
+        "--cert-identity",
+        "https://github.com/colbymchenry/codegraph/.github/workflows/release.yml@refs/heads/main",
+        "--format",
+        "json"
+      ]
+    ],
+    "attestedSourceCommit": "0f0af7bf22a5083a47e34fcb1e1bf67355174ef8",
+    "sourceNote": "The attested workflow source is main at 0f0af7bf22a5083a47e34fcb1e1bf67355174ef8. The tag resolves to 6560052a6f856855d3f71eee838fd66ccfa4285d. The release workflow makes commits before publishing. No equivalence is asserted."
+  },
+  "guidance": {
+    "path": "skills/open-forge-codegraph/SKILL.md",
+    "required": true,
+    "delivery": "open-forge-required-skill",
+    "sha256": "e34f1d7b1303d675bdeb2ebe52866021e0537816c715697ff88b33141e45e753"
+  },
+  "consent": {
+    "source": "../../../docs/tools/codegraph-consent.md",
+    "scope": "project",
+    "pending": []
+  },
+  "trustNotes": [
+    "CodeGraph is third-party software from colbymchenry/codegraph under MIT, downloaded from its official release and maintained by its authors. Open Forge maintains this integration. V1 supports CodeGraph only.",
+    "Use the verified official archive in the per-user versioned store. Its bin/codegraph(.cmd) launcher runs bundled Node 24.16.0. Run install --location local --target claude,codex --yes --no-permissions from that launcher. --yes skips npm and PATH setup. No system Node, npm, PATH or registry changes are needed.",
+    "The local installer writes mcpServers.codegraph in .mcp.json, [mcp_servers.codegraph] in .codex/config.toml, a Claude UserPromptSubmit hook in .claude/settings.json and CODEGRAPH_START to CODEGRAPH_END instruction blocks in .claude/CLAUDE.md and root AGENTS.md. --no-permissions suppresses Claude auto-allow permissions, not the prompt hook. Report recognized legacy cleanup and transient files as listed in the consent inventory.",
+    "After install, configure and update, rewrite only the declared command parts. MCP entries use open-forge with [tool,run,codegraph,serve,--mcp]. The hook uses open-forge tool run codegraph prompt-hook. The marked shell example uses open-forge tool run codegraph explore \"<symbol names or question>\". Keep names, markers, type, alwaysLoad and unrelated content. Use the existing JSON serializer and exact Codex command and args line edits without a TOML parser. Stop and report unexpected or ambiguous shapes. An exact recorded matching rewritten hook is unchanged on rerun.",
+    "One resolver uses open-forge on PATH, or the absolute running Open Forge executable when it is not on PATH. Quote for each destination. Keep the literal substring codegraph prompt-hook so the native uninstaller recognizes it. tool run forwards all following arguments, optionally after --, and forwards streams, exit code and signals without success output. It selects the workspace pin using explicit --workspace before the tool name, CLAUDE_PROJECT_DIR or an upward walk from CWD.",
+    "Ask whether to keep the Claude UserPromptSubmit hook, default yes. It adds context from the local index on structural prompts. Nothing leaves the machine. CODEGRAPH_NO_PROMPT_HOOK=1 disables it. Non-interactive installs take --prompt-hook yes|no. On no, remove only the complete matching CodeGraph hook entry. Keep its containing group and sibling commands under the shared component contract.",
+    "Run the native telemetry off command unless the visible tools.codegraph.telemetry setting enables it. Disclose ~/.codegraph/telemetry.json, its temporary file and deletion of buffered telemetry files. Suppress telemetry before other invocations. Keep update checks, daemon startup, watchers and automatic indexing off during Open Forge writes. Use the declared private Git hook sink without changing real hooks or Git configuration files.",
+    "Removal runs open-forge tool run codegraph uninstall --location local --target claude,codex --yes --keep-cli, then open-forge tool run codegraph uninit <root> --force. Native removal keeps the CLI and removes recognized project entries and this project index. Remove the required Open Forge Skill, conditional active-role line and managed .codegraph/ ignore entry. Release a store version only when no workspace uses it. Report agreed leftovers and keep unrelated content.",
+    "Git is the backup in Git workspaces. Without Git, prepare sibling .bak files before changing existing files. Keep native file names and instruction markers unchanged for uninstall. The complete write inventory is docs/tools/codegraph-consent.md.",
+    "Keep the native CodeGraph instruction block with its corrected shell example. Ship the short required open-forge-codegraph Skill. Add one conditional line to Open Forge managed AGENTS.md and CLAUDE.md blocks only while the code-navigation role is active, and remove the line when the role is cleared or moved. Status and Inspect use native server name codegraph.",
+    "For teammates, bare open-forge tool install installs every tool declared by the workspace. When CodeGraph is declared but not installed locally, tool run fails with a clear instruction to run open-forge tool install. Interactive Run offers normal Install consent. Non-interactive Run never installs silently. Existing consent, artifact verification and hook choice still apply.",
+    "Indexing is external and needs agreement. init --yes builds the first index, index --quiet rebuilds an initialized index and sync refreshes changes. C# call recall was 41% in the trial. Confirm call sites in source.",
+    "Upstream needs an installer option to set the launch command or write the absolute launcher path when it is not on PATH. That would remove Open Forge command rewrites.",
+    "Upstream needs --no-prompt-hook for non-interactive installs. Do not contact upstream unasked.",
+    "The definition trust notes and maintenance CodeGraph worked example record these decisions. Issue comments are discussion, not the specification.",
+    "ToolTarget.Launcher uses the verified bundled node.exe or node with the archive launcher flags and fixed lib/dist/bin/codegraph.js argument. No command shell, PATH-resolved tool or system runtime is used.",
+    "Lifecycle timeouts are policy caps, not measured native qualification: 120 seconds for install, uninstall, cleanup and role activation, 30 seconds for telemetry. Both telemetry commands run once in workspace scope while changing the disclosed account preference.",
+    "The shared hook form currently has one exact expected string and JSON Pointer. The declared hook and decline pointers are the pristine Windows fixture. Upstream uses codegraph.cmd prompt-hook on Windows and codegraph prompt-hook elsewhere and appends its hook group after existing groups. Admission stays blocked until Registration supports binding the platform spelling and appended entry without assuming index zero."
+  ],
+  "review": {
+    "state": "source-reviewed",
+    "qualification": "pending-native-lanes",
+    "registrationGaps": ["hook-platform-variants", "hook-array-position"],
+    "hookFixture": "The typed hook and decline pointers describe the pristine Windows source fixture. Do not activate this recipe until Registration can bind the native platform spelling and appended entry without assuming index zero."
+  }
+}

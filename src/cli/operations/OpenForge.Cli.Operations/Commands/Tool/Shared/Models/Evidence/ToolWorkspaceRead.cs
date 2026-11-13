@@ -22,8 +22,13 @@ internal sealed record ToolWorkspaceRead(WorkspaceSettingsRead Settings, Workspa
         {
             Lock.Document.Tools.TryGetValue(id, out var receipt);
             string[]? capabilities = null;
+            string? origin = null;
             if (receipt is not null)
-                capabilities = new ToolCatalogueReader().Definition(receipt.ManifestBytes, "receipt." + receipt.ManifestFormat, false).Manifest.Capabilities;
+            {
+                var manifest = new ToolCatalogueReader().Definition(receipt.ManifestBytes, "receipt." + receipt.ManifestFormat, false).Manifest;
+                capabilities = manifest.Capabilities;
+                origin = manifest.Origin;
+            }
             if (role is not null && (role != ToolVocabulary.CodeNavigationRole
                 || capabilities is not null && !capabilities.Contains(ToolVocabulary.CodeGraphCapability, StringComparer.Ordinal))) continue;
             var verification = new ToolObservation(ToolEvidenceState.Matching);
@@ -31,8 +36,8 @@ internal sealed record ToolWorkspaceRead(WorkspaceSettingsRead Settings, Workspa
                 verification = new(ToolEvidenceState.Unavailable, Lock.Cause ?? "A matching tool receipt isn't recorded.");
             else if (receipt.Version != setting.Version)
                 verification = new(ToolEvidenceState.Changed, "The settings pin differs from the receipt pin.");
-            rows.Add(new(id, setting.Version, setting.Roles, capabilities, verification));
+            rows.Add(new(id, setting.Version, origin, setting.Roles, capabilities, verification));
         }
-        return [.. rows];
+        return [.. rows.OrderBy(row => ToolVocabulary.OriginOrder(row.Origin)).ThenBy(row => row.Id, StringComparer.Ordinal)];
     }
 }
