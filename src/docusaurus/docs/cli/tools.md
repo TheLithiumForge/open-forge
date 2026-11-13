@@ -15,6 +15,8 @@ The V1 contract defines `list`, `inspect`, `install`, `configure`, `status`, `up
 
 ## Read tools
 
+[CodeGraph](codegraph.md) `1.6.2` and [Codebase Memory](codebase-memory.md) `0.12.1` have drafts with verified releases for all six targets. Both are blocked on installer decisions and native qualification. Draft wrappers aren't accepted `--source` inputs. Required Skills and consent inventories are prepared for review. No installer runs while those decisions are pending.
+
 Run `open-forge tool list --format json` to read the catalogue and recorded installs. With no tool records, the empty core catalogue returns `completed` with empty `available` and `installed` arrays. `tool inspect <id> --source <path>` explains one local definition. Unreviewed pins return `blocked` with the readable definition.
 
 Run `open-forge tool status` for passive file and configuration checks. It starts no process or database session. An index file alone reports `present-unverified`. Missing receipts keep the settings entry and report unavailable verification.
