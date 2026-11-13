@@ -59,7 +59,9 @@ and fails if required packages are unavailable. Builds restore by default;
 | `ci:prepare`               | Write runner SDK paths and macOS temporary paths to `GITHUB_ENV`.            |
 | `ci:reuse`                 | On a direct push, reuse another branch's Build for the same commit.          |
 | `release:checkpoint`       | Print the publication plan and wait 60 seconds before uploads.               |
-| `release:restore-channels` | Preview or apply npm channel recovery for all seven packages.                |
+| `release:restore-channels` | Preview or apply npm channel recovery for all eight packages.                |
+| `release:pypi`             | Validate collected wheels and prepare them for trusted publishing.           |
+| `smoke:aliases`            | Install local alias tarballs and one wheel, then check their version.        |
 | `ci:bundle`                | Archive the published CLI for `--rid` with its license and checksum.         |
 | `ci:checks`                | Run the Build workflow's shared setup and verification.                      |
 | `ci:job`                   | Run one Build matrix job for `--rid` with the workflow's logs.               |
@@ -146,7 +148,7 @@ npx forge publish:release --from artifacts/release --tag preview --dry-run
 Collection requires tested packages with matching source, version and target
 selection. It replaces the output directory and records the selection in
 `release.json`. Omitted target artifacts are not required. Publication consumes
-that exact selection, checks it before uploads, and publishes the wrapper last.
+that exact selection, checks it before uploads, and publishes the wrapper followed by the alias.
 Uploads are not atomic; rerun the same publication to fill missing versions.
 The default Actions workflows still build and release all six targets.
 
@@ -179,7 +181,7 @@ passes, Release can reuse that run without rebuilding those hosts.
 ```sh
 npx forge ci:reuse --help
 npx forge release:checkpoint --wait 60
-npx forge release:restore-channels --version 0.9.0-beta.11 --to 0.9.0-beta.10
+npx forge release:restore-channels --version 0.9.0-beta.11 --to 0.9.0-beta.10 --registry
 ```
 
 `release:checkpoint` prints the target, channel, version, source commit, every
@@ -197,12 +199,22 @@ published. Force cancellation can prevent this report. Inspect npm and GitHub
 before recovery because publication across packages and destinations is not a
 transaction.
 
-`release:restore-channels` prints `npm dist-tag add` commands for all seven
-packages without registry contact. Its default tags are `latest` and the bad
-version's prerelease channel, or just `latest` for a stable version. Use
-`--channels latest,beta` to choose tags explicitly. Add `--apply` only after
-reviewing the plan. It checks that `--to` exists for every package before
-changing any tag. It never unpublishes or deprecates a version.
+`release:restore-channels` builds `npm dist-tag add` commands from the previous
+release's graph. `--registry` reads its scoped wrapper dependencies and checks
+whether its alias version exists. For an offline preview, use
+`--from <previous-release-directory>` with its collected `release.json`. Without
+either source, preview stops before registry contact. Default tags are `latest`
+and the bad version's prerelease channel, or just `latest` for a stable version.
+Use `--channels latest,beta` to choose tags. Add `--apply` only after reviewing
+the plan. It permits registry lookup and checks that `--to` exists for every
+package in the previous graph before changing any tag.
+
+The first alias release can restore the seven preceding packages without a
+previous alias version. Candidate alias tag removals are printed separately and
+never run with `--apply`. Before running them, use `npm view open-forge dist-tags --json`
+to check the current tags. Remove a tag only if the bad release introduced
+the alias and the tag still points to that version. Recovery never unpublishes
+or deprecates a version.
 
 For GitHub recovery, open the affected release under the repository's
 **Releases** page. Use **Edit** to mark it as a prerelease, remove its latest
@@ -210,6 +222,40 @@ designation or explain the withdrawal in its notes. If it should be removed,
 use **Delete** on that release. Edit the previous release's latest designation
 as needed and inspect the source tag separately. These manual actions do not
 restore npm channels or undo downloaded files.
+
+## PyPI setup
+
+The maintainer configures this once before enabling uploads:
+
+1. Create a GitHub environment named `pypi` in `TheLithiumForge/open-forge`. Set its release protections as needed.
+2. In PyPI publishing settings, add a [pending trusted publisher](https://docs.pypi.org/trusted-publishers/creating-a-project-through-oidc/) for each of the eight projects. These are `open-forge`, `thelithiumforge-open-forge` and the six platform names generated from the [npm package model](package-model.ts) by removing `@` and replacing `/` with `-`. Use GitHub owner `TheLithiumForge`, repository `open-forge`, workflow `release.yml` and environment `pypi` for every project. For an existing project you control, add the publisher in that project's publishing settings.
+3. Set the GitHub repository Actions variable `PUBLISH_PYPI` to `true`. It defaults off when absent. An `all` release then publishes wheels after the npm and GitHub jobs succeed.
+
+The PyPI job uses `id-token: write` and the [PyPA publishing action](https://docs.pypi.org/trusted-publishers/using-a-publisher/). It uses no long-lived PyPI token. `github` and `npm` destinations keep their existing scope. Clear `PUBLISH_PYPI` to disable the PyPI job.
+
+`pack` creates the npm alias and three Python wheels. The native wheel takes the same staged executable as npm and has no console script. The pure `thelithiumforge-open-forge` entry wheel selects one exact-version native dependency through environment markers. The pure `open-forge` alias pins that entry package and points to its launcher. Both universal wheels use `py3-none-any`.
+
+Collection checks each host's three wheels against those bytes and metadata, then keeps one matching copy of each universal wheel. It records their hashes in `release.json`. `release:pypi` verifies those hashes before copying wheels into `artifacts/pypi/platform`, `entry` and `alias`. It stays offline. The OIDC job uploads these groups in that order. Every project needs the same trusted publisher configuration. [PyPI supports one publisher for several projects](https://docs.pypi.org/trusted-publishers/internals/).
+
+The publication checkpoint includes wheels when `--pypi` or `RELEASE_PYPI=true` is set. Cross-service uploads are separate effects. A failed PyPI job leaves earlier npm and GitHub uploads present. Re-run the failed job after checking PyPI's state. The action rejects existing files, so a partial PyPI upload needs maintainer recovery.
+
+To check local packages on their matching native host, run:
+
+```sh
+npm run smoke:aliases -- --from artifacts/delivery/win-x64/packages
+```
+
+The smoke installs the three local npm tarballs offline in a temporary prefix and invokes the alias bin. In a clean venv, it installs only the PyPI alias requirement using `--no-index --find-links`. Pip resolves the entry wheel and exactly one platform wheel. The smoke checks that graph and runs `open-forge --version`. It repeats the check with the prefixed entry name in another clean venv. If Python is unavailable, it reports that the wheel check didn't run. It removes its temporary installs. `pack` checks the npm alias without requiring Python. Python is needed only for execution evidence, not wheel generation.
+
+To exercise selection with all six platform wheels available and an existing matching-version host executable, run the tracked fixture preparation from an npm environment:
+
+```sh
+npm exec --offline --call "node scripts/delivery/pypi/__tests__/smoke-local.ts artifacts/alias-smoke-source/package/bin/open-forge.exe"
+```
+
+This Windows example reuses a previously extracted executable. The other five platform payloads are inert selection fixtures. It checks this host's installation and dependency selection. CI qualifies real native payloads on all six hosts.
+
+After both new channels are published, run `npm run smoke:public -- --version <npm-version> --aliases` to check the alias and PyPI console command too. The default public smoke checks only the scoped npm package, so it still works for older releases. No workflow runs the new public checks before publication.
 
 ## Version and clean up
 

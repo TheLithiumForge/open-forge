@@ -137,6 +137,23 @@ Needs Node.js 22.18 or later.
 npm install -g @thelithiumforge/open-forge@beta
 ```
 
+The next release also adds `npm install -g open-forge@beta`. This alias depends on the scoped entry package at the same version. The entry package selects one native platform package. Install one entry name or the other globally because both provide the `open-forge` command. Use the scoped command until the alias is published.
+
+### From PyPI
+
+PyPI wheels start with the next release, after trusted publishing is configured. They need Python 3.9 or later. After publication, install the beta with pipx:
+
+```sh
+pipx install --pip-args=--pre open-forge
+open-forge --version
+```
+
+To run it with uv, use `uvx --prerelease allow open-forge --version`. The prefixed name also works with `pipx install --pip-args=--pre thelithiumforge-open-forge` or `uvx --prerelease allow --from thelithiumforge-open-forge open-forge --version`. `--from` selects the package while `open-forge` selects the command. Stable releases work with `pipx install open-forge` and `uvx open-forge`.
+
+PyPI has the same three package kinds as npm. The pure `open-forge` alias pins `thelithiumforge-open-forge` at the same version. That pure entry package provides the launcher and selects exactly one `thelithiumforge-open-forge-<target>` package through environment markers. Only the platform wheel contains the native executable. Both entry names provide `open-forge`, so install one or the other.
+
+The platform wheels contain the same executables as npm. Installation performs no source build or separate binary download. Wheels cover Windows, macOS and Linux on x64 and ARM64. Linux needs glibc 2.39 or later. macOS needs macOS 15 or later.
+
 ### From a GitHub release
 
 No Node.js needed. Download `open-forge-<version>-<platform>.tar.gz` from the [releases page](https://github.com/TheLithiumForge/open-forge/releases). The platform is one of `linux-x64`, `linux-arm64`, `osx-x64`, `osx-arm64`, `win-x64`, or `win-arm64`.

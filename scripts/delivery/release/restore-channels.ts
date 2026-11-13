@@ -1,20 +1,32 @@
 import assert from "node:assert/strict";
-import { parseArgs } from "node:util";
 import { npm, reportFailure } from "../process.ts";
 import { repositoryRoot } from "../repository.ts";
 import { registryVersionExists } from "../npm/registry-version.ts";
-import { restoreArguments, restoreChannelPlan, restoreCommands } from "./restore-channel-plan.ts";
+import { applyRestorePlan, newAliasTagCommands, newAliasTagPlan, restoreArguments, restoreChannelPlan, restoreChannels, restoreCommands } from "./restore-channel-plan.ts";
+import { readPreviousGraph } from "./read-previous-graph.ts";
+import { readOptions } from "../options.ts";
 
 try {
-  const { values } = parseArgs({ options: { version: { type: "string" }, to: { type: "string" }, channels: { type: "string" }, apply: { type: "boolean" } } });
-  assert.ok(values.version && values.to, "Supply --version <bad> and --to <previous>.");
-  const plan = restoreChannelPlan(values.version, values.to, values.channels);
-  process.stdout.write(`${restoreCommands(plan).join("\n")}\n`);
-  if (values.apply) {
-    for (const name of new Set(plan.map((change) => change.name))) {
-      assert.ok(registryVersionExists(repositoryRoot, name, values.to), `${name}@${values.to} does not exist. No channels changed.`);
+  const values = readOptions("release:restore-channels");
+  if (values) {
+    assert.ok(values.version && values.to, "Supply --version <bad> and --to <previous>.");
+    assert.ok(!(values.from !== undefined && values.registry), "Choose --from or --registry, not both.");
+    restoreChannels(values.version, values.channels);
+    const previous = readPreviousGraph(repositoryRoot, values.to, values.from, values.from === undefined && (values.registry || values.apply) === true);
+    const plan = restoreChannelPlan(values.version, previous, values.channels);
+    process.stdout.write(`${restoreCommands(plan).join("\n")}\n`);
+    const aliasCommands = newAliasTagCommands(newAliasTagPlan(values.version, previous, values.channels));
+    if (aliasCommands.length > 0) {
+      process.stdout.write(
+        `\nSeparate alias review, never applied by --apply:\nIf the alias was introduced by ${values.version}, check its dist-tags and remove only tags still pointing to that version.\n${aliasCommands.join("\n")}\n`,
+      );
     }
-    for (const change of plan) npm(restoreArguments(change), repositoryRoot);
+    if (values.apply)
+      applyRestorePlan(
+        plan,
+        (name, version) => registryVersionExists(repositoryRoot, name, version),
+        (change) => npm(restoreArguments(change), repositoryRoot),
+      );
   }
 } catch (error) {
   reportFailure(error);

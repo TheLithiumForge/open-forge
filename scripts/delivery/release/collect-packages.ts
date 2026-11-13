@@ -1,15 +1,18 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join, resolve, sep } from "node:path";
-import { MainPackageName, PlatformPackages, type SupportedRuntime } from "../package-model.ts";
+import { AliasPackageName, HostArtifactCount, MainPackageName, PlatformPackages, type SupportedRuntime } from "../package-model.ts";
 import { hashArtifact } from "../manifest.ts";
 import { readPackage } from "../package-json.ts";
 import { committedVersion } from "../version.ts";
 import { sourceIdentity } from "../source.ts";
 import { inspectPackageContents } from "../package-contents.ts";
 import { resetOutput } from "../output.ts";
+import { expectedHostWheels } from "../pypi/validate-wheel.ts";
+import { PythonPackage } from "../pypi/wheel-model.ts";
+import { aliasManifest } from "../npm/package-manifests.ts";
 
 import { parseArgs } from "node:util";
 import { AllTargets, parseTargets, readTargets, targetDependencies } from "../targets.ts";
@@ -19,6 +22,7 @@ export function collectPackages(input: string, output: string, sha: string, vers
   const dependencies = targetDependencies(version, targets);
   const selected = new Map<string, { source: string; sha256: string }>();
   let mainContents: string | undefined;
+  let aliasContents: string | undefined;
   for (const platform of targets.map((target) => PlatformPackages[target])) {
     const directory = join(input, `package-${platform.runtime}`);
     const manifest = readPackage(join(directory, "package.json"));
@@ -28,8 +32,11 @@ export function collectPackages(input: string, output: string, sha: string, vers
     assert.equal(manifest["tested"], true, "Release collection requires tested packages; --skip-tests outputs are local only.");
     assert.deepEqual(readTargets(manifest["targets"]), targets, "Package targets differ; repack every selected host with the same --targets.");
     const files = manifest["files"];
-    assert.ok(Array.isArray(files) && files.length === 3, "Incomplete packaged artifacts.");
+    assert.ok(Array.isArray(files) && files.length === HostArtifactCount, "Incomplete packaged artifacts.");
     let mainFound = false;
+    let aliasFound = false;
+    const expectedWheels = expectedHostWheels(directory, version, platform.runtime, targets);
+    const wheelsFound = new Set<string>();
     let platformFound = false;
     let archiveFound = false;
     for (const value of files) {
@@ -48,11 +55,29 @@ export function collectPackages(input: string, output: string, sha: string, vers
           if (mainContents === undefined) mainContents = fingerprint;
           else assert.equal(fingerprint, mainContents, "Main package contents differ across platforms.");
           if (platform.runtime !== targets[0]) continue;
+        } else if (contents.name === AliasPackageName) {
+          assert.equal(aliasFound, false, "Duplicate alias package.");
+          aliasFound = true;
+          assert.deepEqual(contents.manifest, aliasManifest(version));
+          const fingerprint = JSON.stringify(contents.files);
+          if (aliasContents === undefined) aliasContents = fingerprint;
+          else assert.equal(fingerprint, aliasContents, "Alias contents differ across platforms.");
+          if (platform.runtime !== targets[0]) continue;
         } else {
           assert.equal(platformFound, false, "Duplicate platform package.");
           platformFound = true;
           assert.equal(contents.name, platform.packageName);
           assert.equal(contents.files.find((file) => file.path === `bin/${platform.nativeFileName}`)?.sha256, manifest["nativeSha256"], "Packed native identity mismatch.");
+        }
+      } else if (path.endsWith(PythonPackage.suffix)) {
+        assert.ok(expectedWheels.has(path), "Unexpected wheel in host artifacts.");
+        assert.equal(wheelsFound.has(path), false, "Repeated host wheel.");
+        wheelsFound.add(path);
+        assert.deepEqual(readFileSync(join(directory, path)), expectedWheels.get(path), "Wheel differs from the staged native release.");
+        const earlier = selected.get(path);
+        if (earlier !== undefined) {
+          assert.equal(earlier.sha256, value.sha256, "Universal wheel contents differ across platforms.");
+          continue;
         }
       } else {
         assert.equal(path, `open-forge-${version}-${platform.runtime}.tar.gz`);
@@ -64,7 +89,7 @@ export function collectPackages(input: string, output: string, sha: string, vers
       assert.equal(selected.has(path), false, "Repeated release artifact.");
       selected.set(path, { source: join(directory, path), sha256: value.sha256 });
     }
-    assert.ok(mainFound && platformFound && archiveFound, "Incomplete platform package graph.");
+    assert.ok(mainFound && aliasFound && platformFound && archiveFound && wheelsFound.size === expectedWheels.size, "Incomplete platform package graph.");
   }
   mkdirSync(output, { recursive: true });
   const checksums: string[] = [];

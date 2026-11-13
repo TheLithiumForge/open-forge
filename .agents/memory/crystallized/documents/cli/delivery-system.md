@@ -7,6 +7,8 @@ open-forge:
 
 # Delivery System
 
+The delivery system is the repository toolchain that builds, tests, packages and releases Open Forge through the same local TypeScript commands used in CI.
+
 ## What does this system do, and where does each part live?
 
 The delivery system builds, tests, packages and releases the Open Forge CLI. Every step is a `forge` command in the repository, so the same step runs on a developer machine and in GitHub Actions.
@@ -65,6 +67,20 @@ runs on its platform or is skipped elsewhere with a reason declared in
 
 Each Build job writes `build.log`, `bundle.log`, `test.log` and `pack.log` to `artifacts/delivery/logs/<rid>/`, and uploads packages, the downloadable binary and diagnostics. The [CLI Distribution](distribution.md#publication-boundary) document defines the package graph and the complete-release rules that `publish` enforces.
 
+Each host packs a same-version npm alias and three Python wheels alongside its
+existing packages. Both registries use platform packages, an entry package and
+an alias. PyPI names come from the npm model. Its pure entry wheel selects one
+native package through environment markers, and its pure alias shares that
+entry launcher. Collection keeps one matching copy of each universal wheel.
+The release publishes platform packages, then the main package and alias in
+each registry. The optional `pypi` job publishes collected wheels
+through OIDC after the main publish job succeeds. It runs only for `all` when
+`PUBLISH_PYPI=true`. The switch defaults off. The
+[PyPI setup guide](../../../../../scripts/delivery/README.md#pypi-setup) gives the
+trusted publisher settings and the local wheel smoke command. Wheel creation
+and validation use TypeScript. A matching Python installation is needed only
+for wheel execution evidence.
+
 Release reuse requires a successful `build.yml` run for the exact source commit
 and all six unexpired package artifacts, including when a run ID is supplied.
 Only push and manual runs in this repository qualify. A pull request run builds
@@ -81,8 +97,9 @@ with GitHub's **Re-run failed jobs**, then reuse the completed run.
 Cancelling during the publication checkpoint uploads nothing. During npm
 publication, SIGINT or SIGTERM stops further uploads after the current effect
 settles and reports partial results with a non-zero exit. Published uploads
-remain present. `release:restore-channels` previews npm channel recovery for all
-seven packages and applies it only with `--apply`. The [delivery guide](../../../../../scripts/delivery/README.md#reuse-builds-and-cancel-publication)
+remain present. `release:restore-channels` restores packages from the previous
+release graph and applies that plan only with `--apply`. Alias tags absent from
+the previous graph require a separate reviewed action. The [delivery guide](../../../../../scripts/delivery/README.md#reuse-builds-and-cancel-publication)
 explains recovery, including manual GitHub release changes.
 
 ## Qualifying a release

@@ -7,6 +7,10 @@ description: Use the open-forge CLI to load workspace context, find sources, mai
 
 Use the optional CLI to read and maintain Open Forge's Markdown, rules, and links. Read this guide before running commands other than `context`. Reading it grants no installation or package-change authority.
 
+Install the CLI with `npm install -g @thelithiumforge/open-forge@beta`. The next release adds the same-version alias `npm install -g open-forge@beta`. Once PyPI publishing is enabled, use `pipx install --pip-args=--pre open-forge` or `uvx --prerelease allow open-forge --version`. The prefixed PyPI name `thelithiumforge-open-forge` works too. Stable releases work with `pipx install open-forge` and `uvx open-forge`. Install one entry name because both provide `open-forge`.
+
+Both registries use platform packages, an entry package and an alias. The entry package selects one native platform package. PyPI uses exact-version dependencies with environment markers. Its alias pins the entry package and points to that entry launcher's console script. Only platform packages contain executables. Wheels need Python 3.9 or later, glibc 2.39 or later on Linux and macOS 15 or later on macOS. They include the same native executable as npm, on x64 and ARM64.
+
 First installation can select the context folder with `install --main-root <folder>`. The default is `--main-root .agents`. Native Skills stay in `.agents/skills/`, and settings and ownership stay in `.agents/open-forge.json` and `.agents/open-forge.lock.json`. Use `./...` for exact workspace-relative operands and source IDs for layout-independent selections. Older CLIs do not support custom roots. Relocating an established installation is not available yet. Read [installation details](references/packages.md#install) before an authorized setup change.
 
 Before you write workspace files or metadata, read the file formats in `.agents/README.md`, or run `open-forge help concepts` if that page was deleted.

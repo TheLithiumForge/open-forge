@@ -2,7 +2,7 @@
 
 Open Forge gives your coding agent the rules, docs and decisions each task needs, and a place to keep what it learns for the next session.
 
-I built it because one long `AGENTS.md` hands every task every rule, and every new session starts by relearning the project. Open Forge has three parts: agent documents with the routes that link them, a CLI that installs and maintains them, and optional workflows from Extensions. It's all built on Markdown files in your repository, so you read, diff and review it like the rest of your code.
+I built it because one long `AGENTS.md` hands every task every rule, and every new session starts by relearning the project. At The Lithium Forge we forge software, and over time that became a way of working, a forge methodology. Open Forge opens it up to everyone, together with the tooling that makes it easy to follow. It has three parts: agent documents with the routes that link them, a CLI that installs and maintains them, and optional workflows from Extensions. It's all built on Markdown files in your repository, so you read, diff and review it like the rest of your code.
 
 E.g. a rule tagged `LoadNow` with `applyTo: ["src/export/**"]` loads only for tasks that change export code. A fact your team accepted last month, such as "CSV exports use UTF-8", sits in Crystallized Memory, so the next export task starts from it instead of guessing.
 
@@ -21,6 +21,7 @@ To use Open Forge, you need:
 
 - An agent tool that reads `AGENTS.md` or `CLAUDE.md`.
 - Node.js 22.18 or later, if you install the CLI from npm. The native release and the manual copy need no Node.js.
+- Python 3.9 or later with pipx or uv, if you install the CLI from PyPI.
 
 ## Install
 
@@ -31,6 +32,31 @@ npm install -g @thelithiumforge/open-forge@beta
 ```
 
 The CLI is optional. Everything it does, you can do by editing files. The other install methods are below.
+
+### Alias And Python
+
+The next release adds the unscoped npm alias and PyPI wheels. Until those packages are published, use the scoped npm command above.
+
+To use the npm alias after that release, run:
+
+```sh
+npm install -g open-forge@beta
+```
+
+The alias uses `@thelithiumforge/open-forge` at the same version. That entry package selects one native platform package. Install one entry name or the other globally because both provide `open-forge`.
+
+To install the beta from PyPI with pipx, run:
+
+```sh
+pipx install --pip-args=--pre open-forge
+open-forge --version
+```
+
+To run it with uv, use `uvx --prerelease allow open-forge --version`. The prefixed name works too, for example `pipx install --pip-args=--pre thelithiumforge-open-forge` or `uvx --prerelease allow --from thelithiumforge-open-forge open-forge --version`. `--from` selects the package while `open-forge` selects the command.
+
+PyPI mirrors npm's three package kinds. The `open-forge` alias depends on `thelithiumforge-open-forge` at the exact same version. That pure Python entry package provides the launcher and selects one `thelithiumforge-open-forge-<target>` wheel through environment markers. Only the platform wheel contains the native executable. Both entry names provide the same command, so install one or the other. Stable releases work with `pipx install open-forge` and `uvx open-forge`.
+
+Platform wheels contain the same executable as npm. Python starts that executable without building it or fetching a separate binary. Linux wheels require glibc 2.39 or later, and macOS wheels require macOS 15 or later. Windows wheels cover x64 and ARM64.
 
 ### From a GitHub release
 

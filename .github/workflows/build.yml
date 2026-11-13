@@ -127,7 +127,7 @@ jobs:
       # Runner-default PowerShell preserves Windows ACL denial evidence.
       - name: Test managed and native suites
         run: npm run test:built -- --rid ${{ matrix.rid }} --log artifacts/delivery/logs/${{ matrix.rid }}/test.log
-      - name: Pack and test npm installation
+      - name: Pack npm packages and wheel, then test npm installation
         run: npm run pack -- --rid ${{ matrix.rid }} --log artifacts/delivery/logs/${{ matrix.rid }}/pack.log
       - uses: actions/upload-artifact@v7.0.1
         with:
@@ -135,6 +135,7 @@ jobs:
           path: |
             artifacts/delivery/${{ matrix.rid }}/packages/*.tar.gz
             artifacts/delivery/${{ matrix.rid }}/packages/*.tgz
+            artifacts/delivery/${{ matrix.rid }}/packages/*.whl
             artifacts/delivery/${{ matrix.rid }}/packages/package.json
             artifacts/delivery/${{ matrix.rid }}/packages/SHA256SUMS
           if-no-files-found: error

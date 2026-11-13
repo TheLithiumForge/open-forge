@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { valid } from "semver";
-import { MainPackageName, PlatformPackages } from "../package-model.ts";
-import { AllTargets } from "../targets.ts";
+import { AliasPackageName } from "../package-model.ts";
 import { releaseChannel, ReleaseChannel } from "./release-selection.ts";
-import { distTagArguments } from "../npm/dist-tag.ts";
+import { distTagArguments, removeDistTagArguments } from "../npm/dist-tag.ts";
+import type { PreviousReleaseGraph } from "./previous-release-graph.ts";
 
 export interface ChannelRestore {
   name: string;
@@ -18,11 +18,11 @@ export function restoreChannels(version: string, channels?: string): string[] {
   return [...new Set(selected)];
 }
 
-export function restoreChannelPlan(version: string, previous: string, channels?: string): ChannelRestore[] {
-  assert.ok(valid(previous), "--to must be an exact SemVer.");
+export function restoreChannelPlan(version: string, previous: PreviousReleaseGraph, channels?: string): ChannelRestore[] {
+  assert.ok(valid(previous.version), "--to must be an exact SemVer.");
+  assert.ok(previous.packages.length > 0 && new Set(previous.packages).size === previous.packages.length, "Previous package graph must be nonempty and unique.");
   const tags = restoreChannels(version, channels);
-  const names = [...AllTargets.map((rid) => PlatformPackages[rid].packageName), MainPackageName];
-  return names.flatMap((name) => tags.map((channel) => ({ name, version: previous, channel })));
+  return previous.packages.flatMap((name) => tags.map((channel) => ({ name, version: previous.version, channel })));
 }
 
 export function restoreArguments(change: ChannelRestore): string[] {
@@ -31,4 +31,21 @@ export function restoreArguments(change: ChannelRestore): string[] {
 
 export function restoreCommands(plan: readonly ChannelRestore[]): string[] {
   return plan.map((change) => `npm ${restoreArguments(change).join(" ")}`);
+}
+
+export function newAliasTagPlan(version: string, previous: PreviousReleaseGraph, channels?: string): ChannelRestore[] {
+  if (previous.packages.includes(AliasPackageName)) return [];
+  return restoreChannels(version, channels).map((channel) => ({ name: AliasPackageName, version, channel }));
+}
+
+export function newAliasTagCommands(plan: readonly ChannelRestore[]): string[] {
+  return plan.map((change) => `npm ${removeDistTagArguments(change.name, change.channel).join(" ")}`);
+}
+
+export function applyRestorePlan(plan: readonly ChannelRestore[], exists: (name: string, version: string) => boolean, apply: (change: ChannelRestore) => void): void {
+  for (const name of new Set(plan.map((change) => change.name))) {
+    const version = plan.find((change) => change.name === name)?.version ?? assert.fail();
+    assert.ok(exists(name, version), `${name}@${version} does not exist. No channels changed.`);
+  }
+  for (const change of plan) apply(change);
 }

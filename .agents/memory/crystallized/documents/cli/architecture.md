@@ -562,7 +562,7 @@ The accepted local delivery trial adds host-detected `dist`, independent
 `dist:wrapper`, and explicit `publish:native` / `publish:wrapper` commands.
 Local publication consumes existing validated tarballs; wrapper packaging needs
 no native artifact or .NET SDK. Complete-release orchestration still checks all
-six native packages before the wrapper. Authoring these commands does not
+six native packages before the scoped wrapper and its unscoped alias. Authoring these commands does not
 authorize an agent to publish. Distribution defines the package boundaries.
 
 Developer builds restore by default; explicit offline and no-restore modes
@@ -613,7 +613,7 @@ only the shipped launcher.
 Target selection is shared by wrapper generation, host packing and release
 collection. The recorded wrapper dependency graph defines that version’s
 selected platforms. Release publication validates exactly those native packages
-and publishes the wrapper last. Default selection remains all six targets.
+and publishes the scoped wrapper, then the unscoped alias. Default selection remains all six targets.
 These scripts contain no CLI domain behavior or general build framework.
 `src/cli/` contains only C# implementation, projects and their required resources.
 Maintained repository agent tooling belongs under `scripts/agent-tooling/`.
@@ -631,8 +631,11 @@ test, collection and npm publication behavior belongs to shared root scripts.
 
 Root package.json owns one product version. Standard npm version handling and a
 small lifecycle hook project that exact version to one .NET property. Staging
-generates all seven npm manifests and dependencies from the version and platform
-table. The informational version derives from the .NET version. Builds stamp the selected version before compilation. Optional SHA builds
+generates all eight npm manifests and dependencies from the version and platform
+table. Python wheel metadata maps that same version to PEP 440 and mirrors the
+npm platform, entry and alias graph. PyPI package names derive from npm names.
+Environment markers select one platform dependency of the pure entry wheel.
+The pure alias exposes that entry launcher's console script. The informational version derives from the .NET version. Builds stamp the selected version before compilation. Optional SHA builds
 change only the produced artifact version. Tests, packages and releases consume
 that identity rather than supplying a second version. A release may reuse a
 successful build only for the selected source commit and version.

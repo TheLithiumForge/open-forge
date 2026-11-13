@@ -301,7 +301,7 @@ npx forge publish:release --tag preview --dry-run
 The input contains each selected host's `package-<RID>` directory. Collection
 requires their tested packages and matching wrapper dependencies. It records
 the selection in `release.json`. Publication uses that exact graph and uploads
-the wrapper last. Omitted target artifacts are neither required nor uploaded.
+the scoped wrapper, then the unscoped alias. Omitted target artifacts are neither required nor uploaded.
 Changing selection requires repacking, but not rebuilding native executables.
 Without `--targets`, packaging and collection select all six. The existing
 Actions workflows continue to build and release all six by default.
@@ -338,8 +338,8 @@ npm run version:bump -- 0.1.0-beta.1
 These are alternative examples. The command uses npm's normal version handling,
 which updates package.json and its lockfile. Its version lifecycle hook projects
 that value to one property in Directory.Build.props for direct .NET/IDE builds.
-The informational version derives from it. Staging generates all seven npm
-manifests and their exact dependency versions from the selected version and
+The informational version derives from it. Staging generates all eight npm
+manifests, their exact dependency versions and wheel metadata from the selected version and
 platform definitions, so no per-platform manifests need editing. It creates no
 commit, Git tag, or release. Review and commit the resulting diff normally.
 If you edit the root version manually, run `npm run version` to refresh the .NET
@@ -402,6 +402,19 @@ The default collection checks all six targets and replaces its generated release
 Older build runs containing only intermediate test artifacts cannot be reused.
 Release does not compile, repack or change the product version.
 
+Each host also packs the same-version npm alias and three Python wheels.
+Both registries use platform packages, an entry package and an alias. PyPI names
+are generated from npm names by removing `@` and replacing `/` with `-`.
+The pure entry wheel selects one exact-version native package through environment
+markers. The pure alias pins the entry package and shares its launcher.
+Collection keeps one copy of each universal wheel and rejects different host copies.
+Each registry publishes platform packages, then the entry package and alias.
+PyPI publishing defaults off until the maintainer completes the
+[trusted publisher setup](../scripts/delivery/README.md#pypi-setup).
+Run `npm run smoke:aliases` on the matching host for an offline alias and wheel
+installation check. Add `--aliases` to `smoke:public` only after both channels
+publish the selected version.
+
 After collection, `release:checkpoint` prints the complete publication plan
 and waits 60 seconds before either destination. Cancelling during this wait
 uploads nothing. During npm publication, `publish:release` handles SIGINT and
@@ -410,10 +423,14 @@ settle. It reports published, interrupted and unstarted packages and exits
 non-zero. Earlier uploads remain published.
 
 To restore public npm channels, preview
-`npx forge release:restore-channels --version <bad> --to <previous>`.
+`npx forge release:restore-channels --version <bad> --to <previous> --registry`.
 It defaults to `latest` plus the bad version's prerelease channel. Use
 `--channels <tags>` to choose tags and `--apply` to apply the plan after checking
-that the previous version exists for all seven packages. It never unpublishes
+that the previous version exists for every package in its recorded graph.
+`--registry` reads that graph from npm. For an offline preview, use
+`--from <previous-release-directory>` with the previous collected `release.json`.
+Tags for an alias absent from the previous graph are printed for separate review
+and never changed by `--apply`. It never unpublishes
 or deprecates versions. GitHub release changes are manual. The [delivery guide](../scripts/delivery/README.md#reuse-builds-and-cancel-publication)
 describes cancellation and recovery at both destinations.
 

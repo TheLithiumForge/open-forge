@@ -9,6 +9,7 @@ import { createManifest } from "../manifest.ts";
 import { sourceIdentity } from "../source.ts";
 import { deliveryDirectory, DevelopmentPublish, hostRuntime, nativeDirectory, suites } from "../layout.ts";
 import { inspectPackageContents } from "../package-contents.ts";
+import { HostArtifactCount } from "../package-model.ts";
 import { readPublication } from "../npm/publication.ts";
 
 const version = "0.0.0";
@@ -46,7 +47,7 @@ test("skip-tests packs an unqualified build without execution, preserves integri
   assert.equal(metadata.tested, false);
   assert.equal(JSON.parse(readFileSync(join(root, manifestPath), "utf8")).tested, false);
   assert.equal(existsSync(join(output, "journey")), false, "No npm installation test ran.");
-  assert.equal(metadata.files.length, 3);
+  assert.equal(metadata.files.length, HostArtifactCount);
   for (const tarball of readdirSync(output).filter((name) => name.endsWith(".tgz"))) {
     const contents = inspectPackageContents(output, tarball);
     assert.ok(contents.files.some((file) => file.path === "LICENSE"));

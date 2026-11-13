@@ -1,3 +1,5 @@
+import { DeliveryOption } from "../option-names.ts";
+
 export const releaseCommands = {
   "release:select": {
     script: "release/prepare-release.ts",
@@ -14,7 +16,7 @@ export const releaseCommands = {
   "release:checkpoint": {
     script: "release/checkpoint.ts",
     description: "Print the complete publication plan and wait before uploads.",
-    options: ["from", "target", "tag", "wait"],
+    options: ["from", "target", "tag", "wait", "pypi"],
     usage: "release:checkpoint [--wait <seconds>] [--from <directory>] [--target <destination>] [--tag <channel>]",
     details: [
       "Reads collected release packages matching the current source/version. Defaults to artifacts/release, all destinations and the version's channel.",
@@ -24,14 +26,18 @@ export const releaseCommands = {
   },
   "release:restore-channels": {
     script: "release/restore-channels.ts",
-    description: "Preview or apply npm channel restoration for all seven packages.",
-    options: ["version", "to", "channels", "apply"],
-    usage: "release:restore-channels --version <bad> --to <previous> [--channels <tags>] [--apply]",
+    description: "Restore npm channels using the previous release's actual package graph.",
+    options: [DeliveryOption.version, DeliveryOption.to, "channels", DeliveryOption.from, DeliveryOption.registry, "apply"],
+    usage: "release:restore-channels --version <bad> --to <previous> [--from <previous-release-directory> | --registry] [--channels <tags>] [--apply]",
     details: [
-      "Prints npm dist-tag commands offline. Defaults to latest plus the bad version's prerelease channel.",
-      "--apply checks that the previous version exists for all seven packages before changing any channel. Requires npm credentials. Never unpublishes or deprecates a version.",
+      "--from reads the previous collected release.json offline. --registry reads the previous wrapper dependencies and alias presence from npm. Preview without either source stops offline.",
+      "--apply allows registry reads and checks every package in that previous graph before changing any channel. Tags of a newly introduced alias are printed for separate review and never applied automatically.",
+      "Defaults to latest plus the bad version's prerelease channel. Never unpublishes or deprecates a version.",
     ],
-    examples: ["release:restore-channels --version 0.9.0-beta.11 --to 0.9.0-beta.10", "release:restore-channels --version 1.0.1 --to 1.0.0 --channels latest"],
+    examples: [
+      "release:restore-channels --version 0.9.0-beta.11 --to 0.9.0-beta.10 --registry",
+      "release:restore-channels --version 1.0.1 --to 1.0.0 --from artifacts/previous-release --channels latest",
+    ],
   },
   "release:collect": {
     script: "release/collect-packages.ts",
@@ -39,7 +45,7 @@ export const releaseCommands = {
     options: ["targets"],
     usage: "release:collect <input-directory> <output-directory> [--targets <rids>]",
     details: [
-      "Requires committed source and input/package-<RID>/package.json plus its three archives for every selected target.",
+      "Requires committed source and input/package-<RID>/package.json plus its seven archives for every selected target.",
       "Use the same --targets when packing on each selected host. All versions, source identities, hashes and wrapper dependencies must match.",
       "Replaces the output directory with selected archives, checksums and release.json. Keep input/output separate; output must be inside artifacts/.",
     ],
@@ -47,7 +53,7 @@ export const releaseCommands = {
   },
   "publish:release": {
     script: "release/publish-release.ts",
-    description: "Publish the collected target selection, wrapper last.",
+    description: "Publish selected native packages, then the wrapper and alias.",
     options: ["from", "tag", "dry-run"],
     usage: "publish:release --tag <channel> [--from <directory>] [--dry-run]",
     details: [
