@@ -38,7 +38,7 @@ JSON and YAML definitions follow the [manifest schema](../schemas/tools/v1/manif
 
 ## Workspace files
 
-`.agents/open-forge.json` records installed tools, exact versions and active roles. An inactive tool keeps an empty role list. `.agents/open-forge.lock.json` records verified receipts, hashes, generated member values and runtime coverage. Prior bytes stay in sibling `.bak` files until changed content validates. Status and Doctor report leftover backups. Repair can restore them. These paths and native Skills stay fixed when you choose a custom context folder.
+`.agents/open-forge.json` records installed tools, exact versions and active roles. An inactive tool keeps an empty role list. `.agents/open-forge.lock.json` records verified receipts, hashes, generated member values and runtime coverage. The planned backup flow keeps prior bytes in sibling `.bak` files until changed content validates. Backup reporting and Repair restoration are pending. These paths and native Skills stay fixed when you choose a custom context folder.
 
 Only active providers receive managed Claude Code members in `.mcp.json`, plus their required usage Skill. Member edits keep unrelated entries. Codex writes are on hold behind the existing host seam. Tracked host files block account-specific managed paths until you resolve the shared-file arrangement or leave that host out of managed setup. Open Forge doesn't change Git's index.
 
