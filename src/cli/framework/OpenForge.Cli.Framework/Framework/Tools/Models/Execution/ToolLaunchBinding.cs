@@ -14,6 +14,9 @@ internal sealed record ToolLaunchBinding
     public required string[] PrefixArguments { get; init; }
     public required Dictionary<string, string> Environment { get; init; }
     public required ToolFileStamp[] Files { get; init; }
+    // Fully resolved argument vectors after the Run ID, recorded by verified MCP registration.
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string[][]? McpArguments { get; init; }
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
@@ -23,6 +26,6 @@ internal sealed record ToolFileStamp(
     [property: JsonRequired] long Bytes,
     [property: JsonRequired] long LastWriteTimeUtcTicks);
 
-// The root host forwards raw streams and signals. This is not the captured lifecycle runner.
+// The root host keeps console signals and supervises parent-only termination without interop.
 internal sealed record ToolDispatchRequest(ToolLaunchBinding Launch, string WorkingDirectory, string[] Arguments);
 internal delegate ValueTask<int> ToolDispatchProcess(ToolDispatchRequest request, CancellationToken token);

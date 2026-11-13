@@ -28,4 +28,10 @@ A resolved launch keeps the selected workspace alongside its dispatch request. A
 
 Tool Status, workspace Status, Doctor and Run report declared missing tools with `open-forge tool install`. Interactive Run can offer that installation, but applies the same artifact, component, destination and final consent checks.
 
+## MCP lifetime
+
+`ToolLaunchBinding.McpArguments` records each fully resolved argument vector after the Run ID for a verified MCP invocation. Writers records these vectors during full verification of the registered MCP command. An absent value keeps existing launch records valid and gives normal CLI input behavior. Run matches the forwarded arguments exactly, after consuming its optional delimiter.
+
+For a matching MCP invocation with redirected stdin, the host relays raw input bytes without capture. EOF starts the parent-stop policy in the interface. Ordinary CLI input inherits stdin, so EOF adds no execution timeout.
+
 The [interface](interface.md) defines caller behavior. The [dated decisions](../../../technical-designs/external-tools.md#decisions-2026-11-13) keep the source history.

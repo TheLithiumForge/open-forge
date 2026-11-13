@@ -22,7 +22,17 @@ All arguments after the tool name are forwarded verbatim as separate arguments. 
 
 ## Process
 
-Run only the recorded executable for the settings pin in its verified store. Keep CWD. Forward stdin, stdout, stderr, exit code and signals unchanged. Add no successful-run output. Raw child streams are an exception to the shared command report envelope. No shell interprets the argument array.
+Run only the recorded executable for the settings pin in its verified store. Keep CWD. Pass raw stdin, stdout and stderr without capture. Add no successful-run output. Raw child streams are an exception to the shared command report envelope. No shell interprets the argument array. Run imposes no execution timeout.
+
+## Signals
+
+The child shares the Windows console or Unix foreground process group. Run keeps that console and process group, so interactive Ctrl+C or Ctrl+Break reaches the child through the OS.
+
+When Run receives Ctrl+C, Ctrl+Break or SIGINT, it cancels its own default termination and keeps waiting. The child decides how to exit, and Run returns that exit code. Unix SIGQUIT follows the same behavior.
+
+When Run alone receives SIGTERM or SIGHUP, it waits one second for the child to exit. If the child is still running, Run calls `Process.Kill(entireProcessTree: true)` and waits for it to exit. Run then returns 143 for SIGTERM or 129 for SIGHUP. Managed `Console.CancelKeyPress` and `PosixSignalRegistration` handle these events. Native interop is prohibited.
+
+For a verified MCP invocation, closing the parent input pipe starts the same one-second grace and process-tree stop, then returns 129. The [MCP lifetime record](behavior.md#mcp-lifetime) identifies those invocations. Ordinary CLI pipe EOF keeps normal child input behavior.
 
 ## Workspace
 
@@ -42,6 +52,6 @@ Pre-launch failures write a diagnostic to stderr without a schema-3 envelope. Th
 | Child could not start                                                | 1    |
 | Cancelled before launch                                              | 130  |
 
-After launch, forward the child's exit unchanged. Successful dispatch adds no output. JSON or detail selection never wraps child output. Writer and consent flags aren't Run flags.
+After launch, return the child's exit unchanged unless the parent-stop policy applies. Successful dispatch adds no output. JSON or detail selection never wraps child output. Writer and consent flags aren't Run flags.
 
 The [behavior](behavior.md) defines the pre-launch checks.
