@@ -64,7 +64,7 @@ Framework, Extension and Library records store no target baseline, fingerprint k
 
 ## Tool Receipts
 
-Tool, member-value and runtime-directory receipts are decided additions in lock v2. They record verified artifact and installed-file hashes, manifest snapshots and digests, adapter revisions, exact generated files, last generated semantic member values, native mappings. Prior bytes stay in sibling `.bak` files until changed content validates. These tool-specific records don't restore document baselines or make the lock a workspace integrity gate.
+Tool command and runtime-directory receipts are decided additions in lock v2. They record verified artifact and installed-file hashes, manifest snapshots and digests, adapter revisions, invoked lifecycle commands, exit results and native mappings. Tool-owned installers handle agent files. Git workspaces create no new backups. Without Git, prior managed-file bytes stay in sibling `.bak` files until changed content validates. These tool-specific records don't restore document baselines or make the lock a workspace integrity gate.
 
 Installed pins and active roles stay in the separate settings tool-ID map. Account-local bindings, shared references and process consent supplement workspace receipts. The [Tool Manifest interface](../contracts/shared/tool-manifest/interface.md#lock-records) defines the split and paired-write behavior. The lock records no backup data. The [Tool backups design](tool-backups.md) defines sibling file restoration.
 

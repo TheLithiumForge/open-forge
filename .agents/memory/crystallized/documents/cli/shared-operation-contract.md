@@ -988,19 +988,19 @@ Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and
 
 ## Tool operations
 
-The [tool command group](contracts/tool/_tool.md) adds three readers and five writers for reviewed external programs. Its core has no concrete production tool. Search, indexing, ranking and external maintenance remain outside these operations.
+The [tool command group](contracts/tool/_tool.md) adds three readers and five writers for reviewed external programs. Its core has no concrete production tool. Search and indexing run through the external program.
 
 ### Plans and consent
 
 Install, configure, update, remove and choose form one complete ordered plan before effects. Preview uses apply's request, current facts, plan and checks. It creates no files, grants, leases, processes or network traffic. Checks requiring future artifact bytes or processes stay conditional.
 
-Show exact transfers, settings processes, host members, guidance, grants, exclusions, store references, deletions, recovery bytes and required host restarts. Missing consent returns `blocked` with required flags and all plan facts that can be determined. Equal consent gives equal preview and apply decisions before effects.
+Show exact transfers, declared commands, arguments, environment, CWD, grants, exclusions, store references, ignore changes and control-file changes. Missing consent returns `blocked` with required flags and all plan facts that can be determined. Equal consent gives equal preview and apply decisions before effects.
 
-Interactive apply separates artifact consent, daemon consent, destination grants and final confirmation. JSON and automatic mode never prompt. `--automatic` supplies final confirmation only. It doesn't approve downloads, process scope, role selection or conflict overrides. Download consent binds this invocation's exact URL, byte size and digest. Process consent binds the declared local build, cache and session scope. Account-local consent doesn't travel through Git.
+Interactive apply separates artifact consent, daemon consent, destination grants and final confirmation. JSON and automatic mode never prompt. `--automatic` gives final confirmation only. Download consent covers this invocation's exact URL, byte size and digest. Process consent covers the declared local build, cache and session scope. Account-local consent doesn't travel through Git.
 
 ### Writer results
 
-Every tool writer supplies these `data` fields:
+Every tool writer gives these `data` fields:
 
 | Field | Meaning |
 | --- | --- |
@@ -1015,48 +1015,52 @@ Every tool writer supplies these `data` fields:
 | `remaining` | Every unfinished requested part |
 | `instructions` | Resolved external command, argument and environment records |
 
-Plan records contain `kind`, `subject`, `action`, `before`, `after`, `requires` and `verification`. Subjects identify paths, member selectors, roles, digests or store keys. Effects contain changed items only. Instructions are data and aren't executed by rendering.
+Plan records contain `kind`, `subject`, `action`, `before`, `after`, `requires` and `verification`. Subjects identify paths, roles, commands, digests or store keys. Effects contain changed items only. Instructions are data and aren't executed by rendering. Command receipts distinguish proposed, started, exited, failed and interrupted execution. An exit code is present only after exit. Record the invoked action and result in settings and detailed command evidence in the lock. Don't copy child output into settings.
 
 Consent decisions are `not-required`, `missing`, `supplied` and `recorded-local`. Checks are `not-run`, `verified`, `failed` and `unavailable`. Coverage is complete or unavailable per store, with a cause. Counts are numbers or unknown. Only inapplicable role, pin, roleFilter and installed values are null in their command payloads.
 
-Bad input stops before resolution. Failure and cancellation keep their event meanings. Otherwise precedence is `blocked`, `incomplete`, `completed-with-warnings`, `completed`. Install's expected `needs-index` is information. Status warns for active index or language limits and missing required guidance. Inactive missing indexes are information. Known retained recovery warns. Unknown cleanup state fails. Partial effects name verified changes and unfinished work.
+Bad input stops before resolution. Failure and cancellation keep their event meanings. Otherwise precedence is `blocked`, `incomplete`, `completed-with-warnings`, `completed`. Install's expected `needs-index` is information. Status warns for active index or language limits. Known retained backups warn. Unknown cleanup state fails. Partial effects name verified changes, commands that ran and unfinished work.
 
-Tool finding codes use the command prefix and one situation per suffix. Defined suffixes include `download-consent-required`, `session-daemon-consent-required`, `target-unsupported`, `pin-not-supported`, `member-changed`, `hooks-uncontrolled`, `daemon-conflict`, `cache-permission-rejected`, `index-missing`, `index-stale`, `deletion-rebuild-required`, `usage-skill-missing`, `path-excluded`, `store-unavailable` and `removal-incomplete`. Existing path, permission and lock codes keep their meanings. Tool backup findings stay separate from v1 bundle findings.
+Tool finding codes use the command prefix and one situation per suffix. Consent, target, pin, exclusions, stores and removal keep separate codes. Tool backup findings stay separate from v1 bundle findings.
 
-### Shared members
+### Tool commands
 
-Parse each complete host file and reject duplicate JSON keys, duplicate TOML tables and ambiguous syntax. Keep unrelated bytes, comments, BOM and line endings. A member receipt records the last generated semantic value. Change or remove a member only when that value still matches. Recheck the complete file immediately before writing. Concurrent edits require a new plan.
+The pinned definition declares install, uninstall and index-cleanup commands with separate argument arrays. Each command launches the verified target entry in the physical workspace. It never invokes a shell or resolves another executable through PATH. Definitions stay subject to exact release admission. A local manifest can't add an unreviewed command.
 
-Claude Code uses `/mcpServers/open-forge-<id>` in `.mcp.json`. Commands are absolute verified entries with separate arguments and process-local environment. Claude Code launches from that project root. Native host trust and approval policies stay unchanged. Codex writes are on hold. Keep its existing reader and host seam. A request that requires a Codex edit returns `blocked` with `host-on-hold` before effects. Install defaults to Claude Code.
+The tool's own installer handles agent configuration, native settings, helpers and tool guidance. Open Forge writes neither `.mcp.json` nor `.codex/config.toml`. It has no TOML parser, marked-block editor or host-member writer. Host observations are information and grant no permission to change those files.
 
-Tracked host files block insertion of account-specific paths. Report that shared settings need to move and the file needs to be deliberately untracked, or that host needs to be omitted from managed configuration. Open Forge never changes Git's index. Delete a created host file only when no unrelated content exists and its receipt permits deletion.
+Install runs the declared install command without choosing a role or building an index. Configure reruns the registered pin's declared installation configuration with its desired hosts and code root. Update stages and verifies the new pin, runs its declared install command and publishes its reference before releasing the old immutable reference. It doesn't run the old uninstaller after publishing new configuration. Choose changes the role mapping only. It doesn't reconcile agent files or run an installer. Remove runs the stored index-cleanup and uninstall commands before releasing registration. A failed command stops subsequent commands. Keep any existing registration and record execution evidence and unfinished work. A failed first install adds no verified installation. The separate `toolRuns` map in settings keeps the latest action and exit summary by tool ID. The lock's `toolRuns` map keeps its detailed command evidence even when no `tools` registration exists. Failure to save that evidence is reported with the in-memory result and unfinished publication.
 
-Required guidance verifies before launchable members are published. Inactive providers have no managed launch members or usage Skill. Shared content stays while another active role or registration still needs it. An unmanaged duplicate that conflicts with activation blocks and stays untouched.
+A host-scoped command runs once for each desired host in ordinal order. A workspace-scoped command runs once. Scope, arguments, timeout and environment are part of the reviewed definition. Configuration host removal uses the stored uninstaller for removed hosts before installation for the desired hosts. A workspace-scoped profile must support replacing its own complete desired host set. Concrete command vectors and behavior tests belong to the next branch.
 
 ### Content coexistence
 
-Required Tool Skills and Tool file or member receipts participate in Extension and Library destination collision checks. Matching bytes alone don't adopt managed guidance. Shared guidance stays while an active role or another registration still requires it. Each operation releases only its own receipts and keeps unrelated Tool lock sections and references. Library operations don't write their source bytes or Tool account stores to resolve collisions. Existing permission, expected-state and shared-content checks still apply.
+Tool-owned outputs use the normal existing-file and ownership rules. Tool command preflight rejects declared outputs covered by Framework, Extension or Library receipts. Extension and Library operations keep Tool registration and execution records. They don't change Library source files or Tool account stores to resolve a collision. Tools add no managed guidance or agent-file receipts.
+
+### Managed files
+
+The only workspace files Open Forge edits for Tool operations are `.agents/open-forge.json`, `.agents/open-forge.lock.json` and its managed `.gitignore` section. The tool's commands handle their own outputs. Open Forge doesn't adopt those outputs as files it generated or promise to restore their bytes after a failed child command.
 
 ### Ignore entries
 
-The tool section uses `# BEGIN OPEN FORGE TOOLS` and `# END OPEN FORGE TOOLS`. Add exact anchored escaped paths for declared graph state and approved local files. Keep authored rules, other providers' rules, Framework and Library sections, surrounding bytes, BOM and line endings. Duplicate or malformed sections block required changes. Ignore entries never untrack files.
-
-Host, native project settings and ignore-file writes outside context and Skill folders require shared workspace grants. Remove created empty files or directories only when their receipts permit it. The shared mechanical editor doesn't merge Library and Tool policy.
+The Tool section uses `# BEGIN OPEN FORGE TOOLS` and `# END OPEN FORGE TOOLS`. Add exact anchored escaped paths for declared in-project state and approved machine-specific local paths. Keep authored rules, other providers' rules, Framework and Library sections, surrounding bytes, BOM and line endings. Duplicate or malformed sections block required changes. Ignore entries never untrack files. `.gitignore` changes require a shared workspace destination grant. The shared mechanical editor keeps Library and Tool policy separate.
 
 ### Exclusions
 
-Every tool writer honors `removedFiles`, `removedDirectories` and applicable `removedCategories` before creating or changing workspace content. Directory exclusions cover future descendants. Grants, automatic mode and role choice never clear exclusions. Clear every covering exclusion before restoring required guidance, host members or native project settings.
+Every Tool writer honors `removedFiles`, `removedDirectories` and applicable `removedCategories`. Directory exclusions cover future descendants. Grants, automatic mode and role choice never clear exclusions. Before running a command, check its declared workspace output paths, including agent files and tool guidance, against exclusions and destination grants. If a required output is excluded, block before starting the command. Excluding `.gitignore` blocks required section changes.
 
-Root path Remove releases tool path or member receipts within its exact target and records the normal exclusion. It leaves external installs and host members outside that target alone. Removing required guidance leaves the provider registered but incomplete. Status warns. Configure and Choose block until covering exclusions are cleared. Tool Remove can release remaining registration without restoring missing content.
+Root path Remove records its normal exclusions and releases only intersecting Tool path receipts. It doesn't run an external uninstaller or clear a registration. Configure and install can't restore excluded tool output through a child command. Choose changes metadata only and doesn't restore removed content. Tool Remove can release a remaining registration without restoring missing files. If a cleanup command would write an excluded path, stop and report that conflict.
 
 ### Stores and effects
 
-Immutable installs and archives can be shared. Mutable indexes are separate for each physical worktree, code root and execution environment. Bind state to the exact build, native format and extraction settings. A moved checkout needs configuration for its new path. Missing references don't become permission to delete shared artifacts.
+Immutable installs and archives can be shared. Mutable indexes are separate for each physical worktree, code root and execution environment. Bind state to the exact build, native format and extraction settings. A moved checkout needs configuration for its new path. Missing references don't permit shared deletion.
 
-Only reviewed finite version and settings actions can run during writes. They never index or search. Consent for a session daemon includes final-client shutdown. Busy or incompatible clients block changes. Never stop a process by name or stale PID, or stop another client's daemon to change a pin.
+Only the pinned lifecycle commands and finite verification actions run during writes. They never search or build an index. Index cleanup selects the exact workspace project. Session consent includes final-client shutdown. Busy or incompatible clients block changes. Never stop a process by name or stale PID, or stop another client's daemon to change a pin.
 
-Acquire the user-store lease first, then at most one workspace lease. Readers and previews take neither. Hold no writing leases during prompts or large transfers. Reacquire and revalidate after staging. Prepare and verify sibling backups before changing existing files. Keep settings and lock backups until both records validate. The [external-tools design](technical-designs/external-tools.md) defines bounded stores and host capabilities.
+Acquire the user-store lease first, then at most one workspace lease. Readers and previews take neither. Hold no writing leases during prompts or large transfers. Reacquire and revalidate after staging. The [external-tools design](technical-designs/external-tools.md) defines bounded stores and process capabilities.
 
-Apply in declared order and verify each effect. Publish receipts after verified effects. Publish a new shared reference before releasing its predecessor. Recheck complete references before shared deletion. Stop new effects after failure and restore changed existing files from their sibling backups. Report any failed restoration and unfinished work. A new invocation plans from current files and never replays a saved plan.
+If the workspace is a Git repository, write no `.bak`. Git is the backup, including for dirty or untracked files under this maintainer policy. Report Git recovery without claiming that Git saved uncommitted or untracked bytes. Without Git, prepare every required sibling backup before changing existing managed files. Keep settings and lock backups until both records validate. Restore changed managed files on failure when their current bytes still match this operation's writes. Don't undo child-command effects through a guessed inverse command.
 
-After validation, delete this operation's backups. A retained backup warns with its exact path. Unknown cleanup state fails. Existing backups block new changes to their targets. The [Tool backups design](technical-designs/tool-backups.md) defines restoration and interrupted-write reporting. Existing recovery v1 stays unchanged.
+Apply in declared order and verify each effect. Publish receipts after verified effects. Publish a new shared reference before releasing its predecessor. Recheck complete references before shared deletion. Stop new effects after failure and report commands already run and unfinished work. A new invocation plans from current files and never replays a saved plan.
+
+After validation, delete this operation's backups. A retained backup warns with its exact path. Unknown cleanup state fails. Existing backups block new changes to their targets even in a Git workspace. The [Tool backups design](technical-designs/tool-backups.md) defines restoration and interrupted-write reporting. Existing recovery v1 stays unchanged.

@@ -24,10 +24,10 @@ Write commands preview the same plan with `--dry-run`. `--automatic` gives final
 
 ## Workspace records
 
-`.agents/open-forge.json` records installed pins and active roles. `.agents/open-forge.lock.json` keeps verified receipts, hashes and generated member values. Required usage guidance verifies before active Claude Code members are published. Unrelated host entries stay unchanged. Codex writes are on hold. Planned Tool writes use sibling `.bak` files. Backup reporting and Repair restoration are pending.
+`.agents/open-forge.json` records installed pins and active roles. `.agents/open-forge.lock.json` keeps verified receipts, hashes, lifecycle commands and their results. Tool-owned installers handle both hosts. Planned Tool writes create no `.bak` in Git workspaces. Without Git, sibling backups keep prior managed-file bytes until changed content validates. Backup reporting and Repair restoration are pending.
 
 ## Keep removals
 
-Tool writers honor recorded removal exclusions. If you remove required guidance, Configure and Choose block until every covering exclusion is cleared. Tool Remove can release the registration without restoring missing content.
+Tool writers check declared output paths against recorded removal exclusions before starting a command. Configure can't restore excluded output. Choose changes metadata only. Tool Remove can release the registration without restoring missing content.
 
 Full command and consent details are in the [external tool reference](/guides/tools). Use the installed CLI's help to check command availability.

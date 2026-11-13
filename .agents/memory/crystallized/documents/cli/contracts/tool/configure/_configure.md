@@ -7,7 +7,7 @@ open-forge:
 # tool configure
 `tool configure` is a write command that reconciles a registered pin's settings, hosts and code root.
 
-The interface defines desired configuration. The behavior defines checked member changes without downloads.
+The interface defines desired configuration. The behavior defines declared installer configuration without downloads.
 
 ## Axioms
 
@@ -15,5 +15,5 @@ The interface defines desired configuration. The behavior defines checked member
 
 ## Entries
 
-- [Define stored-definition configuration, guidance checks and managed host reconciliation](behavior.md) - #Memory #Document #CLI #Contract #Tool #Configure #Behavior #CurrentTruth
-- [Define desired hosts, contained code roots and receipt-based tool configuration](interface.md) - #Memory #Document #CLI #Contract #Tool #Configure #Interface #CurrentTruth
+- [Define stored-definition installer configuration without downloads](behavior.md) - #Memory #Document #CLI #Contract #Tool #Configure #Behavior #CurrentTruth
+- [Define desired hosts, contained code roots and stored tool configuration](interface.md) - #Memory #Document #CLI #Contract #Tool #Configure #Interface #CurrentTruth

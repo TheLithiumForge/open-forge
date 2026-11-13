@@ -37,7 +37,7 @@ Local flags apply only to these commands:
 | `--role <role>` | list | No filter. Filter by the role's required capability |
 | `--source <path>` | list, inspect, install, update | Embedded catalogue. Select one exact local manifest or catalogue |
 | `--tool-version <exact>` | inspect, install, update | The chosen source's default pin |
-| `--host <claude-code\|codex>` | install, configure | Claude Code on install. Codex writes are on hold. Recorded hosts on configure. Repetition gives the full desired set |
+| `--host <claude-code\|codex>` | install, configure | Both hosts on install. Recorded hosts on configure. Repetition gives the full desired set |
 | `--code-root <path>` | install, configure | `.` on install. Recorded root on configure. One contained workspace root |
 | `--allow-download` | install, update | No consent. Approve this invocation's exact artifact descriptors |
 | `--allow-session-daemon` | install, configure, update, choose | No new consent. Approve the declared build, cache and process scope |

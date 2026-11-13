@@ -5,15 +5,15 @@ open-forge:
 ---
 
 # Tool backups
-Tool backups are sibling `.bak` files that keep an existing file's bytes while a Tool writer changes it.
+Tool backups are sibling `.bak` files that keep an existing managed file's bytes during a Tool write outside Git.
 
-For example, before changing `.mcp.json`, copy it to `.mcp.json.bak`. Write the new content and validate it. Delete the backup after validation passes. On failure, restore the saved bytes. A leftover backup after interruption gives Status and Doctor a path to report and Repair a file to restore.
+For example, without Git, before changing `.gitignore`, copy it to `.gitignore.bak`. Write the new content and validate it. Delete the backup after validation passes. On failure, restore the saved bytes. A leftover backup after interruption gives Status and Doctor a path to report and Repair a file to restore.
 
 Status: V1 design decided.
 
 ## Write files
 
-Before changing an existing file, create its sibling backup without overwriting any existing `.bak`. This applies to host files, `.gitignore`, settings, lock and other existing files in the declared write set. Reject links and special files at either path. Read back the backup and compare it with the expected prior bytes before changing the target.
+If the workspace is a Git repository, create no backup. This applies even when a managed file is dirty, ignored or untracked. Report Git recovery without claiming that Git saved those bytes. Otherwise, before changing an existing managed file, create its sibling backup without overwriting any existing `.bak`. Managed files are `.gitignore`, settings and lock. Tool-owned command effects have no Open Forge file backup. Reject links and special files at either path. Read back the backup and compare it with the expected prior bytes before changing the target.
 
 For a group of related files, prepare every required backup before changing the first file. Keep the backups until every new file validates and the settings and lock agree. Recheck expected bytes under the existing writing leases before each effect. A changed target or an existing backup blocks a new plan.
 
@@ -23,7 +23,7 @@ New files have no prior bytes to back up. Directories have no backup manifest. T
 
 ## Read backups
 
-Status and Doctor check the exact Tool control paths and receipt-declared file paths for sibling backups. They report each leftover path without reading its contents into output or treating it as a ZIP. Reads create no files and follow no links. Unreadable paths keep their cause and unavailable coverage.
+Status and Doctor check the exact Tool control paths and known legacy Tool paths for sibling backups, including in Git workspaces. They report each leftover path without reading its contents into output or treating it as a ZIP. Reads create no files and follow no links. Unreadable paths keep their cause and unavailable coverage.
 
 The lock records no backup identity, path, digest or state. Backup discovery works when the current settings or lock is invalid. Existing recovery v1 stores and readers keep their behavior. Cleanup doesn't delete these backups.
 

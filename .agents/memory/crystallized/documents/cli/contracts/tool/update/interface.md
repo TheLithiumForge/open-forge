@@ -25,7 +25,7 @@ Use the selected source's default unless an exact listed version is supplied. Re
 
 New bytes require consent for their exact descriptors. A changed daemon build, cache or process scope requires matching local consent or renewed consent. Stage separately. Publish the verified new reference before releasing the old one. Keep references and usable artifacts needed by other worktrees.
 
-Reconcile active members and required guidance against their last generated values. Required extraction-format or version changes produce rebuild instructions. Update doesn't build an index. An equal pin and equal verified configuration is a no-op.
+Run the new pin's declared installer with the recorded configuration. Agent-file edits belong to that process. Required extraction-format or version changes produce rebuild instructions. Update doesn't build an index. An equal pin and equal verified configuration is a no-op.
 
 The shared [tool operations](../../../shared-operation-contract.md#tool-operations) define writer data, recovery and exclusions. `role` is null. `pin` is the exact target pin. Missing source, unsupported tuples and incomplete stores keep their defined outcomes.
 
@@ -38,7 +38,7 @@ Required cases are:
 - New artifact and changed process-scope consent.
 - New reference published before the old reference is released.
 - Other worktree references kept during shared-byte deletion checks.
-- Changed members, exclusions and unavailable references block unsafe changes.
+- Excluded declared outputs and unavailable references block unsafe changes.
 - Interruption reports verified partial effects and recovery.
 
 The [behavior](behavior.md) defines staging and publication.

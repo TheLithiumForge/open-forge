@@ -5,7 +5,7 @@ open-forge:
 ---
 
 # tool remove interface
-`tool remove` is a write command that clears one provider's roles, managed configuration, guidance, state and registration.
+`tool remove` is a write command that runs one provider's declared cleanup and uninstall commands, then clears its roles and registration.
 
 The final reference also releases recognized shared install and archive bytes. Other registrations stay usable. Removal needs neither its original catalogue nor an available code root.
 
@@ -19,13 +19,13 @@ Proposed:
 open-forge tool remove <id> [--allow-path <path>...] [--automatic] [--dry-run] [global flags]
 ```
 
-Source, pin, host, root, download and daemon consent flags aren't accepted. Removal requires affected sessions stopped. It doesn't start a daemon or run an upstream uninstaller. The help purpose is "Remove one registered tool and its recognized artifacts."
+Source, pin, host, root, download and daemon consent flags aren't accepted. Removal requires affected sessions stopped. It doesn't start a daemon. It runs the pinned stored uninstaller without a shell. The help purpose is "Remove one registered tool and its recognized artifacts."
 
 ## Removal
 
-Use stored definitions and verified receipts. Changed members, unknown files, busy processes or unreadable references block complete removal. Recognized missing content can be released without restoring it. Persistent removal exclusions stay effective.
+Use stored definitions and verified receipts. Unsafe declared outputs, busy processes or unreadable references block complete removal. Recognized missing content can be released without restoring it. Persistent removal exclusions stay effective.
 
-Remove role members and guidance, worktree state, native settings and managed ignore rules before releasing the registration. Remove shared bytes only after a complete empty reference set is rechecked. Keep disappeared-worktree references until authorized cleanup resolves them.
+Run the stored index-cleanup and uninstall commands, then remove unused managed ignore rules before releasing the registration. Tool-owned commands handle agent files and state. Remove shared bytes only after a complete empty reference set is rechecked. Keep disappeared-worktree references until authorized cleanup resolves them.
 
 Report zero selected leftovers only after every required check passes. Keep other registrations' kept artifacts and historical recovery separate from selected leftovers. A later failure reports partial removal. Repeating a verified completed removal is a no-op.
 
@@ -37,9 +37,9 @@ Required cases are:
 
 - Removal without a source catalogue or existing code root.
 - Nonfinal and final shared-reference removal.
-- Missing guidance and host content after root path Remove.
-- Changed members, unknown output, links, busy processes and unavailable references.
-- Sibling backup restoration for deleted files and checked directory membership.
+- Missing tool output after root path Remove without restoring excluded content.
+- Links, busy processes, excluded command outputs and unavailable references.
+- Git recovery policy and non-Git sibling backups for managed files.
 - Unrelated authored files and other worktrees kept usable.
 - Repeated verified removal without new effects.
 

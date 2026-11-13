@@ -7,7 +7,7 @@ open-forge:
 # tool install interface
 `tool install` is a write command that installs one exact reviewed pin and registers it without choosing a role.
 
-Installation verifies immutable bytes and prepares compatible settings. Indexing is an external step. A matching verified install can be reused offline. Matching foreign binaries aren't adopted.
+Installation verifies immutable bytes and runs the tool's own pinned installer. Indexing is an external step. A matching verified install can be reused offline. Matching foreign binaries aren't adopted.
 
 Status: V1 core contract decided.
 
@@ -25,7 +25,7 @@ The [group inputs](../_tool.md#inputs) define defaults and repetition. The help 
 
 Resolve the exact source and pin. Validate release admission, target, paths, exclusions, current receipts, disk space and process compatibility before effects. Transfers report each exact URL, size and digest. `--allow-download` covers only these descriptors for this invocation. `--automatic` gives final confirmation only.
 
-Prepare manual operation and its required guidance before publishing any launchable member. Install doesn't choose a role, publish inactive MCP members or build an index. The settings entry has the verified pin and an empty `roles` array for a new registration. Unrelated role assignments stay unchanged.
+The tool's installer handles agent files and native configuration. Open Forge doesn't edit them. Install doesn't choose a role or build an index. The settings entry has the verified pin and an empty `roles` array for a new registration. Unrelated role assignments stay unchanged.
 
 The shared [tool operations](../../../shared-operation-contract.md#tool-operations) define complete preview and apply data, consent, permissions, recovery and verification. `role` is null. `pin` identifies the exact selected version. Expected `needs-index` is information.
 

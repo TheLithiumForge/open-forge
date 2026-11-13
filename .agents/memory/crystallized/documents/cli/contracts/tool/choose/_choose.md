@@ -16,4 +16,4 @@ The interface defines provider choice. The behavior defines checked switches whi
 ## Entries
 
 - [Define checked provider switches and role clearing without fallback or index changes](behavior.md) - #Memory #Document #CLI #Contract #Tool #Choose #Behavior #CurrentTruth
-- [Define one-provider role selection, explicit clearing and required active guidance](interface.md) - #Memory #Document #CLI #Contract #Tool #Choose #Interface #CurrentTruth
+- [Define one-provider role selection, explicit clearing and kept tool-owned output](interface.md) - #Memory #Document #CLI #Contract #Tool #Choose #Interface #CurrentTruth

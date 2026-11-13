@@ -7,7 +7,7 @@ open-forge:
 # External tools
 External tool support is a CLI capability that installs reviewed program bytes and reconciles their workspace configuration.
 
-The core handles contracts, catalogue selection, records, host members and bounded lifecycle effects. Concrete CodeGraph and Codebase Memory definitions and adapters belong to the next stacked branch. This core ships an empty production catalogue.
+The core handles contracts, catalogue selection, records, declared commands and bounded lifecycle effects. Concrete CodeGraph and Codebase Memory definitions and adapters belong to the next stacked branch. This core ships an empty production catalogue.
 
 Status: V1 core design decided.
 
@@ -15,11 +15,11 @@ Status: V1 core design decided.
 
 Root composition directly registers the eight Tool leaves in contract order. Compiled adapters are selected by finite typed IDs and revisions. There is no reflective discovery, imported adapter code, service locator or runtime plugin registry. Local sources select exact reviewed tuples through data only.
 
-Framework Tools handles definition facts, catalogue and allow-list checks, template values, store identity, reference records and member observations. Framework Settings handles the visible tool settings map. Framework Lifecycle handles verified tool receipts. Framework Tools handles sibling backup mechanics. Framework Recovery keeps existing v1 bundle mechanics. Operations Tool keeps command requests, policy, plans, findings, effects and results. Rendering Tool projects command models. OutputText contains human wording. Namespaces mirror physical paths and local support stays under `Shared/<Capability>/`.
+Framework Tools handles definition facts, catalogue and allow-list checks, template values, store identity, reference records and passive host observations. Framework Settings handles the visible tool settings map. Framework Lifecycle handles verified tool receipts. Framework Tools handles sibling backup mechanics. Framework Recovery keeps existing v1 bundle mechanics. Operations Tool keeps command requests, policy, plans, findings, effects and results. Rendering Tool projects command models. OutputText contains human wording. Namespaces mirror physical paths and local support stays under `Shared/<Capability>/`.
 
-The host provides bounded network and process capabilities through typed requests. Download requests name exact HTTPS descriptors and approved redirect hosts. Process requests name reviewed finite actions, verified executable, separate arguments, complete declared environment, physical CWD, timeout and cancellation. No general shell or arbitrary process execution enters a manifest. Capabilities return typed facts and don't render or decide domain status.
+The host provides bounded network and process capabilities through typed requests. Download requests name exact HTTPS descriptors and approved redirect hosts. Process requests name reviewed finite actions, verified executable, separate arguments, complete declared environment, physical CWD, timeout and cancellation. Definitions declare pinned lifecycle argument vectors. They never choose a shell, executable from PATH or imported code. Capabilities return typed facts and don't render or decide domain status.
 
-All JSON graphs use static source generation. YAML uses the existing standard parser and static model context. Native AOT evidence covers every added graph and embedded resource. The provisional Tomlyn 2.10.2 reader stays behind the Codex host seam. Codex writes are on hold. Do no further TOML implementation until the maintainer decides.
+All JSON graphs use static source generation. YAML uses the existing standard parser and static model context. Native AOT evidence covers every added graph and embedded resource. The core uses no TOML dependency or agent-config editing seam.
 
 ## Stores
 
@@ -45,9 +45,9 @@ Account records supplement the lock with physical bindings, shared references an
 
 ## Host members
 
-The shared [tool operation rules](../shared-operation-contract.md#shared-members) define member selectors, expected generated values and preservation. Full-file parsing precedes edits. JSON duplicate keys, TOML duplicate tables and ambiguous syntax block changes. Use syntax spans to replace only recognized managed members. Recheck complete expected bytes immediately before atomic replacement.
+Tool-owned installers handle agent configuration, native settings, helpers and usage guidance. Open Forge edits only its settings, lock and managed ignore section. It doesn't parse or write Codex TOML or write Claude JSON. Passive host-entry observations are information and aren't generated-member receipts.
 
-Launch commands use absolute verified entries. Render arguments as arrays and environment as exact strings. Declared empty environment values override inheritance. Unequal duplicate environment declarations block. Codex receives workspace CWD. Claude Code starts from the project root. Tracked host files block account-specific managed configuration. Git index edits and host trust-policy changes are outside this capability.
+Definitions declare pinned install, uninstall and index-cleanup argument vectors, scope, timeout and output paths. The verified target entry runs with separate arguments, declared environment and physical workspace CWD. Exact release admission covers these declarations. The [shared Tool rules](../shared-operation-contract.md#tool-commands) define command ordering and execution evidence.
 
 ## Ignore editing
 
@@ -57,7 +57,7 @@ Extract only neutral byte-preserving section mechanics from the existing Library
 
 Adapters provide finite configuration, passive checks and external maintenance instructions. They don't provide a query proxy, scheduler or index command inside Open Forge. Required guidance names the pin, root, state, commands, process limits and language trust notes. Retrieval doesn't activate workspace instructions.
 
-CodeGraph's future profile validates a single-segment in-project index directory. It sets telemetry, daemon and watcher opt-outs together. Every supplied launch replaces hook-related child environment with an empty `GIT_CONFIG_PARAMETERS`, count one, key `core.hooksPath` and a verified private sink. Configuration and external recipes check Git's resolved hooks path with that exact environment before proceeding. File-level Git configuration and real hooks stay unchanged. The reviewed bootstrap helper creates schema only through pinned bundled APIs. Installation never calls upstream init, install, uninit or upgrade paths.
+CodeGraph's future profile validates a single-segment in-project index directory. It sets telemetry, daemon and watcher opt-outs together. Every supplied launch replaces hook-related child environment with an empty `GIT_CONFIG_PARAMETERS`, count one, key `core.hooksPath` and a verified private sink. Configuration and external recipes check Git's resolved hooks path with that exact environment before proceeding. File-level Git configuration and real hooks stay unchanged. The reviewed bootstrap helper creates schema only through pinned bundled APIs. The next branch chooses the pinned installer, uninstaller and index-cleanup arguments. The core contains no CodeGraph-specific invocation.
 
 Codebase Memory's future profile accepts only code root `.` and physical workspace CWD. Verify native project identity and index binding for both hosts. Use one exact build and resolved account cache for all active clients. Session consent covers the build, cache, process scope and final-client shutdown. Native settings turn automatic indexing, watching and UI off while keeping unrelated settings. Preflight ancestor permissions. A rejected dedicated cache requires a separate default-cache plan, never a silent switch or permission change.
 
@@ -71,6 +71,6 @@ The core uses minimal synthetic test-only definitions and local hashed artifacts
 
 ## Not decided yet
 
-- Decide whether Open Forge writes Codex configuration. Keep its seam and provisional Tomlyn dependency until then.
+Concrete installer, uninstaller and index-cleanup vectors need native tests on the next branch. They don't change this core's generic command contract.
 
 The [CLI Architecture](../architecture.md) defines the parent layer and dependency rules.

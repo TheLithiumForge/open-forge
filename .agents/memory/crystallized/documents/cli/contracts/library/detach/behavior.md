@@ -369,4 +369,4 @@ Writing commands acquire `.open-forge-state/workspace.lock` for the selected phy
 
 ## Tool coexistence
 
-Detach releases only its Library receipts and keeps Tool-managed content and Library source files. See [shared coexistence rules](../../../shared-operation-contract.md#content-coexistence).
+Tool-owned outputs use the normal existing-file and ownership rules. This operation keeps Tool registration and execution records. See [shared coexistence rules](../../../shared-operation-contract.md#content-coexistence).

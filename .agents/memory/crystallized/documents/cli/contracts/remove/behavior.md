@@ -126,6 +126,4 @@ Preserve `.open-forge-state/` and its recovery evidence. Explicit removal target
 
 ## Tool path receipts
 
-Before planning a root path removal, include Tool path and member receipts intersecting the exact target. Release only selected receipts after their effects verify. Keep unrelated tool receipts, settings entries, external installs and host members. Record normal path exclusions, including future descendants of removed directories. No Tool Configure or Choose plan can restore covered required guidance or host content while those exclusions exist.
-
-Keep existing workspace Remove recovery v1 behavior when selected paths include Tool receipts. Test required Skill removal, a containing directory and a managed host file, followed by Configure and Choose refusal. After every covering exclusion is cleared, test restoration.
+Root path Remove records normal file and directory exclusions for tool output within its exact target. It doesn't run a tool uninstaller, alter external installs or clear a registration. Tool writers check those exclusions before invoking commands that could restore the output. Choose changes role metadata without restoring files. The [shared Tool rules](../../shared-operation-contract.md#exclusions) define these checks. Existing root Remove recovery v1 behavior stays unchanged.

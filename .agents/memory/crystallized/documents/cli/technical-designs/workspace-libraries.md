@@ -315,4 +315,4 @@ unsandboxed host must run it.
 
 ## Tool coexistence
 
-Tool and Library operations can share neutral byte-preserving managed-ignore section mechanics. Marker choice, desired rules, permission, receipts and deletion policy stay with each family. Tool receipts participate in destination collisions and shared-content retention. Library operations never write Tool external stores or Library source bytes to resolve a collision. The [Tool rules](../shared-operation-contract.md#ignore-entries) define the separate Tool section.
+Tool and Library operations can share neutral byte-preserving managed-ignore section mechanics. Marker choice, desired rules, permission, receipts and deletion policy stay with each family. Tool-owned outputs use the normal existing-file and ownership checks. Library operations keep Tool registration and execution records. Library operations never write Tool external stores or Library source bytes to resolve a collision. The [Tool rules](../shared-operation-contract.md#ignore-entries) define the separate Tool section.
