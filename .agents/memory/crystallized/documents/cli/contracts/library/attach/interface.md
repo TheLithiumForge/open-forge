@@ -647,4 +647,4 @@ Writing commands acquire `.open-forge-state/workspace.lock` for the selected phy
 
 ## Tool coexistence
 
-Include Tool-managed destinations in Attach collision checks without changing Library source files. See [shared coexistence rules](../../../shared-operation-contract.md#content-coexistence).
+Tool-owned outputs use the normal existing-file and ownership rules. This operation keeps Tool registration and execution records. See [shared coexistence rules](../../../shared-operation-contract.md#content-coexistence).

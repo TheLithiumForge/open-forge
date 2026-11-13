@@ -56,7 +56,7 @@ Each code names one failed observation. The message carries its exact cause:
 | `tool-status.store-unavailable` | `incomplete` | An installed-file store cannot be verified | `<cause>` |
 | `tool-status.installed-file-missing` | `completed-with-warnings` | A receipted installed file is missing | `<cause>` |
 | `tool-status.installed-file-changed` | `completed-with-warnings` | A receipted file hash differs | `<cause>` |
-| `tool-status.member-changed` | `completed-with-warnings` | A generated host member or recorded setting differs | `<cause>` |
+| `tool-status.member-changed` | `completed-with-warnings` | An informational host entry or recorded setting differs | `<cause>` |
 | `tool-status.host-unavailable` | `incomplete` | A desired host member cannot be safely read | `<cause>` |
 | `tool-status.index-missing` | `completed-with-warnings` | The active provider needs an index | `<cause>` |
 | `tool-status.index-unavailable` | `incomplete` | Native index evidence cannot be safely read | `<cause>` |

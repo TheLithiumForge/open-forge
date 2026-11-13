@@ -18,7 +18,7 @@ The operation follows these steps:
 1. Validate the request and read exact workspace settings.
 2. Select the requested ID or all recorded IDs in ordinal order.
 3. Read lock records and account-local bindings without creating stores.
-4. Compare installed file hashes, generated member values and required guidance with receipts.
+4. Compare installed file hashes, recorded command results and passive tool-owned output presence.
 5. Check covering exclusions and passive native index metadata.
 6. Report source identity, completion evidence, limits and store coverage independently.
 7. Form one result using shared precedence and the command's warning rules.

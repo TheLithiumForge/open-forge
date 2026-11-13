@@ -34,13 +34,13 @@ Install and Update need separate `--allow-download` consent for exact transfer d
 
 ## Records
 
-`.agents/open-forge.json` records installed pins and active roles. The generated lock keeps receipts, hashes, written members and runtime coverage. Planned Tool writes keep sibling `.bak` files until changed content validates. Backup reporting and Repair restoration are pending. An inactive tool keeps `roles:[]`. Missing receipts don't hide a readable settings entry or establish a verified installation. Settings edits alone don't install or activate a tool.
+`.agents/open-forge.json` records installed pins and active roles. The generated lock keeps receipts, hashes, lifecycle commands and their results. Planned Tool writes create no `.bak` in Git workspaces. Without Git, sibling backups keep prior managed-file bytes until changed content validates. Backup reporting and Repair restoration are pending. An inactive tool keeps `roles:[]`. Missing receipts don't hide a readable settings entry or establish a verified installation. Settings edits alone don't install or activate a tool.
 
-Active providers need verified usage guidance before launchable host members are published. Keep unrelated host entries and native host trust policy. Claude Code writes use `.mcp.json`. Codex writes are on hold behind the existing host seam. A tracked host file blocks managed account paths until the shared-file arrangement is resolved or that host is left out.
+The decided writer design runs the pinned tool's declared installer, uninstaller and index-cleanup commands. The tool handles agent files, native settings and guidance. Open Forge edits only its settings, lock and managed `.gitignore` section. Choose changes only the role mapping.
 
 ## Removal exclusions
 
-Tool writers honor removed files, directories and applicable categories. Root Remove can remove required guidance while leaving a provider registered. Status then warns. Configure and Choose block until every covering exclusion is cleared. Grants and automatic mode never clear exclusions. Tool Remove can release the remaining registration without restoring missing content.
+Tool writers check declared command output paths against removed files, directories and applicable categories before execution. Root Remove leaves the provider registered. Configure can't restore excluded output through the installer. Choose changes metadata only. Grants and automatic mode never clear exclusions. Tool Remove can release the registration without restoring missing content.
 
 ## Graph use
 

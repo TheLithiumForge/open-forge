@@ -714,4 +714,4 @@ Drafts, damaged or invalid bundles, and unavailable recovery coverage produce wa
 
 ## Tool coexistence
 
-Include Tool-required guidance and receipts in Install destination collision checks. See [shared coexistence rules](../../../shared-operation-contract.md#content-coexistence).
+Tool-owned outputs use the normal existing-file and ownership rules. This operation keeps Tool registration and execution records. See [shared coexistence rules](../../../shared-operation-contract.md#content-coexistence).

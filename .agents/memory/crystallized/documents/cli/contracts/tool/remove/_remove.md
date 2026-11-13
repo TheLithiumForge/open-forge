@@ -15,5 +15,5 @@ The interface defines complete removal. The behavior defines stored-definition c
 
 ## Entries
 
-- [Define receipt-driven complete tool removal with checked members and final-reference deletion](behavior.md) - #Memory #Document #CLI #Contract #Tool #Remove #Behavior #CurrentTruth
+- [Define receipt-driven tool-owned uninstall and final-reference deletion](behavior.md) - #Memory #Document #CLI #Contract #Tool #Remove #Behavior #CurrentTruth
 - [Define complete tool removal from stored receipts while keeping other registrations usable](interface.md) - #Memory #Document #CLI #Contract #Tool #Remove #Interface #CurrentTruth

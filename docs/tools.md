@@ -28,7 +28,7 @@ Run `open-forge tool status` to compare recorded files and configuration with pa
 
 ## Consent
 
-The five write commands preview the same plan with `--dry-run`. Preview writes nothing and starts no transfers or processes. `--automatic` gives final confirmation only. Downloads need separate `--allow-download` consent for exact artifacts. Declared session daemons need `--allow-session-daemon` or matching account-local consent. Host files and other destinations outside context and Skill folders need shared `--allow-path` grants.
+The five write commands preview the same plan with `--dry-run`. Preview writes nothing and starts no transfers or processes. `--automatic` gives final confirmation only. Downloads need separate `--allow-download` consent for exact artifacts. Declared session daemons need `--allow-session-daemon` or matching account-local consent. Declared tool outputs and `.gitignore` changes need the shared destination grants shown by the plan.
 
 The exact per-command flags, result fields and conformance cases are in the [Tool contracts](../.agents/memory/crystallized/documents/cli/contracts/tool/_tool.md).
 
@@ -38,18 +38,18 @@ JSON and YAML definitions follow the [manifest schema](../schemas/tools/v1/manif
 
 ## Workspace files
 
-`.agents/open-forge.json` records installed tools, exact versions and active roles. An inactive tool keeps an empty role list. `.agents/open-forge.lock.json` records verified receipts, hashes, generated member values and runtime coverage. The planned backup flow keeps prior bytes in sibling `.bak` files until changed content validates. Backup reporting and Repair restoration are pending. These paths and native Skills stay fixed when you choose a custom context folder.
+`.agents/open-forge.json` records installed tools, exact versions and active roles. An inactive tool keeps an empty role list. `.agents/open-forge.lock.json` records verified receipts, hashes, lifecycle commands and their results. Planned Tool writes use Git as the backup in Git workspaces. Without Git, sibling `.bak` files keep prior managed-file bytes until changed content validates. Backup reporting and Repair restoration are pending. These paths and native Skills stay fixed when you choose a custom context folder.
 
-Only active providers receive managed Claude Code members in `.mcp.json`, plus their required usage Skill. Member edits keep unrelated entries. Codex writes are on hold behind the existing host seam. Tracked host files block account-specific managed paths until you resolve the shared-file arrangement or leave that host out of managed setup. Open Forge doesn't change Git's index.
+The decided writer design invokes each pinned tool's own install, uninstall and index-cleanup commands. The tool handles agent files, native settings and its guidance. Open Forge edits only its settings, lock and managed `.gitignore` section. Choose changes only the role mapping. Open Forge doesn't change Git's index.
 
 ## Keep removals
 
-Tool writers honor recorded file, directory and category exclusions. Removing required guidance through root Remove leaves the provider registered but incomplete. Configure and Choose block until you clear every covering exclusion. Tool Remove can release the remaining registration without restoring missing content.
+Tool writers check declared command outputs against recorded file, directory and category exclusions before running the command. Root Remove leaves the provider registered. Configure can't restore excluded output through an installer. Choose changes metadata only. Tool Remove can release the registration without restoring missing content.
 
 ## Limits
 
 The core adds no search proxy, index scheduler, arbitrary scripts, system PATH changes or registry changes. The external program performs search and indexing. Graph answers are leads. Before an edit depends on an edge, read its caller and exact callee and check binding where it matters. Retrieved documents don't replace the workspace loader or activate rules.
 
-## Not decided yet
+## Tool commands
 
-- Decide whether Open Forge writes Codex configuration. Its seam and provisional Tomlyn 2.10.2 dependency stay in place.
+Concrete installer, uninstaller and cleanup arguments belong to the next branch. The core keeps those definitions generic and ships no concrete tool.

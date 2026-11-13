@@ -33,19 +33,25 @@ Adapter and template tokens have separate finite vocabularies:
 | ActionId | `render-members`, `native-settings`, `render-helper` |
 | CheckId | `artifact-hash`, `installed-files`, `native-settings`, `host-members`, `index-state`, `hook-policy`, `process-policy`, `cache-permissions`, `dependency-lock`, `source-membership`, `usage-skill` |
 
-Unknown tokens invalidate a definition. Reserved tokens can describe deferred definitions but can't activate in V1. A manifest can't widen template destinations or enable arbitrary helpers. `render-helper` writes only a reviewed compiled helper template.
+Unknown tokens invalidate a definition. Reserved tokens can describe deferred definitions but can't activate in V1. A manifest can't widen its reviewed command or output scope. Tool installers handle their helpers and agent files.
 
 ## Values
 
-Join `downloadBase` and `file` for the exact HTTPS URL. Reject absolute file names, traversal, credentials and query overrides. Artifact references resolve inside the same manifest. Relative paths use forward slashes without dot or parent segments. Only blocked definitions can omit byte sizes or their source commit. Graph archives use SHA-256. npm tarballs can use SHA-512 SRI. Locked-package targets require a complete runtime and dependency artifact closure. Package resolution and install scripts don't run during installation.
+Join `downloadBase` and `file` for the exact HTTPS URL. Reject absolute file names, traversal, credentials and query overrides. Artifact references resolve inside the same manifest. Relative paths use forward slashes without dot or parent segments. Only blocked definitions can omit byte sizes or their source commit. Graph archives use SHA-256. npm tarballs can use SHA-512 SRI. Locked-package targets require a complete runtime and dependency artifact closure. Package resolution and package-manager install scripts don't run during artifact preparation. The verified tool entry can run its declared lifecycle commands after preparation.
 
-Scalars are strings, Booleans, finite numbers or null. Template variables are `${install}`, `${entry}`, `${worktree}`, `${codeRoot}`, `${state}`, `${cache}`, `${hookSink}`, `${projectId}` and `${indexDirName}` only. Render typed values without a shell. Install and entry paths become absolute. Each argument stays separate. Index directory names contain one validated segment.
+Scalars are strings, Booleans, finite numbers or null. Template variables are `${install}`, `${entry}`, `${worktree}`, `${codeRoot}`, `${state}`, `${cache}`, `${hookSink}`, `${projectId}`, `${indexDirName}`, `${host}` and `${target}` only. Render typed values without a shell. Install and entry paths become absolute. Each argument stays separate. Index directory names contain one validated segment.
 
 Merge process and MCP environment maps. Equal duplicate values are allowed. Unequal duplicates block. Declared values override inheritance, including empty strings. The command is the verified absolute target entry. CWD is the selected physical workspace. Both hosts need evidence for the resulting launch environment.
 
 Candidate admission means native testing is pending. Enabled admission needs a source commit, an available target with an entry, required verification and the target in `qualification.targets`.
 
 V1 graph definitions require a non-null Skill with `optional:false` and `defaultEnabled:true`. Pending native testing doesn't prevent inspecting a release-supported candidate. Unreviewed tuples and unavailable adapter revisions keep the shared blocked outcome.
+
+## Lifecycle commands
+
+A definition declares `install`, `uninstall` and `indexCleanup` commands. Each has an argument array, a `workspace` or `host` scope and a bounded timeout. The executable is always the verified target entry. Repeated argument values are allowed because each position has its own meaning. Output paths and managed ignore paths are declared data and stay inside the workspace. Tool-owned outputs are used for permission and exclusion checks, not as permission for Open Forge to edit them.
+
+The [shared Tool rules](../../../shared-operation-contract.md#tool-commands) define when each command runs and how its result is recorded. A missing lifecycle declaration permits inspection but blocks writes. Production support still requires the exact reviewed manifest hash and adapter revision.
 
 ## Catalogue
 
@@ -61,21 +67,21 @@ The release allow-list contains exact `(id, version, manifest SHA-256, adapter r
 
 ## Workspace settings
 
-The fixed `.agents/open-forge.json` adds a direct `tools` map. An omitted map means no recorded tools. Each tool requires `version` and `roles`. Optional hosts default to Claude Code while Codex writes are on hold. Optional code root defaults to `.`.
+The fixed `.agents/open-forge.json` adds a direct `tools` map. An omitted map means no recorded tools. Each tool requires `version` and `roles`. The latest lifecycle action and exit summary records what ran. Detailed invocations belong in the lock. A separate `toolRuns` map keeps the latest action summary for failed first installs and completed removals without claiming an installed tool. Optional hosts default to both supported hosts. Optional code root defaults to `.`.
 
 The [settings v6 schema](../../../../../../../../schemas/v6/open-forge.schema.json) defines the exact tool-ID map and entry fields.
 
 An installed inactive tool has `roles:[]`. At most one tool lists a given role. `code-navigation` requires `code-graph`. Reserved roles can't activate in V1. Reject unknown fields inside tool entries, duplicate keys, duplicate array values and incompatible role assignments. Keep unrelated settings keys under the shared tolerant settings contract. CBM permits only `.` in V1.
 
-Hand edits don't install bytes, approve downloads or update host entries. Install adds a tool after verification. Update changes its pin. Configure changes recorded hosts and root. Choose moves or clears a role. Remove deletes the entry after verified removal.
+Hand edits don't install bytes or approve downloads. Tool-owned commands handle host entries. Install adds a tool after verification. Update changes its pin. Configure changes recorded hosts and root. Choose moves or clears a role. Remove deletes the entry after verified removal.
 
 ## Lock records
 
-The fixed `.agents/open-forge.lock.json` keeps generated tool receipts separately from settings. The [lock v2 schema](../../../../../../../../schemas/v2/open-forge.lock.schema.json) defines its exact authoring shape. Receipts record artifact and installed-file hashes, exact manifest digest and snapshot, adapter revision, generated file paths, host member selectors and last generated semantic values, runtime-directory coverage and native project mappings. Existing receipt kinds keep their meanings.
+The fixed `.agents/open-forge.lock.json` keeps generated tool receipts separately from settings. The [lock v2 schema](../../../../../../../../schemas/v2/open-forge.lock.schema.json) defines its exact authoring shape. Receipts record artifact and installed-file hashes, exact manifest digest and snapshot, adapter revision, generated file paths, declared lifecycle invocations and their results, managed ignore paths, runtime-directory coverage and native project mappings. Tool-owned host files have no generated-member receipts. A separate `toolRuns` map keeps detailed execution evidence independently of installed registrations. Existing receipt kinds keep their meanings.
 
-The lock records no backup data. Exact prior bytes stay in sibling `.bak` files until new content validates. Account-local records keep physical store bindings, shared-install references and local process consent outside Git. They supplement the workspace lock and don't replace settings entries.
+The lock records no backup data. Without Git, exact prior bytes stay in sibling `.bak` files until new content validates. Git workspaces create no new backups. Account-local records keep physical store bindings, shared-install references and local process consent outside Git. They supplement the workspace lock and don't replace settings entries.
 
-Settings and lock changes keep their sibling backups until both records validate. Missing or mismatched detailed records mean incomplete configuration. They never establish a verified install or permit a silent role switch. Removal uses stored definitions and receipts without requiring the original catalogue. These records add no document fingerprints or workspace integrity gate.
+Without Git, settings and lock changes keep their sibling backups until both records validate. Missing or mismatched detailed records mean incomplete configuration. They never establish a verified install or permit a silent role switch. Removal uses stored definitions and receipts without requiring the original catalogue. These records add no document fingerprints or workspace integrity gate.
 
 ## Outcomes
 

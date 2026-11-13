@@ -1,13 +1,13 @@
 ---
 open-forge:
-  description: Define desired hosts, contained code roots and receipt-based tool configuration
+  description: Define desired hosts, contained code roots and stored tool configuration
   tags: [Memory, Document, CLI, Contract, Tool, Configure, Interface, CurrentTruth]
 ---
 
 # tool configure interface
 `tool configure` is a write command that reconciles the stored definition and configuration of one registered tool.
 
-Only an active provider receives launchable MCP members and its required usage Skill. Removing a host releases only matching managed members. Configure downloads nothing.
+The tool's own installer handles its agent files and native settings. Open Forge records the requested configuration and command results. Configure downloads nothing.
 
 Status: V1 core contract decided.
 
@@ -23,9 +23,9 @@ Omitted hosts and code root keep the recorded values. Repeated hosts give the fu
 
 ## Changes
 
-Use the registered pin's stored definition and receipts. Validate required guidance before publishing launchable members. Safely missing guidance can be restored only without a covering exclusion. Changed or excluded guidance blocks.
+Use the registered pin's stored definition and receipts. Check declared command outputs against grants and exclusions before invoking the tool. Open Forge never edits agent files or tool guidance.
 
-A changed CodeGraph root marks its index unusable and prints a rebuild action. Configure neither builds nor deletes that index. CBM accepts only the physical workspace root `.` in V1. A nested root is invalid input before effects.
+A changed code root reports the need for an external rebuild. Configure neither builds nor deletes that index. Tool-specific root restrictions belong to the next branch's reviewed definition.
 
 Settings keep the recorded pin and roles while hosts and code root follow the verified result. A settings and lock mismatch is incomplete configuration. It doesn't authorize a silent host change. The shared [tool operations](../../../shared-operation-contract.md#tool-operations) define writer data and safety. `role` is null and `pin` is the registered pin.
 
@@ -34,9 +34,9 @@ Settings keep the recorded pin and roles while hosts and code root follow the ve
 Required cases are:
 
 - Omitted configuration values and full repeated-host replacement.
-- Removed host members with unrelated content kept byte-for-byte.
-- Missing, edited and excluded required guidance.
-- Nested CBM root rejection before effects.
+- Removed-host uninstall and desired-host installer invocation order.
+- Declared tool output permissions and covering exclusions.
+- Contained root validation before effects.
 - Root change with rebuild instructions and unchanged index bytes.
 - No downloads and no source-catalogue dependency.
 - Preview parity, stale-plan rejection and recoverable paired writes.

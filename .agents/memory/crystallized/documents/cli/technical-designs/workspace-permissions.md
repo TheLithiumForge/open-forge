@@ -49,7 +49,7 @@ legacy reader or new presentation framework is introduced. Ownership, reserved
 paths, Library source containment and physical safety remain separate checks.
 ## Layout Admission
 
-The five Tool writers consume the same workspace `allowInstallPaths` list. Host members, native project settings and ignore files outside implicit content need exact destination grants. A member grant admits the file destination and doesn't adopt unrelated members. Removal exclusions remain independent and can't be cleared by grants or role choice.
+The five Tool writers consume the same workspace `allowInstallPaths` list. Declared tool-command outputs and ignore files outside implicit content need exact destination grants. A grant permits the declared command destination. Open Forge doesn't edit the tool-owned file. Removal exclusions remain independent and can't be cleared by grants or role choice.
 
 Account installs, archives and runtime units use separately bounded store bindings and process consent. Workspace grants don't admit arbitrary account paths. The [external-tools design](external-tools.md#stores) defines those units and test redirection.
 

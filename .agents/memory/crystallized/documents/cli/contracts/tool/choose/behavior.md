@@ -5,9 +5,9 @@ open-forge:
 ---
 
 # tool choose behavior
-`tool choose` is a write operation that reconciles one role assignment and the host members that assignment needs.
+`tool choose` is a write operation that assigns or clears one role in the workspace settings without editing tool-owned files.
 
-Choice and installation are separate facts. The complete plan keeps installed binaries and indexes while changing only role-dependent configuration and guidance.
+A complete plan precedes consent and effects. Preview uses that same plan without transfers, processes, grants or writes.
 
 Status: V1 core contract decided.
 
@@ -15,19 +15,17 @@ Status: V1 core contract decided.
 
 The operation follows these steps:
 
-1. Validate one role and an exact tool ID or `none`.
-2. Read all role assignments and the affected providers' settings and receipts.
-3. Validate the target capability, install, root, process compatibility and local consent.
-4. Read required guidance, host files, grants, exclusions and unmanaged duplicate entries.
-5. Form one plan for the old and new managed members, guidance, role settings and lock values.
-6. Resolve process consent, grants and final confirmation.
-7. Acquire user-store then workspace leases and revalidate the plan's facts.
-8. Prepare and verify sibling backups before changing existing files.
-9. Prepare and verify required guidance, then publish launchable members and matching role records. Release old role-dependent members only through the checked plan.
-10. Verify the single-provider mapping, kept installs and index bytes, then report host restarts and recovery disposition.
+1. Validate one role and an exact installed tool ID or `none`.
+2. Read all role assignments and affected providers' settings and receipts.
+3. Validate the target capability, verified pin, root and required process consent.
+4. Form the complete paired settings and lock plan. Keep tool-owned host files, guidance, installs and indexes unchanged.
+5. Resolve destination grants and final confirmation.
+6. Acquire the workspace lease and revalidate the current records.
+7. Use Git recovery or sibling backups for the paired records, then publish the single-provider mapping.
+8. Verify the role mapping and report the outcome. Choice never invokes a tool installer or restores removed content.
 
-## Clearing
+## Repetition
 
-For `none`, remove only the role's recognized host members and guidance. Keep content another active role still references. Clearing an already empty verified role is a no-op. Missing or changed evidence never becomes a verified no-op.
+A verified unchanged request is a no-op without new leases, backups, transfers or child processes. Missing receipts and foreign files don't become a verified installation through adoption. After a partial command failure, keep execution evidence and every unfinished part. A new invocation plans from current facts. It doesn't replay a saved plan or guess an inverse command.
 
 The [interface](interface.md) defines caller input and output.
