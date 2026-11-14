@@ -92,12 +92,18 @@ Dependency direction and no real PATH writes matter independently of test counts
 
 ## Progress
 
-Done: Kept implementation commit `38cc6a791a0bd5b8d31565e5e78232ef4d97ddfc` and corrected A-R2 in the host and its focused tests. The final managed build, eight process-host cases and both mandatory .NET checks pass.
-Now: Task 90 "Tool setup" (phase 3/3): milestone 3/7. A-R2 is READY_FOR_REVIEW and uncommitted for the coordinator's pending integration resolution.
-Next: Return the checked host and test patch for the coordinator's pending integration resolution. Keep implementation commit `38cc6a791a0bd5b8d31565e5e78232ef4d97ddfc`. Don't commit this correction.
+Done: Finished A-R2. The commit continuation's managed build, whitespace check and style check each exited `0`. No local tests ran after the maintainer's redirect.
+Now: Task 90 "Tool setup" (phase 3/3): milestone 3/7. The maintainer authorized the immediate local commit of the three finished files on top of `38cc6a791a0bd5b8d31565e5e78232ef4d97ddfc`.
+Next: The coordinator integrates the local correction commit. CI runs every test. Snapshot regeneration stays integrator-only.
 Blocker: None. No shared-model or ABI request is needed.
 
 ## Evidence
+
+### Commit continuation
+
+The maintainer superseded the earlier uncommitted return and local test instructions. Local commit checks now consist of the managed build, `npm run check:dotnet:whitespace` and `npm run check:dotnet:style`. All three exited `0` in this continuation. No local tests, snapshot regeneration, further source edits or refactoring ran. The finished host and test bytes match the returned A-R2 candidate. Earlier test receipts below describe work before this redirect.
+
+The exact build command was `dotnet build OpenForge.Cli.slnx --configuration Release -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1`. It reported zero warnings and errors. The audit override stayed invocation-only. Logs are `build.log`, `check-whitespace.log` and `check-style.log` under `artifacts/tool-setup-lane-a/a-r2-commit/`. `exits.json` records all three exits and that no local tests ran. Only the host, its test file and this packet are included in the local conventional commit. The original implementation commit and earlier lane evidence are kept.
 
 ### A-R2 cleanup
 
@@ -113,7 +119,7 @@ The focused Integration class grows from five to eight cases. The output-limit c
 
 The first build found `CA2261` and `xUnit1030` in the new test's cleanup await. The corrected await uses a non-generic task and keeps the captured test context. The first class run passed four cases and failed four during disposal because the new probe entries weren't registered with `TemporaryWorkspace`. The test now uses its existing `WriteText` and `CreateDirectory` APIs. The directory rename check moves the directory back before normal disposal. The second run passed seven cases. Its child-output case reached timeout because the Windows child wasn't forwarding output to the host. The fixture now redirects the child's two streams and relays them through the root. These changes keep the assertions and disposal. Failed logs and reports are kept as `first-*` and `second-*` under `artifacts/tool-setup-lane-a/a-r2/ToolProcessHostTests/`. The initial build log is `artifacts/tool-setup-lane-a/a-r2/first-build.log`. No failed directory was manually removed or retried.
 
-### A-R2 checks
+### Earlier A-R2 checks
 
 READY_FOR_REVIEW covers three uncommitted files on base `38cc6a791a0bd5b8d31565e5e78232ef4d97ddfc`, tree `91d2da956e67bb076fc213e29e557634ebd24e16`. They are `ToolProcessHost.cs`, `ToolProcessHostTests.cs` and this packet. Constructors and composition signatures stay unchanged. Main's original host and test blobs match the base. `main-base-blobs.json` records that comparison.
 
