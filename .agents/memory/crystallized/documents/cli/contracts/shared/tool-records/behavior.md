@@ -38,21 +38,58 @@ For a union, add newly required missing items and extend its receipt without cla
 For a set, managed file or block migration, change only a matching recorded value or hash.
 A new set still requires absence.
 Anything else is drift and stays unchanged.
-When a profile drops an addition, use its removal rule.
+When a profile drops an addition, plan its guarded removal before the new profile's changes.
+Use the prior receipt order for removals and the new recipe order for additions.
+B returns removal observations with current and desired values, disposition and conflicts.
+Remove takes that read-only plan and revalidates each observation before effects.
 Don't restore an earlier repository value.
 
 ## Native settings
 
-Read the stored native setting, keeping an inherited environment override separate.
-For CodeGraph telemetry, read the tool's status with its telemetry override variables removed for that probe only.
+Read the native setting through its authored source, keeping inherited environment overrides separate.
+Prefer `StoredValue` when authored.
+Otherwise use declared `ReadArguments`, `ReadEnvironment` and `ValueParserId` only through `InstalledInvocation`.
+That read target comes from verified installed detection, not a future planned write invocation.
+A command read also requires authored positive `ReadTimeout` and `ReadMaximumOutputBytes`.
+An absent read environment means an empty overlay.
+If neither source is available, block preflight.
+An authored stored-reader failure blocks without falling back to a command.
+Keep the read declarations optional so native-command changes can use either supported source.
+For CodeGraph telemetry, read `${nativeHome}/.codegraph/telemetry.json` through the declared stored-value parser.
+An absent file or an object without `enabled` uses the documented on default.
+For a present Boolean setting, validate only JSON token kinds required by the native format.
+On requires a string `machine_id`. Off permits a string or null `machine_id`.
+Never extract, compare, log or return identity text.
+Unreadable files, invalid JSON, non-object roots, a wrong setting type or rejected member kinds block before effects.
+CodeGraph V1 uses this stored reader before installation and for later verification.
+This read needs no installed executable and doesn't invoke native status.
+Keep only presence and the on/off setting in the observation.
+Don't probe identity values or queues.
 Normal tool invocations keep their environment.
 Record the stored previous on/off value in machine state.
+Write through the resolved native `telemetry off` command and verify the stored setting again.
+Keep the original previous value on reapply.
 Disclose that telemetry off deletes the upstream identity and unsent queues.
 Project Remove keeps the account setting because other projects can rely on it.
 Report the kept setting and print the native command to change it back.
 Changing the setting can't restore deleted telemetry history.
 Add no cross-project native-setting registry.
 If previous state is unavailable, block before effects.
+
+### Command reads
+
+The shared `CodeGraphTelemetryStatusParserId` is `codegraph-telemetry-status-v1`.
+Its declared arguments are `["--no-color", "telemetry", "status"]`.
+Its read overlay removes `DO_NOT_TRACK` and `CODEGRAPH_TELEMETRY` and sets `CODEGRAPH_NO_DOWNLOAD=1`.
+These changes apply only to that child read.
+The parser accepts exactly one complete `Telemetry: enabled (<reason>)` or `Telemetry: disabled (<reason>)` line after line-ending and ANSI handling.
+Accept only `your saved choice` or `default` as the reason.
+Map enabled to on and disabled to off.
+The shared definitions name the parser ID, prefix, values, reasons and environment keys.
+Ignore other lines without extracting identity or queue data.
+An unknown parser, missing or duplicate setting line, unknown value or reason, failed process or truncated output blocks the read.
+Preserve the caller's normal environment for writes.
+CodeGraph V1 keeps this command-read metadata while its stored reader stays preferred.
 
 ## Backups
 
@@ -61,7 +98,9 @@ Other existing bytes get a sibling `.bak` before a write.
 Git can't recover uncommitted bytes.
 An occupied backup destination blocks replacement.
 Keep one original backup across sequential edits to the same file.
-After successful verification, discard only this operation's unchanged backup.
+Services return pending backup completions to D without discarding backups.
+After final effect verification and record publication, D discards only this operation's unchanged backups.
+Use each target's latest expected hash when completing one original backup shared across stages.
 On failure, keep it and print guarded manual restoration instructions.
 Tools don't add a Repair action or depend on the existing workspace lock or recovery mechanism.
 
@@ -81,8 +120,15 @@ Unattended runs print instructions and keep them.
 
 ## Publication
 
-After each verified addition, save its actual receipt in the lock and any native setting facts in machine state.
-A later failure keeps completed receipts and reports unfinished work.
+After each verified removal or addition, save the complete remaining receipt set and native-setting facts before the next effect.
+D passes the full current receipt set in each stage request, even when the stage contains one observation.
+A result starts from that input set and changes only verified receipts.
+Completed and removed IDs describe only this call.
+A failure keeps untouched and unverified receipts and reports unfinished work.
+Keep account-setting facts when dropping a project native-command receipt.
+C writes with its latest file expectations and D reads fresh expectations after publication.
+A record-write failure stops the operation and keeps pending backups.
+Report effects that verified but couldn't be published without inventing a receipt.
 An interruption between an effect and its receipt doesn't authorize guessing or deleting that unrecorded value.
 Report that gap for manual checking.
 Don't add a Tool journal, lease or recovery folder.

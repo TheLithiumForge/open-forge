@@ -79,10 +79,13 @@ A JSON value receipt exists only for a member that Open Forge created.
 Native setup outputs stay under upstream control and aren't rewritten as Open Forge addition receipts.
 
 Bare Install uses each exact lock version.
+The [RD1 channel rule](../../tool/behavior.md#channel-choice) keeps the lock channel as a recorded fact.
 A declared tool without a lock entry gets the latest version supported by its declaration.
 Named Install or Update without a version gets latest support.
 The optional digest detects profile changes. It isn't an executable pin.
-Its fixed UTF-8 JSON projection covers profile ID, range, minimum versions, setup and uninstall vectors, declared effects and config recipes with template hashes.
+Its fixed UTF-8 JSON projection covers profile ID, range, minimum versions, setup and uninstall vectors, environment overlays, process bounds, native inventory declarations, possible outputs, declared effects and config recipes with template hashes.
+Include the authored native home policy, command-read arguments, environment, parser ID and bounds, stored-value reader declarations, missing-value defaults and effective-ignore conditions.
+Hash authored token strings and resource bytes before expansion.
 Use declared array order and ordinal object-key order for authored JSON values.
 Exclude machine paths, observed values and timestamps.
 
@@ -96,10 +99,25 @@ On Windows use the existing physical-path comparison form before hashing.
 The physical path stays in machine state so readers can check the binding.
 
 PATH records keep the exact chosen files and the prior and applied PATH entry or marked block.
-Native-setting records keep the previous setting and allow-listed manual change arguments per workspace.
+Native-setting records keep the previous setting, resolved absolute `NativeHomePath` and allow-listed manual change arguments per workspace.
+Match facts by tool ID, change ID and resolved native home using the existing physical-path comparison.
+A changed home or a missing binding can't reuse an old previous value.
+Read the newly resolved home before any setting write.
+Keep each retained fact bound to its recorded home and identify that home in manual instructions.
+This remains workspace-keyed machine state and adds no cross-project registry.
 Project Remove keeps account-wide settings and reports those commands instead of running them.
 A missing or unreadable native previous value blocks that change.
 This doesn't create an executable-version reference registry.
+
+## Result sets
+
+Config apply and removal results carry the complete remaining receipt set for that tool.
+Include untouched, unstarted, conflicting and intentionally kept receipts.
+Completed and removed change IDs are per-call deltas.
+Native-setting lists are complete for that tool and keep the original previous value through reapply.
+C replaces that tool's receipt set with the returned complete set and keeps other tools unchanged.
+An empty complete set removes all of that tool's project receipts.
+A successful no-op keeps its existing receipts.
 
 ## Publication
 

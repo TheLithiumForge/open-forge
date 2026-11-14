@@ -57,9 +57,9 @@ Tools add no workspace state, lease or recovery dependency under `.open-forge-st
 ## Checkpoint
 
 Done: Recorded C1 through C7 and committed the frozen packets in 2e517348e. Created five isolated worktrees and verified all five initial workers alive after dispatch.
-Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. D has returned its independent selection and consent code. F prepares the shared planning proposal from B, D and E's evidence.
-Next: Close the shared planning contracts, resume dependent implementation and integrate completed branches before E's entries, journeys and docs.
-Blocker: Native templates, first-install stored-state observation, concrete channel plans and config removal plans need the shared contract increment. Independent work continues. The shipping Open Forge version is asked of the maintainer.
+Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. The reviewed shared planning contract builds with zero warnings and errors. A, B and D have checked partial returns. C is verifying its first pass.
+Next: Build and commit the shared contract, transfer it to idle lanes and resume dependent implementation before integration and E's entries, journeys and docs.
+Blocker: No implementation blocker after this contract increment. The first shipping Open Forge version is asked of the maintainer.
 
 ## Phase 1 checks
 
@@ -116,6 +116,16 @@ Bare Install pins the exact lock version and follows the normal existing-support
 Only a named `--channel` is an override.
 D's next continuation must remove the implicit lock-channel override and update its focused selection evidence.
 
+A's first pass returned 93 passing focused cases, a green Release build and both .NET checks.
+Its independent version, manager policy, transfer, archive, runtime, launcher and PATH components are uncommitted.
+The channel service still needs the shared command-resolution, existing-install, runtime-receipt and removal-inventory shapes.
+
+B's first pass returned 61 passing focused cases, a green Release build and both .NET checks.
+Its independent config editors and backups are uncommitted.
+Dropped recipes, templates, native values and deferred backup completion still need the shared contract.
+Automatic approval review rejected cleanup of failed-test temporary directories as "blocked by policy".
+Those directories are kept. Final fixtures clean up successfully and no flake was reported.
+
 E's first run returned twelve checked asset pins, native file inventories and six contract requests.
 Its build, twelve documentation cases and both .NET checks passed.
 Run `r_fec5e0e39de0` resumes E for tagged-source telemetry reads before installation, bundled runtime entry facts and native plan output details.
@@ -138,3 +148,13 @@ The C1 through C7 contract update and five lane packets passed these local check
 The frozen interfaces now carry the entry and workspace for channel installation, the invocation for native config, file hash expectations and backup completion.
 Native setting change arguments are named as manual instructions.
 These are compile-only changes before the worker execution base is created.
+
+## Shared planning checks
+
+F returned revised proposal run `r_3cccfc39ce08`.
+The reviewed patch SHA-256 is `04154710409995db3754eb9380b39f5187d1b7631e49f04c6fac3a674072068f`.
+The coordinator applied it and added A's resolved invocation, existing-install, runtime receipt and fresh removal inventory shapes.
+The Release solution build passed with zero warnings and errors.
+All twelve focused `ToolSetupDocumentationTests` passed.
+Both required .NET checks, Prettier, Markdown links, LF and Git whitespace checks passed.
+This increment changes shared types and defining documents. It adds no command behavior.

@@ -19,5 +19,15 @@ internal sealed record ToolReleaseAsset
     public required ToolArchiveKind Archive { get; init; }
     public required int StripComponents { get; init; }
     public required string EntryRelativePath { get; init; }
+    public ToolBundledRuntimeSpec? BundledRuntime { get; init; }
     public required long MaximumBytes { get; init; }
+}
+
+internal sealed record ToolBundledRuntimeSpec
+{
+    public required string Runtime { get; init; }
+    public required string Version { get; init; }
+    public required string RuntimeRelativePath { get; init; }
+    public required string EntryRelativePath { get; init; }
+    public required IReadOnlyList<string> Arguments { get; init; }
 }

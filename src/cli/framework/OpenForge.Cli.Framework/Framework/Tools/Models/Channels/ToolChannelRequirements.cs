@@ -11,6 +11,8 @@ internal sealed record ToolTarget
     public ToolLinuxLibc? LinuxLibc { get; init; }
     public string? MinimumOperatingSystemVersion { get; init; }
     public string? MinimumLibcVersion { get; init; }
+    public string? MinimumLinuxKernelVersion { get; init; }
+    public string? MinimumLibStdCppVersion { get; init; }
 }
 
 internal sealed record ToolRuntimeRequirement(string Runtime, string VersionRange);

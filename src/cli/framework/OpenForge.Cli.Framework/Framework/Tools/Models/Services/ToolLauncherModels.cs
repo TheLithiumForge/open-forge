@@ -21,6 +21,8 @@ internal sealed record ToolPathRemoveResult(IReadOnlyList<string> RemovedTargets
 
 internal sealed record ToolManagedFilesRemoveRequest
 {
+    public required ToolRecordsRequest Locations { get; init; }
+    public required ToolRecordsResult Records { get; init; }
     public required ToolMachineState Expected { get; init; }
     public required IReadOnlyList<string> ApprovedToolPaths { get; init; }
     public required IReadOnlyList<ToolNodeRuntimeRecord> ApprovedRuntimes { get; init; }

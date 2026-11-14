@@ -29,7 +29,7 @@ Before adding or updating a profile, complete these checks:
 5. Pin each direct asset's SHA-256 or verified attestation. CodeGraph uses published SHA256SUMS. Reject digest mismatches.
 6. For private Node, verify signed SHASUMS256, skip archive link entries before the link-rejecting extractor and use Node's own npm CLI script.
 7. Detect and test npm-family clients, project-lockfile preference, Yarn Modern exclusion and manager-global-bin readiness.
-8. Record native setup and uninstall commands, dry-run support and project or account effects. Keep native MCP names, hooks, permissions, blocks and Skills.
+8. Record native setup and uninstall commands, dry-run support and project or account effects. Review possible output declarations against native inventory, profile and legacy paths. Keep native MCP names, hooks, permissions, blocks and Skills.
 9. Check JSON union and absent-only set, marked blocks, absent-only files and native account settings against their additive removal rules.
 10. Verify exact lock versions, channels and added items, keys, markers and hashes. Keep native previous values in machine state.
 11. Test absolute launchers, private runtime compatibility, PATH choices and unattended instructions. Never edit real user PATH or shell profiles in journeys.
@@ -96,7 +96,7 @@ Back up those declared files, keep the installer output unchanged and record act
 Don't add an Open Forge Skill or line.
 
 Telemetry off is account-wide and deletes the upstream identity and unsent queues.
-Read the stored setting through the native status command with telemetry overrides removed for that probe.
+Use the [stored-setting read](../cli/contracts/shared/tool-records/behavior.md#native-settings) before installation and for later verification.
 Keep the caller's normal environment and report any override separately.
 Machine state records only the previous setting, not telemetry identity or queues.
 

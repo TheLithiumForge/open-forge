@@ -41,6 +41,9 @@ Read the project's lockfiles as preference hints.
 Check each manager's runtime, version and global-bin PATH readiness.
 A catalogue entry can require one client.
 Ask about multiple usable choices. The common Interface defines the `--yes` fallback.
+Review RD1: bare Install pins the lock's exact version and then uses this normal channel order.
+The recorded lock channel is an installation fact, not an implicit channel override.
+Only named `--channel` overrides channel choice.
 Keep the manager responsible for an existing installation and never create a second install.
 A failed transfer doesn't silently switch channels.
 
@@ -76,7 +79,8 @@ Disclose account scope and watcher defaults.
 Open Forge writes no replacement MCP entries or Codex TOML sections.
 It adds no tool Skill or managed-block line.
 
-Back up declared changed files before invoking native setup.
+Use the [native output plan](../../technical-designs/tool-setup.md#native-outputs) for possible destinations and available native inventory.
+Back up its concrete targets before invoking native setup.
 Run a chosen native uninstall before removing Open Forge additions.
 Codebase Memory's account-wide uninstall needs the live confirmation defined by the common Interface.
 With `--yes` or without a terminal, skip that uninstall and remove only Open Forge's project additions.

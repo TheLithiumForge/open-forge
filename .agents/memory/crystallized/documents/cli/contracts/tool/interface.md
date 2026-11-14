@@ -57,7 +57,8 @@ The [recorded choices](../../technical-designs/tool-setup-lanes.md#recorded-choi
 
 Use the existing schema-3 envelope, statuses, exits, detail levels and streams from [Result coordinates](../shared/result-coordinates/interface.md).
 The command identity is `tool <leaf>`.
-Every leaf has `data.tools`, an ordinal ID array, even for one tool.
+Every leaf has `data.tools`, an array ordered by tool ID, even for one tool.
+Each entry carries the leaf's tool facts, including Inspect facts.
 Writers add `preview`, `plan` and `outcomes`.
 Plans show exact versions where known, channels, managers and requirements, commands, scopes, native installer writes, Open Forge additions, telemetry, downloads, launchers, PATH choices, backups and unfinished work.
 Say when dry-run needs network access to resolve latest.

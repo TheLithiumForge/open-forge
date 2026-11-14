@@ -28,6 +28,7 @@ Open Forge guidance can return if evals show a need.
 The [Tool Interface](../contracts/tool/interface.md) defines `id@version`.
 Named Install and Update with a bare ID select latest support.
 Bare Install uses exact lock versions and uses latest support only for a declaration without a lock.
+The [RD1 channel rule](../contracts/tool/behavior.md#channel-choice) keeps normal channel choice after that version selection.
 Initial profiles are CodeGraph `1.6.x` from `1.6.2` and Codebase Memory `0.12.x` from `0.12.1`.
 Their compatibility ranges keep the major.minor meaning and their minimum reviewed patches limit selectable releases.
 Keep older supported profiles and exact pins as the catalogue grows.
@@ -176,6 +177,131 @@ Operations supplies command requests, selection, consent, plans and results.
 Rendering and OutputText supply presentation.
 The frozen interfaces are in `Framework/Tools/Models/Services/ToolServiceContracts.cs`.
 No command or service behavior is implemented in this phase.
+
+### Shared planning
+
+A channel request includes the Open Forge home.
+A command resolver returns an absolute command path and its real executable invocation.
+Detection carries verified recorded-install facts and the responsible manager into channel planning.
+A successful resolution includes its executable invocation, command path, runtime, native install directory, ordered process commands, download and extraction destinations and launchers.
+Install takes that resolution and executes the checked plan.
+A returns verified private-runtime records with its tool state.
+Shared-file removal receives C's locations and expected records, then checks the current launcher inventory before removing an unused runtime.
+A handles package-manager paths and supply ordering.
+D uses those facts for reporting and native setup.
+For reused CBM, the native install directory contains its verified existing command.
+Setup `--dir` points there without creating another installation.
+
+Planning checks files and backup feasibility without creating backups.
+A missing future executable isn't invoked.
+Whole-batch preflight checks every available requirement before effects.
+Later native discovery or execution can still fail.
+Report that effect failure and completed receipts without claiming that a first-install description predicts every native outcome.
+
+### Recipe values
+
+The [recipe definitions](../../../../../../src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Recipes/ToolRecipeContext.cs) define the shared context and token spellings.
+Context paths are resolved absolute host paths.
+`MainRoot` is a workspace-relative slash path without a trailing slash.
+E.g. `context` produces `context/memory/archived/**`.
+Client root keys match `[a-z][a-z0-9-]*` and name resolved roots provided by Root or native output.
+
+Expand tokens once in setup, preview and inventory arguments, environment values, effect and output paths, JSON string values, block content and strict UTF-8 managed-file content.
+Keep JSON member names, JSON Pointers, markers, resource IDs and environment keys literal.
+`${client:<id>}` selects one declared client root.
+`${previous}` is valid only in a manual native-setting command and expands to the recorded setting.
+`ToolRecipeDefinitions.DollarEscapeToken` defines `$$` as one literal dollar.
+A single dollar outside a token stays literal.
+E.g. with `MainRoot` set to `context`, `$$${mainRoot}` produces `$context`, while `$cash` stays `$cash`.
+Unknown tokens, missing roots, malformed tokens and invalid paths block planning.
+Inserted values aren't expanded again.
+Expansion adds no config-edit kind.
+A null environment value removes that key.
+The process host starts from Root's injected base environment, then applies the overlay.
+Keep the first native previous-value observation when replanning file changes after native setup.
+A changed stored setting blocks revalidation instead of becoming an inferred previous value.
+
+A managed-file resource ID is its exact manifest logical name in the Framework assembly.
+B hashes its original bytes for the profile digest and expands its content for apply.
+V1's entries need no new managed-file resource or packaging rule.
+
+### Native outputs
+
+B implements read-only `IToolSetupService.PlanAsync`.
+A setup spec declares possible outputs and can declare one bounded native inventory command.
+With an installed invocation, use its inventory command, otherwise its declared dry run.
+Without an installed invocation, describe the command and possible destinations.
+Dry-run output is descriptive and isn't parsed for paths.
+
+C implements `IToolNativePlanReader` for CBM's `agent.install.plan.v1` format.
+Require exit zero, bounded complete stdout, the declared type, typed arrays, `writes_started=false` and `network_after_install=false`.
+Keep stderr separate and never execute `next_safe_command`.
+Collect config, instruction, Skill, agent and prompt file arrays and hook paths.
+Add declared profile, legacy-cleanup and malformed-JSON backup destinations omitted by native inventory.
+A supplement's optional client ID matches the complete native detected-client set.
+Without native inventory, show it as conditional potential output and keep the detected-client set unavailable.
+Install and uninstall have separate declarations. An install plan isn't an uninstall inventory.
+Keep native discovery and the full client set.
+Declarations cover possible writes without selecting clients or reproducing discovery.
+
+An exact backup output names a possible file, including an absent file.
+An existing-pattern output matches existing wildcard components using `*` and `?` within slash-separated segments.
+Keep an exact final filename even when it is absent inside a matched existing directory.
+E.g. `profiles/*/mcp.json` includes a missing `mcp.json` in an existing profile.
+It covers profile folders and legacy names without recursive `**`.
+Check resolved native paths and client roots through physical containment.
+Deduplicate concrete backup targets with host path comparison.
+Keep SHA-256 expectations, using null for absence.
+Check occupied sibling backups during planning.
+Revalidate and take backups immediately before native writes.
+Report-only outputs also describe native empty-directory cleanup without backing up arbitrary trees.
+They describe telemetry and native cache effects without reading identity or queues.
+If inventory names a destination outside the reviewed possible set, stop before native setup and report it.
+
+A marked block can declare an effective-ignore condition.
+B checks Git's effective data coverage during preflight, after native output and immediately before apply.
+Existing root rules or an internal ignore can satisfy it.
+Add the block only when coverage is absent.
+When its recorded block already supplies coverage, keep that receipt and return no change.
+Don't create an index to obtain coverage.
+
+### Runtime targets
+
+Host wrapper Node requirements stay in the channel runtime requirement.
+The V1 runtime grammar accepts an exact stable version or `>=major[.minor[.patch]]`, with an optional `<major[.minor[.patch]]` ceiling.
+Missing numeric components mean zero.
+This catalogue grammar is separate from CLI tool selectors.
+Choose the newest approved private Node inside those bounds.
+Different bounds can select different private runtime versions.
+Lane A provides the pinned official runtime catalogue and its signed-checksum review evidence.
+Target requirements also cover bundled runtimes.
+CodeGraph's bundled Node needs Linux kernel 4.18, glibc 2.28 and libstdc++ 6.0.25.
+CBM's unspecified numeric floors stay unspecified.
+Assets declare bundled runtime version, executable, application entry and runtime arguments relative to the extraction root.
+A resolves these declarations without filename heuristics.
+Keep upstream release launchers for normal direct execution.
+
+### Root hosts
+
+Root can receive complete Tool homes, client roots, base process environment and process, download and PATH hosts through composition inputs.
+Use supplied inputs throughout detection, planning and effects.
+Each profile declares its native home policy.
+For CodeGraph's `Node` policy, Windows uses `USERPROFILE` and other systems use `HOME`.
+When that variable is absent, resolve the OS-user home with the same native rule.
+CBM's `HomeThenUserProfile` policy uses the first nonempty `HOME`, then `USERPROFILE`.
+If the native home can't be resolved, block preflight.
+Resolve these policies from the injected base environment without changing normal child environment.
+An injected `NativeHomePath` overrides policy resolution for owned journeys.
+The journey provides child environment that makes the native tool use that same home.
+Root doesn't rewrite normal child environment to force a resolved home.
+Resolve production known folders once in Root.
+Changing a child environment doesn't relocate .NET Windows known folders.
+`TestDataHome` covers legacy stores and isn't a Tool home resolver.
+
+Test live CBM account-uninstall consent and native-first ordering with an injected process host.
+The real Windows journey uses `--yes` project-only removal.
+Upstream confirmed uninstall writes persistent user PATH, so it stays outside that real journey.
+These inputs add no command flag or production test mode.
 
 ## Decisions
 

@@ -1,10 +1,16 @@
 using OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Tools.Models.Channels;
 using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
+using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 
 namespace OpenForge.Cli.Core.Framework.Tools.Models.Services;
 
-internal sealed record ToolDetectionRequest(ToolCatalogueEntry Entry, string WorkingDirectory);
+internal sealed record ToolDetectionRequest(ToolCatalogueEntry Entry, string WorkingDirectory)
+{
+    public ToolMachineState? RecordedState { get; init; }
+}
+
+internal sealed record ToolResolvedCommand(string CommandPath, ToolCommandTarget Invocation);
 internal sealed record ToolChannelPlanResult(
     ToolChannelResolution? Resolution,
     IReadOnlyList<ToolPackageManagerFacts> ManagerChoices,
@@ -33,7 +39,18 @@ internal interface IToolConfigService
     string ComputeProfileDigest(ToolVersionProfile profile);
     Task<ToolConfigPlan> PlanAsync(ToolConfigRequest request, CancellationToken cancellationToken);
     Task<ToolConfigApplyResult> ApplyAsync(ToolConfigPlan plan, CancellationToken cancellationToken);
-    Task<ToolConfigRemoveResult> RemoveAsync(ToolConfigRemoveRequest request, CancellationToken cancellationToken);
+    Task<ToolConfigRemovePlan> PlanRemoveAsync(ToolConfigRemoveRequest request, CancellationToken cancellationToken);
+    Task<ToolConfigRemoveResult> RemoveAsync(ToolConfigRemovePlan plan, CancellationToken cancellationToken);
+}
+
+internal interface IToolSetupService
+{
+    Task<ToolSetupPlan> PlanAsync(ToolSetupRequest request, CancellationToken cancellationToken);
+}
+
+internal interface IToolNativePlanReader
+{
+    ToolNativePlanObservation Read(ToolNativePlanParser parser, ToolProcessResult result);
 }
 
 internal interface IToolBackupService
@@ -50,6 +67,7 @@ internal interface IToolRecordService
 
 internal interface IToolProcessHost
 {
+    Task<ToolResolvedCommand?> ResolveAsync(string command, string workingDirectory, CancellationToken cancellationToken);
     Task<ToolProcessResult> RunAsync(ToolProcessRequest request, CancellationToken cancellationToken);
 }
 

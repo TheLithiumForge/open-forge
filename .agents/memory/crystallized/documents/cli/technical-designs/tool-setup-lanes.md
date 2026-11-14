@@ -39,7 +39,10 @@ A required change goes in a separate `contract(tool): ...` commit, with the reas
 The mastermind checks and integrates that contract before dependent work.
 Workers use agreed fakes at their typed interfaces until implementations merge.
 Channel requests carry their workspace and install entry, so registry config and package identity stay with the plan.
-Config requests carry the resolved invocation for native commands.
+Config requests carry the resolved recipe context and planned invocation for native writes.
+The [shared planning design](tool-setup.md#shared-planning) defines the shared inputs.
+A implements channels and hosts. B implements config, templates, setup planning and backups. C implements native inventory parsing, codecs and observations. D sequences writers and completes backups. F later wires Root.
+After this contract lands, D corrects its selector so bare Install pins only the lock version under RD1.
 B implements the frozen backup interface and profile digest method for D.
 C returns file SHA-256 expectations, with null for absence, for its own expected-state writes.
 Each worker reads the complete C# catalogue, design and style Directives independently.
@@ -62,9 +65,12 @@ Leaf help and output text initially belong to the same lane as that leaf.
 Framework paths start at `src/cli/framework/OpenForge.Cli.Framework/`.
 Operations paths start at `src/cli/operations/OpenForge.Cli.Operations/`.
 A alone edits root shared Tool host capabilities.
+A also supplies the reviewed private Node version pins and command resolution.
 C alone edits Settings and Ownership codecs. B returns typed addition records and never writes their JSON files.
 D uses C's record service and B's config service.
-D applies one planned config change at a time and publishes its verified receipt through C before starting the next change.
+D applies one planned removal or config change at a time and publishes the complete remaining receipt set through C before starting the next change.
+A, B and C return pending backup completions to D.
+D completes them only after final verification and publication, or keeps them after failure.
 The integrator alone edits central command registration and shared models.
 No lane implements a substitute for a frozen interface.
 

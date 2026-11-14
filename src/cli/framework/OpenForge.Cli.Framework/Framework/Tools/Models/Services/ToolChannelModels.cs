@@ -13,6 +13,8 @@ internal sealed record ToolDetectionResult
     public string? Version { get; init; }
     public string? ChannelId { get; init; }
     public string? RuntimePath { get; init; }
+    public ToolMachineState? RecordedState { get; init; }
+    public ToolPackageManagerFacts? PackageManager { get; init; }
     public string? Failure { get; init; }
 }
 
@@ -20,6 +22,7 @@ internal sealed record ToolChannelRequest
 {
     public required ToolCatalogueEntry Entry { get; init; }
     public required string WorkspacePath { get; init; }
+    public required string HomePath { get; init; }
     public required ToolVersionSelection Selection { get; init; }
     public required ToolDetectionResult Existing { get; init; }
     public required ToolTarget Target { get; init; }
@@ -38,11 +41,33 @@ internal sealed record ToolChannelResolution
     public required string ChannelId { get; init; }
     public required string Version { get; init; }
     public required bool ReuseExisting { get; init; }
+    public ToolDetectionResult? Existing { get; init; }
+    public required ToolChannelExecutionPlan Execution { get; init; }
     public ToolPackageManagerFacts? PackageManager { get; init; }
     public ToolPrivateNodeSpec? PrivateNode { get; init; }
     public ToolReleaseAsset? Asset { get; init; }
     public required IReadOnlyList<ToolDeclaredEffect> Effects { get; init; }
 }
 
-internal sealed record ToolChannelInstallRequest(ToolCatalogueEntry Entry, ToolChannelResolution Resolution, string HomePath, string WorkspacePath);
-internal sealed record ToolChannelInstallResult(ToolMachineState? State, IReadOnlyList<string> CompletedEffects, string? Failure);
+internal sealed record ToolChannelExecutionPlan
+{
+    public required string HomePath { get; init; }
+    public required string WorkspacePath { get; init; }
+    public required string BinPath { get; init; }
+    public required string NativeInstallDirectory { get; init; }
+    public required string CommandPath { get; init; }
+    public required ToolCommandTarget Invocation { get; init; }
+    public string? ToolPath { get; init; }
+    public string? RuntimePath { get; init; }
+    public required IReadOnlyList<ToolDownloadRequest> Downloads { get; init; }
+    public required IReadOnlyList<ToolExtractionRequest> Extractions { get; init; }
+    public required IReadOnlyList<ToolProcessRequest> Commands { get; init; }
+    public required IReadOnlyList<ToolLauncherSpec> Launchers { get; init; }
+}
+
+internal sealed record ToolChannelInstallRequest(ToolChannelResolution Plan);
+internal sealed record ToolChannelInstallResult(ToolMachineState? State, IReadOnlyList<string> CompletedEffects, string? Failure)
+{
+    public required IReadOnlyList<ToolBackupCompletionRequest> PendingBackups { get; init; }
+    public required IReadOnlyList<ToolNodeRuntimeRecord> Runtimes { get; init; }
+}
