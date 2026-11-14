@@ -102,7 +102,7 @@ public sealed class CodeGraphCatalogueTests
         Assert.Equal(new(1, 6), profile.Range);
         Assert.Equal(CodeGraphDefinitions.Version, profile.MinimumToolVersion);
         Assert.Equal(ToolCatalogueDefinitions.MinimumOpenForgeVersion, profile.MinimumOpenForgeVersion);
-        Assert.Empty(profile.TestedVersions);
+        Assert.Equal(CodeGraphDefinitions.Version, Assert.Single(profile.TestedVersions));
     }
 
     [Fact(DisplayName = "CodeGraph telemetry declares a pre-install stored reader and separate bounded native status metadata"), Trait("Feature", "tool-catalogue"), Trait("Evidence", "Unit")]

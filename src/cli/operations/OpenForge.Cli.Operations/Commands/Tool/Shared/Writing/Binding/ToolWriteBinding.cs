@@ -27,11 +27,11 @@ internal static class ToolWriteBinding
         var command = new Command(Name(kind), Description(kind));
         var spec = new Argument<string?>(kind == ToolWriteKind.Remove ? IdArgument : SpecArgument)
         {
-            Description = kind == ToolWriteKind.Remove ? "The declared or locked tool ID." : "A tool ID, ID@major.minor or ID@exact stable version.",
-            Arity = kind == ToolWriteKind.Remove ? ArgumentArity.ExactlyOne : ArgumentArity.ZeroOrOne,
+            Description = kind == ToolWriteKind.Remove ? "The declared or locked tool ID." : "A tool ID, ID@major.minor or ID@exact stable SemVer.",
+            Arity = ArgumentArity.ZeroOrOne,
         };
         command.Arguments.Add(spec);
-        var yes = new Option<bool>(YesOption) { Description = "Accept the shown plan, including downloads. Keep PATH and shared files unchanged.", Arity = ArgumentArity.Zero };
+        var yes = new Option<bool>(YesOption) { Description = "Accept the shown plan and downloads. Skip PATH edits, shared deletion and account-wide uninstall.", Arity = ArgumentArity.Zero };
         var dryRun = new Option<bool>(DryRunOption) { Description = "Show the checked plan without applying changes.", Arity = ArgumentArity.Zero };
         var allow = new Option<string[]>(PermissionOptions.AllowPath.Name)
         {
@@ -46,7 +46,7 @@ internal static class ToolWriteBinding
         Option<string?>? channel = null;
         if (kind != ToolWriteKind.Remove)
         {
-            channel = new(ChannelOption) { Description = "Select an advertised channel for the named tool.", Arity = ArgumentArity.ExactlyOne };
+            channel = new(ChannelOption) { Description = "Select an advertised channel for a named tool.", Arity = ArgumentArity.ExactlyOne };
             command.Options.Add(channel);
         }
         parent.Subcommands.Add(command);
@@ -102,9 +102,9 @@ internal static class ToolWriteBinding
 
     private static string Description(ToolWriteKind kind) => kind switch
     {
-        ToolWriteKind.Install => "Install tools and add configuration.",
-        ToolWriteKind.Update => "Update tools to a supported version.",
-        ToolWriteKind.Remove => "Uninstall tool setup and remove its additions.",
+        ToolWriteKind.Install => "Install tools, run native setup and add project configuration.",
+        ToolWriteKind.Update => "Update declared tools within supported versions.",
+        ToolWriteKind.Remove => "Remove project additions and offer native uninstall.",
         _ => throw new ArgumentOutOfRangeException(nameof(kind)),
     };
 }

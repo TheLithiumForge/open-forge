@@ -90,10 +90,10 @@ The report can be used to compile complete entries and run both Windows journeys
 
 ## Progress
 
-Done: The B review documents were committed locally as `240c78f3449147fb9993f3fecc8c45a879583241`. The coordinator accepted F-H1, F-H2 and the bounded C# port plan after two ordinary JSON5 readers failed required native behavior. Root has authored the dated contract choice. Both required .NET checks pass for this design evidence commit. The exact prior build receipt is kept.
-Now: The two-document design evidence increment is checked for its authorized local commit on base `240c78f3449147fb9993f3fecc8c45a879583241`. Only the new report and this packet's Progress and Evidence change. Formatting, local links, LF, packet-section and exact two-file checks pass. Root keeps the implementation choice as a maintainer question under the user delegation.
-Next: Return the local commit's full SHA, two-file list and checked native licence cache path and SHA-256. F handles the private reader and tests through Root's contract increment. Full user docs and real Windows journeys wait for Root wiring. Successful exact journey versions must populate `TestedVersions` later.
-Blocker: None for this local design evidence increment. Product source, dependencies, root `LICENSE` and F files are unchanged. `MinimumOpenForgeVersion` stays provisionally `0.9.0-beta.19`. Product and package versions are unchanged.
+Done: Preserved the complete 33-path candidate, B/C v3 inputs and all prior evidence. Applied only the checked 12-file D source patch. E-J1, E-J2, E-J3, E-J4, I-R1 and I-R2 are revalidated. Both real Windows journeys complete. Real CBM project-only Remove returns completed and exit 0 without native uninstall or its dry run. Confirmed account removal passes with injected native effects. CBM `0.12.1` now joins CodeGraph `1.6.2` in tested metadata.
+Now: READY_FOR_REVIEW, uncommitted. The actual beta.19 graph and manual host build. Final focused results are 132 passed, two pending C Imprint mismatches and zero skips across 134 cases. Both mandatory .NET checks return 0. Markdown, local links, LF and site checks pass. The E-only set has 35 paths and the protected input record has 72 paths.
+Next: The coordinator reviews the two C account-choice captures, then handles the 43 help captures, other payload work and later commit continuation. Use the final E-only and protected input manifests under `artifacts/task90-lane-e-remove-final/`. No further native recheck is required by the current findings.
+Blocker: The two protected C `AccountChoice` baselines need coordinator review for the intended deferred-plan rendering. Their semantic assertions pass before Imprint. No native journey or product defect stays open in this return. No baseline is accepted by E.
 
 ## Evidence
 
@@ -334,6 +334,367 @@ Its SHA-256 is `1f58f9911dc5e3bcb96de28bb28e7b6bb7eb323952d29569c5d7214a152146bb
 Its Git blob `0b95352746a97a8cf2d1f3ba568bc7bb5e514d1f` matches the tagged native tree.
 The final local receipt records the exact cache path, final source hashes, commit identity and two-file list.
 No new build, tests, native tool, account action, product edit, dependency change, root licence edit, F source edit, push or merge ran.
+
+### Native reader review
+
+The [native reader review](../evidence/native-reader-review.md) checks only F's three new reader files, changed caller and two test files against tagged CBM and the accepted plan.
+All six hashes match before and after review. The content checkpoint is `c72327e8f458cb28cc1608090da61fc1a41f8ae724d16294f220215aaf3528c3`.
+No NR1 finding is raised.
+F's 176-case receipt, clean build and both .NET checks were consumed without rerunning them.
+The source review ran no product edits, tests, build, package or native execution, account actions or commit.
+Only the assigned review report and this packet change.
+Prettier, six local links, LF, whitespace, packet-section and two-file checks pass. Six external source links stay marked unchecked by References.
+
+### Reader review commit
+
+The coordinator authorized a separate local commit of the accepted review report and this packet.
+The exact prior E build receipt stays unchanged at `artifacts/task90-lane-e-review-docs/final-receipt.json`.
+It records SDK `10.0.101`, managed Release `net10.0` on Windows x64, zero warnings and errors and duration `00:04:39.43`.
+The build log still matches SHA-256 `2e4c1792b39e2b7d2376de25a9cb0df5fdee6da02a2d95a70fa909c8940ba482`.
+Only Markdown changed since that build's source base `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9`.
+Product source and build configuration are unchanged, so no new build ran.
+
+Fresh pre-commit checks are:
+
+| Check                             | Result                                                  | Artifact under `artifacts/task90-lane-e-native-reader-review/` |
+| --------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------- |
+| `npm run check:dotnet:whitespace` | Passed, exit 0                                          | `whitespace.log`                                               |
+| `npm run check:dotnet:style`      | Passed, exit 0                                          | `style.log`                                                    |
+| Focused Markdown formatting       | Passed for both files                                   | `markdown.log`                                                 |
+| Production References             | Six complete local links, six external links unchecked  | `report-references.json`, `packet-references.json`             |
+| LF, whitespace and Markdown AST   | Passed, only Progress and Evidence change in the packet | `document-checks.json`                                         |
+| Exact file limit and commit list  | Only the two assigned documents                         | `final-receipt.json`                                           |
+
+The exact document and link commands are:
+
+```powershell
+node node_modules/prettier/bin/prettier.cjs --check .agents/memory/working/cli-development/tool-setup/evidence/native-reader-review.md .agents/memory/working/cli-development/tool-setup/packets/lane-e.md
+open-forge references .agents/memory/working/cli-development/tool-setup/evidence/native-reader-review.md --direction out --format json
+open-forge references .agents/memory/working/cli-development/tool-setup/packets/lane-e.md --direction out --format json
+git diff --check
+```
+
+The final local receipt records the full commit SHA, parent, two-file list, source hashes and clean status.
+No tests, native tools, catalogue, Root, grammar, shared-file or snapshot edits, GitHub actions, account actions, push or merge ran.
+
+### Final execution capsule
+
+The final dispatch transfers catalogue tested metadata, matching journey evidence, docs, help wording, CommandHelpIntegrationTests and both CLI Skill copies to E.
+The frozen input hashes, safe native environment, exact manual commands and results are in the [Windows journey report](../evidence/windows-journeys.md).
+The complete input manifest is `artifacts/task90-lane-e-final/input-manifest.json`.
+The reviewed patch and all 34 C files matched their supplied hashes. Copy targets matched the core base. None of the 51 supplied files was staged.
+Transferred help wording and this packet are the only writable overlaps with those inputs. Other input files stay byte-identical.
+
+The realistic effects are tool installation, owned native client configuration and project additions inside task-owned D: locations.
+Git and sibling backups keep project edits reviewable. Native account settings stay in the owned account and are kept on project Remove.
+No real persistent PATH, registry or profile change is permitted.
+The existing production graph and injected homes, clients, process, download and PATH capabilities cover the journey.
+The manual host is test support, not a production flag or replacement service implementation.
+Normal automated tests stay offline. Manual native execution is recorded separately.
+Focused catalogue, command help and new synthetic journey evidence are the selected managed tests. Full suites and Native AOT stay in CI.
+No snapshots or payload fixtures will be regenerated by E.
+
+Root and Docusaurus `npm ci` pass. The baseline prospective build passes with zero warnings and errors in `00:04:09.19`.
+Its invocation uses `-p:OpenForgeCliVersion=0.9.0-beta.19` and the local NuGet audit override only on the command.
+Actual executable and composed-host `--version` output is `0.9.0-beta.19`.
+Composed List returns schema 3 with `data.tools`. Initial Inspect reports the missing CodeGraph state.
+CodeGraph `TestedVersions` now contains `1.6.2`. CBM stays empty because E-J1 blocks its real journey.
+
+### Final checked candidate
+
+The final managed Release build passes with zero warnings and errors in `00:03:27.24`.
+It uses `-p:OpenForgeCliVersion=0.9.0-beta.19` and the local audit override only on the invocation.
+The resulting executable reports `0.9.0-beta.19`.
+The final log is `artifacts/task90-lane-e-final/final-build.log`.
+The site build passes with `npm run build` in `src/docusaurus`.
+
+The focused results are:
+
+| Class                               | Cases | Result                           | Artifact under `artifacts/task90-lane-e-final/` |
+| ----------------------------------- | ----- | -------------------------------- | ----------------------------------------------- |
+| `CodeGraphCatalogueTests`           | 13    | Passed, exit 0                   | `test-codegraph.log`                            |
+| `ToolJourneyTransitionTests`        | 2     | Passed, exit 0                   | `test-transition-final.log`                     |
+| `ToolDocumentationIntegrationTests` | 3     | Passed, exit 0                   | `test-docs.log`                                 |
+| `ToolHelpIntegrationTests`          | 8     | Six pass, two fail, exit 2. E-J3 | `test-help-final.log`                           |
+
+Both final-source mandatory gates pass:
+
+| Command                           | Exit | Artifact under `artifacts/task90-lane-e-final/`     |
+| --------------------------------- | ---- | --------------------------------------------------- |
+| `npm run check:dotnet:whitespace` | 0    | `whitespace-final.log`, `whitespace-final.exit.txt` |
+| `npm run check:dotnet:style`      | 0    | `style-final.log`, `style-final.exit.txt`           |
+
+The Windows report gives the exact test commands, native vectors, physical writes and completed MCP request.
+CodeGraph's initial project content returns byte-for-byte after Remove.
+Its telemetry stays off and its CLI and index stay available.
+The owned MCP process exits 0, and its native daemon shuts down idle with zero clients.
+No CBM native command runs because E-J1 blocks before download.
+The confirmed account path still needs injected process and PATH coverage after the corrected CBM journey.
+The frozen C account-choice cases are consumed as reviewed evidence, without rerunning them or editing their snapshots.
+
+The final input and E slice records are:
+
+- `artifacts/task90-lane-e-final/input-manifest.json` - all 51 supplied input hashes and preparation checks.
+- `artifacts/task90-lane-e-final/frozen-input-check.json` - 46 unchanged protected files and five assigned wording or packet overlaps.
+- `artifacts/task90-lane-e-final/e-files.txt` and `e-file-manifest.json` - the 31-file E slice, including one deleted unused outline.
+- `artifacts/task90-lane-e-final/final-receipt.json` - final source hashes, checks and exact blocked requirements.
+
+Only Progress and Evidence change in this packet against its frozen `3a6469a8e1e7119281b842640f069c6d0456ad44` input.
+The Windows report is the new routed Markdown file for the coordinator's final Index.
+No shared ABI change is requested.
+E-J1, E-J2 and E-J3 are implementation findings for coordinated correction.
+The full CBM journey and its `TestedVersions` update are incomplete.
+Payload-driven help, Skill, catalogue read and the two known WorkspaceShape captures wait for the coordinator's single final pass.
+No snapshot is regenerated.
+Nothing is staged or committed.
+
+### Grouped correction run
+
+The complete grouped dispatch is read. The current C# rules, Open Forge scopes and defining Tool records are reloaded.
+The execution capsule still uses owned native Windows fixtures, the production graph and only the assigned injectable hosts.
+The new private temporary directory's ACL is required by native CBM. No shared ancestor is edited and the native guard stays enabled.
+Real native execution stays separate from the injected confirmed-account proof.
+No production option, storage field, dependency or shared model changes.
+
+The prior E-only source hashes all match before preservation under `artifacts/task90-lane-e-grouped/prior-candidate/`.
+The complete prior evidence directory is copied to `prior-evidence/`.
+B patch hash is `27b3c7a09eb374d8e61f95b852cef21ff6315d0dafada8a727371c18b2c4cabc`.
+`git apply --check` passes and all seven B output hashes match.
+The C v2 manifest hash is `7a10709564a7c5108dd579b78e77b5f222a397cc7662e5a29d0de8fa66a37da6`.
+Exactly four v1-to-v2 rows differ. Each target matches its v1 bytes before replacement.
+The original 31 E files stay unchanged after those inputs.
+All B/C inputs are protected and excluded from E staging.
+No C production Root file changes. F-P1 stays with C and doesn't enter this graph.
+
+The grouped initial build uses actual prospective version `0.9.0-beta.19`, passes with zero warnings and errors and takes `00:02:35.57`.
+The manual host rebuild passes.
+The current ten-case ToolHelp class passes, including missing-ID execution without any host or filesystem effect.
+The CommandHelp class compiles with all exact prose/order assertions removed. Its 43 final Imprint captures stay pending.
+Both CLI Skill Tool references are byte-identical and now use fixed settings paths, named selector scope and native setup after exact restore.
+
+Real CBM installation passes in `D:/of-task90-e-final/journey-8c5e12856e/codebase-memory`.
+Only this new private task directory gets an ACL change. Native default discovery finds Codex.
+Its version, index and search work directly and over MCP. Archived memory is excluded. Native watcher defaults are read back unchanged.
+Real Update reuses verified `0.12.1` with zero downloads.
+Real `--yes` Remove is attempted and stops before effects with E-J4.
+A separate injected native-preview diagnostic also blocks on absent optional client bindings.
+The project stays byte-identical and the native binary and client entries stay present.
+
+The confirmed account path succeeds through the production Root operation in a separate inert fixture.
+It checks exact uninstall arguments and environment, live account confirmation, native-first order, project cleanup and an unchanged index sentinel.
+No native uninstaller or real persistent PATH/registry operation runs.
+The Windows report gives the source trace, exact artifact names and the remaining requirement.
+CBM tested metadata stays empty because the real Remove hasn't succeeded.
+
+The final solution build uses the same command given in the Windows report and actual `OpenForgeCliVersion=0.9.0-beta.19`.
+It returns 0 with zero warnings and errors in `00:02:03.61`.
+The actual Root `--version` output is `0.9.0-beta.19`. Release files are unchanged.
+The final manual launcher build returns 0.
+The final-source injected account proof runs in `D:/of-task90-e-final/proof-ab15bebde5` and returns 0.
+Its receipt labels the version probe and native effects as injected.
+All three recorded MCP PIDs are absent. Owned CBM daemon probes report no running daemon.
+Native daemon status uses exit 1 for that state. Stop returns 0 with nothing to stop.
+
+The focused final tests all use `--filter-class`, `--minimum-expected-tests`, `--fail-warns on`, `--fail-skips on`, `--no-ansi` and `--progress off`.
+Their exact commands are in the Windows report. The final artifacts under `artifacts/task90-lane-e-grouped/` are:
+
+| Class                               | Minimum | Passed | Failed | Skipped | Exit | Artifact                       |
+| ----------------------------------- | ------- | ------ | ------ | ------- | ---- | ------------------------------ |
+| `ToolHelpIntegrationTests`          | 10      | 10     | 0      | 0       | 0    | `test-help-final.log`          |
+| `ToolDocumentationIntegrationTests` | 3       | 3      | 0      | 0       | 0    | `test-documentation-final.log` |
+| `ToolJourneyTransitionTests`        | 2       | 2      | 0      | 0       | 0    | `test-transition-final.log`    |
+| `CodeGraphCatalogueTests`           | 13      | 13     | 0      | 0       | 0    | `test-codegraph-final.log`     |
+
+No CBM catalogue source or its 12-case class changes in this continuation.
+B's 66-case receipt and C's accepted evidence are consumed without rerunning peer classes.
+The CommandHelp class compiles. Its 43 payload captures aren't run or accepted.
+
+Both mandatory formatter commands finish on final source:
+
+| Command                           | Exit | Artifact                                                              |
+| --------------------------------- | ---- | --------------------------------------------------------------------- |
+| `npm run check:dotnet:whitespace` | 0    | `whitespace-final-recorded.log`, `whitespace-final-recorded.exit.txt` |
+| `npm run check:dotnet:style`      | 0    | `style-final-recorded.log`, `style-final-recorded.exit.txt`           |
+
+The nine-file Prettier check, production Markdown link checks, CLI Skill byte parity and Docusaurus build pass.
+The site build prints Node's localStorage experimental warning and generates static files.
+UTF-8, LF, no BOM and `git diff --check` pass for the E slice.
+Only Progress and Evidence change in this packet against the frozen input.
+The old branch is kept and the index is empty.
+The grouped input record has 58 paths, including 53 unchanged protected paths and five assigned overlaps.
+The E manifest has 33 paths, including one deletion and the two new injected-proof helper files.
+All 31 original candidate files and their prior evidence are kept in the grouped artifact archive.
+The final source and artifact hashes are in `artifacts/task90-lane-e-grouped/final-receipt.json`.
+The current defect list contains E-J4 only. No shared ABI change is proposed.
+No payload baseline is regenerated or accepted, and nothing is staged or committed.
+
+### C v3 input continuation
+
+The coordinator accepts the E-J1, E-J2, E-J3, I-R1 and I-R2 closures and assigns E-J4 to D in `r_9bcb4010c5bb`.
+This continuation copies frozen checked inputs and verifies their integration. It adds no architecture choice or mechanism.
+Existing BCL file copies and SHA-256 checks keep the update reversible through the exact before bytes.
+The requested managed Integration classes are the focused evidence. Native execution and full suites aren't part of this continuation.
+
+All 33 E path hashes match before work.
+Their complete bytes and deletion record are copied to `artifacts/task90-lane-e-c-v3/prior-candidate/`.
+Both earlier final and grouped artifact directories are copied to `prior-evidence/` in that same directory.
+The previous receipt SHA-256 is `54453150647e2f94c9016f4a9eace8ddb7fc4426cadbfa1e3007c5376f5763c7`.
+
+The C v3 manifest SHA-256 is `56bfd6530bead94bc852d5b46f28c437923f4760733172a9cb0de1fb34ca703f`.
+It has 36 paths. Exactly five differ from the applied 34-path v2 manifest.
+All 31 other v3 rows equal v2 and aren't copied.
+The three previously listed targets first match their v2 hashes.
+The previously unlisted tracked Framework reader matches core `885b17db3e56ceb6839ba23609e85a4380c75018`, SHA-256 `6c044a0198d532994486faa9e555773051fc37f14b818a85e6ead5112740b85f`.
+The new Integration reader test target is absent before copying.
+Every source and copied target matches its v3 hash.
+The exact five-path record is `artifacts/task90-lane-e-c-v3/input-corrections.json`.
+No Unit file or assigned wording overlap is copied.
+All 33 E hashes still match immediately after copying.
+
+The copied paths are the Framework reader, Root `ToolCompositionFactory`, `ToolWorkspaceCompositionIntegrationTests`, the new Integration `ToolWorkspaceObservationReaderTests` and C's command-composition receipt.
+All five stay protected and outside E staging.
+The combined input set now has 60 paths, including 55 protected paths and five assigned packet or wording overlaps.
+Only this packet's Progress and Evidence change in E's existing 33-path set.
+The other 32 E paths, catalogue tested metadata, help wording and public docs stay byte-identical to the grouped return.
+Earlier docs formatting, local links, Skill parity and site receipts are reused.
+No site rebuild, native Tool call, account preview, writer fix or payload acceptance runs.
+
+The current managed Release build passes with zero warnings and errors in `00:03:12.89`.
+Its command is:
+
+```powershell
+dotnet build OpenForge.Cli.slnx --configuration Release -p:OpenForgeCliVersion=0.9.0-beta.19 -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1
+```
+
+The build exit is 0 in `build.exit.txt`, with matching `build.log` under `artifacts/task90-lane-e-c-v3/`.
+The rebuilt Root `--version` returns exit 0 and `0.9.0-beta.19` in `version.txt` and `version.exit.txt`.
+The toolchain facts are in `dotnet-info.txt`.
+No release file changes.
+
+Only these three managed Integration classes run:
+
+```powershell
+dotnet artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.dll --filter-class OpenForge.Cli.IntegrationTests.Framework.Tools.Shared.Observation.ToolWorkspaceObservationReaderTests --minimum-expected-tests 11 --fail-warns on --fail-skips on --no-ansi --progress off
+dotnet artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.dll --filter-class OpenForge.Cli.IntegrationTests.Commands.Tool.ToolWorkspaceCompositionIntegrationTests --minimum-expected-tests 18 --fail-warns on --fail-skips on --no-ansi --progress off
+dotnet artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.dll --filter-class OpenForge.Cli.IntegrationTests.Commands.Tool.ToolHelpIntegrationTests --minimum-expected-tests 10 --fail-warns on --fail-skips on --no-ansi --progress off
+```
+
+All 39 cases pass. The current run artifacts are:
+
+| Class                                      | Minimum | Passed | Failed | Skipped | Exit | Artifact                                        |
+| ------------------------------------------ | ------- | ------ | ------ | ------- | ---- | ----------------------------------------------- |
+| `ToolWorkspaceObservationReaderTests`      | 11      | 11     | 0      | 0       | 0    | `reader.log`, `reader.exit.txt`                 |
+| `ToolWorkspaceCompositionIntegrationTests` | 18      | 18     | 0      | 0       | 0    | `workspace-root.log`, `workspace-root.exit.txt` |
+| `ToolHelpIntegrationTests`                 | 10      | 10     | 0      | 0       | 0    | `help.log`, `help.exit.txt`                     |
+
+Both required formatter checks use the final C# source:
+
+| Command                           | Exit | Artifact                                |
+| --------------------------------- | ---- | --------------------------------------- |
+| `npm run check:dotnet:whitespace` | 0    | `whitespace.log`, `whitespace.exit.txt` |
+| `npm run check:dotnet:style`      | 0    | `style.log`, `style.exit.txt`           |
+
+The packet's Prettier check, UTF-8, LF, no BOM and `git diff --check` pass.
+All earlier public docs, local-link and site evidence stays unchanged and isn't rerun.
+The current source checkpoint, input hashes, E-only paths and reused receipt hashes are in `artifacts/task90-lane-e-c-v3/receipt.json`.
+Its matching files are `source-manifest.json`, `input-manifest.json`, `e-file-manifest.json` and `document-checks.json`.
+The index is empty and the previous E branch stays unchanged.
+E-J4 is still the sole open journey finding. No D patch or catalogue metadata change enters this return.
+All 43 help captures and other payload work stay pending with the coordinator.
+Nothing is committed.
+
+### Final Remove recheck
+
+The coordinator accepts D's E-J4 correction. This continuation reuses the existing owned-home graph, native safety guard and production process, config, records and backup mechanisms.
+The only new E production change is tested-version metadata after successful real removal.
+The focused managed tests, actual owned-file deltas and injected account operation cover the changed limit.
+There is no new dependency, ABI, public option, storage setting or platform mechanism.
+
+All 33 E paths and all 60 current inputs match before work.
+Their complete source bytes and every prior evidence directory are copied under `artifacts/task90-lane-e-remove-final/prior-candidate/` and `prior-evidence/`.
+The prior checked receipt SHA-256 is `c663f4d4a8fb614205d8decfb2e7cbab2dfb6fd600f4a75facec09f7094cb1f4`.
+D patch SHA-256 is `eeb35af0156d5b8e0615cdc1896baa41ba216ae0d02d706276c64f4f888dae2c`.
+D source-manifest SHA-256 is `015bab6f4103ead84dc07242ae3aafb5120904dc8a0c8c277cd3c46bf62914c0`.
+`git apply --check --include=src/cli/**` passes, then the same include applies only source.
+All twelve C# output hashes match.
+No D packet or report is copied. None of its source paths overlaps E's bindings or wording.
+All earlier E and B/C bytes still match immediately after application.
+The final combined input record covers 72 paths, including 67 protected paths and five assigned overlaps.
+Only E's 35-path set is eligible for its later staging.
+
+The initial prospective graph and manual host build, then real `tool remove codebase-memory --yes --format json` completes in the existing private fixture.
+The native executable, client files, project, native settings and index match the earlier Update receipt before that call.
+Only activity and rendezvous data differ after earlier native control calls.
+The earlier successful Install, Status, direct, MCP and Update receipts stay valid and aren't repeated.
+
+The only changed file contents are project `.cbmignore`, `.agents/open-forge.json` and `.agents/open-forge.lock.json`.
+The original `.cbmignore` bytes return, and the Tool declaration and lock entry are removed.
+All native account files, executable copies, settings and the index keep their hashes.
+The 67-file non-log inventory has no new or missing files.
+The two existing native cache logs predate Remove and follow the earlier log exclusion policy.
+Nine real child calls run. One is native `--version` and eight are local Git backup queries.
+No native uninstall or uninstall dry run executes.
+The guarded process host stays unchanged.
+The result reports Description, skipped native removal, completed config and records and exactly one manual native uninstall vector.
+All 329 unchosen possible output templates stay conditional.
+Raw command, result, before/after hashes, process logs, inventory and verification are in the final artifact directory.
+
+The final graph repeats confirmed account removal at `D:/of-task90-e-final/proof-a3f7b72b63` with injected processes and downloads.
+Live plan and account choices precede preparation and native-first apply.
+Exactly one injected uninstall runs with the unchanged native arguments and empty environment overlay.
+Project cleanup restores its original bytes and the index sentinel stays unchanged.
+The proof returns 0 and records real native uninstall and persistent PATH/registry edits as false.
+Only after the real journey and injected proof pass does `CodebaseMemoryCatalogueEntry` add `CodebaseMemoryDefinitions.Version` to `TestedVersions`.
+Its matching catalogue assertion uses that same production definition.
+The user docs describe the actual completed Windows result.
+
+The final solution build uses the same prospective command shown in the Windows report and returns 0 with zero warnings and errors in `00:02:31.12`.
+The final manual host build returns 0. The actual Root version output is `0.9.0-beta.19`.
+Release files and package versions are unchanged.
+
+The exact eleven focused commands are in the Windows report and `test-commands.json`.
+Every command uses its qualified class, actual minimum count, strict warning/skip policy, no ANSI and progress off.
+The final managed population has these results:
+
+| Class                                        | Cases | Passed | Failed | Skipped | Exit | Log                 |
+| -------------------------------------------- | ----- | ------ | ------ | ------- | ---- | ------------------- |
+| `ToolWriteOperationTests`                    | 36    | 36     | 0      | 0       | 0    | `d-operation.log`   |
+| `ToolWriteSafetyTests`                       | 15    | 15     | 0      | 0       | 0    | `d-safety.log`      |
+| `ToolWriteRemovePlanningTests`               | 9     | 9      | 0      | 0       | 0    | `d-planning.log`    |
+| `ToolWriteDeferredRemovalTests`              | 11    | 11     | 0      | 0       | 0    | `d-application.log` |
+| `ToolCompositionInteractionIntegrationTests` | 7     | 5      | 2      | 0       | 2    | `c-interaction.log` |
+| `ToolWorkspaceCompositionIntegrationTests`   | 18    | 18     | 0      | 0       | 0    | `c-workspace.log`   |
+| `ToolWorkspaceObservationReaderTests`        | 11    | 11     | 0      | 0       | 0    | `c-reader.log`      |
+| `ToolHelpIntegrationTests`                   | 10    | 10     | 0      | 0       | 0    | `e-help.log`        |
+| `ToolJourneyTransitionTests`                 | 2     | 2      | 0      | 0       | 0    | `e-transition.log`  |
+| `CodebaseMemoryCatalogueTests`               | 12    | 12     | 0      | 0       | 0    | `e-catalogue.log`   |
+| `ToolDocumentationIntegrationTests`          | 3     | 3      | 0      | 0       | 0    | `e-docs.log`        |
+
+The first CBM command incorrectly used a minimum of 15. It ran all 12 cases successfully but returned policy exit 9.
+The corrected minimum is 12 and its repeat returns 0.
+The older 15-case subtotal included 12 CBM cases and three catalogue-factory cases.
+No test assertion or source changes to reduce the population. The first log and exit receipt are kept separately.
+The final population has 134 cases, 132 passes, two snapshot mismatches and zero skips.
+
+Both C account-choice cases pass their semantic assertions before Imprint.
+Their only differences are the unresolved conditional output template, absent pre-confirmation backup target and manual command purpose.
+The received `approved.json` and `declined.json` captures are copied under `pending-c-account-choice/` for the coordinator.
+Their protected expected files stay byte-identical.
+No capture is accepted. The 43 shipped-help captures and other payload work stay pending too.
+
+Both mandatory checks finish on final C# source:
+
+| Command                           | Exit | Artifacts                               |
+| --------------------------------- | ---- | --------------------------------------- |
+| `npm run check:dotnet:whitespace` | 0    | `whitespace.log`, `whitespace.exit.txt` |
+| `npm run check:dotnet:style`      | 0    | `style.log`, `style.exit.txt`           |
+
+The nine-file Prettier check, production local-link and Skill parity tests, LF and `git diff --check` pass.
+The Docusaurus build returns 0 and generates static files with the same Node localStorage experimental warning.
+No unrelated class, full suite or native build runs.
+Final input identity, E-only paths, source hashes, commands, exact exits and pending captures are in `artifacts/task90-lane-e-remove-final/final-receipt.json`.
+Only Progress and Evidence change in this packet against its frozen input.
+The old branch and all prior evidence stay intact. The index is empty and nothing is committed.
 
 ## Divergences
 

@@ -2,7 +2,7 @@ namespace OpenForge.Cli.Core.Framework.Tools.Catalogue.Shared.Recipes;
 
 internal static class ToolCatalogueDefinitions
 {
-    // Provisional first shipping build supplied by the Task 90 coordinator.
+    // First shipping build approved by the maintainer on 14 November 2026.
     internal const string MinimumOpenForgeVersion = "0.9.0-beta.19";
     internal const string NpmChannelId = "npm";
     internal const string GitHubChannelId = "github-release";

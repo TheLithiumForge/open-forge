@@ -25,35 +25,236 @@ Extension use, see [Extensions](extensions.md).
 
 The primary content locations are the selected context folder and native Skills at `.agents/skills`. Examples with `.agents` as the context folder use the default layout. For a custom folder, use the actual workspace path with `./`, or keep using short source IDs. See [Context folder](#context-folder).
 
-## Planned tools
+## Tools
 
-Tool setup is a planned command group that installs published tools and adds configuration.
-The tools keep their native installers, MCP entries, hooks, permissions, blocks and Skills.
+Tool setup installs published developer tools, runs their native setup and records Open Forge's project additions.
+For example, you can install CodeGraph in one project, commit its exact lock and restore that version on a teammate's machine.
+The profiles require Open Forge `0.9.0-beta.19` or newer.
 
-Status: Planned commands. Implementation follows the round-2 spec.
+Start by reading the entry, then preview and apply the install:
 
-The planned commands are:
+```sh
+open-forge tool list
+open-forge tool inspect codegraph
+open-forge tool install codegraph@1.6.2 --channel github-release --dry-run
+open-forge tool install codegraph@1.6.2 --channel github-release --yes
+open-forge tool status codegraph
+```
 
-| Command                                  | Job                                                                 |
-| ---------------------------------------- | ------------------------------------------------------------------- |
-| `open-forge tool list`                   | List catalogue entries                                              |
-| `open-forge tool inspect <id>`           | Show channels, requirements, native writes, additions and telemetry |
-| `open-forge tool status [id]`            | Check exact versions, additions and PATH readiness                  |
-| `open-forge tool install [id[@version]]` | Run native setup and add configuration                              |
-| `open-forge tool update [id[@version]]`  | Select latest support or an explicit version                        |
-| `open-forge tool remove <id>`            | Remove project additions and offer native uninstall                 |
+The install resolves `1.6.2`, runs native local Claude and Codex setup and records the project additions.
+Status compares the installed version with the project lock.
+Read [native effects](#tool-native-effects) before applying setup to an account shared by several projects.
+For a walkthrough from installation to direct tool use, see [Tool setup](https://thelithiumforge.github.io/open-forge/docs/cli/tools).
 
-Bare Install restores exact lock versions.
-A bare name selects latest support. For example, `codegraph@1.6` selects that supported minor range.
-Writers have planned `--yes`, `--dry-run` and path-permission options.
-Install and Update also have `--channel` for a named spec.
-`--yes` accepts the shown plan and downloads. It never edits PATH or deletes shared files unattended.
-Codebase Memory account uninstall needs live confirmation naming its binary and all agent entries.
-With `--yes` or no terminal, Remove only removes Open Forge's project additions and prints the native uninstall command.
-Project Remove keeps account-wide settings such as telemetry off and prints their manual change commands.
-Dry-run says when it needs network access to resolve latest.
-CodeGraph `1.6.x` and Codebase Memory `0.12.x` are the V1 targets.
-Full help and examples land after implementation.
+### Tool commands
+
+The six commands are:
+
+| Command                                  | Job                                                               |
+| ---------------------------------------- | ----------------------------------------------------------------- |
+| `open-forge tool list`                   | List catalogue entries and project declarations                   |
+| `open-forge tool inspect <id>`           | Show channels, requirements, native outputs and machine facts     |
+| `open-forge tool status [id]`            | Check exact versions, project additions, native settings and PATH |
+| `open-forge tool install [id[@version]]` | Install and run native setup, then add project configuration      |
+| `open-forge tool update [id[@version]]`  | Update declared tools within supported versions                   |
+| `open-forge tool remove <id>`            | Remove project additions and offer native uninstall               |
+
+List, Inspect and Status change no files.
+Inspect can report an unavailable installation before you install it.
+Status without an ID checks declared or locked tools.
+Install, Update and Remove require a workspace directory.
+
+### Tool selectors
+
+Install and Update take these selectors:
+
+| Selector          | Result                          |
+| ----------------- | ------------------------------- |
+| `codegraph`       | Latest supported exact version  |
+| `codegraph@1.6`   | Latest supported patch in `1.6` |
+| `codegraph@1.6.2` | That exact stable SemVer        |
+
+The initial profiles cover CodeGraph `1.6.x` from `1.6.2` and Codebase Memory `0.12.x` from `0.12.1`.
+CLI selectors don't accept `1.6.x`, dist-tags or npm range expressions.
+The `.x` form belongs to the supported range stored in settings.
+
+Without an ID, Install restores exact lock versions.
+If a declaration has no lock, it resolves within the declared range.
+Without an ID, Update chooses newest support for declared tools.
+A named Update requires a declaration or lock.
+
+Install and Update accept `--channel <channel>` only with a named selector.
+Use Inspect to see the advertised channels.
+CodeGraph advertises `npm` and `github-release`.
+Codebase Memory advertises `github-release`.
+Without an override, Open Forge tries a supported existing installation, a compatible package manager, private Node for an npm tool or a verified release archive, in that order.
+The lock's recorded channel doesn't force a teammate to use that channel.
+
+### Tool options
+
+Install, Update and Remove share these options:
+
+| Option                | Effect                                       |
+| --------------------- | -------------------------------------------- |
+| `--dry-run`           | Check and show the plan without applying it  |
+| `--yes`               | Accept the shown plan and downloads          |
+| `--allow-path <path>` | Grant the shown project path before applying |
+
+A dry run shows exact versions where known, commands, downloads, files, backups and additions.
+It uses the declared native preview when the tool is already available.
+Latest-version lookup can use the network, and the result says when it does.
+
+PATH edits and shared file deletion need separate live choices.
+`--yes` leaves those actions unchosen.
+For Codebase Memory, it also skips account-wide uninstall.
+A command without `--yes` needs a terminal to accept its main plan.
+The normal global options, including `--workspace`, `--format json` and `--output`, apply.
+
+### Tool native effects
+
+The upstream installer controls native MCP entries, hooks, permissions, instruction blocks and Skills.
+Open Forge keeps that setup and adds only the changes listed below.
+Inspect and dry run show possible native outputs before setup.
+Actual files depend on native client discovery and existing configuration.
+
+CodeGraph runs `install --yes --location local --target claude,codex`.
+It configures local Claude MCP, its prompt hook and permissions and local Codex MCP and instructions.
+Codex needs to trust the project before it enables project configuration.
+Native setup doesn't build the project index.
+Run `codegraph init` from the project to build it.
+
+Open Forge turns CodeGraph's stored account telemetry off through its native command.
+That command deletes the upstream identity and unsent queues.
+Status reports stored state separately from inherited `DO_NOT_TRACK` and `CODEGRAPH_TELEMETRY` overrides.
+Version detection sets `CODEGRAPH_NO_DOWNLOAD=1`.
+Open Forge unions the archive exclude into `codegraph.json` and adds a marked `.gitignore` block only when effective Git rules don't already cover the index.
+CodeGraph's native `.codegraph/.gitignore` is a separate file written when it initializes the index.
+
+Codebase Memory runs `install --yes --skip-binary --dir <Open Forge bin>` after verified placement.
+It uses default account-wide client discovery.
+Its native setup can add global MCP entries, Skills, tiered agents, hooks and instructions for discovered clients.
+Its watcher defaults stay `auto_index=false`, `auto_watch=true` and `watcher_enabled=true`.
+Open Forge adds the archive exclude in a marked `.cbmignore` block.
+
+Both archive excludes follow the workspace's context folder.
+For the default `.agents`, they exclude `.agents/memory/archived/`.
+Open Forge adds no per-tool usage Skill, guidance line or replacement MCP entry.
+
+### Tool paths
+
+Open Forge places launchers and native executables in `~/.open-forge/bin`, or `%USERPROFILE%\.open-forge\bin` on Windows.
+Tool files and private runtimes live beside that folder under `tools` and `runtimes`.
+Private Node stays out of `bin`.
+CodeGraph's npm wrapper needs Node 20 or newer.
+The release archive includes its runtime.
+
+Status and Inspect show the Open Forge bin and any selected manager's global-bin PATH readiness.
+If bin is missing, choose "Add it for me" or "I'll do it myself" in a terminal.
+For manual setup, follow the exact PATH instructions printed by the command.
+Restart terminals and agent apps after changing PATH, then run Status again.
+
+The installed tools run directly:
+
+```sh
+codegraph --version
+codegraph init
+codegraph query greeting
+codebase-memory-mcp --version
+```
+
+CodeGraph `1.6.2` reports `1.6.2` and `init` builds the index in the current project.
+Native Windows MCP hosts differ in how they launch `.cmd` files.
+Open Forge keeps the upstream MCP configuration unchanged.
+
+### Tool records
+
+Commit `.agents/open-forge.json` and `.agents/open-forge.lock.json`.
+These paths stay fixed when you use a custom context root.
+Settings declare supported ranges.
+The lock records exact versions, channels and additive receipts.
+A teammate runs this command to restore those exact versions with normal channel choice:
+
+```sh
+open-forge tool install --dry-run
+open-forge tool install --yes
+```
+
+Machine paths, previous native account settings and PATH history stay in per-user state.
+Tool commands add no lease, journal or recovery bundle under `.open-forge-state/`.
+Run tool operations one at a time.
+
+### Tool removal
+
+Preview project removal, then apply it:
+
+```sh
+open-forge tool remove codegraph --dry-run
+open-forge tool remove codegraph --yes
+```
+
+CodeGraph's native uninstall removes its local Claude and Codex setup.
+Its CLI and project index stay available.
+Open Forge removes its recorded archive union and conditional ignore block while keeping unrelated content.
+
+Codebase Memory's native uninstall removes the account binary and all agent entries.
+It can also edit persistent user PATH on Windows.
+Only a live interactive confirmation naming those account effects permits it.
+With `--yes`, no terminal or a declined account confirmation, Remove skips native uninstall, removes only Open Forge's project additions and prints the native command:
+
+```sh
+open-forge tool remove codebase-memory --yes --format json
+```
+
+The checked Windows `0.12.1` journey returns `status: completed` and exit 0.
+The native executable, Codex setup, native settings and index stay unchanged.
+The project `.cbmignore` returns to its original content.
+
+Every project Remove keeps account-wide settings, including CodeGraph telemetry off.
+The result reports those settings and prints their manual change commands, such as `codegraph telemetry on`.
+These kept effects alone don't make project removal incomplete.
+Shared binary deletion and recorded PATH cleanup need their own live choices.
+
+Git keeps unchanged tracked originals.
+Existing uncommitted files can need sibling backups.
+On a conflict or partial failure, read the reported completed steps and backups before retrying.
+Open Forge doesn't roll changes back automatically.
+
+### Tool JSON
+
+Tool results use schema 3 with `data.tools`.
+Read `status`, findings and the exit code before using the data.
+For example, this command returns the installed CodeGraph facts:
+
+```sh
+open-forge tool status codegraph --format json
+```
+
+These selected fields come from the successful Windows journey:
+
+```json
+{
+  "schemaVersion": 3,
+  "command": "tool status",
+  "status": "completed",
+  "data": {
+    "tools": [
+      {
+        "id": "codegraph",
+        "lockedVersion": "1.6.2",
+        "detectedVersion": "1.6.2",
+        "channel": "github-release",
+        "state": "current",
+        "machineState": "available",
+        "nativeRecordState": "available",
+        "binReadiness": "ready"
+      }
+    ]
+  }
+}
+```
+
+Write results also include the plan, whether it was a preview and completed or unfinished steps.
+They report possible native outputs separately from operation outcomes.
 
 ## Command index
 
@@ -1328,7 +1529,7 @@ a trailing slash needs a manual link edit, and Repair never suggests a file in
 its place. Existing local files keep their normal checks. Web URLs stay unchecked.
 
 Index encodes local link paths, such as `old%20guide.md`.
-Doctor also accepts readable paths: `<old guide.md>` and `café(one).md`.
+Doctor also accepts readable paths: `<old guide.md>` and `cafÃ©(one).md`.
 Escape an entity-opening ampersand as `%26`: write `entity&amp;.md` as
 `entity%26amp;.md`. Keep `#`, `%` and `?` in names escaped.
 Repair writes Index's form when

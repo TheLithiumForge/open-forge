@@ -59,7 +59,7 @@ internal static class CodeGraphCatalogueEntry
                 MinimumToolVersion = CodeGraphDefinitions.Version,
                 MinimumOpenForgeVersion = ToolCatalogueDefinitions.MinimumOpenForgeVersion,
                 NativeHomePolicy = ToolNativeHomePolicy.Node,
-                TestedVersions = ImmutableArray<string>.Empty,
+                TestedVersions = ImmutableArray.Create(CodeGraphDefinitions.Version),
                 Setup = CodeGraphNativeSetup.Create(uninstall: false),
                 Uninstall = CodeGraphNativeSetup.Create(uninstall: true),
                 Changes = Changes(),
