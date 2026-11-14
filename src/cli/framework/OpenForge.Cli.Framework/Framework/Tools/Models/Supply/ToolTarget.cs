@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using OpenForge.Cli.Core.Framework.Tools.Models.Execution;
 
 namespace OpenForge.Cli.Core.Framework.Tools.Models.Supply;
 
@@ -14,4 +15,7 @@ internal sealed record ToolTarget
     public required ToolDependencyLock? Lock { get; init; }
 
     public required string? Reason { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ToolLauncher? Launcher { get; init; }
 }

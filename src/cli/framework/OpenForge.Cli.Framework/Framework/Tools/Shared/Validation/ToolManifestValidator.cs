@@ -1,4 +1,6 @@
 using System.Text.Json;
+using OpenForge.Cli.Core.Framework.Tools.Models.Registration;
+using OpenForge.Cli.Core.Framework.Tools.Models.Execution;
 using System.Diagnostics.CodeAnalysis;
 using OpenForge.Cli.Core.Framework.Tools.Models.Manifest;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Supply;
@@ -15,6 +17,7 @@ internal static class ToolManifestValidator
         Require(!string.IsNullOrWhiteSpace(manifest.Name) && !string.IsNullOrWhiteSpace(manifest.License), "name and license are required");
         Require(Https(manifest.Source.Repository) && !string.IsNullOrWhiteSpace(manifest.Source.Tag), "invalid source repository or tag");
         Choice(manifest.Admission, "admission", "candidate", "enabled", "blocked");
+        Choice(manifest.Origin, "origin", ToolOrigin.FirstParty, ToolOrigin.ThirdParty);
         Require(manifest.Source.Commit is { Length: 40 } commit && commit.All(IsLowerHex)
             || manifest.Admission == "blocked" && manifest.Source.Commit is null, "source commit must contain 40 lowercase hex characters");
         Require(ToolVocabulary.Adapters.Contains(manifest.Adapter.Id) && manifest.Adapter.Revision > 0, "unknown adapter or revision");
@@ -95,7 +98,7 @@ internal static class ToolManifestValidator
         Choice(process.Telemetry, "telemetry", "off", "absent", "unverified");
         Choice(process.UpdateChecks, "update checks", "off", "absent", "unverified");
         Choice(process.Daemon, "daemon", "off", "session-required", "unverified");
-        Require(process.Watcher == "off" && process.AutoIndex == "off" && process.Hooks == "blocked", "watching, automatic indexing and hooks must be disabled");
+        Require(process.Watcher == "off" && process.AutoIndex == "off" && process.Hooks == "blocked", "watching, automatic indexing and Git hooks must be disabled");
         Choice(process.Consent, "process consent", "none", "session-daemon");
         Choice(process.Coordination, "coordination", "worktree", "account-build-cache");
         Environment(process.Environment);
@@ -109,9 +112,16 @@ internal static class ToolManifestValidator
         Distinct(manifest.Mcp.Args, "MCP arguments");
         Environment(manifest.Mcp.Environment);
         Require(manifest.Mcp.Hosts.Keys.ToHashSet(StringComparer.Ordinal).SetEquals(ToolVocabulary.Hosts), "both host templates are required");
-        Require(manifest.Mcp.Hosts["claude-code"].Path == ".mcp.json" && manifest.Mcp.Hosts["codex"].Path == ".codex/config.toml", "host templates cannot widen destinations");
-        Require(manifest.Mcp.Hosts["claude-code"].Selector == $"/mcpServers/open-forge-{manifest.Id}"
-            && manifest.Mcp.Hosts["codex"].Selector == $"mcp_servers.open-forge-{manifest.Id}", "host selectors must identify the tool member");
+        var claude = manifest.Mcp.Hosts[ToolVocabulary.ClaudeCodeHost];
+        var codex = manifest.Mcp.Hosts[ToolVocabulary.CodexHost];
+        Require(claude is not null && codex is not null, "host observations cannot be null");
+        Require(claude.Path == ToolHostTemplate.ClaudeFile && codex.Path == ToolHostTemplate.CodexFile, "host observations cannot widen destinations");
+        Require(claude.Selector.StartsWith(ToolHostTemplate.ClaudeSelectorPrefix, StringComparison.Ordinal)
+            && claude.Selector.Length > ToolHostTemplate.ClaudeSelectorPrefix.Length
+            && !claude.Selector[ToolHostTemplate.ClaudeSelectorPrefix.Length..].Contains('/'), "Claude observation must select one MCP server");
+        Require(codex.Selector.StartsWith(ToolHostTemplate.CodexSelectorPrefix, StringComparison.Ordinal)
+            && codex.Selector.Length > ToolHostTemplate.CodexSelectorPrefix.Length, "Codex observation must select one MCP table");
+        Require(!claude.Selector.Any(char.IsControl) && !codex.Selector.Any(char.IsControl), "host selectors cannot contain control characters");
     }
 
     internal static bool Https(string value) => Uri.TryCreate(value, UriKind.Absolute, out var uri)

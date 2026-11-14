@@ -17,14 +17,14 @@ The [shared operation contract](../shared-operation-contract.md#workspace-layout
 
 A workspace has one main root, the context folder. Its default is `.agents`. A custom root may be nested, such as `docs/forge`.
 
-| Content | Location |
-| --- | --- |
+| Content                                     | Location                                                                                |
+| ------------------------------------------- | --------------------------------------------------------------------------------------- |
 | Loader, human guide and ordinary categories | `<mainRoot>/loader.md`, `<mainRoot>/README.md` and category folders below the main root |
-| Native Skills and their catalogues | `.agents/skills`, even with a custom root |
-| Authored settings | `.agents/open-forge.json` |
-| Generated ownership | `.agents/open-forge.lock.json` |
-| Host instructions | Workspace-root `AGENTS.md` and `CLAUDE.md` |
-| Mutation lock and new recovery bundles | Workspace-root `.open-forge-state/` |
+| Native Skills and their catalogues          | `.agents/skills`, even with a custom root                                               |
+| Authored settings                           | `.agents/open-forge.json`                                                               |
+| Generated ownership                         | `.agents/open-forge.lock.json`                                                          |
+| Host instructions                           | Workspace-root `AGENTS.md` and `CLAUDE.md`                                              |
+| Mutation lock and new recovery bundles      | Workspace-root `.open-forge-state/`                                                     |
 
 The host sections point to the selected loader. `CLAUDE.md` retains its `@AGENTS.md` bridge. The custom loader can list the native Skills catalogue using a relative link. A competing `skills` category inside a custom root is invalid. An absent native Skills folder is optional, while an inaccessible or unsafe existing folder is an observation failure.
 
@@ -32,7 +32,7 @@ The host sections point to the selected loader. `CLAUDE.md` retains its `@AGENTS
 
 ## Settings v4
 
-Tool settings, lock receipts, native Skills, `.mcp.json`, `.codex/config.toml` and `.open-forge-state/` keep their fixed paths when `mainRoot` changes. Tool code roots are separate contained workspace roots. CBM's future V1 adapter accepts only `.`. The [external-tools design](external-tools.md#workspace-records) defines settings v6 and lock v2 without relocating controls or changing loader behavior.
+Tool settings, lock receipts, native Skills, `.mcp.json`, `.codex/config.toml` and `.open-forge-state/` keep their fixed paths when `mainRoot` changes. Tool code roots are separate contained workspace roots. Codebase Memory is outside V1. Its former root restriction stays research in maintenance. The [external-tools design](external-tools.md#workspace-records) defines settings v6 and lock v2 without relocating controls or changing loader behavior.
 
 The optional `mainRoot` string introduced in settings schema v4 names the canonical workspace-relative context folder. Absence means `.agents`. An absent default value is never inserted. Unrelated rewrites preserve existing schema declarations, unknown values and property order. New settings files and explicit custom-root changes declare the current settings version. Published schemas v1 through v4 remain unchanged, and CLI JSON results remain schema 3.
 

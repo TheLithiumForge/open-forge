@@ -18,10 +18,7 @@
     },
     "frontmatter": {
       "type": "string",
-      "enum": [
-        "root",
-        "scoped"
-      ],
+      "enum": ["root", "scoped"],
       "default": "scoped",
       "description": "Selects where Open Forge writes metadata: at the frontmatter root or under open-forge. Both forms are always read. A missing value means scoped."
     },
@@ -144,10 +141,7 @@
       "additionalProperties": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "version",
-          "roles"
-        ],
+        "required": ["version", "roles"],
         "properties": {
           "version": {
             "type": "string",
@@ -157,19 +151,14 @@
             "type": "array",
             "uniqueItems": true,
             "items": {
-              "enum": [
-                "code-navigation"
-              ]
+              "enum": ["code-navigation"]
             }
           },
           "hosts": {
             "type": "array",
             "uniqueItems": true,
             "items": {
-              "enum": [
-                "claude-code",
-                "codex"
-              ]
+              "enum": ["claude-code", "codex"]
             }
           },
           "codeRoot": {
@@ -180,6 +169,22 @@
             "type": "boolean",
             "default": false,
             "description": "Desired telemetry choice. Omission means off. Tool configuration applies the choice."
+          },
+          "components": {
+            "anyOf": [
+              {
+                "type": "object",
+                "propertyNames": {
+                  "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"
+                },
+                "additionalProperties": {
+                  "type": "boolean"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         }
       }
@@ -194,65 +199,31 @@
   "examples": [
     {
       "schemaVersion": 5,
-      "allowInstallPaths": [
-        "docs/agents",
-        "tools/agent-notes.md"
-      ],
-      "removedCategories": [
-        "skills"
-      ],
-      "removedFiles": [
-        ".agents/patterns/_patterns.md",
-        "AGENTS.md"
-      ],
-      "removedDirectories": [
-        "docs/obsolete"
-      ],
-      "removedExtensions": [
-        "planning"
-      ],
-      "removedLibraries": [
-        "team-knowledge"
-      ],
-      "ignoreLinksFrom": [
-        ".agents/memory/archived"
-      ],
+      "allowInstallPaths": ["docs/agents", "tools/agent-notes.md"],
+      "removedCategories": ["skills"],
+      "removedFiles": [".agents/patterns/_patterns.md", "AGENTS.md"],
+      "removedDirectories": ["docs/obsolete"],
+      "removedExtensions": ["planning"],
+      "removedLibraries": ["team-knowledge"],
+      "ignoreLinksFrom": [".agents/memory/archived"],
       "ignoreLinksTo": [],
-      "outsideRoutes": [
-        "docs/team"
-      ],
-      "roots": [
-        "CONTRIBUTING.md",
-        ".cursor/rules/testing.mdc",
-        "docs/team/_team.md"
-      ]
+      "outsideRoutes": ["docs/team"],
+      "roots": ["CONTRIBUTING.md", ".cursor/rules/testing.mdc", "docs/team/_team.md"]
     }
   ],
   "$defs": {
     "toolCommandSummary": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "action",
-        "host",
-        "state",
-        "exitCode"
-      ],
+      "required": ["action", "host", "state", "exitCode"],
       "properties": {
         "action": {
-          "enum": [
-            "install",
-            "uninstall",
-            "index-cleanup"
-          ]
+          "enum": ["install", "uninstall", "index-cleanup", "activate", "deactivate", "telemetry-on", "telemetry-off"]
         },
         "host": {
           "anyOf": [
             {
-              "enum": [
-                "claude-code",
-                "codex"
-              ]
+              "enum": ["claude-code", "codex"]
             },
             {
               "type": "null"
@@ -260,13 +231,7 @@
           ]
         },
         "state": {
-          "enum": [
-            "planned",
-            "started",
-            "exited",
-            "failed",
-            "interrupted"
-          ]
+          "enum": ["planned", "started", "exited", "failed", "interrupted"]
         },
         "exitCode": {
           "anyOf": [
@@ -283,29 +248,13 @@
     "toolRunSummary": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "action",
-        "state",
-        "commands"
-      ],
+      "required": ["action", "state", "commands"],
       "properties": {
         "action": {
-          "enum": [
-            "install",
-            "configure",
-            "update",
-            "remove",
-            "choose"
-          ]
+          "enum": ["install", "configure", "update", "remove", "choose"]
         },
         "state": {
-          "enum": [
-            "planned",
-            "started",
-            "exited",
-            "failed",
-            "interrupted"
-          ]
+          "enum": ["planned", "started", "exited", "failed", "interrupted"]
         },
         "commands": {
           "type": "array",

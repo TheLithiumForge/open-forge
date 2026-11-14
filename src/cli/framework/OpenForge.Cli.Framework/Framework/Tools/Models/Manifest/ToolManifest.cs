@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
 using OpenForge.Cli.Core.Framework.Tools.Models.Lifecycle;
 using OpenForge.Cli.Core.Framework.Tools.Models.Execution;
 
+using OpenForge.Cli.Core.Framework.Tools.Models.Registration;
+
 namespace OpenForge.Cli.Core.Framework.Tools.Models.Manifest;
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
@@ -18,6 +20,8 @@ internal sealed record ToolManifest
     public required string Version { get; init; }
 
     public required string License { get; init; }
+
+    public required string Origin { get; init; }
 
     public required ToolSource Source { get; init; }
 
@@ -53,4 +57,7 @@ internal sealed record ToolManifest
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public ToolLifecycle? Lifecycle { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ToolRegistration? Registration { get; init; }
 }

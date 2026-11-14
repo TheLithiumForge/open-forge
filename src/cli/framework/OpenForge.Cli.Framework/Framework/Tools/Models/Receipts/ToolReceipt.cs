@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 
+using OpenForge.Cli.Core.Framework.Tools.Models.Registration;
+
 namespace OpenForge.Cli.Core.Framework.Tools.Models.Receipts;
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
@@ -20,4 +22,10 @@ internal sealed record ToolReceipt
     public required Dictionary<string, string> NativeProjects { get; init; }
     public string[] IgnorePaths { get; init; } = [];
     public bool Telemetry { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Dictionary<string, bool>? Components { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ToolRewriteReceipt[]? Rewrites { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ToolGuidanceReceipt[]? Guidance { get; init; }
 }

@@ -35,6 +35,9 @@ internal static class ToolReadIssueCodes
         ToolReadIssueCode.ReadUnavailable => "read-unavailable",
         ToolReadIssueCode.BackupPresent => "backup-present",
         ToolReadIssueCode.BackupUnavailable => "backup-unavailable",
+        ToolReadIssueCode.DeclaredToolMissing => "declared-tool-missing",
+        ToolReadIssueCode.EntryRewriteDrift => "entry-rewrite-drift",
+        ToolReadIssueCode.RoleGuidanceDrift => "role-guidance-drift",
         _ => throw new ArgumentOutOfRangeException(nameof(code)),
     };
 }

@@ -180,10 +180,22 @@ The current implementation still lacks Tool Run, its fast verified dispatch and 
 
 Done: Rebase onto `75f6677ad` is complete. The checkpoint index keeps Comment Links and Tool Command. The Repair prose conflict keeps encoded relinks, weak evidence labels and Tool backup restoration. Generated values were refreshed from fresh output. The default-layout fixture comes from an isolated install with all account stores redirected. It contains 23 files. Status accepts 56 refreshed captures for payload measurements and the added CLI Skill Tool reference. Tool help accepts three captures for the final Run, registration, consent and removal wording.
 
-Now: The specification and contracts record the final decisions with issue history. Runtime command work stays pending. The shared source contract increment follows this documentation checkpoint. No Tool writer or Tool Run binding is added in this step.
+Now: The specification and contracts record the final decisions with issue history. Runtime command work stays pending. The shared source contract increment is complete. No Tool writer or Tool Run binding is added in this step.
 
 Next: Finish the shared model and interface increment, then hand off Dispatch, Registration and Writers as described in the Tool lane contracts. Concrete CodeGraph definitions and adapters follow on their separate branch. Codebase Memory has no V1 definition, Skill or public tool page. Private Node preparation waits for the maintainer. Add no help pointer.
 
 Blocker: None for the narrowed step. Full managed and Native AOT gates belong to CI. No push is authorized.
 
 The fresh Release Integration and EndToEnd builds pass without warnings or errors. Focused Integration verification passes 22 cases, with zero skips. This includes the five former snapshot failures, the unaffected outside and included-file captures, Tool backup Repair and two encoded Repair relink cases. Both published default-layout compatibility cases pass. Evidence is under `artifacts/tool-command/narrow-*`. The writing review closes R24-R33. Both required format checks pass. The documentation site build passes with the existing Node localStorage warning. Index preview has zero effects and findings. Changed relative link destinations resolve.
+
+## Shared contract handoff
+
+Done: The shared source contracts define origins, four rewrite forms, optional components, role-line planning and observation, launcher and file-stamp bindings, component and rewrite receipts, all five writer requests and results, Run requests and resolution, process-dispatch capability and finding codes. The unreleased schemas describe these additions. Passive host selectors accept upstream entry names. Git hooks and optional agent hooks have separate meanings. The newer V1 scope replaces the old twelve-journey distribution requirement with six CodeGraph journeys.
+
+Now: The narrowed rebase, specification and shared-contract step is complete. Source and prose review findings R12-R14 and R24-R33 are closed. No Tool Run or writer binding or handler was implemented. No managed-block help pointer was added. The production catalogue remains empty.
+
+Next: Dispatch implements the Run resolver, parser, raw host and missing-tool offer. Registration implements exact entry changes, optional-component removal, passive drift checks, origin projections and conditional managed role lines. Writers implement the five operations, consume the declared activation and telemetry calls and launcher prefixes, and bind consent, recovery, ignores, exclusions and content effects. All lanes use the shared source contracts and the Tool lane contracts document. A test-only second provider supplies Choose switch evidence. General private Node preparation waits for the maintainer.
+
+Blocker: None for this step. CI owns complete managed and Native AOT qualification. Nothing was pushed.
+
+The Release Unit and Integration builds pass with zero warnings and errors. Focused Unit verification passes 32 cases. Focused Integration verification passes 11 cases. Both published default-layout compatibility cases pass again. There are zero skips. The fixture is regenerated again from the current source and is byte-for-byte unchanged from the documentation commit. Six Tool Inspect captures were refreshed because their only change is the required origin field. Both required format checks pass after trimming trailing whitespace in four new result records. Index has zero effects and findings. The synthetic manifest passes the local JSON Schema check. No test flake was observed. Evidence is under `artifacts/tool-command/shared-contract-*`.

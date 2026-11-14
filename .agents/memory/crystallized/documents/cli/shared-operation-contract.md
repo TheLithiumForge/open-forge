@@ -1004,22 +1004,22 @@ Interactive apply separates artifact consent, daemon consent, destination grants
 
 Every single-tool writer gives these `data` fields. Bare Install adds an ordinal `tools` array of per-pin results and reports aggregate status using the same precedence:
 
-| Field          | Meaning                                                     |
-| -------------- | ----------------------------------------------------------- |
-| `mode`         | `preview` or `apply`                                        |
-| `id`           | Exact tool ID, or `none` when clearing a role               |
-| `role`         | Requested role for Choose, otherwise null                   |
-| `pin`          | Exact applicable pin, otherwise null                        |
-| `plan`         | Ordered proposed changes and checks                         |
-| `permissions`  | Destination decisions and proposed saved grants             |
-| `consents`     | Exact descriptors, requirement, scope and decision          |
-| `verification` | Checks and their results                                    |
-| `remaining`    | Every unfinished requested part                             |
-| `instructions` | Resolved external command, argument and environment records |
+| Field          | Meaning                                                      |
+| -------------- | ------------------------------------------------------------ |
+| `mode`         | `preview` or `apply`                                         |
+| `id`           | Exact tool ID, `none` when clearing or null for bare Install |
+| `role`         | Requested role for Choose, otherwise null                    |
+| `pin`          | Exact applicable pin, otherwise null                         |
+| `plan`         | Ordered proposed changes and checks                          |
+| `permissions`  | Destination decisions and proposed saved grants              |
+| `consents`     | Exact descriptors, requirement, scope and decision           |
+| `verification` | Checks and their results                                     |
+| `remaining`    | Every unfinished requested part                              |
+| `instructions` | Resolved external command, argument and environment records  |
 
 Plan records contain `kind`, `subject`, `action`, `before`, `after`, `requires` and `verification`. Subjects identify paths, roles, commands, digests or store keys. Effects contain changed items only. Instructions are data and aren't executed by rendering. Command receipts distinguish proposed, started, exited, failed and interrupted execution. An exit code is present only after exit. Record the invoked action and result in settings and detailed command evidence in the lock. Don't copy child output into settings.
 
-Consent decisions are `not-required`, `missing`, `supplied` and `recorded-local`. Checks are `not-run`, `verified`, `failed` and `unavailable`. Coverage is complete or unavailable per store, with a cause. Counts are numbers or unknown. Only inapplicable role, pin, roleFilter and installed values are null in their command payloads.
+Consent decisions are `not-required`, `missing`, `supplied` and `recorded-local`. Checks are `not-run`, `verified`, `failed` and `unavailable`. Coverage is complete or unavailable per store, with a cause. Counts are numbers or unknown. Inapplicable role, pin, roleFilter and installed values are null. Bare Install also has a null aggregate ID.
 
 Bad input stops before resolution. Failure and cancellation keep their event meanings. Otherwise precedence is `blocked`, `incomplete`, `completed-with-warnings`, `completed`. Install's expected `needs-index` is information. Status warns for active index or language limits. Known retained backups warn. Unknown cleanup state fails. Partial effects name verified changes, commands that ran and unfinished work.
 

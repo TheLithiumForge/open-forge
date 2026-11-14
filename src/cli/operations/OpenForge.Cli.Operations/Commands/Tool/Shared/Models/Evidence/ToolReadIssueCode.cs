@@ -29,4 +29,7 @@ internal enum ToolReadIssueCode
     ReadUnavailable,
     BackupPresent,
     BackupUnavailable,
+    DeclaredToolMissing,
+    EntryRewriteDrift,
+    RoleGuidanceDrift,
 }

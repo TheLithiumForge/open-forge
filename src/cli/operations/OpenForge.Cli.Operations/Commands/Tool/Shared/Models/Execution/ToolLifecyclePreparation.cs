@@ -1,8 +1,12 @@
 using OpenForge.Cli.Core.Framework.Tools.Models.Lifecycle;
+using OpenForge.Cli.Core.Framework.Tools.Models.Registration;
 
 namespace OpenForge.Cli.Core.Commands.Tool.Shared.Models.Execution;
 
-internal sealed record ToolExecutableLocation(string Root, string Entry, string Sha256);
+internal sealed record ToolExecutableLocation(string Root, string Entry, string Sha256)
+{
+    public string[] PrefixArguments { get; init; } = [];
+}
 
 internal sealed record ToolCommandValues
 {
@@ -14,11 +18,13 @@ internal sealed record ToolCommandValues
     public string? HookSink { get; init; }
     public string? ProjectId { get; init; }
     public string? IndexDirName { get; init; }
+    public string? OpenForge { get; init; }
 }
 
 internal sealed record ToolLifecyclePreparation
 {
     public required ToolLifecycle Lifecycle { get; init; }
+    public ToolRegistration? Registration { get; init; }
     public required string Action { get; init; }
     public required ToolExecutableLocation Executable { get; init; }
     public required ToolCommandValues Values { get; init; }

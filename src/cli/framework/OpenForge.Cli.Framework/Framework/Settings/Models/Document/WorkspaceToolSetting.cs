@@ -10,4 +10,6 @@ internal sealed record WorkspaceToolSetting
     public string[]? Hosts { get; init; }
     public string? CodeRoot { get; init; }
     public bool Telemetry { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Dictionary<string, bool>? Components { get; init; }
 }

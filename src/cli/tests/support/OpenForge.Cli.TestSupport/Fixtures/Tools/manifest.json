@@ -142,5 +142,6 @@
     "workflow": null,
     "targets": [],
     "accuracy": "pending"
-  }
+  },
+  "origin": "third-party"
 }

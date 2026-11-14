@@ -9,6 +9,7 @@ fixture-tool 1.0.0  <native-target>
   "name": "Synthetic fixture",
   "version": "1.0.0",
   "license": "MIT",
+  "origin": "third-party",
   "source": {
     "repository": "https://fixture.invalid/source",
     "tag": "v1.0.0",

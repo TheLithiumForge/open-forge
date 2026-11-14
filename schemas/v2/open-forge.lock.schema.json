@@ -61,10 +61,7 @@
       "items": {
         "type": "object",
         "additionalProperties": true,
-        "required": [
-          "path",
-          "region"
-        ],
+        "required": ["path", "region"],
         "properties": {
           "path": {
             "type": "string",
@@ -81,26 +78,19 @@
     "frameworkOwnership": {
       "type": "object",
       "additionalProperties": true,
-      "required": [
-        "source"
-      ],
+      "required": ["source"],
       "properties": {
         "source": {
           "type": "object",
           "additionalProperties": true,
-          "required": [
-            "id"
-          ],
+          "required": ["id"],
           "properties": {
             "id": {
               "type": "string",
               "minLength": 1
             },
             "version": {
-              "type": [
-                "string",
-                "null"
-              ],
+              "type": ["string", "null"],
               "description": "The release that wrote these entries. Compared by version alone; no payload hash is recorded, because the lock records ownership rather than integrity."
             }
           }
@@ -118,10 +108,7 @@
           "items": {
             "type": "object",
             "additionalProperties": true,
-            "required": [
-              "directory",
-              "entrypoint"
-            ],
+            "required": ["directory", "entrypoint"],
             "properties": {
               "directory": {
                 "type": "string",
@@ -139,25 +126,17 @@
     "extensionOwnership": {
       "type": "object",
       "additionalProperties": true,
-      "required": [
-        "id"
-      ],
+      "required": ["id"],
       "properties": {
         "id": {
           "type": "string",
           "minLength": 1
         },
         "version": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "source": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": ["string", "null"],
           "description": "Where the Extension was installed from, such as \"bundled\" or an explicit source path."
         },
         "dependencies": {
@@ -179,11 +158,7 @@
     "libraryOwnership": {
       "type": "object",
       "additionalProperties": true,
-      "required": [
-        "id",
-        "sourceRoot",
-        "destinationRoot"
-      ],
+      "required": ["id", "sourceRoot", "destinationRoot"],
       "properties": {
         "id": {
           "type": "string",
@@ -231,14 +206,7 @@
           "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$(?![\\s\\S])"
         },
         "target": {
-          "enum": [
-            "win-x64",
-            "win-arm64",
-            "osx-x64",
-            "osx-arm64",
-            "linux-x64",
-            "linux-arm64"
-          ]
+          "enum": ["win-x64", "win-arm64", "osx-x64", "osx-arm64", "linux-x64", "linux-arm64"]
         },
         "manifestSha256": {
           "type": "string",
@@ -249,10 +217,7 @@
           "contentEncoding": "base64"
         },
         "manifestFormat": {
-          "enum": [
-            "json",
-            "yaml"
-          ]
+          "enum": ["json", "yaml"]
         },
         "adapterRevision": {
           "type": "integer",
@@ -264,10 +229,7 @@
         "hosts": {
           "type": "array",
           "items": {
-            "enum": [
-              "claude-code",
-              "codex"
-            ]
+            "enum": ["claude-code", "codex"]
           }
         },
         "bindings": {
@@ -305,29 +267,62 @@
           "type": "boolean",
           "default": false,
           "description": "Telemetry choice applied by the recorded configuration. Omission means off."
+        },
+        "components": {
+          "anyOf": [
+            {
+              "type": "object",
+              "propertyNames": {
+                "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"
+              },
+              "additionalProperties": {
+                "type": "boolean"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rewrites": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ToolRewriteReceipt"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "guidance": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ToolGuidanceReceipt"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       }
     },
     "toolBinding": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "id",
-        "kind",
-        "identitySha256"
-      ],
+      "required": ["id", "kind", "identitySha256"],
       "properties": {
         "id": {
           "type": "string",
           "pattern": "^[a-z0-9][a-z0-9-]{0,127}$(?![\\s\\S])"
         },
         "kind": {
-          "enum": [
-            "install",
-            "archive",
-            "runtime-state",
-            "native-cache"
-          ]
+          "enum": ["install", "archive", "runtime-state", "native-cache"]
         },
         "identitySha256": {
           "type": "string",
@@ -338,18 +333,10 @@
     "toolFile": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "storeId",
-        "path",
-        "sha256",
-        "executable"
-      ],
+      "required": ["storeId", "path", "sha256", "executable"],
       "properties": {
         "storeId": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "path": {
           "type": "string"
@@ -366,12 +353,7 @@
     "toolDirectory": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "storeId",
-        "path",
-        "files",
-        "directories"
-      ],
+      "required": ["storeId", "path", "files", "directories"],
       "properties": {
         "storeId": {
           "type": "string"
@@ -396,27 +378,15 @@
     "toolCommandSummary": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "action",
-        "host",
-        "state",
-        "exitCode"
-      ],
+      "required": ["action", "host", "state", "exitCode"],
       "properties": {
         "action": {
-          "enum": [
-            "install",
-            "uninstall",
-            "index-cleanup"
-          ]
+          "enum": ["install", "uninstall", "index-cleanup", "activate", "deactivate", "telemetry-on", "telemetry-off"]
         },
         "host": {
           "anyOf": [
             {
-              "enum": [
-                "claude-code",
-                "codex"
-              ]
+              "enum": ["claude-code", "codex"]
             },
             {
               "type": "null"
@@ -424,13 +394,7 @@
           ]
         },
         "state": {
-          "enum": [
-            "planned",
-            "started",
-            "exited",
-            "failed",
-            "interrupted"
-          ]
+          "enum": ["planned", "started", "exited", "failed", "interrupted"]
         },
         "exitCode": {
           "anyOf": [
@@ -447,32 +411,15 @@
     "toolCommandReceipt": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "action",
-        "host",
-        "state",
-        "exitCode",
-        "entry",
-        "entrySha256",
-        "args",
-        "environment",
-        "cause"
-      ],
+      "required": ["action", "host", "state", "exitCode", "entry", "entrySha256", "args", "environment", "cause"],
       "properties": {
         "action": {
-          "enum": [
-            "install",
-            "uninstall",
-            "index-cleanup"
-          ]
+          "enum": ["install", "uninstall", "index-cleanup", "activate", "deactivate", "telemetry-on", "telemetry-off"]
         },
         "host": {
           "anyOf": [
             {
-              "enum": [
-                "claude-code",
-                "codex"
-              ]
+              "enum": ["claude-code", "codex"]
             },
             {
               "type": "null"
@@ -480,13 +427,7 @@
           ]
         },
         "state": {
-          "enum": [
-            "planned",
-            "started",
-            "exited",
-            "failed",
-            "interrupted"
-          ]
+          "enum": ["planned", "started", "exited", "failed", "interrupted"]
         },
         "exitCode": {
           "anyOf": [
@@ -532,18 +473,7 @@
     "toolRunRecord": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "version",
-        "target",
-        "manifestSha256",
-        "action",
-        "state",
-        "commands",
-        "manifestBytes",
-        "manifestFormat",
-        "codeRoot",
-        "hosts"
-      ],
+      "required": ["version", "target", "manifestSha256", "action", "state", "commands", "manifestBytes", "manifestFormat", "codeRoot", "hosts"],
       "properties": {
         "version": {
           "type": "string"
@@ -556,22 +486,10 @@
           "pattern": "^[0-9a-f]{64}$"
         },
         "action": {
-          "enum": [
-            "install",
-            "configure",
-            "update",
-            "remove",
-            "choose"
-          ]
+          "enum": ["install", "configure", "update", "remove", "choose"]
         },
         "state": {
-          "enum": [
-            "planned",
-            "started",
-            "exited",
-            "failed",
-            "interrupted"
-          ]
+          "enum": ["planned", "started", "exited", "failed", "interrupted"]
         },
         "commands": {
           "type": "array",
@@ -584,10 +502,7 @@
           "contentEncoding": "base64"
         },
         "manifestFormat": {
-          "enum": [
-            "json",
-            "yaml"
-          ]
+          "enum": ["json", "yaml"]
         },
         "codeRoot": {
           "type": "string"
@@ -596,11 +511,231 @@
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "enum": [
-              "claude-code",
-              "codex"
-            ]
+            "enum": ["claude-code", "codex"]
           }
+        }
+      }
+    },
+    "ToolEntryRewrite": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ToolJsonCommandRewrite"
+        },
+        {
+          "$ref": "#/$defs/ToolTomlCommandRewrite"
+        },
+        {
+          "$ref": "#/$defs/ToolHookCommandRewrite"
+        },
+        {
+          "$ref": "#/$defs/ToolMarkedLineRewrite"
+        }
+      ]
+    },
+    "ToolJsonCommandRewrite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "host", "file", "pointer", "expected", "replacement"],
+      "properties": {
+        "kind": {
+          "const": "json-command"
+        },
+        "id": {
+          "type": "string"
+        },
+        "host": {
+          "enum": ["claude-code", "codex"]
+        },
+        "file": {
+          "type": "string"
+        },
+        "component": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pointer": {
+          "type": "string"
+        },
+        "expected": {
+          "$ref": "#/$defs/ToolCommandValue"
+        },
+        "replacement": {
+          "$ref": "#/$defs/ToolCommandValue"
+        }
+      }
+    },
+    "ToolTomlCommandRewrite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "host", "file", "table", "expected", "replacement"],
+      "properties": {
+        "kind": {
+          "const": "toml-command"
+        },
+        "id": {
+          "type": "string"
+        },
+        "host": {
+          "enum": ["claude-code", "codex"]
+        },
+        "file": {
+          "type": "string"
+        },
+        "component": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "table": {
+          "type": "string"
+        },
+        "expected": {
+          "$ref": "#/$defs/ToolCommandValue"
+        },
+        "replacement": {
+          "$ref": "#/$defs/ToolCommandValue"
+        }
+      }
+    },
+    "ToolHookCommandRewrite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "host", "file", "pointer", "expected", "replacement"],
+      "properties": {
+        "kind": {
+          "const": "hook-command"
+        },
+        "id": {
+          "type": "string"
+        },
+        "host": {
+          "enum": ["claude-code", "codex"]
+        },
+        "file": {
+          "type": "string"
+        },
+        "component": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pointer": {
+          "type": "string"
+        },
+        "expected": {
+          "type": "string"
+        },
+        "replacement": {
+          "type": "string"
+        }
+      }
+    },
+    "ToolMarkedLineRewrite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "host", "file", "startMarker", "endMarker", "expected", "replacement"],
+      "properties": {
+        "kind": {
+          "const": "marked-line"
+        },
+        "id": {
+          "type": "string"
+        },
+        "host": {
+          "enum": ["claude-code", "codex"]
+        },
+        "file": {
+          "type": "string"
+        },
+        "component": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "startMarker": {
+          "type": "string"
+        },
+        "endMarker": {
+          "type": "string"
+        },
+        "expected": {
+          "type": "string"
+        },
+        "replacement": {
+          "type": "string"
+        }
+      }
+    },
+    "ToolCommandValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "args"],
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ToolRewriteReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "rewrite", "declined"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "rewrite": {
+          "$ref": "#/$defs/ToolEntryRewrite"
+        },
+        "declined": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ToolGuidanceReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "skillPath", "skillSha256", "line"],
+      "properties": {
+        "role": {
+          "type": "string"
+        },
+        "skillPath": {
+          "type": "string"
+        },
+        "skillSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "line": {
+          "type": "string"
         }
       }
     }
@@ -613,9 +748,7 @@
           "id": "open-forge",
           "version": "0.1.0"
         },
-        "paths": [
-          ".agents/loader.md"
-        ],
+        "paths": [".agents/loader.md"],
         "regions": [
           {
             "path": ".agents/directives/_directives.md",
@@ -632,12 +765,8 @@
           "id": "planning",
           "version": "0.1.0",
           "source": "bundled",
-          "dependencies": [
-            "development"
-          ],
-          "paths": [
-            ".agents/templates/planning/plan.md"
-          ],
+          "dependencies": ["development"],
+          "paths": [".agents/templates/planning/plan.md"],
           "regions": []
         }
       ],
@@ -646,9 +775,7 @@
           "id": "shared",
           "sourceRoot": "libs/shared",
           "destinationRoot": ".agents",
-          "paths": [
-            "patterns/api.md"
-          ]
+          "paths": ["patterns/api.md"]
         }
       ]
     }

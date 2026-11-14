@@ -9,6 +9,12 @@ internal sealed record ToolLifecycle
     public required ToolLifecycleCommand Uninstall { get; init; }
     public required ToolLifecycleCommand IndexCleanup { get; init; }
     public required string[] IgnorePaths { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string[]? RemovalOrder { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ToolLifecycleCommand? TelemetryOn { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ToolLifecycleCommand? TelemetryOff { get; init; }
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]

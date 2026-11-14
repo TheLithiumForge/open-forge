@@ -62,7 +62,11 @@ V1 graph definitions require a non-null Skill with `optional:false` and `default
 
 ## Lifecycle commands
 
-A definition declares `install`, `uninstall` and `indexCleanup` commands. Each has an argument array, a `workspace` or `host` scope and a bounded timeout. The executable is always the verified target entry. Repeated argument values are allowed because each position has its own meaning. Output paths and managed ignore paths are declared data and stay inside the workspace. A leading `${codeRoot}/` resolves from the selected contained code root. Other path templates are rejected. Tool-owned outputs are used for permission and exclusion checks, not as permission for Open Forge to edit them.
+A definition declares `install`, `uninstall` and `indexCleanup` commands. Each has an argument array, a `workspace` or `host` scope and a bounded timeout. The executable is always the verified target entry. Repeated argument values are allowed because each position has its own meaning. Output paths and managed ignore paths are declared data and stay inside the workspace. A leading `${codeRoot}/` resolves from the selected contained code root. Other path templates are rejected. Tool-owned outputs are used for permission and exclusion checks. Only separately declared command rewrites permit Open Forge entry edits.
+
+Passive MCP selectors identify the upstream entry in the two fixed host files. They need no Open Forge name prefix. These descriptors grant no registration write. `processes.hooks` controls Git hooks. Agent prompt hooks are separate optional components.
+
+The optional registration record declares activation and deactivation, exact command rewrites, declined-component entries and conditional role lines. Native telemetry calls use the optional lifecycle `telemetryOn` and `telemetryOff` commands. Removal needs its declared order. The schemas and source types define these fields.
 
 The [shared Tool rules](../../../shared-operation-contract.md#tool-commands) define when each command runs and how its result is recorded. A missing lifecycle declaration permits inspection but blocks writes. Production support still requires the exact reviewed manifest hash and adapter revision.
 

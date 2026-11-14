@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using OpenForge.Cli.Core.Framework.Tools.Models.Receipts;
+using OpenForge.Cli.Core.Framework.Tools.Models.Execution;
 
 namespace OpenForge.Cli.Core.Framework.Tools.Models.Storage;
 
@@ -34,6 +35,8 @@ internal sealed record ToolLocalRegistration
     public required string PhysicalWorkspace { get; init; }
     public required string CodeRoot { get; init; }
     public string? ProcessConsentSha256 { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ToolLaunchBinding? Launch { get; init; }
 }
 
 internal static class ToolStoreRegistryDefinitions

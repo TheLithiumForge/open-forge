@@ -27,7 +27,8 @@
         "mcp",
         "skill",
         "checks",
-        "qualification"
+        "qualification",
+        "origin"
       ],
       "properties": {
         "schema": {
@@ -57,11 +58,7 @@
           "$ref": "#/$defs/ToolAdapter"
         },
         "admission": {
-          "enum": [
-            "candidate",
-            "enabled",
-            "blocked"
-          ]
+          "enum": ["candidate", "enabled", "blocked"]
         },
         "admissionReason": {
           "anyOf": [
@@ -76,11 +73,7 @@
         "capabilities": {
           "type": "array",
           "items": {
-            "enum": [
-              "code-graph",
-              "docs-search",
-              "code-to-docs-links"
-            ]
+            "enum": ["code-graph", "docs-search", "code-to-docs-links"]
           },
           "uniqueItems": true,
           "minItems": 1
@@ -96,14 +89,7 @@
         },
         "targets": {
           "type": "object",
-          "required": [
-            "win-x64",
-            "win-arm64",
-            "osx-x64",
-            "osx-arm64",
-            "linux-x64",
-            "linux-arm64"
-          ],
+          "required": ["win-x64", "win-arm64", "osx-x64", "osx-arm64", "linux-x64", "linux-arm64"],
           "properties": {
             "win-x64": {
               "$ref": "#/$defs/ToolTarget"
@@ -182,6 +168,19 @@
               "type": "null"
             }
           ]
+        },
+        "origin": {
+          "enum": ["first-party", "third-party"]
+        },
+        "registration": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToolRegistration"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "allOf": [
@@ -221,10 +220,7 @@
           "if": {
             "properties": {
               "admission": {
-                "enum": [
-                  "candidate",
-                  "enabled"
-                ]
+                "enum": ["candidate", "enabled"]
               }
             }
           },
@@ -254,11 +250,7 @@
     "ToolSource": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "repository",
-        "tag",
-        "commit"
-      ],
+      "required": ["repository", "tag", "commit"],
       "properties": {
         "repository": {
           "type": "string"
@@ -267,10 +259,7 @@
           "type": "string"
         },
         "commit": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": ["string", "null"],
           "pattern": "^[0-9a-f]{40}$(?![\\s\\S])"
         }
       }
@@ -278,17 +267,10 @@
     "ToolAdapter": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "id",
-        "revision"
-      ],
+      "required": ["id", "revision"],
       "properties": {
         "id": {
-          "enum": [
-            "codegraph-1.6",
-            "cbm-0.12",
-            "qmd-2.8"
-          ]
+          "enum": ["codegraph-1.6", "cbm-0.12", "qmd-2.8"]
         },
         "revision": {
           "type": "integer",
@@ -299,22 +281,13 @@
     "ToolArtifact": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "file",
-        "bytes",
-        "integrity",
-        "archive",
-        "stripComponents"
-      ],
+      "required": ["file", "bytes", "integrity", "archive", "stripComponents"],
       "properties": {
         "file": {
           "type": "string"
         },
         "bytes": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": ["integer", "null"],
           "minimum": 1
         },
         "integrity": {
@@ -322,12 +295,7 @@
           "pattern": "^(?:sha256:[0-9a-f]{64}|sha512-[A-Za-z0-9+/]{86}==)$(?![\\s\\S])"
         },
         "archive": {
-          "enum": [
-            "zip",
-            "tar.gz",
-            "tgz",
-            "file"
-          ]
+          "enum": ["zip", "tar.gz", "tgz", "file"]
         },
         "stripComponents": {
           "type": "integer",
@@ -343,20 +311,10 @@
     "ToolTarget": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "state",
-        "artifacts",
-        "entry",
-        "lock",
-        "reason"
-      ],
+      "required": ["state", "artifacts", "entry", "lock", "reason"],
       "properties": {
         "state": {
-          "enum": [
-            "available",
-            "unsupported",
-            "blocked"
-          ]
+          "enum": ["available", "unsupported", "blocked"]
         },
         "artifacts": {
           "type": "array",
@@ -394,16 +352,23 @@
               "type": "null"
             }
           ]
+        },
+        "launcher": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToolLauncher"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       }
     },
     "ToolDependencyLock": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "artifacts",
-        "closureComplete"
-      ],
+      "required": ["artifacts", "closureComplete"],
       "properties": {
         "artifacts": {
           "type": "array",
@@ -420,20 +385,10 @@
     "ToolRuntime": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "kind",
-        "version",
-        "notes",
-        "extraDownloads",
-        "installScripts"
-      ],
+      "required": ["kind", "version", "notes", "extraDownloads", "installScripts"],
       "properties": {
         "kind": {
-          "enum": [
-            "native",
-            "bundled",
-            "locked-package"
-          ]
+          "enum": ["native", "bundled", "locked-package"]
         },
         "version": {
           "anyOf": [
@@ -456,52 +411,28 @@
           "uniqueItems": true
         },
         "installScripts": {
-          "enum": [
-            "forbidden"
-          ]
+          "enum": ["forbidden"]
         }
       }
     },
     "ToolConfiguration": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "template",
-        "codeRoot",
-        "documents",
-        "settings",
-        "files",
-        "actions"
-      ],
+      "required": ["template", "codeRoot", "documents", "settings", "files", "actions"],
       "properties": {
         "template": {
-          "enum": [
-            "codegraph-manual-v1",
-            "cbm-manual-v1",
-            "qmd-inventory-v1"
-          ]
+          "enum": ["codegraph-manual-v1", "cbm-manual-v1", "qmd-inventory-v1"]
         },
         "codeRoot": {
-          "enum": [
-            "workspace-relative",
-            "none"
-          ]
+          "enum": ["workspace-relative", "none"]
         },
         "documents": {
-          "enum": [
-            "none",
-            "open-forge-source-inventory"
-          ]
+          "enum": ["none", "open-forge-source-inventory"]
         },
         "settings": {
           "type": "object",
           "additionalProperties": {
-            "type": [
-              "string",
-              "boolean",
-              "number",
-              "null"
-            ]
+            "type": ["string", "boolean", "number", "null"]
           }
         },
         "files": {
@@ -514,11 +445,7 @@
         "actions": {
           "type": "array",
           "items": {
-            "enum": [
-              "render-members",
-              "native-settings",
-              "render-helper"
-            ]
+            "enum": ["render-members", "native-settings", "render-helper"]
           },
           "uniqueItems": true
         }
@@ -527,22 +454,13 @@
     "ToolConfigFile": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "path",
-        "format",
-        "members"
-      ],
+      "required": ["path", "format", "members"],
       "properties": {
         "path": {
           "type": "string"
         },
         "format": {
-          "enum": [
-            "json-members",
-            "native-settings",
-            "native-collections",
-            "adapter-helper"
-          ]
+          "enum": ["json-members", "native-settings", "native-collections", "adapter-helper"]
         },
         "members": {
           "type": "array",
@@ -556,17 +474,10 @@
     "ToolSkill": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "template",
-        "optional",
-        "defaultEnabled"
-      ],
+      "required": ["template", "optional", "defaultEnabled"],
       "properties": {
         "template": {
-          "enum": [
-            "code-graph-usage-v1",
-            "docs-search-usage-v1"
-          ]
+          "enum": ["code-graph-usage-v1", "docs-search-usage-v1"]
         },
         "optional": {
           "type": "boolean"
@@ -579,65 +490,32 @@
     "ToolProcesses": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "telemetry",
-        "updateChecks",
-        "daemon",
-        "watcher",
-        "autoIndex",
-        "hooks",
-        "consent",
-        "coordination",
-        "environment"
-      ],
+      "required": ["telemetry", "updateChecks", "daemon", "watcher", "autoIndex", "hooks", "consent", "coordination", "environment"],
       "properties": {
         "telemetry": {
-          "enum": [
-            "off",
-            "absent",
-            "unverified"
-          ]
+          "enum": ["off", "absent", "unverified"]
         },
         "updateChecks": {
-          "enum": [
-            "off",
-            "absent",
-            "unverified"
-          ]
+          "enum": ["off", "absent", "unverified"]
         },
         "daemon": {
-          "enum": [
-            "off",
-            "session-required",
-            "unverified"
-          ]
+          "enum": ["off", "session-required", "unverified"]
         },
         "watcher": {
-          "enum": [
-            "off"
-          ]
+          "enum": ["off"]
         },
         "autoIndex": {
-          "enum": [
-            "off"
-          ]
+          "enum": ["off"]
         },
         "hooks": {
-          "enum": [
-            "blocked"
-          ]
+          "enum": ["blocked"],
+          "description": "Git hook execution policy. Agent prompt hooks are declared optional components."
         },
         "consent": {
-          "enum": [
-            "none",
-            "session-daemon"
-          ]
+          "enum": ["none", "session-daemon"]
         },
         "coordination": {
-          "enum": [
-            "worktree",
-            "account-build-cache"
-          ]
+          "enum": ["worktree", "account-build-cache"]
         },
         "environment": {
           "type": "object",
@@ -650,21 +528,10 @@
     "ToolIndex": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "location",
-        "path",
-        "perWorktree",
-        "sharedContentCache",
-        "freshness",
-        "rebuildOnVersionChange"
-      ],
+      "required": ["location", "path", "perWorktree", "sharedContentCache", "freshness", "rebuildOnVersionChange"],
       "properties": {
         "location": {
-          "enum": [
-            "project-directory",
-            "native-account-cache",
-            "external"
-          ]
+          "enum": ["project-directory", "native-account-cache", "external"]
         },
         "path": {
           "type": "string"
@@ -673,17 +540,10 @@
           "const": true
         },
         "sharedContentCache": {
-          "enum": [
-            "none",
-            "native-content-keyed"
-          ]
+          "enum": ["none", "native-content-keyed"]
         },
         "freshness": {
-          "enum": [
-            "manual-sync",
-            "full-rebuild-after-delete",
-            "manual-update"
-          ]
+          "enum": ["manual-sync", "full-rebuild-after-delete", "manual-update"]
         },
         "rebuildOnVersionChange": {
           "type": "boolean"
@@ -693,24 +553,13 @@
     "ToolMcp": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "transport",
-        "command",
-        "args",
-        "cwd",
-        "environment",
-        "hosts"
-      ],
+      "required": ["transport", "command", "args", "cwd", "environment", "hosts"],
       "properties": {
         "transport": {
-          "enum": [
-            "stdio"
-          ]
+          "enum": ["stdio"]
         },
         "command": {
-          "enum": [
-            "target-entry"
-          ]
+          "enum": ["target-entry"]
         },
         "args": {
           "type": "array",
@@ -720,9 +569,7 @@
           "uniqueItems": true
         },
         "cwd": {
-          "enum": [
-            "worktree"
-          ]
+          "enum": ["worktree"]
         },
         "environment": {
           "type": "object",
@@ -732,10 +579,7 @@
         },
         "hosts": {
           "type": "object",
-          "required": [
-            "claude-code",
-            "codex"
-          ],
+          "required": ["claude-code", "codex"],
           "properties": {
             "claude-code": {
               "$ref": "#/$defs/ToolHostTemplate"
@@ -751,10 +595,7 @@
     "ToolHostTemplate": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "path",
-        "selector"
-      ],
+      "required": ["path", "selector"],
       "properties": {
         "path": {
           "type": "string"
@@ -767,19 +608,10 @@
     "ToolQualification": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "attestation",
-        "workflow",
-        "targets",
-        "accuracy"
-      ],
+      "required": ["attestation", "workflow", "targets", "accuracy"],
       "properties": {
         "attestation": {
-          "enum": [
-            "release-evidence-required",
-            "required-at-install",
-            "unavailable"
-          ]
+          "enum": ["release-evidence-required", "required-at-install", "unavailable"]
         },
         "workflow": {
           "anyOf": [
@@ -794,34 +626,19 @@
         "targets": {
           "type": "array",
           "items": {
-            "enum": [
-              "win-x64",
-              "win-arm64",
-              "osx-x64",
-              "osx-arm64",
-              "linux-x64",
-              "linux-arm64"
-            ]
+            "enum": ["win-x64", "win-arm64", "osx-x64", "osx-arm64", "linux-x64", "linux-arm64"]
           },
           "uniqueItems": true
         },
         "accuracy": {
-          "enum": [
-            "three-languages-2026-11-12",
-            "pending"
-          ]
+          "enum": ["three-languages-2026-11-12", "pending"]
         }
       }
     },
     "ToolLifecycleCommand": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "args",
-        "scope",
-        "workspaceOutputs",
-        "timeoutSeconds"
-      ],
+      "required": ["args", "scope", "workspaceOutputs", "timeoutSeconds"],
       "properties": {
         "args": {
           "type": "array",
@@ -830,10 +647,7 @@
           }
         },
         "scope": {
-          "enum": [
-            "workspace",
-            "host"
-          ]
+          "enum": ["workspace", "host"]
         },
         "workspaceOutputs": {
           "type": "array",
@@ -852,12 +666,7 @@
     "ToolLifecycle": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "install",
-        "uninstall",
-        "indexCleanup",
-        "ignorePaths"
-      ],
+      "required": ["install", "uninstall", "indexCleanup", "ignorePaths"],
       "properties": {
         "install": {
           "$ref": "#/$defs/ToolLifecycleCommand"
@@ -874,6 +683,345 @@
             "type": "string"
           },
           "uniqueItems": true
+        },
+        "removalOrder": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "enum": ["uninstall", "index-cleanup"]
+              },
+              "uniqueItems": true,
+              "minItems": 2,
+              "maxItems": 2
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "telemetryOn": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToolLifecycleCommand"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "telemetryOff": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToolLifecycleCommand"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "ToolLauncher": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["executable", "args"],
+      "properties": {
+        "executable": {
+          "type": "string"
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ToolCommandValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "args"],
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ToolJsonCommandRewrite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "host", "file", "pointer", "expected", "replacement"],
+      "properties": {
+        "kind": {
+          "const": "json-command"
+        },
+        "id": {
+          "type": "string"
+        },
+        "host": {
+          "enum": ["claude-code", "codex"]
+        },
+        "file": {
+          "type": "string"
+        },
+        "component": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pointer": {
+          "type": "string"
+        },
+        "expected": {
+          "$ref": "#/$defs/ToolCommandValue"
+        },
+        "replacement": {
+          "$ref": "#/$defs/ToolCommandValue"
+        }
+      }
+    },
+    "ToolTomlCommandRewrite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "host", "file", "table", "expected", "replacement"],
+      "properties": {
+        "kind": {
+          "const": "toml-command"
+        },
+        "id": {
+          "type": "string"
+        },
+        "host": {
+          "enum": ["claude-code", "codex"]
+        },
+        "file": {
+          "type": "string"
+        },
+        "component": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "table": {
+          "type": "string"
+        },
+        "expected": {
+          "$ref": "#/$defs/ToolCommandValue"
+        },
+        "replacement": {
+          "$ref": "#/$defs/ToolCommandValue"
+        }
+      }
+    },
+    "ToolHookCommandRewrite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "host", "file", "pointer", "expected", "replacement"],
+      "properties": {
+        "kind": {
+          "const": "hook-command"
+        },
+        "id": {
+          "type": "string"
+        },
+        "host": {
+          "enum": ["claude-code", "codex"]
+        },
+        "file": {
+          "type": "string"
+        },
+        "component": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pointer": {
+          "type": "string"
+        },
+        "expected": {
+          "type": "string"
+        },
+        "replacement": {
+          "type": "string"
+        }
+      }
+    },
+    "ToolMarkedLineRewrite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "host", "file", "startMarker", "endMarker", "expected", "replacement"],
+      "properties": {
+        "kind": {
+          "const": "marked-line"
+        },
+        "id": {
+          "type": "string"
+        },
+        "host": {
+          "enum": ["claude-code", "codex"]
+        },
+        "file": {
+          "type": "string"
+        },
+        "component": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "startMarker": {
+          "type": "string"
+        },
+        "endMarker": {
+          "type": "string"
+        },
+        "expected": {
+          "type": "string"
+        },
+        "replacement": {
+          "type": "string"
+        }
+      }
+    },
+    "ToolEntryRewrite": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ToolJsonCommandRewrite"
+        },
+        {
+          "$ref": "#/$defs/ToolTomlCommandRewrite"
+        },
+        {
+          "$ref": "#/$defs/ToolHookCommandRewrite"
+        },
+        {
+          "$ref": "#/$defs/ToolMarkedLineRewrite"
+        }
+      ]
+    },
+    "ToolJsonEntryRemoval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["host", "file", "pointer", "expected"],
+      "properties": {
+        "host": {
+          "enum": ["claude-code", "codex"]
+        },
+        "file": {
+          "type": "string"
+        },
+        "pointer": {
+          "type": "string"
+        },
+        "expected": {}
+      }
+    },
+    "ToolOptionalComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "flag", "description", "defaultEnabled", "declinedEntries"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "flag": {
+          "enum": ["prompt-hook"]
+        },
+        "description": {
+          "type": "string"
+        },
+        "defaultEnabled": {
+          "type": "boolean"
+        },
+        "declinedEntries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ToolJsonEntryRemoval"
+          }
+        }
+      }
+    },
+    "ToolRoleGuidance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "line"],
+      "properties": {
+        "role": {
+          "type": "string"
+        },
+        "line": {
+          "type": "string"
+        }
+      }
+    },
+    "ToolRegistration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rewrites", "components", "roleGuidance", "activate", "deactivate"],
+      "properties": {
+        "rewrites": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ToolEntryRewrite"
+          }
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ToolOptionalComponent"
+          }
+        },
+        "roleGuidance": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ToolRoleGuidance"
+          }
+        },
+        "activate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToolLifecycleCommand"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "deactivate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToolLifecycleCommand"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       }
     }
