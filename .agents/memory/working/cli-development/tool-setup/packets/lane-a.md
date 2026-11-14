@@ -92,12 +92,51 @@ Dependency direction and no real PATH writes matter independently of test counts
 
 ## Progress
 
-Done: Implemented the three integrated ABI additions, A-R1 and the responsible-manager update checks on `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9`. The managed solution build, 191 focused tests and both .NET checks pass. The 12 reviewed portable Node pins are kept.
-Now: Task 90 "Tool setup" (phase 3/3): milestone 3/7. The coordinator accepted the complete 191-test A candidate for a local implementation commit.
-Next: The coordinator integrates the local commit. C handles central Root composition. F keeps private ToolHomes and the native reader. Both use the committed host API.
-Blocker: None after contract commit `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9`.
+Done: Finished A-R2. The commit continuation's managed build, whitespace check and style check each exited `0`. No local tests ran after the maintainer's redirect.
+Now: Task 90 "Tool setup" (phase 3/3): milestone 3/7. The maintainer authorized the immediate local commit of the three finished files on top of `38cc6a791a0bd5b8d31565e5e78232ef4d97ddfc`.
+Next: The coordinator integrates the local correction commit. CI runs every test. Snapshot regeneration stays integrator-only.
+Blocker: None. No shared-model or ABI request is needed.
 
 ## Evidence
+
+### Commit continuation
+
+The maintainer superseded the earlier uncommitted return and local test instructions. Local commit checks now consist of the managed build, `npm run check:dotnet:whitespace` and `npm run check:dotnet:style`. All three exited `0` in this continuation. No local tests, snapshot regeneration, further source edits or refactoring ran. The finished host and test bytes match the returned A-R2 candidate. Earlier test receipts below describe work before this redirect.
+
+The exact build command was `dotnet build OpenForge.Cli.slnx --configuration Release -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1`. It reported zero warnings and errors. The audit override stayed invocation-only. Logs are `build.log`, `check-whitespace.log` and `check-style.log` under `artifacts/tool-setup-lane-a/a-r2-commit/`. `exits.json` records all three exits and that no local tests ran. Only the host, its test file and this packet are included in the local conventional commit. The original implementation commit and earlier lane evidence are kept.
+
+### A-R2 cleanup
+
+The combined gate crashed in `ToolProcessHostTests.BoundsOutput` when `TemporaryWorkspace.Dispose` couldn't remove its working directory. The failed log is `artifacts/tool-setup/merge-core/ToolProcessHostTests.log` in the integration worktree. Its original failed temporary directory is kept untouched. The main host and test files were read without edits. Both Git blob hashes match this branch's implementation commit. The `Path` to `Paths` integration rename doesn't affect these two files.
+
+The old cleanup used `WaitForExitAsync` after `Kill(entireProcessTree: true)`. On Windows, the async wait can accept an exit code before the process handle signals. The pinned [.NET process implementation](https://github.com/dotnet/runtime/blob/v10.0.1/src/libraries/System.Diagnostics.Process/src/System/Diagnostics/ProcessManager.Windows.cs) checks the exit code first. The bounded synchronous wait uses the handle signal. This permits the old host to return while the process still holds its working directory. The original crash log doesn't identify the holding PID. This is the source-level cleanup defect that matches the observed lock.
+
+The correction uses a five-second synchronous root wait before returning. A separate cancellation source keeps both output readers draining after command cancellation. Tree termination is attempted on cancellation even when the root already reports exit. Inherited output pipes then have a separate five-second EOF bound. Cleanup failures use the existing `Failure` field and aren't replaced by the output-limit message. Every started reader and the execution task is joined before its buffers and process are disposed. The output budget stays capped while excess bytes are discarded during termination. No process-result field, dependency, native mechanism or global test support changes are needed.
+
+The supported correction covers the owned root and inherited streams. The [BCL tree-kill contract](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.process.kill?view=net-10.0) doesn't make the root wait a wait for every descendant. The child scenarios check immediate process exit, exclusive file access and working-directory release after the host returns. They don't introduce a guarantee for detached descendants or native process-tree containment.
+
+The focused Integration class grows from five to eight cases. The output-limit case now checks immediate directory release. Three new cases start a root and child with separate owned file handles and PID receipts. They exercise output limit, timeout and cancellation. Cancellation follows a `FileSystemWatcher` readiness event. The test always joins its host call before fixture disposal. It adds no cleanup sleeps, disposal retries, broad deletion or weaker assertions. Full suites, unrelated classes and snapshots aren't selected.
+
+The first build found `CA2261` and `xUnit1030` in the new test's cleanup await. The corrected await uses a non-generic task and keeps the captured test context. The first class run passed four cases and failed four during disposal because the new probe entries weren't registered with `TemporaryWorkspace`. The test now uses its existing `WriteText` and `CreateDirectory` APIs. The directory rename check moves the directory back before normal disposal. The second run passed seven cases. Its child-output case reached timeout because the Windows child wasn't forwarding output to the host. The fixture now redirects the child's two streams and relays them through the root. These changes keep the assertions and disposal. Failed logs and reports are kept as `first-*` and `second-*` under `artifacts/tool-setup-lane-a/a-r2/ToolProcessHostTests/`. The initial build log is `artifacts/tool-setup-lane-a/a-r2/first-build.log`. No failed directory was manually removed or retried.
+
+### Earlier A-R2 checks
+
+READY_FOR_REVIEW covers three uncommitted files on base `38cc6a791a0bd5b8d31565e5e78232ef4d97ddfc`, tree `91d2da956e67bb076fc213e29e557634ebd24e16`. They are `ToolProcessHost.cs`, `ToolProcessHostTests.cs` and this packet. Constructors and composition signatures stay unchanged. Main's original host and test blobs match the base. `main-base-blobs.json` records that comparison.
+
+The final managed Windows x64 build passed with zero warnings and errors using SDK `10.0.101`. The focused class selected, discovered and executed eight cases on .NET `10.0.1`. All eight passed with zero failures, warnings and skips. The preceding eight-case pass found one whitespace line break. After that formatting-only correction, the solution was rebuilt and all eight cases passed again. Both mandatory .NET checks then passed. The exact commands are:
+
+```powershell
+dotnet build OpenForge.Cli.slnx --configuration Release -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1
+dotnet run --project src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-build --no-restore -- --filter-class OpenForge.Cli.IntegrationTests.Composition.Shared.Tools.ToolProcessHostTests --minimum-expected-tests 8 --fail-warns on --fail-skips on --no-ansi --progress off --report-xunit-ctrf --report-xunit-ctrf-filename results.json --results-directory artifacts/tool-setup-lane-a/a-r2/ToolProcessHostTests
+npm run check:dotnet:whitespace
+npm run check:dotnet:style
+```
+
+Final logs are `build.log`, `check-whitespace.log`, `check-style.log` and `ToolProcessHostTests/run.log` under `artifacts/tool-setup-lane-a/a-r2/`. The class's `command.txt` and `results.json` record the exact selection and counts. `test-summary.json`, `final-cases.json`, `source-hashes.json` and `assembly-hashes.json` bind the result to its runtime, sources and binaries. Earlier failed receipts and the pre-format pass are kept separately. The audit override stays invocation-only.
+
+The exact host and test correction is `artifacts/tool-setup-lane-a/a-r2/a-r2-host-tests.patch`. Git exports it with `--binary --full-index`. Its SHA-256 is `043C6C7B9F4466C08324F8C7814A272396032DC1EB4B51E20DCF1083EF753E55`. The patch has LF and passes forward checking against the unchanged index and reverse checking against the working correction. `a-r2-packet.patch` carries only this packet's progress and evidence. `patch-receipt.json` records the checks and final patch hashes. The three changed files have LF and pass `git diff --check`. No files are staged.
+
+The original failed temporary directory is still present. No old B cleanup was retried. No real tool install, persistent PATH, registry, shell profile, protected model, global test support, snapshot, parent-worktree edit, commit, push or merge occurred. No unrelated class or full suite ran. Unix and native evidence stay with integration and CI. No new routed file needs Index.
 
 ### Local commit
 
