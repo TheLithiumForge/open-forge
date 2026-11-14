@@ -1,8 +1,8 @@
 using System.CommandLine;
 using OpenForge.Cli.Core.Commands.Tool.Status.Models;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Evidence;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Inventory;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Provider;
+using OpenForge.Cli.Core.Commands.Tool.Models.Evidence;
+using OpenForge.Cli.Core.Commands.Tool.Models.Inventory;
+using OpenForge.Cli.Core.Commands.Tool.Models.Provider;
 using OpenForge.Cli.Core.Framework.Tools;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Validation;
 using OpenForge.Cli.Core.Shell.Composition.Models;

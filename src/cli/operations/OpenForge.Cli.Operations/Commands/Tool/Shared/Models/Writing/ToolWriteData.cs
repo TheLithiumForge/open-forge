@@ -1,5 +1,5 @@
 using System.Text.Json;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Provider;
+using OpenForge.Cli.Core.Commands.Tool.Models.Provider;
 
 namespace OpenForge.Cli.Core.Commands.Tool.Shared.Models.Writing;
 

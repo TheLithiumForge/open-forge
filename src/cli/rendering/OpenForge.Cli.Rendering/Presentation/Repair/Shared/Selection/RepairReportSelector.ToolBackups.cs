@@ -1,12 +1,10 @@
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
-using OpenForge.Cli.Core.Commands.Shared;
 using OpenForge.Cli.Core.Presentation.Repair.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.OutputText.Tool;
 
@@ -20,19 +18,6 @@ internal static partial class RepairReportSelector
         var preview = result.Mode == RepairMode.DryRun;
         var headline = ToolText.BackupRestoreHeadline(preview);
         var rows = backups.Files.Select(file => new RepairDataTextRow(file.Target, ToolText.BackupRestoreRow(file.Backup, file.Verified))).ToArray();
-        var nextCommand = CommandLines.RepairAutomaticPreview;
-        var nextReason = ToolText.BackupBlockedNext();
-        if (result.Status == CliSemanticStatus.Complete && preview)
-        {
-            nextCommand = CommandLines.RepairAutomatic;
-            nextReason = ToolText.BackupApplyNext();
-        }
-        if (backups.Applied && backups.Files.All(file => file.Verified && file.BackupRemoved))
-        {
-            nextCommand = CommandLines.Repair;
-            nextReason = ToolText.BackupRestoreNext();
-        }
-        if (result.WorkspacePath is { } root) nextCommand = CliCommandText.InWorkspace(nextCommand, root);
         return new()
         {
             Command = result.Command,
@@ -52,9 +37,17 @@ internal static partial class RepairReportSelector
                 TextHeadline = headline,
                 ShowNoChanges = preview,
             },
-            Next = new CliNextAction(nextCommand, nextReason),
+            Next = new CliNextAction(backups.Next.Command, BackupNextReason(backups.Next.Step)),
         };
     }
+
+    private static string BackupNextReason(RepairToolBackupNextStep step) => step switch
+    {
+        RepairToolBackupNextStep.Preview => ToolText.BackupBlockedNext(),
+        RepairToolBackupNextStep.Apply => ToolText.BackupApplyNext(),
+        RepairToolBackupNextStep.Continue => ToolText.BackupRestoreNext(),
+        _ => throw new ArgumentOutOfRangeException(nameof(step)),
+    };
 
     private static IEnumerable<CliEffect> BackupEffects(RepairToolBackupFile file, bool preview)
     {

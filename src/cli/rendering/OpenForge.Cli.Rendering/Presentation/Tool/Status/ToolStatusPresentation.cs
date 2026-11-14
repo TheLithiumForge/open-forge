@@ -24,7 +24,7 @@ internal static class ToolStatusPresentation
             Headline = new(ToolText.StatusHeadline(), ToolReadPresentation.Headline(result.Status)),
             Workspace = result.WorkspacePath is { } path ? new CliWorkspaceEcho(path, result.WorkspaceExplicit) : null,
             Findings = ToolReadPresentation.Findings(result.Command, result.Issues),
-            Next = ToolReadPresentation.Next(result.Command, result.Status, result.Issues, result.WorkspacePath),
+            Next = ToolReadPresentation.Next(result.NextCommand, result.Issues),
             Data = new(result.Tools, result.Coverage),
         },
         DataJsonTypeInfo = ToolStatusJsonContext.Default.ToolStatusData,

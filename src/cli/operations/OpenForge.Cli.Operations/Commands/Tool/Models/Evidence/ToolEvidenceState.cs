@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace OpenForge.Cli.Core.Commands.Tool.Shared.Models.Evidence;
+namespace OpenForge.Cli.Core.Commands.Tool.Models.Evidence;
 
 [JsonConverter(typeof(JsonStringEnumConverter<ToolEvidenceState>))]
 internal enum ToolEvidenceState

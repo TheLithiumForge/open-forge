@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Tool.Inspect;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Evidence;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Inventory;
+using OpenForge.Cli.Core.Commands.Tool.Models.Evidence;
+using OpenForge.Cli.Core.Commands.Tool.Models.Inventory;
 using OpenForge.Cli.Core.Commands.Tool.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Document;

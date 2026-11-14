@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Repair;
 using OpenForge.Cli.Core.Commands.Repair.Models.Interaction;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
+using OpenForge.Cli.Core.Commands.Repair.Models.Result;
 using OpenForge.Cli.Core.Commands.Repair.Shared.Application;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.GitIgnore;
@@ -44,8 +45,9 @@ public sealed class ToolBackupRepairTests
         var components = RepairOperationFactory.CreateDefaultComponents() with { ToolBackups = new(locks.Manager, Disabled()) };
         var result = await new RepairOperation(components).ExecuteAsync(new(workspace, preview ? RepairMode.DryRun : RepairMode.Apply, true, [], false), Token);
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
-        var facts = Assert.IsType<OpenForge.Cli.Core.Commands.Repair.Models.Result.RepairToolBackupResult>(result.ToolBackups);
+        var facts = Assert.IsType<RepairToolBackupResult>(result.ToolBackups);
         Assert.Single(facts.Files);
+        Assert.Equal(preview ? RepairToolBackupNextStep.Apply : RepairToolBackupNextStep.Continue, facts.Next.Step);
         if (preview)
         {
             Assert.Equal(before, temporary.SnapshotHashes());
@@ -102,6 +104,8 @@ public sealed class ToolBackupRepairTests
         var result = await new RepairToolBackupOperation(locks.Manager, Disabled()).ExecuteAsync(new(workspace, RepairMode.Apply, true, [], false), Token);
         Assert.NotNull(result);
         Assert.Equal(succeeds ? CliSemanticStatus.Complete : CliSemanticStatus.Blocked, result.Status);
+        var facts = Assert.IsType<RepairToolBackupResult>(result.ToolBackups);
+        Assert.Equal(succeeds ? RepairToolBackupNextStep.Continue : RepairToolBackupNextStep.Preview, facts.Next.Step);
         Assert.Equal(!succeeds, File.Exists(temporary.Combine(ToolBackupPaths.Beside(ManagedGitIgnoreSection.Path))));
         Assert.Equal(succeeds ? "prior\n" : "current\n", await File.ReadAllTextAsync(temporary.Combine(ManagedGitIgnoreSection.Path), Token));
     }

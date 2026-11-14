@@ -1,8 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Evidence;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Inventory;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Provider;
+using OpenForge.Cli.Core.Commands.Tool.Models.Inventory;
+using OpenForge.Cli.Core.Commands.Tool.Models.Provider;
 
 namespace OpenForge.Cli.Core.Presentation.Tool.Inspect.Models;
 

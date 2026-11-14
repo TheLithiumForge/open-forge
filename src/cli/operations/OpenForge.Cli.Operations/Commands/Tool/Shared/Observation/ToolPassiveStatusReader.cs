@@ -1,7 +1,8 @@
-using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Evidence;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Inventory;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Provider;
+using System.Text.Json;
+using OpenForge.Cli.Core.Commands.Tool.Models.Evidence;
+using OpenForge.Cli.Core.Commands.Tool.Models.Inventory;
+using OpenForge.Cli.Core.Commands.Tool.Models.Provider;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Settings.Models.Document;

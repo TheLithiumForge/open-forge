@@ -1,6 +1,6 @@
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Evidence;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Inventory;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Provider;
+using OpenForge.Cli.Core.Commands.Tool.Models.Evidence;
+using OpenForge.Cli.Core.Commands.Tool.Models.Inventory;
+using OpenForge.Cli.Core.Commands.Tool.Models.Provider;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Models.Observation;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;

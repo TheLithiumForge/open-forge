@@ -2,6 +2,7 @@ using System.Text;
 using OpenForge.Cli.Core.Commands.Repair.Models.Interaction;
 using OpenForge.Cli.Core.Commands.Repair.Models.Request;
 using OpenForge.Cli.Core.Commands.Repair.Models.Result;
+using OpenForge.Cli.Core.Commands.Repair.Shared.Result;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.GitIgnore;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
@@ -116,7 +117,7 @@ internal sealed class RepairToolBackupOperation(WorkspaceLockManager locks, Repa
                 receipt?.BackupRemoved == true, receipt?.Cause);
         }).ToArray();
         var verified = data.Count(file => file.Verified);
-        return new(new RepairResultFormation
+        var result = new RepairResult(new RepairResultFormation
         {
             Workspace = request.Workspace,
             Mode = request.Mode,
@@ -139,8 +140,9 @@ internal sealed class RepairToolBackupOperation(WorkspaceLockManager locks, Repa
                 Recovery = RepairRecovery.NotRequired,
                 PostDiagnosis = RepairPostDiagnosis.NotRequested,
             },
-        })
-        { ToolBackups = new(data, restoration is not null) };
+        });
+        var applied = restoration is not null;
+        return result with { ToolBackups = new(data, applied, RepairToolBackupNextAction.Read(result, data, applied)) };
     }
 
     private static string Relative(CliWorkspace workspace, string path) => Path.GetRelativePath(workspace.LexicalRoot, path).Replace(Path.DirectorySeparatorChar, '/');

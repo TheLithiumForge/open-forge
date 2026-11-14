@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Text;
 using System.Text.Json.Nodes;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Evidence;
+using OpenForge.Cli.Core.Commands.Tool.Models.Evidence;
 using OpenForge.Cli.Core.Commands.Tool.Shared.Observation;
 using OpenForge.Cli.Core.Commands.Tool.Status;
 using OpenForge.Cli.Core.Framework.Ownership;

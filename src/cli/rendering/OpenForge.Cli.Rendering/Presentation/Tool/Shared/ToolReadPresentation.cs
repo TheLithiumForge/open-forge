@@ -1,27 +1,18 @@
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Evidence;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Inventory;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Provider;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Reporting;
+using OpenForge.Cli.Core.Commands.Tool.Models.Evidence;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.OutputText.Tool;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
-using OpenForge.Cli.Core.Commands.Shared;
-using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 
 namespace OpenForge.Cli.Core.Presentation.Tool.Shared;
 
 internal static class ToolReadPresentation
 {
-    internal static CliNextAction? Next(string command, CliSemanticStatus status, ToolReadIssue[] issues, string? workspace)
+    internal static CliNextAction? Next(string? command, ToolReadIssue[] issues)
     {
-        if (issues.Any(issue => issue.Code == ToolReadIssueCode.BackupPresent))
-        {
-            var next = CommandLines.RepairAutomaticPreview;
-            if (workspace is not null) next = CliCommandText.InWorkspace(next, workspace);
-            return new(next, ToolText.BackupNext());
-        }
-        return status == CliSemanticStatus.Complete ? null : new("open-forge " + command + " --help", ToolText.ReadNext());
+        if (command is null) return null;
+        var reason = issues.Any(issue => issue.Code == ToolReadIssueCode.BackupPresent) ? ToolText.BackupNext() : ToolText.ReadNext();
+        return new(command, reason);
     }
 
     internal static CliHeadlineKind Headline(CliSemanticStatus status) => status switch
@@ -38,7 +29,7 @@ internal static class ToolReadPresentation
     internal static CliFinding[] Findings(string command, ToolReadIssue[] issues)
         => issues.Select(issue => new CliFinding
         {
-            Code = command.Replace(' ', '-') + "." + ToolReadIssueCodes.Suffix(issue.Code),
+            Code = command.Replace(' ', '-') + "." + issue.MachineCode,
             Severity = Severity(issue.Status),
             Title = ToolText.FindingTitle(),
             Message = issue.Cause,

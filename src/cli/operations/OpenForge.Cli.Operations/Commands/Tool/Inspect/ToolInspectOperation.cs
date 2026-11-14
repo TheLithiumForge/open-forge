@@ -1,9 +1,10 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Tool.Inspect.Models;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Evidence;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Inventory;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Provider;
+using OpenForge.Cli.Core.Commands.Tool.Models.Evidence;
+using OpenForge.Cli.Core.Commands.Tool.Models.Inventory;
+using OpenForge.Cli.Core.Commands.Tool.Models.Provider;
 using OpenForge.Cli.Core.Commands.Tool.Shared.Observation;
+using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Evidence;
 using OpenForge.Cli.Core.Framework.Tools;
 using OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Serialization;

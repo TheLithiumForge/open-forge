@@ -199,3 +199,29 @@ Next: Dispatch implements the Run resolver, parser, raw host and missing-tool of
 Blocker: None for this step. CI owns complete managed and Native AOT qualification. Nothing was pushed.
 
 The Release Unit and Integration builds pass with zero warnings and errors. Focused Unit verification passes 32 cases. Focused Integration verification passes 11 cases. Both published default-layout compatibility cases pass again. There are zero skips. The fixture is regenerated again from the current source and is byte-for-byte unchanged from the documentation commit. Six Tool Inspect captures were refreshed because their only change is the required origin field. Both required format checks pass after trimming trailing whitespace in four new result records. Index has zero effects and findings. The synthetic manifest passes the local JSON Schema check. No test flake was observed. Evidence is under `artifacts/tool-command/shared-contract-*`.
+
+## Presentation dependencies
+
+Done: The architecture test passes after removing all twelve offending imports. Eleven shared report models now live under `Commands.Tool.Models`. The report model exposes finding-code names. Operations selects next commands for Tool reads and backup Repair. Presentation supplies their wording. Backup Repair tests check the preview, apply and continue choices.
+
+Now: The Presentation dependency fix is complete. This is a reversible source refactor for local CLI output. It changes no filesystem effects or public output. It reuses existing report models, source-generated JSON and Shell command text. No dependency or exceptional machinery was added.
+
+Next: Hand off Dispatch, Registration and Writers from this commit. The earlier shared-contract handoff still defines their scope. Use `Commands.Tool.Models` for shared report facts. No Tool Run or writer command handler was added by this fix.
+
+Blocker: None. CI covers the full managed and Native AOT gates. Don't push.
+
+The fresh managed Release Integration and Unit builds pass with zero warnings and errors. The final focused Integration selection passes 49 cases, including the Presentation architecture test, all six Tool snapshot methods and affected read and backup Repair checks. The focused Unit selection passes its finding-code test. Both runs have zero skips. Both required format checks pass. Evidence is under `artifacts/tool-command/presentation-*`.
+
+The first snapshot run found seven stale root Status captures in `ToolBackupReportingTests.ReportsBackupOutput`. Review found only routed-file byte, character and token measurements and the resulting startup share. The captures now contain the fresh received output. Tool output, findings, next commands and every other captured field are unchanged. No flake was observed. The accepted semantic contracts, public docs and default-layout fixture are unchanged.
+
+Reproduce with the Release builds and standard runner flags under Verification. Unit selects `*ToolReadIssueCodesTests.CodesAreDistinctAndClosed`. Integration uses a minimum of 49 tests and these method filters:
+
+- `*LayerBoundaryTests.PresentationDependenciesFollowAcceptedDirections`
+- `*ToolReadCommandsTests.*`
+- `*ToolHostStatusTests.KeepsToolOwnedHosts`
+- `*ToolTelemetryReadTests.*`
+- `*ToolBackupReportingTests.*`
+- `*ToolBackupRepairTests.RestoresSettings`
+- `*ToolBackupRepairTests.RequiresIgnoreAuthority`
+- `*ToolBackupRepairTests.ReportsRestorationPreview`
+- `*ToolBackupRepairTests.ReportsRepairHelp`

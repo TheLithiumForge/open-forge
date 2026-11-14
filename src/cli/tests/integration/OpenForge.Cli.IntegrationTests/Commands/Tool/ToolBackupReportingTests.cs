@@ -3,7 +3,7 @@ using OpenForge.Cli.Core.Commands.Doctor;
 using OpenForge.Cli.Core.Commands.Doctor.Models.Result;
 using OpenForge.Cli.Core.Commands.Status;
 using OpenForge.Cli.Core.Commands.Status.Models.Result;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Evidence;
+using OpenForge.Cli.Core.Commands.Tool.Models.Evidence;
 using OpenForge.Cli.Core.Commands.Tool.Status;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Ownership;
