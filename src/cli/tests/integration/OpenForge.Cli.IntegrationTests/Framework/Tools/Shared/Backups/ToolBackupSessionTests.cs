@@ -232,6 +232,28 @@ public sealed class ToolBackupSessionTests
 
     private static CliWorkspace Selected(TemporaryWorkspace temporary) => new(temporary.Path, temporary.Path, CliWorkspaceSelectionMethod.ExplicitWorkspace);
 
+    [Theory(DisplayName = "Shared file replacement keeps backup restoration bytes and file modes"), InlineData(false), InlineData(true)]
+    public async Task SharedReplacementKeepsBackupContract(bool git)
+    {
+        using var temporary = TemporaryWorkspace.Create("tool-backup-shared-write");
+        using var locks = WorkspaceLockTestStore.Create("tool-backup-shared-lock");
+        if (git) temporary.WriteText(WorkspaceLayoutNames.GitMetadataDirectoryName + "/" + ToolGitRecoveryReader.Head, "ref: refs/heads/fixture\n");
+        temporary.WriteBytes(First, Original);
+        var mode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
+        if (!OperatingSystem.IsWindows()) File.SetUnixFileMode(temporary.Combine(First), mode);
+        var workspace = Selected(temporary);
+        await using var lease = await LeaseAsync(locks, workspace);
+        var prior = await ToolFileReader.ReadAsync(workspace, temporary.Combine(First), Token);
+        var session = await ToolBackupSession.PrepareAsync(lease, [PlannedFileChange.Replace(prior.Expectation, Changed)], Token);
+        await session.ApplyAsync(Token);
+        Assert.Equal(Changed, await File.ReadAllBytesAsync(temporary.Combine(First), Token));
+        if (!OperatingSystem.IsWindows()) Assert.Equal(mode, File.GetUnixFileMode(temporary.Combine(First)));
+        Assert.Empty(await session.RestoreAsync());
+        Assert.Equal(Original, await File.ReadAllBytesAsync(temporary.Combine(First), Token));
+        if (!OperatingSystem.IsWindows()) Assert.Equal(mode, File.GetUnixFileMode(temporary.Combine(First)));
+        Assert.False(File.Exists(ToolBackupPaths.Beside(temporary.Combine(First))));
+    }
+
     private static async ValueTask<WorkspaceLockLease> LeaseAsync(WorkspaceLockTestStore locks, CliWorkspace workspace)
         => Assert.IsType<WorkspaceLockLease>((await locks.AcquireAsync(new(workspace, "tool install", Guid.NewGuid()), Token)).Lease);
 }

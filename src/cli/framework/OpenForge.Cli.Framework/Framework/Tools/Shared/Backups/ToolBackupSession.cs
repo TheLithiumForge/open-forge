@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Tools.Models.Storage;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
@@ -83,7 +84,7 @@ internal sealed partial class ToolBackupSession
             _attempted.Add(change.LogicalPath);
             var target = check.PhysicalPath ?? throw new IOException("A checked change requires a physical destination.");
             if (change.Kind == PlannedFileChangeKind.Delete) File.Delete(target);
-            else await WriteAsync(change.Expectation, target, change.IntendedBytes.AsMemory(), token).ConfigureAwait(false);
+            else await WriteAsync(change.Expectation, change.IntendedBytes.AsMemory(), token).ConfigureAwait(false);
             await CheckAsync(Intended(change, target), token).ConfigureAwait(false);
         }
     }
@@ -120,30 +121,10 @@ internal sealed partial class ToolBackupSession
         => change.Kind == PlannedFileChangeKind.Delete ? FileExpectation.Missing(change.LogicalPath)
             : FileExpectation.File(change.LogicalPath, physicalPath, FileExpectation.Hash(change.IntendedBytes.AsSpan()));
 
-    private async ValueTask WriteAsync(FileExpectation expected, string target, ReadOnlyMemory<byte> bytes, CancellationToken token)
+    private ValueTask WriteAsync(FileExpectation expected, ReadOnlyMemory<byte> bytes, CancellationToken token)
     {
-        var stage = Path.Combine(Path.GetDirectoryName(target) ?? throw new IOException("The target has no parent."), Path.GetRandomFileName());
-        try
-        {
-            await using (var stream = new FileStream(stage, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-                await stream.WriteAsync(bytes, token).ConfigureAwait(false);
-            var staged = await File.ReadAllBytesAsync(stage, token).ConfigureAwait(false);
-            if (!staged.AsSpan().SequenceEqual(bytes.Span)) throw new IOException("The staged bytes differ from the planned bytes.");
-            var check = await CheckAsync(expected, token).ConfigureAwait(false);
-            if (!string.Equals(check.PhysicalPath, target, OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
-                throw new IOException("The staged target's physical identity changed.");
-            if (!OperatingSystem.IsWindows())
-            {
-                var permissionsFrom = expected.Exists ? target : ToolBackupPaths.Beside(target);
-                if (_backups.Values.Any(saved => saved.PhysicalPath == permissionsFrom) || expected.Exists)
-                    File.SetUnixFileMode(stage, File.GetUnixFileMode(permissionsFrom));
-            }
-            token.ThrowIfCancellationRequested();
-            File.Move(stage, target, overwrite: expected.Exists);
-        }
-        finally
-        {
-            if (File.Exists(stage)) File.Delete(stage);
-        }
+        RequireLease();
+        UnixFileMode? mode = _priorModes.TryGetValue(expected.LogicalPath, out var prior) ? prior : null;
+        return ToolFileReplacement.WriteAsync(_lease.Request.Workspace, new ToolFileWrite(expected, bytes, mode), RequireLease, token);
     }
 }

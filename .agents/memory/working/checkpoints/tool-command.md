@@ -9,9 +9,9 @@ The Tool command core is an implementation task that adds the eight external-pro
 
 The selected sources are issue #23 and both comments, the complete external specification and the latest maintainer decisions. This worktree stays on `feature/tool-command`, above updated Comment Links. The overseer handles pushes and PR #26. Earlier checkpoint details and capture lists are kept in Git at `0822e0ed8:.agents/memory/working/checkpoints/tool-command.md`.
 
-Done: Contracts, models, schemas, catalogue selection and the three read commands are committed. Generic process, ignore and backup mechanics are committed. The supply increment is gated and ready to commit.
-Now: Finish the verified-download contracts increment, then implement the five writers.
-Next: Build stores, extraction, bindings, references, telemetry choice, backup reporting and Repair restoration, then Install, Configure, Choose, Update and Remove with consent and preview parity.
+Done: Contracts, models, schemas, catalogue selection and the three read commands are committed. Generic process, ignore and backup mechanics and the supply recipes are committed.
+Now: Gate the storage and extraction foundation, then implement the five writers.
+Next: Finish store publication and release, telemetry choice, backup reporting and Repair restoration, then Install, Configure, Choose, Update and Remove with consent and preview parity.
 Blocker: Choose integration switching and Unix Node archive links need maintainer decisions. Independent native artifact and writer work can continue.
 
 ## Decisions
@@ -44,6 +44,7 @@ The current history includes these review boundaries:
 | `d8c7ba60b` | Lifecycle vectors and separate execution records, agent parser removed |
 | `489e785d6` | Linux clean-checkout fix for three ignored supply model files |
 | `0822e0ed8` | Bounded process host, Git backup selection and shared ignore mechanics |
+| `391ed70f6` | Verified upstream supply recipes, admission checklist and source checks |
 
 The Linux failure was caused by `Models/Artifacts` matching the Windows artifact ignore rule. All three types now live in tracked `Models/Supply`. No discarded parser package, context or seam survives.
 
@@ -60,6 +61,7 @@ Recent gates are:
 | Linux source fix | 0 warnings/errors | 48 passed | Unchanged | Both format checks passed |
 | Generic mechanics | Both builds, 0 warnings/errors | 18 passed | 79 passed | Both format checks passed, no snapshots changed |
 | Supply recipes | Both builds, 0 warnings/errors | 7 passed | 8 passed | Both format checks, four schemas, site and Index passed |
+| Store foundation | Both builds, 0 warnings/errors | 8 passed | 21 passed | Both format checks passed, no snapshots changed |
 
 Every listed run had zero final failures and skips. The supply Unit selection is `*ToolArtifactSourceTests`. Its initial failure used a synthetic non-GitHub repository in the positive GitHub scenario. The fixture was corrected before the final run. The mechanics build corrected one xUnit analyzer violation. Neither was a flake.
 
@@ -79,6 +81,10 @@ Supply reports are under `artifacts/tool-command/restart-supply-*`. Accepted 56 
 Writing review R12-R15 was corrected and passed recheck. Choose's unconfirmed metadata-only behavior is now proposed. Attestations keep the where-published condition. npm SRI is separate from native/Node archive SHA-256. Optional per-artifact `url` and its source-check seam support Node and registry URLs in one recipe.
 
 ## Resume
+
+The store foundation adds the per-platform locator, physical store areas, a bounded file lease and a source-generated reference registry. Initialization uses an atomic directory rename. Later changes require the store lease and expected prior bytes. Missing or inconsistent references block access. The archive reader verifies pinned bytes before extraction and rejects traversal, duplicate destinations, file-parent conflicts, links and special members. Extraction uses an empty private directory. The existing backup session and the registry share one byte-replacement helper.
+
+Foundation evidence is under `artifacts/tool-command/store-foundation-*`. Unit selects the new `ToolArtifactIntegrityTests` and `ToolStoreLocatorTests`. Integration selects all methods in the new `ToolArchiveExtractorTests` and `ToolStoreRegistryTests`, plus only `ToolBackupSessionTests.SharedReplacementKeepsBackupContract`. The final runs executed 8 and 21 tests with zero failures or skips. An initial registry fixture exposed a missing-root read bug, which was fixed. A zero-test mixed class/method filter was replaced with method-only filters. Neither result was counted as a passing gate. No snapshots changed. Writing review R16 corrected the distinction between initial atomic publication and later leased changes.
 
 The pending writer work is:
 

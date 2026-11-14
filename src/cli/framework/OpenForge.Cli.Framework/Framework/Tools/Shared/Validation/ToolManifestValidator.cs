@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using OpenForge.Cli.Core.Framework.Tools.Models.Manifest;
+using OpenForge.Cli.Core.Framework.Tools.Shared.Supply;
 
 namespace OpenForge.Cli.Core.Framework.Tools.Shared.Validation;
 
@@ -29,9 +30,9 @@ internal static partial class ToolManifestValidator
             Require(!artifact.File.Contains('?') && !artifact.File.Contains('#')
                 && ToolIdentity.IsRelativePath(Uri.UnescapeDataString(artifact.File)), "artifact file must be a contained relative URL path");
             Require(artifact.Bytes > 0 || manifest.Admission == "blocked" && artifact.Bytes is null, "artifact bytes must be positive");
-            Require(Integrity(artifact.Integrity), "invalid artifact integrity");
+            Require(ToolArtifactIntegrity.IsValid(artifact.Integrity), "invalid artifact integrity");
             if (manifest.Runtime.Kind != "locked-package" && manifest.Capabilities.Contains(ToolVocabulary.CodeGraphCapability, StringComparer.Ordinal))
-                Require(artifact.Integrity.StartsWith("sha256:", StringComparison.Ordinal), "graph distributions require SHA-256");
+                Require(artifact.Integrity.StartsWith(ToolArtifactIntegrity.Sha256Prefix, StringComparison.Ordinal), "graph distributions require SHA-256");
             Choice(artifact.Archive, "archive", "zip", "tar.gz", "tgz", "file");
             Require(artifact.StripComponents >= 0 && (artifact.Archive != "file" || artifact.StripComponents == 0), "invalid stripComponents");
         }
@@ -130,14 +131,6 @@ internal static partial class ToolManifestValidator
             Require(key.Length > 0 && !key.Contains('=') && !key.Contains('\0'), "invalid environment name");
             Template(value);
         }
-    }
-
-    private static bool Integrity(string value)
-    {
-        if (value.StartsWith("sha256:", StringComparison.Ordinal)) return ToolIdentity.IsSha256(value[7..]);
-        if (!value.StartsWith("sha512-", StringComparison.Ordinal) || value.Length != 95 || value.Any(char.IsWhiteSpace)) return false;
-        Span<byte> decoded = stackalloc byte[64];
-        return Convert.TryFromBase64String(value[7..], decoded, out var count) && count == decoded.Length;
     }
 
     private static bool IsLowerHex(char value) => value is >= '0' and <= '9' or >= 'a' and <= 'f';

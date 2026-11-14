@@ -45,6 +45,10 @@ Default account stores are:
 
 Use the platform's native known-folder resolution. A product-level store override gives tests an owned temporary root without changing OS configuration. Every test redirects all product account stores through one shared test-support seam before use. Tests never download real artifacts or touch real account stores.
 
+`OPENFORGE_TOOL_HOME` selects an absolute test root with `tools`, `tool-cache` and `tool-state` children. Normal runs use the platform locations above. The shared test data-home helper sets this override before tests run.
+
+The account-local `tool-state/registry.json` keeps root identities, bounded units, file hashes, workspace references and both sides of dependency references. Pending units stay separate from verified bytes. An existing store without its complete registry is unavailable coverage. Initialization publishes a private directory through an atomic rename. Later registry changes require the store file lease. Large transfers happen outside that lease. Byte replacement shares the Tool backup mechanism and rechecks expected content and the live lease before publication.
+
 Install keys are `<id>/<version>/<target>/<artifact-set-sha256>`. For one archive, the set digest is its SHA-256. For several artifacts, hash ordinally sorted UTF-8 `id=integrity` lines, each ending in LF. Archive keys use artifact digests. Private Node runtimes use their own version, target and archive digest keys and share references by the same rules. Account-local records bind exact physical units and keep shared references and local process consent outside Git. Custom account roots and unmanaged adoption are deferred.
 
 Store bindings cover one install, archive, runtime-state or declared native-cache unit. Their hashes cover kind and resolved physical root. They never grant a whole home or global store parent. Runtime state uses physical worktree, code-root and execution-environment identities. Branch names and shared Git history aren't identities. Immutable bytes can be shared. Mutable indexes can't be shared without a tested native content-key contract.
