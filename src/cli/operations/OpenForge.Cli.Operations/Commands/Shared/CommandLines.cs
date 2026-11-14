@@ -47,6 +47,8 @@ internal static class CommandLines
     internal const string Install = Run + InstallDefinitions.CommandIdentity;
     internal const string References = Run + ReferencesDefinitions.CommandIdentity;
     internal const string Repair = Run + RepairDefinitions.CommandIdentity;
+    internal const string RepairAutomatic = Repair + " --automatic";
+    internal const string RepairAutomaticPreview = RepairAutomatic + " --dry-run";
     internal const string RouteCreate = Run + RouteCreateDefinitions.CommandIdentity;
     internal const string RouteInit = Run + RouteInitDefinitions.CommandIdentity;
     internal const string RouteInspect = Run + RouteInspectDefinitions.CommandIdentity;

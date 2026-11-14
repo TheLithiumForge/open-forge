@@ -54,6 +54,8 @@ internal static class DoctorDefinitions
             DoctorFindingKind.RecoveryDraftRecognized => "recovery.draft-recognized",
             DoctorFindingKind.RecoveryBundleCollision => "recovery.bundle-collision",
             DoctorFindingKind.RecoveryProvenanceUnavailable => "recovery.provenance-unavailable",
+            DoctorFindingKind.ToolBackupPresent => "tool.backup-present",
+            DoctorFindingKind.ToolBackupUnavailable => "tool.backup-unavailable",
             DoctorFindingKind.RouteEntrypointMissing => "route.entrypoint-missing",
             DoctorFindingKind.RouteEntrypointDuplicate => "route.entrypoint-duplicate",
             DoctorFindingKind.RouteEscape => "route.escape",

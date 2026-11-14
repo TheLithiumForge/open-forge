@@ -54,6 +54,7 @@ internal sealed record RepairResultFormation
 
 internal sealed record RepairResult : ICliCommandResult
 {
+    internal RepairToolBackupResult? ToolBackups { get; init; }
     internal RepairResult(RepairResultFormation formation)
         : this(formation, formation?.Facts?.Findings ?? throw new ArgumentNullException(nameof(formation)))
     {

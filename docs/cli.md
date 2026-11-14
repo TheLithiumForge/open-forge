@@ -1341,6 +1341,8 @@ If Git times out, Doctor says renamed files could not be proven and retries the 
 
 ### `repair`
 
+If settings, lock or `.gitignore` has a sibling `.bak`, Repair handles that group first. Preview it with `open-forge repair --automatic --dry-run`. Current destination permission and removal exclusions still apply. Saved settings don't grant permission. Review the preview, then apply it with `open-forge repair --automatic`. Check restored files, then rerun Repair for other work. Status and Doctor report these backups without showing their saved contents.
+
 Apply selected local-link corrections or supported recovery of leftover Library state.
 
 #### Common examples

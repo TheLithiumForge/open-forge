@@ -471,6 +471,8 @@ internal static class StatusReportSelector
     private static CliFinding Finding(StatusResult result, StatusFinding finding)
     {
         var subject = finding.Subject;
+        if (finding.Code is StatusFindingCode.ToolBackupPresent or StatusFindingCode.ToolBackupUnavailable && subject is not null && result.WorkspacePath is { } backupWorkspace)
+            subject = Path.GetRelativePath(backupWorkspace, subject).Replace(Path.DirectorySeparatorChar, '/');
         var isLibrarySource = finding.Code is StatusFindingCode.LibrarySourceRootInvalid
             or StatusFindingCode.LibrarySourceRootAliased
             or StatusFindingCode.LibrarySourceRootUnavailable;
@@ -490,7 +492,8 @@ internal static class StatusReportSelector
             id = path is null ? finding.MachineCode : null;
         }
 
-        var message = Message(finding);
+        var message = finding.Code == StatusFindingCode.ToolBackupPresent
+            ? global::OpenForge.Cli.OutputText.Tool.ToolText.BackupMessage(subject ?? finding.Subject ?? finding.MachineCode) : Message(finding);
         return new CliFinding
         {
             Severity = CliReportVocabulary.Severity(finding.Status),
@@ -501,7 +504,7 @@ internal static class StatusReportSelector
                 isIdentifier ? CliSubjectKind.Identifier : path is null ? CliSubjectKind.Identifier : CliSubjectKind.File,
                 path,
                 id),
-            Actions = Action(finding) is { } action ? [action] : [],
+            Actions = Action(result, finding) is { } action ? [action] : [],
             Resolution = Resolution(finding.Code),
             Evidence = Evidence(finding),
         };
@@ -553,6 +556,8 @@ internal static class StatusReportSelector
                  or StatusFindingCode.LibraryProjectionUnavailable or StatusFindingCode.LibraryProjectionBlocked
                 => StatusWording.LibraryProjection(finding.Code, finding.Owner ?? global::OpenForge.Cli.OutputText.Status.StatusText.LabelThe(), finding.Cause),
             StatusFindingCode.LibraryExtensionCollision => finding.Cause,
+            StatusFindingCode.ToolBackupPresent => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupMessage(subject),
+            StatusFindingCode.ToolBackupUnavailable => finding.Cause,
             StatusFindingCode.InvalidInput => StatusWording.Invalid(StatusWording.TrimSentence(finding.Cause)),
             StatusFindingCode.WorkspaceUnavailable => StatusWording.WorkspaceUnavailable(),
             StatusFindingCode.WorkspaceNotDirectory => StatusWording.WorkspaceNotDirectory(),
@@ -563,7 +568,7 @@ internal static class StatusReportSelector
         };
     }
 
-    private static CliNextAction? Action(StatusFinding finding)
+    private static CliNextAction? Action(StatusResult result, StatusFinding finding)
     {
         var command = StatusWording.ActionCommand(finding.Code, finding.Owner, finding.Subject);
         if (command is null)
@@ -571,14 +576,19 @@ internal static class StatusReportSelector
             return null;
         }
 
-        return new CliNextAction(command, StatusWording.ActionReason(finding.Code));
+        return new CliNextAction(ScopeBackupCommand(result, finding, command), StatusWording.ActionReason(finding.Code));
     }
+
+    private static string ScopeBackupCommand(StatusResult result, StatusFinding finding, string command)
+        => finding.Code is StatusFindingCode.ToolBackupPresent or StatusFindingCode.ToolBackupUnavailable && result.WorkspacePath is { } workspacePath
+            ? OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.CliCommandText.InWorkspace(command, workspacePath) : command;
 
     private static CliResolution? Resolution(StatusFindingCode code)
         => StatusWording.ActionCommand(code, owner: null, subject: null) is null
             ? null
             : code switch
             {
+                StatusFindingCode.ToolBackupPresent => CliResolution.TargetedOperation,
                 StatusFindingCode.FrameworkTargetChanged or StatusFindingCode.FrameworkTargetMissing
                     or StatusFindingCode.ExtensionTargetChanged or StatusFindingCode.ExtensionTargetMissing
                     or StatusFindingCode.LibraryProjectionMissing or StatusFindingCode.LibraryProjectionChanged
@@ -630,7 +640,7 @@ internal static class StatusReportSelector
             ?? (result.Status == CliSemanticStatus.Invalid
                 ? "open-forge status --help"
                 : "open-forge doctor");
-        return new CliNextAction(command, StatusWording.NextReason(result.Status, finding.Code));
+        return new CliNextAction(ScopeBackupCommand(result, finding, command), StatusWording.NextReason(result.Status, finding.Code));
     }
 
     private static int NextRank(StatusFindingCode code) => code switch

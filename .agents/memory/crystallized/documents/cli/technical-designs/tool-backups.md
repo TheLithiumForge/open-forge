@@ -31,6 +31,12 @@ The lock records no backup identity, path, digest or state. Backup discovery wor
 
 Repair can plan restoration from an ordinary sibling backup to its exact settings, lock or `.gitignore` target. It shows the target and backup before confirmation and follows the existing destination permission rules. Preview writes nothing. Under the workspace lease, recheck both paths and their bytes, restore the backup bytes, validate the target and delete the backup only after success. A link, changed file, unavailable permission or ambiguous target blocks restoration. Tool backup restoration never edits agent files.
 
+Restore control records before planning repairs that depend on them. If backups are present, Repair handles that group first. Run Repair again for other workspace repairs after checking the restored files. `--automatic` selects the group. An interactive run asks for confirmation. Explicit relink requests need a separate invocation after restoration.
+
+Validate saved settings and lock bytes before any write. The resulting Tool pins must agree. Restoring `.gitignore` requires a grant in the current settings. Saved settings don't grant that permission. Recheck current control records under the lease so a changed grant or exclusion blocks the write. A plain backup filename doesn't identify the command that created it.
+
+If restored bytes verify but a backup is still present, report a warning. If backup removal can't be checked, report failure. These results use Tool backup finding codes separately from recovery v1.
+
 Tool backups don't select account-store targets. Existing recovery v1 restoration keeps its format, selection and behavior.
 
 ## Conformance

@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 3,
+  "command": "tool status",
+  "status": "completed-with-warnings",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Read passive tool installation and configuration evidence.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "tool-status.backup-present",
+      "title": "Tool observation",
+      "message": "A sibling backup is present at a Tool control path. Preview restoration with open-forge repair --automatic --dry-run --workspace <workspace>.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": ".gitignore.bak",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "tools": [],
+    "coverage": [
+      {
+        "store": "settings",
+        "state": "complete",
+        "cause": null
+      },
+      {
+        "store": "lock",
+        "state": "complete",
+        "cause": null
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge repair --automatic --dry-run --workspace <workspace>",
+    "reason": "Review the saved file and preview its restoration before changing the target."
+  }
+}

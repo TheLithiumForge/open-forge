@@ -30,7 +30,7 @@ A source, size, hash, required signature or attestation mismatch blocks installa
 
 ## Workspace records
 
-`.agents/open-forge.json` records installed pins and active roles. `.agents/open-forge.lock.json` keeps verified receipts, hashes, lifecycle commands and their results. Tool-owned installers handle both hosts. Planned Tool writes create no `.bak` in Git workspaces. Without Git, sibling backups keep prior managed-file bytes until changed content validates. Backup reporting and Repair restoration are pending.
+`.agents/open-forge.json` records installed pins and active roles. `.agents/open-forge.lock.json` keeps verified receipts, hashes, lifecycle commands and their results. Tool-owned installers handle both hosts. Planned Tool writes create no `.bak` in Git workspaces. Without Git, sibling backups keep prior managed-file bytes until changed content validates. Status and Doctor report leftover backups at these control paths. Preview restoration with `open-forge repair --automatic --dry-run`. Review the preview, then apply it with `open-forge repair --automatic`. Check restored files, then run Repair again for other work.
 
 The user store keeps tool and private Node versions while any workspace references them. Update selects only reviewed catalogue pins, including exact older pins for downgrades. The catalogue keeps previously reviewed pins. The last update or removal releases an old version after a complete reference check.
 

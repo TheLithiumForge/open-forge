@@ -40,7 +40,7 @@ Missing pins or closure, unsafe archives, size or hash mismatches, failed requir
 
 ## Records
 
-`.agents/open-forge.json` records installed pins and active roles. The generated lock keeps receipts, hashes, lifecycle commands and their results. Planned Tool writes create no `.bak` in Git workspaces. Without Git, sibling backups keep prior managed-file bytes until changed content validates. Backup reporting and Repair restoration are pending. An inactive tool keeps `roles:[]`. Missing receipts don't hide a readable settings entry or establish a verified installation. Settings edits alone don't install or activate a tool.
+`.agents/open-forge.json` records installed pins and active roles. The generated lock keeps receipts, hashes, lifecycle commands and their results. Planned Tool writes create no `.bak` in Git workspaces. Without Git, sibling backups keep prior managed-file bytes until changed content validates. Status and Doctor report leftover backups at these control paths. Preview restoration with `open-forge repair --automatic --dry-run`. Review the preview, then apply it with `open-forge repair --automatic`. Check restored files, then run Repair again for other work. An inactive tool keeps `roles:[]`. Missing receipts don't hide a readable settings entry or establish a verified installation. Settings edits alone don't install or activate a tool.
 
 The decided writer design runs the pinned tool's declared installer, uninstaller and index-cleanup commands. The tool handles agent files, native settings and guidance. Open Forge edits only its settings, lock and managed `.gitignore` section. Choose's agent integration policy needs the maintainer's decision.
 

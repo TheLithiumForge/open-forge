@@ -1,0 +1,5 @@
+No errors. 1 warning was recorded.
+  Warning  .gitignore.bak  Sibling backup is kept
+         A sibling backup is present at .gitignore.bak. Preview restoration before changing its target.
+         open-forge repair --automatic --dry-run --workspace <workspace>
+Next: open-forge repair --automatic --dry-run --workspace <workspace>

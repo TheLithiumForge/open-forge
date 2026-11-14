@@ -7,6 +7,12 @@ open-forge:
 
 # Repair Behavior Contract
 
+## Tool backups
+
+If settings, lock or `.gitignore` has a sibling `.bak`, restore that group before planning repairs that use those records. Preview writes nothing. `--automatic` selects the group. Interactive mode confirms the target and backup paths. Explicit relink requests need a separate invocation after restoration. After restoring the group, return its results and ask for a fresh Repair invocation for other work.
+
+Validate saved control bytes, resulting Tool pin agreement, current destination permission and removal exclusions before writing. A saved settings grant doesn't authorize `.gitignore`. Under the workspace lease, recheck both files and every current control record used by permission checks. Verify all restored bytes before deleting any backup. Keep backups on failure. The [Tool backups design](../../technical-designs/tool-backups.md) defines the file flow. Existing recovery v1 keeps its behavior.
+
 Authored relinks also cover [comment links](../shared/source-references/interface.md#comment-links). Change only the target word. Relinks write a repository-root path. Existing selection, protection, dry-run, revalidation, recovery and verification apply to these edits. Legacy IDs require a chosen path. Weak move or heading suggestions require selection.
 
 ## Workspace Layout

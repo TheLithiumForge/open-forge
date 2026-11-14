@@ -27,4 +27,6 @@ internal enum ToolReadIssueCode
     NativeLimits,
     Cancelled,
     ReadUnavailable,
+    BackupPresent,
+    BackupUnavailable,
 }

@@ -6,13 +6,23 @@ using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.OutputText.Tool;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using OpenForge.Cli.Core.Commands.Shared;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 
 namespace OpenForge.Cli.Core.Presentation.Tool.Shared;
 
 internal static class ToolReadPresentation
 {
-    internal static CliNextAction? Next(string command, CliSemanticStatus status)
-        => status == CliSemanticStatus.Complete ? null : new("open-forge " + command + " --help", ToolText.ReadNext());
+    internal static CliNextAction? Next(string command, CliSemanticStatus status, ToolReadIssue[] issues, string? workspace)
+    {
+        if (issues.Any(issue => issue.Code == ToolReadIssueCode.BackupPresent))
+        {
+            var next = CommandLines.RepairAutomaticPreview;
+            if (workspace is not null) next = CliCommandText.InWorkspace(next, workspace);
+            return new(next, ToolText.BackupNext());
+        }
+        return status == CliSemanticStatus.Complete ? null : new("open-forge " + command + " --help", ToolText.ReadNext());
+    }
 
     internal static CliHeadlineKind Headline(CliSemanticStatus status) => status switch
     {

@@ -33,6 +33,8 @@ internal static class ToolReadIssueCodes
         ToolReadIssueCode.NativeLimits => "native-limits",
         ToolReadIssueCode.Cancelled => "cancelled",
         ToolReadIssueCode.ReadUnavailable => "read-unavailable",
+        ToolReadIssueCode.BackupPresent => "backup-present",
+        ToolReadIssueCode.BackupUnavailable => "backup-unavailable",
         _ => throw new ArgumentOutOfRangeException(nameof(code)),
     };
 }

@@ -48,7 +48,7 @@ JSON and YAML definitions follow the [manifest schema](../schemas/tools/v1/manif
 
 ## Stores and records
 
-`.agents/open-forge.json` records installed tools, exact versions and active roles. An inactive tool keeps an empty role list. `.agents/open-forge.lock.json` records verified receipts, hashes, lifecycle commands and their results. Planned Tool writes use Git as the backup in Git workspaces. Without Git, sibling `.bak` files keep prior managed-file bytes until changed content validates. Backup reporting and Repair restoration are pending. These paths and native Skills stay fixed when you choose a custom context folder.
+`.agents/open-forge.json` records installed tools, exact versions and active roles. An inactive tool keeps an empty role list. `.agents/open-forge.lock.json` records verified receipts, hashes, lifecycle commands and their results. Planned Tool writes use Git as the backup in Git workspaces. Without Git, sibling `.bak` files keep prior managed-file bytes until changed content validates. Status and Doctor report leftover backups at these control paths. Preview restoration with `open-forge repair --automatic --dry-run`. Review the preview, then apply it with `open-forge repair --automatic`. Check restored files, then run Repair again for other work. These paths and native Skills stay fixed when you choose a custom context folder.
 
 The decided writer design invokes each pinned tool's own install, uninstall and index-cleanup commands. The tool handles agent files, native settings and its guidance. Open Forge edits only its settings, lock and managed `.gitignore` section. The maintainer's decision on Choose and agent integrations is pending. Open Forge doesn't change Git's index.
 

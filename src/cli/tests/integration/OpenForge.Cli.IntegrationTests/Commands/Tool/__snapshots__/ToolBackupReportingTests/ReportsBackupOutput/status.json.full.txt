@@ -1,0 +1,296 @@
+{
+  "schemaVersion": 3,
+  "command": "status",
+  "status": "completed-with-warnings",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Open Forge is installed, but 1 thing needs attention.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "status.tool-backup-present",
+      "title": "Sibling backup is kept",
+      "message": "A sibling backup is present at .gitignore.bak. Preview restoration before changing its target.",
+      "subject": {
+        "kind": "file",
+        "path": ".gitignore.bak",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge repair --automatic --dry-run --workspace <workspace>",
+          "reason": "Review the saved file and preview its restoration before changing the target."
+        }
+      ],
+      "candidates": [],
+      "evidence": [
+        {
+          "label": "cause",
+          "value": "A sibling backup is present at a Tool control path."
+        }
+      ],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routedFiles": 20,
+    "startupFiles": 7,
+    "startupTokens": 4037,
+    "mayLoadAgainFiles": 1,
+    "mayLoadAgainTokens": 243,
+    "allTokens": 30779,
+    "startupShare": 13.115273400695279248838493778,
+    "rootCategories": 7,
+    "entriesSectionsCurrent": 12,
+    "entriesSectionsStale": 0,
+    "entriesSectionsMissing": 0,
+    "frameworkFilesCurrent": 21,
+    "frameworkFilesChanged": 0,
+    "frameworkFilesMissing": 0,
+    "extensionsInstalled": 0,
+    "librariesRegistered": 0,
+    "libraryLinksCurrent": 0,
+    "libraryLinksMissing": 0,
+    "libraryLinksChanged": 0,
+    "recoveryBundles": 0,
+    "recoveryDrafts": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "installation": {
+      "state": "installed",
+      "entryPath": "AGENTS.md",
+      "loaderPath": ".agents/loader.md"
+    },
+    "context": {
+      "startup": {
+        "shipped": {
+          "files": 7,
+          "characters": 16147,
+          "bytes": 16147,
+          "tokens": 4037
+        },
+        "current": {
+          "files": 7,
+          "characters": 16147,
+          "bytes": 16147,
+          "tokens": 4037
+        },
+        "difference": {
+          "files": 0,
+          "characters": 0,
+          "bytes": 0,
+          "tokens": 0
+        },
+        "mayLoadAgain": {
+          "files": 1,
+          "characters": 971,
+          "bytes": 971,
+          "tokens": 243
+        }
+      },
+      "allRouted": {
+        "files": 20,
+        "characters": 123115,
+        "bytes": 123116,
+        "tokens": 30779
+      },
+      "startupShare": 13.115273400695279248838493778,
+      "mayLoadAgainSources": [
+        {
+          "sourceId": "memory/emerging",
+          "bytes": 971,
+          "layers": [
+            {
+              "path": ".agents/memory/emerging/_emerging.md",
+              "bytes": 971
+            }
+          ]
+        }
+      ]
+    },
+    "structure": {
+      "rootCategories": {
+        "count": 7,
+        "added": [],
+        "removed": []
+      }
+    },
+    "frameworkFiles": [
+      {
+        "path": ".agents/README.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/directives/_directives.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/loader.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/maps/_maps.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/_memory.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/SKILL.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/common.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/discovery.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/packages.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/routes.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/tools.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/templates/_templates.md",
+        "state": "current"
+      },
+      {
+        "path": "AGENTS.md",
+        "state": "current"
+      },
+      {
+        "path": "CLAUDE.md",
+        "state": "current"
+      }
+    ],
+    "entriesSections": [
+      {
+        "path": ".agents/directives/_directives.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/guidance/_guidance.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/loader.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/maps/_maps.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/_memory.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/archived/_archived.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/emerging/_emerging.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/memory/working/_working.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/patterns/_patterns.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/_skills.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/templates/_templates.md",
+        "state": "current"
+      }
+    ],
+    "extensions": [],
+    "libraries": [],
+    "recovery": {
+      "stores": [
+        {
+          "kind": "workspace",
+          "path": "<workspace-recovery-store>",
+          "coverage": "complete",
+          "candidates": [],
+          "cause": null
+        },
+        {
+          "kind": "legacy",
+          "path": "<legacy-recovery-store>",
+          "coverage": "complete",
+          "candidates": [],
+          "cause": null
+        }
+      ],
+      "candidates": []
+    }
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge repair --automatic --dry-run --workspace <workspace>",
+    "reason": "Review the saved file and preview its restoration before changing the target."
+  }
+}

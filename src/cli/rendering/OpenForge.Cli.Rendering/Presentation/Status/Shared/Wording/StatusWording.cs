@@ -376,6 +376,8 @@ internal static class StatusWording
     internal static string FindingTitle(StatusFindingCode code) => code switch
     {
         StatusFindingCode.InvalidInput => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleInvalidInput(),
+        StatusFindingCode.ToolBackupPresent => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupTitle(),
+        StatusFindingCode.ToolBackupUnavailable => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupUnavailableTitle(),
         StatusFindingCode.WorkspaceUnavailable => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsUnavailable(),
         StatusFindingCode.WorkspaceNotDirectory => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsNotADirectory(),
         StatusFindingCode.WorkspaceUnsafe => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceIsUnsafe(),
@@ -432,6 +434,8 @@ internal static class StatusWording
     internal static string? ActionCommand(StatusFindingCode code, string? owner, string? subject)
         => code switch
         {
+            StatusFindingCode.ToolBackupPresent => OpenForge.Cli.Core.Commands.Shared.CommandLines.RepairAutomaticPreview,
+            StatusFindingCode.ToolBackupUnavailable => "open-forge doctor",
             StatusFindingCode.FrameworkTargetChanged or StatusFindingCode.FrameworkTargetMissing => "open-forge update",
             StatusFindingCode.ExtensionTargetChanged or StatusFindingCode.ExtensionTargetMissing
                 => $"open-forge extension update {owner ?? "<id>"}",
@@ -469,6 +473,7 @@ internal static class StatusWording
     internal static string ActionReason(StatusFindingCode code)
         => code switch
         {
+            StatusFindingCode.ToolBackupPresent => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupNext(),
             StatusFindingCode.FrameworkTargetChanged or StatusFindingCode.FrameworkTargetMissing
                 => global::OpenForge.Cli.OutputText.Status.StatusText.MessageUpdateTheFrameworkFilesThatNeedAttention(),
             StatusFindingCode.ExtensionTargetChanged or StatusFindingCode.ExtensionTargetMissing

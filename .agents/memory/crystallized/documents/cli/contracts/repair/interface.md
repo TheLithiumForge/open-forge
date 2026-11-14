@@ -9,6 +9,14 @@ open-forge:
 
 Authored relinks also admit [comment links](../shared/source-references/interface.md#comment-links) in code and Markdown. An exact source location can name either file kind. Repair changes only the target word and writes an encoded repository-root path. Existing dry-run, selection, protection and recovery rules apply. Git and weak suggestions stay distinct evidence in the result and choice labels. Unique-slug choices are labelled weak. Weak candidates and legacy IDs require a chosen target.
 
+## Tool backups
+
+Repair previews and restores sibling backups for settings, lock and `.gitignore` with its existing flags. When backups are present, `--automatic` selects their group and interactive mode asks for confirmation. `--dry-run` shows target and backup paths without writing. Check restored files, then run Repair again for other workspace work. Explicit relink requests need a separate invocation after restoration.
+
+JSON adds `data.toolBackups` for this result. Each row records `target`, `backup`, `before`, `after`, `written`, `verified`, `backupRemoved` and `cause`. Hashes describe bytes without disclosing saved content. The existing status and exit rules apply. Invalid saved records, unavailable paths, changed bytes, missing current permission and removal exclusions block restoration. Existing recovery v1 keeps its public format.
+
+Tool backup findings use `repair.tool-backup-conflict`, `repair.tool-backup-retained` and `repair.tool-backup-write-failed`. A known kept backup warns. Unknown backup-removal state fails. Preview effects include restoring changed targets and deleting the saved backups after verification.
+
 ## Workspace Layout
 
 Repair uses the selected layout for diagnosis and repairs. A missing loader can be restored when ordinary repair rules allow it. An intentional removal is respected, and a layout mismatch is not an instruction to relocate files.

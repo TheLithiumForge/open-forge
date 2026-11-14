@@ -1,0 +1,4 @@
+Preview restoring Tool control files from sibling backups.
+  .agents/open-forge.json  Restore from .agents/open-forge.json.bak.
+No files were changed.
+Next: open-forge repair --automatic --workspace <workspace>

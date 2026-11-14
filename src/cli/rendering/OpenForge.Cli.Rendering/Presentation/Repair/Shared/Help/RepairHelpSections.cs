@@ -18,6 +18,7 @@ internal static class RepairHelpSections
                 new CliHelpSection("Relink coordinates", global::OpenForge.Cli.OutputText.Repair.RepairText.HelpRelinkCoordinatesDetails()),
                 new CliHelpSection("Worked relink example", global::OpenForge.Cli.OutputText.Repair.RepairText.HelpWorkedRelinkExampleDetails(), preserveLines: true),
                 new CliHelpSection("Other repairs", global::OpenForge.Cli.OutputText.Repair.RepairText.HelpOtherRepairsDetails()),
+                new CliHelpSection("Tool backups", global::OpenForge.Cli.OutputText.Repair.RepairText.HelpToolBackups()),
                 new CliHelpSection("Safety", global::OpenForge.Cli.OutputText.Repair.RepairText.HelpSafetyDetails()),
             ],
             RelatedCommands = global::OpenForge.Cli.OutputText.Repair.RepairText.HelpRelatedCommands(),

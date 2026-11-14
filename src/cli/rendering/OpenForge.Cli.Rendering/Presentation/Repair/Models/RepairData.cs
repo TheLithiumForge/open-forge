@@ -18,6 +18,9 @@ internal sealed record RepairData
     public IReadOnlyList<RepairDataLibraryRecovery>? LibraryRecovery { get; init; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<RepairToolBackupFile>? ToolBackups { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public RepairDataDiagnosis? Diagnosis { get; init; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

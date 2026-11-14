@@ -25,6 +25,8 @@ internal static class DoctorWording
     internal static string Category(DoctorFindingKind kind)
         => kind.ToString() switch
         {
+            nameof(DoctorFindingKind.ToolBackupPresent) or nameof(DoctorFindingKind.ToolBackupUnavailable)
+                => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryData(),
             var value when value.StartsWith("Workspace", StringComparison.Ordinal)
                 || value.StartsWith("Library", StringComparison.Ordinal) => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspace(),
             var value when value.StartsWith("Recovery", StringComparison.Ordinal) => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryData(),
@@ -67,6 +69,7 @@ internal static class DoctorWording
             DoctorProvenanceSource.ExtensionLifecycle => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleExtensionInstallationRecord(),
             DoctorProvenanceSource.ExtensionSource => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleExtensionSource(),
             DoctorProvenanceSource.LifecycleOwnership => global::OpenForge.Cli.OutputText.Doctor.DoctorText.LabelFileOwnershipRecords(),
+            DoctorProvenanceSource.ToolBackups => global::OpenForge.Cli.OutputText.Tool.ToolText.Backups(),
             _ => throw new ArgumentOutOfRangeException(nameof(source), source, "The Doctor provenance source is not defined."),
         };
 
@@ -148,6 +151,8 @@ internal static class DoctorWording
             DoctorFindingKind.LibraryLinkCapabilityUnsupported => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleRequiredLibraryLinksAreUnsupported(),
             DoctorFindingKind.LibraryExtensionCollision => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleLibraryAndExtensionPathsConflict(),
             DoctorFindingKind.LibraryRecoverySafeExact => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleVerifiedLibraryRecoveryIsAvailable(),
+            DoctorFindingKind.ToolBackupPresent => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupTitle(),
+            DoctorFindingKind.ToolBackupUnavailable => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupUnavailableTitle(),
             DoctorFindingKind.RecoveryBundleRecognized => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleIsKept(),
             DoctorFindingKind.RecoveryDraftRecognized => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleIncompleteRecoveryDraftFound(),
             DoctorFindingKind.RecoveryBundleCollision => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryBundleIsDamaged(),
@@ -279,6 +284,8 @@ internal static class DoctorWording
             DoctorFindingKind.LibraryLinkCapabilityUnsupported => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatThisSystemCannotCreateTheFileLinksTheLibraryNeeds($"{LibraryId(finding)}"),
             DoctorFindingKind.LibraryExtensionCollision => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatIsClaimedByTheLibraryAndByAnExtension($"{path}", $"{LibraryId(finding)}"),
             DoctorFindingKind.LibraryRecoverySafeExact => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatAVerifiedRecoveryStepForCanRestore($"{LibraryId(finding)}", $"{path}"),
+            DoctorFindingKind.ToolBackupPresent => global::OpenForge.Cli.OutputText.Tool.ToolText.BackupMessage(path),
+            DoctorFindingKind.ToolBackupUnavailable => Cause(finding, global::OpenForge.Cli.OutputText.Tool.ToolText.BackupUnavailableTitle()),
             DoctorFindingKind.RecoveryBundleRecognized => global::OpenForge.Cli.OutputText.Shared.SharedPhrases.FormatARecoveryBundleFromAnEarlierCommandIsKeptAt($"{path}"),
             DoctorFindingKind.RecoveryDraftRecognized => global::OpenForge.Cli.OutputText.Shared.SharedPhrases.FormatAnUnfinishedRecoveryDraftIsAtACommandDidNotFinish($"{path}"),
             DoctorFindingKind.RecoveryBundleCollision => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatTheRecoveryBundleAtIsDamagedItWasLeftInPlace($"{path}", $"{Cause(finding, "the records conflict")}"),

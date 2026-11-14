@@ -47,6 +47,17 @@ public static class ToolText
     public static string StatusHeadline() => "Read passive tool installation and configuration evidence.";
     public static string FindingTitle() => "Tool observation";
     public static string ReadNext() => "Resolve the reported cause, then rerun the same read command.";
+    public static string BackupTitle() => "Sibling backup is kept";
+    public static string BackupUnavailableTitle() => "Sibling backup cannot be checked";
+    public static string BackupMessage(string path) => $"A sibling backup is present at {path}. Preview restoration before changing its target.";
+    public static string BackupNext() => "Review the saved file and preview its restoration before changing the target.";
+    public static string Backups() => "Tool control-file backups";
+    public static string BackupRestoreHeadline(bool preview) => preview ? "Preview restoring Tool control files from sibling backups." : "Read Tool control-file restoration results.";
+    public static string BackupRestoreRow(string backup, bool verified) => verified ? $"Restored and verified from {backup}." : $"Restore from {backup}.";
+    public static string BackupRestoreNext() => "Read the restored files, then rerun Repair for other workspace repairs.";
+    public static string BackupApplyNext() => "Review the preview, then apply the shown backup restoration.";
+    public static string BackupBlockedNext() => "Resolve the reported cause, then preview the backup restoration again.";
+    public static string BackupRestoreFailedTitle() => "Backup restoration failed";
     public static string Available() => "Available";
     public static string Installed() => "Installed";
     public static string Empty() => "None recorded.";

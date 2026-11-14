@@ -1,0 +1,6 @@
+Open Forge is installed, but 1 thing needs attention.
+  Warning  .gitignore.bak  Sibling backup is kept
+         A sibling backup is present at .gitignore.bak. Preview restoration before changing its target.
+         open-forge repair --automatic --dry-run --workspace <workspace>
+  Startup reads 7 of 20 routed files, about 4.0k tokens.
+Next: open-forge repair --automatic --dry-run --workspace <workspace>

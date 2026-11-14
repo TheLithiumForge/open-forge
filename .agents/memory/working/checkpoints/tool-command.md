@@ -10,8 +10,8 @@ The Tool command core is an implementation task that adds the eight external-pro
 The selected sources are issue #23 and both comments, the complete external specification and the latest maintainer decisions. This worktree stays on `feature/tool-command`, above updated Comment Links. The overseer handles pushes and PR #26. Earlier checkpoint details and capture lists are kept in Git at `0822e0ed8:.agents/memory/working/checkpoints/tool-command.md`.
 
 Done: Contracts, models, schemas, catalogue selection and the three read commands are committed. Generic process, ignore and backup mechanics and the supply recipes are committed.
-Now: Gate the storage and extraction foundation, then implement the five writers.
-Next: Finish store publication and release, telemetry choice, backup reporting and Repair restoration, then Install, Configure, Choose, Update and Remove with consent and preview parity.
+Now: Finish store publication and release, then implement the five writers.
+Next: Finish store publication and release and telemetry choice, then Install, Configure, Choose, Update and Remove with consent and preview parity.
 Blocker: Choose integration switching and Unix Node archive links need maintainer decisions. Independent native artifact and writer work can continue.
 
 ## Decisions
@@ -45,6 +45,7 @@ The current history includes these review boundaries:
 | `489e785d6` | Linux clean-checkout fix for three ignored supply model files |
 | `0822e0ed8` | Bounded process host, Git backup selection and shared ignore mechanics |
 | `391ed70f6` | Verified upstream supply recipes, admission checklist and source checks |
+| `c28e4c5fb` | Verified extraction, physical store areas and reference registry |
 
 The Linux failure was caused by `Models/Artifacts` matching the Windows artifact ignore rule. All three types now live in tracked `Models/Supply`. No discarded parser package, context or seam survives.
 
@@ -62,6 +63,7 @@ Recent gates are:
 | Generic mechanics | Both builds, 0 warnings/errors | 18 passed | 79 passed | Both format checks passed, no snapshots changed |
 | Supply recipes | Both builds, 0 warnings/errors | 7 passed | 8 passed | Both format checks, four schemas, site and Index passed |
 | Store foundation | Both builds, 0 warnings/errors | 8 passed | 21 passed | Both format checks passed, no snapshots changed |
+| Backup reporting and Repair | Both builds, 0 warnings/errors | 1 passed | 23 passed | Both format checks, site and Index passed |
 
 Every listed run had zero final failures and skips. The supply Unit selection is `*ToolArtifactSourceTests`. Its initial failure used a synthetic non-GitHub repository in the positive GitHub scenario. The fixture was corrected before the final run. The mechanics build corrected one xUnit analyzer violation. Neither was a flake.
 
@@ -90,12 +92,22 @@ The pending writer work is:
 
 1. Add per-user stores, safe extraction, bindings, complete shared references and local process consent. Use local hashed test artifacts only.
 2. Add the visible telemetry choice and effective Inspect output. Keep private Node, frozen npm closure and official-source checks on their accepted seams.
-3. Add Status and Doctor backup reporting and bounded Root Repair restoration before writer effects. Only settings, lock and ignore are Tool backup targets.
+3. Backup reporting and bounded Root Repair restoration are gated. Only settings, lock and ignore are Tool backup targets.
 4. Add all five typed writer leaves, complete plans, consent, final confirmation, expected-state revalidation and paired control publication.
 5. Add managed ignore planning, all removal exclusions, ownership collisions, root Remove coexistence and final-reference release.
 6. Replace unavailable store observations with verified bindings and resolve external instructions. Native completion adapters remain on the next branch.
 
-Original stash `60d034fef70b076bcb05a488d668f09fd538ddce` is untouched. Its rebased reporting/restoration copy is `15825724e67c04a66957378d2316925e28c92e85`. Restore selected reporting and restoration files carefully. They still reference the removed member model and old host backup targets. The generic mechanics checkpoint `76a2b372ae9af705bd28eef5174a9a2061a4448c` is already applied and committed. Don't apply it again.
+Original stash `60d034fef70b076bcb05a488d668f09fd538ddce` is untouched. Its rebased reporting/restoration copy is `15825724e67c04a66957378d2316925e28c92e85`. The reporting and restoration portions were restored selectively and adapted. Don't apply either stash wholesale or restore the discarded member model and host backup targets. The generic mechanics checkpoint `76a2b372ae9af705bd28eef5174a9a2061a4448c` is already applied and committed. Don't apply it again.
+
+## Backup increment
+
+The current increment restores the reporting checkpoint selectively. It reads sibling backups only at settings, lock and `.gitignore`, including when current records are invalid. Reports keep saved contents private and show workspace-relative paths. Tool readers and root Status and Doctor point to the scoped Repair preview. No agent-file backup target survives.
+
+Root Repair restores the control group before other work. Automatic selection or interactive confirmation is required. Explicit relinks need a separate invocation after restoration. Validate saved control bytes, matching resulting Tool pins, current ignore-file permission and removal exclusions. Recheck all current control records and both saved and target bytes under the workspace lease. Verify the group before deleting backups. Known kept backups warn. Unknown removal fails. Tool backup findings are separate from recovery v1. Preview includes target restoration and later backup deletion.
+
+The final Integration build passed with reflection disabled, zero warnings and zero errors. The latest affected run before the final result refinements executed 23 tests with 19 passes and four expected measurement snapshot failures. Accepted 56 Status captures for Skill byte, character, token and ratio totals only. Structured comparison kept every other JSON value. Accepted 37 new reporting, preview and help captures after review. The final preview refreshed four JSON captures for backup-deletion effects only. Final managed Unit passed 1/1, Integration passed 23/23, both with zero skips. Both builds had zero warnings and errors. Both required format checks and the site build passed. The site kept its existing Node localStorage warning. Index refreshed the checkpoint description while keeping both active entries. Its final preview is expected to have zero changes. Reproduction selects `*RepairFiniteMappingTests.FindingDefinitionsAreComplete` in Unit. Integration uses method filters for `*ToolBackupReportingTests.*`, `*ToolBackupRepairTests.*` and the five affected Status/Included methods listed above, excluding the unchanged Tool help test.
+
+Reports and logs use `artifacts/tool-command/tool-backup-*`. Development corrections fixed the Doctor finding category, the public Status code oracle, explicit standard detail for Doctor warning rows and fixture replacement through the real file API. These were deterministic failures, not flakes. Writing review R17-R18 and the final result-clause review passed. An incidental Windows default-encoding rewrite was corrected by restoring untouched contract bytes from HEAD with explicit UTF-8. Both Repair contract diffs now contain additions only.
 
 ## Not decided yet
 

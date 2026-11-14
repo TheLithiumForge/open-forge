@@ -25,7 +25,7 @@ internal static class ToolInspectPresentation
             Headline = new(ToolText.InspectHeadline(), ToolReadPresentation.Headline(result.Status)),
             Workspace = result.WorkspacePath is { } path ? new CliWorkspaceEcho(path, result.WorkspaceExplicit) : null,
             Findings = ToolReadPresentation.Findings(result.Command, result.Issues),
-            Next = ToolReadPresentation.Next(result.Command, result.Status),
+            Next = ToolReadPresentation.Next(result.Command, result.Status, result.Issues, result.WorkspacePath),
             Data = new(result.Id, result.Version, result.Definition, result.Target, result.Installed, result.Requirements, result.Limitations, result.Instructions),
         },
         DataJsonTypeInfo = ToolInspectJsonContext.Default.ToolInspectData,

@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 3,
+  "command": "status",
+  "status": "completed-with-warnings",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Open Forge is installed, but 1 thing needs attention.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "status.tool-backup-present",
+      "title": "Sibling backup is kept",
+      "message": "A sibling backup is present at .gitignore.bak. Preview restoration before changing its target.",
+      "subject": {
+        "kind": "file",
+        "path": ".gitignore.bak",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": "targeted-operation",
+      "actions": [
+        {
+          "kind": "command",
+          "command": "open-forge repair --automatic --dry-run --workspace <workspace>",
+          "reason": "Review the saved file and preview its restoration before changing the target."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "routedFiles": 20,
+    "startupFiles": 7,
+    "startupTokens": 4037,
+    "mayLoadAgainFiles": 1,
+    "mayLoadAgainTokens": 243,
+    "allTokens": 30779,
+    "startupShare": 13.115273400695279248838493778,
+    "rootCategories": 7,
+    "entriesSectionsCurrent": 12,
+    "entriesSectionsStale": 0,
+    "entriesSectionsMissing": 0,
+    "frameworkFilesCurrent": 21,
+    "frameworkFilesChanged": 0,
+    "frameworkFilesMissing": 0,
+    "extensionsInstalled": 0,
+    "librariesRegistered": 0,
+    "libraryLinksCurrent": 0,
+    "libraryLinksMissing": 0,
+    "libraryLinksChanged": 0,
+    "recoveryBundles": 0,
+    "recoveryDrafts": 0,
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "installation": {
+      "state": "installed",
+      "entryPath": "AGENTS.md",
+      "loaderPath": ".agents/loader.md"
+    },
+    "context": {
+      "startup": {
+        "shipped": {
+          "files": 7,
+          "characters": 16147,
+          "bytes": 16147,
+          "tokens": 4037
+        },
+        "current": {
+          "files": 7,
+          "characters": 16147,
+          "bytes": 16147,
+          "tokens": 4037
+        },
+        "difference": {
+          "files": 0,
+          "characters": 0,
+          "bytes": 0,
+          "tokens": 0
+        },
+        "mayLoadAgain": {
+          "files": 1,
+          "characters": 971,
+          "bytes": 971,
+          "tokens": 243
+        }
+      },
+      "allRouted": {
+        "files": 20,
+        "characters": 123115,
+        "bytes": 123116,
+        "tokens": 30779
+      },
+      "startupShare": 13.115273400695279248838493778
+    },
+    "structure": {
+      "rootCategories": {
+        "count": 7,
+        "added": [],
+        "removed": []
+      }
+    },
+    "extensions": [],
+    "libraries": []
+  },
+  "recovery": null,
+  "next": {
+    "kind": "command",
+    "command": "open-forge repair --automatic --dry-run --workspace <workspace>",
+    "reason": "Review the saved file and preview its restoration before changing the target."
+  }
+}

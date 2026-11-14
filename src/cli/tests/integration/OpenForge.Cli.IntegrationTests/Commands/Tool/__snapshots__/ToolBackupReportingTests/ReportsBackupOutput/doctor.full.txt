@@ -1,0 +1,13 @@
+No errors. 1 warning was recorded.
+Workspace: <workspace>
+Recovery data
+  Warning  .gitignore.bak  Sibling backup is kept [tool.backup-present]
+         A sibling backup is present at .gitignore.bak. Preview restoration before changing its target.
+         use open-forge repair --automatic --dry-run --workspace <workspace>
+         open-forge repair --automatic --dry-run --workspace <workspace>
+         Preview restoration of the sibling backup before changing its target.
+         state: present
+         read from .gitignore.bak
+  48 links valid, 1 external link not checked, 18 routes checked.
+  1 uses the indicated command.
+Next: open-forge repair --automatic --dry-run --workspace <workspace>

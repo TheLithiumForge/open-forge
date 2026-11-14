@@ -1,0 +1,9 @@
+Read passive tool installation and configuration evidence.
+  Warning  .gitignore.bak  Tool observation
+         A sibling backup is present at a Tool control path. Preview restoration with open-forge repair --automatic --dry-run --workspace <workspace>.
+None recorded.
+Coverage
+  settings: Complete
+  lock: Complete
+1 warnings.
+Next: open-forge repair --automatic --dry-run --workspace <workspace>
