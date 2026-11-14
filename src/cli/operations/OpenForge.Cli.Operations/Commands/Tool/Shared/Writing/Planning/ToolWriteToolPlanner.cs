@@ -99,15 +99,29 @@ internal sealed class ToolWriteToolPlanner(
             detected.CommandPath is { } path ? Path.GetDirectoryName(path) ?? input.Facts.Path.BinPath : input.Facts.Path.BinPath);
         if (context is null) return new() { Entry = entry, Detection = detected };
         ToolSetupPlan? native = null;
+        ToolSetupRequest? deferred = null;
         if (profile is not null && detected.Invocation is { } invocation)
         {
-            native = await setup.PlanAsync(new()
+            var request = new ToolSetupRequest
             {
                 Setup = profile.Uninstall,
                 Invocation = invocation,
                 InstalledInvocation = invocation,
                 Context = context,
-            }, cancellationToken).ConfigureAwait(false);
+            };
+            if (profile.Uninstall.Effects.Any(effect =>
+                effect.Kind is ToolDeclaredEffectKind.PathChange or ToolDeclaredEffectKind.SharedFileDeletion
+                || effect.Scope == ToolEffectScope.Account && effect.Kind == ToolDeclaredEffectKind.Configuration))
+            {
+                deferred = request;
+                // This request formats the command only. Keep the complete declaration for confirmed preparation.
+                request = request with
+                {
+                    InstalledInvocation = null,
+                    Setup = request.Setup with { DryRunArguments = null, NativePlan = null, Effects = [], PossibleOutputs = [] },
+                };
+            }
+            native = await setup.PlanAsync(request, cancellationToken).ConfigureAwait(false);
         }
         var removal = await config.PlanRemoveAsync(new()
         {
@@ -116,7 +130,7 @@ internal sealed class ToolWriteToolPlanner(
             Lock = locked ?? new() { Version = detected.Version ?? string.Empty, Channel = detected.ChannelId ?? string.Empty, Changes = [] },
             NativeSettings = NativeSettings(input, id),
         }, cancellationToken).ConfigureAwait(false);
-        return new() { Entry = entry, Detection = detected, Profile = profile, Context = context, Native = native, Removal = removal };
+        return new() { Entry = entry, Detection = detected, Profile = profile, Context = context, Native = native, DeferredNativeRemoval = deferred, Removal = removal };
     }
 
     private Task<ToolDetectionResult> DetectAsync(ToolCatalogueEntry entry, ToolWritePlanningInput input, CancellationToken cancellationToken)

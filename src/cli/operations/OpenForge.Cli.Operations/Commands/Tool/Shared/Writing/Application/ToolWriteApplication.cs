@@ -4,7 +4,6 @@ using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Planning;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Request;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Result;
 using OpenForge.Cli.Core.Commands.Tool.Shared.Writing.Consent;
-using OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -62,9 +61,7 @@ internal sealed class ToolWriteApplication(
     {
         var request = plan.Input.Request;
         var nativeChosen = tool.Native is not null;
-        if (tool.Native is { } setup && setup.Request.Setup.Effects.Any(effect =>
-                effect.Kind is ToolDeclaredEffectKind.PathChange or ToolDeclaredEffectKind.SharedFileDeletion
-                || effect.Scope == ToolEffectScope.Account && effect.Kind == ToolDeclaredEffectKind.Configuration))
+        if (tool.DeferredNativeRemoval is { } deferred)
         {
             var decision = await new ToolWriteConsentOperation(interaction.ConfirmOptional).AskAsync(new()
             {
@@ -75,7 +72,7 @@ internal sealed class ToolWriteApplication(
                 {
                     Kind = ToolWriteConsentKind.AccountUninstall,
                     ToolId = tool.Entry.Identity.Id,
-                    Effects = [.. setup.Request.Setup.Effects.Select(ToolWriteProjection.Effect)],
+                    Effects = [.. deferred.Setup.Effects.Select(ToolWriteProjection.Effect)],
                 },
             }, cancellationToken).ConfigureAwait(false);
             if (decision == ToolWriteConsentDecision.Cancelled) throw new OperationCanceledException(cancellationToken);
@@ -83,11 +80,23 @@ internal sealed class ToolWriteApplication(
         }
         if (nativeChosen)
         {
-            if (!await native.ApplyAsync(tool, state, cancellationToken).ConfigureAwait(false)) return;
+            var actual = tool;
+            if (tool.DeferredNativeRemoval is { } chosen)
+            {
+                actual = await native.RefreshAsync(tool, chosen.Invocation, cancellationToken).ConfigureAwait(false);
+                if (actual.Native is { } prepared) state.NativeRemovals[tool.Entry.Identity.Id] = prepared;
+                if (actual.Native?.Problems.Count > 0)
+                {
+                    state.Findings.Add(new(ToolWriteFindingCode.NativePlanBlocked, CliSemanticStatus.Blocked,
+                        tool.Entry.Identity.Id, Cause: string.Join("\n", actual.Native.Problems)));
+                    state.Stopped = true;
+                    return;
+                }
+            }
+            if (!await native.ApplyAsync(actual, state, cancellationToken).ConfigureAwait(false)) return;
         }
-        else if (tool.Native is { } skipped)
+        else if (tool.Native is not null)
         {
-            state.ManualCommands.Add((tool.Entry.Identity.Id, ToolWriteProjection.Command("manual-native-uninstall", skipped.Command)));
             state.Outcomes.Add(new(tool.Entry.Identity.Id, ToolWriteStages.Native, ToolWriteStages.Skipped, [], []));
         }
         if (await config.RemoveAsync(plan, tool, state, cancellationToken).ConfigureAwait(false)
