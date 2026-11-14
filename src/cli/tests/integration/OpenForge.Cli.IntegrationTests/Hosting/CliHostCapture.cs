@@ -1,3 +1,5 @@
+using OpenForge.Cli.Composition.Models;
+using OpenForge.Cli.IntegrationTests.Hosting.Shared.ToolIsolation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Output;
 using OpenForge.Cli.Hosting;
@@ -9,14 +11,24 @@ internal static class CliHostCapture
     internal static async Task<CliHostCaptureResult> RunAsync(
         string[] arguments,
         string currentDirectory,
-        CliOutputColors? colors = null)
+        CliOutputColors? colors = null,
+        CliToolHostInputs? tools = null)
     {
         using var standardOutput = new StringWriter();
         using var standardError = new StringWriter();
+        using var isolation = tools is null ? new CliToolIsolation() : null;
         var exitCode = await CliHost.RunAsync(
             arguments,
             currentDirectory,
             new CliOutputWriters(standardOutput, standardError) { Colors = colors ?? CliOutputColors.Plain },
+            new CliCompositionInputs
+            {
+                StandardInput = TextReader.Null,
+                PromptOutput = standardError,
+                StandardInputRedirected = true,
+                PromptOutputRedirected = true,
+                Tools = tools ?? isolation?.Inputs,
+            },
             TestContext.Current.CancellationToken);
         return new CliHostCaptureResult(exitCode, standardOutput.ToString(), standardError.ToString());
     }
