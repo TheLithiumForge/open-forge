@@ -1,0 +1,61 @@
+Tool setup.
+synthetic  Synthetic tool  3.2.x  missing
+Version: locked missing, detected unavailable
+Machine records: unavailable, native settings unavailable
+Bin: unavailable (unavailable)
+Manager global bin: unavailable (unavailable)
+Tool path: unavailable
+Runtime path: unavailable
+synthetic-native: no-change, stored value off -> off
+  Effective native value from SYNTHETIC_NATIVE_OVERRIDE: on
+Retired addition synthetic-retired: remove
+Origin: third-party
+Upstream: https://example.invalid/tool
+Licence: synthetic
+Channel synthetic-npm: npm, runtime synthetic-runtime >=20, required client npm
+  npm: 1.0.0
+  Target: linux, x64, libc glibc, minimum OS 5.0, minimum libc 2.17
+  Minimum Linux kernel: 4.18
+  Minimum libstdc++: 6.0.25
+Channel synthetic-release: git-hub-release, runtime native, required client any
+  Release asset version: 3.2.1
+  Target: linux, x64, libc not applicable, minimum OS unspecified, minimum libc unspecified
+  Minimum Linux kernel: unspecified
+  Minimum libstdc++: unspecified
+  Bundled runtime: synthetic-runtime 20.1.0
+  Bundled runtime path: runtime
+  Bundled application entry: app.js
+Bundled runtime arguments: ["synthetic-runtime-argument"]
+Profile synthetic-profile: 3.2.x, minimum tool 3.2.1, minimum Open Forge 0.1.0, tested 3.2.1
+  Native home policy: node
+Native setup: ["synthetic-setup"]
+  Native timeout seconds: 1
+  Native output byte limit: 128
+Native inventory: ["synthetic-plan"]
+  Native inventory parser: cbm-install-plan-v1
+  Native inventory timeout seconds: 1
+  Native inventory output byte limit: 128
+  Potential native output: ${nativeHome}/synthetic.json, account, exact, backup, condition synthetic-client
+Native preview: ["synthetic-preview"]
+  account: Synthetic account registration
+Native uninstall: ["synthetic-remove"]
+  Native timeout seconds: 1
+  Native output byte limit: 128
+Native inventory: ["synthetic-plan"]
+  Native inventory parser: cbm-install-plan-v1
+  Native inventory timeout seconds: 1
+  Native inventory output byte limit: 128
+  Potential native output: ${nativeHome}/synthetic.json, account, exact, backup, condition synthetic-client
+  account: Synthetic account registration
+Addition synthetic-native: native-command, account. Synthetic native setting
+  Required initial state: readable-native-value
+  Desired native setting: disabled
+  Stored native value path: ${nativeHome}/synthetic.json
+  Stored native value parser: code-graph-telemetry-v1
+  Missing stored native value: on
+  Stored native value byte limit: 128
+  Native status parser: synthetic-parser
+Apply: ["setting", "disable"]
+Read: ["setting", "status"]
+Manual setting change: ["setting", "{previous}"]
+  SYNTHETIC_OVERRIDE: <removed for this command>

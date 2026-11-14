@@ -24,6 +24,7 @@ internal enum DoctorSubjectKind
     LibraryMapping,
     LibraryProjection,
     LibraryResidual,
+    Tool,
 }
 
 internal sealed record DoctorSubject

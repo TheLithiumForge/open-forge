@@ -304,3 +304,27 @@ That question doesn't authorize a new parser or dependency.
 The separate review evidence commit is `240c78f3449147fb9993f3fecc8c45a879583241`.
 Its staged main-worktree merge passes a clean build and twelve focused documentation tests.
 Both required .NET checks pass before the merge commit.
+
+## Records integration
+
+The review evidence merge is `c8fb87aa2b5f7e5e6d465c1a35d7c02719058b69`.
+C's implementation merge is staged above it.
+The combined managed build passes with zero warnings and errors.
+All twelve touched classes pass, with 62 Unit cases and 50 Integration cases.
+The exact reproduction selections are the current C packet classes with counts 8, 10, 8, 15, 5, 4, 4, 6 and 2 for Unit, then 19, 22 and 9 for Integration.
+The invocation keeps snapshot updates disabled and uses the existing minimum-count, warning and skip gates.
+Logs are under `artifacts/tool-setup/merge-records/`.
+Both .NET checks pass before its merge commit.
+
+D's implementation is committed as `41ef63a7fc8987836e74315ea3450fe8bdd7273c`.
+Checking its leaf connections found D-R5.
+The three writer bindings take constructed operations, which would resolve host facts during Root composition.
+Correction run `r_37c1c9c2353a` changes those inputs to execution-time factories and checks construction, help, invalid input and once-only execution.
+The planning and effect implementation stays unchanged.
+
+E's native-source check confirms F-H1 and F-H2.
+CBM supports JSON5 syntax beyond the current BCL reader and treats a zero-length file as missing.
+Its include precedence already matches the provider.
+E investigates an ordinary compatible parser in `r_70a2ecb5dfbd` before a separate dependency choice.
+The mastermind can make the smallest reversible choice under the user's direction and records it as a maintainer question.
+No custom parser, include resolver or dependency is added by the current provider slice.
