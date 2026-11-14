@@ -56,10 +56,10 @@ Tools add no workspace state, lease or recovery dependency under `.open-forge-st
 
 ## Checkpoint
 
-Done: Recorded C1 through C7 and committed the frozen packets in 2e517348e. Created five isolated worktrees and verified all five initial workers alive after dispatch.
-Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. The catalogue and records are integrated. The provider base and bounded reader contract are staged and checked. A and B finalize their commits. D adds early catalogue validation before its lazy factory. Core command registration is pending.
-Next: Review the complete implementation candidates, commit and integrate their branches, then complete E's journeys and docs.
-Blocker: No implementation blocker after this contract increment. The first shipping Open Forge version is asked of the maintainer.
+Done: Recorded C1 through C7 and started the supervised lanes. The catalogue, records and home provider are integrated. The combined channel, config and writer services pass 590 cases across 41 focused classes.
+Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. The checked core merge is ready. C connects the composed CLI on that exact base.
+Next: Integrate the native reader and central command graph, then complete E's journeys and docs.
+Blocker: No implementation blocker. The first shipping Open Forge version is asked of the maintainer. The provisional minimum is 0.9.0-beta.19.
 
 ## Phase 1 checks
 
@@ -360,3 +360,80 @@ Commit continuation `r_73f2e23f0951` also replaces repeated ignore filenames in 
 D-R5 passes 38 binding cases, including 24 factory-lifecycle cases.
 D-R6 adds pure catalogue validation so unknown named IDs and channels are rejected before the factory resolves homes.
 The combined correction and commit continuation is `r_576e6838e9e3`.
+
+## Core merge
+
+All core implementation heads are staged in one user-authorized no-fast-forward merge:
+
+- A `38cc6a791a0bd5b8d31565e5e78232ef4d97ddfc`, with 58 files and 191 passing cases.
+- B `46834001af0470d5cff565e772339856e335fa52`, with 39 files and its accepted focused receipts.
+- D `9044c04c2b758e9414a1992b743923d4180331f3`, above `41ef63a7fc8987836e74315ea3450fe8bdd7273c`, with 45 final binding cases.
+- E `973d223de7c59eb01e29d1f124106d28acff943f`, with the native-reader source and licence plan.
+
+The branches have separate file assignments. This combines their checked commits without replaying or squashing them.
+The full upstream MIT text is added to the existing root licence for F's derived reader.
+Its words stay unchanged. Line endings and trailing blank-line spaces follow repository formatting.
+
+The first combined build found 101 compiler errors from the new `Tools.Shared.Path` namespace hiding `System.IO.Path` in B and C.
+The integrator renames that one internal capability folder to `Paths` and changes its eight namespace references.
+No shared model or behavior changes. The same frozen API still connects the services.
+The first log is kept as `artifacts/tool-setup/merge-core/build-namespace-collision.log`.
+The corrected combined build and all touched A, B and D test classes run before acceptance.
+The selected matrix is written under `artifacts/tool-setup/merge-core/` with each class's command outcome.
+Final payload regeneration is still reserved for the end.
+
+## Core corrections
+
+After the namespace correction, the combined build passes with zero warnings and errors.
+Both required .NET checks also pass on that source.
+The first focused run stops in `ToolProcessHostTests.BoundsOutput` because its owned temporary directory is still held during cleanup.
+The failed log is kept. A investigates the actual process cleanup in `r_be4c67dc773b` and returns an uncommitted checked correction for this merge.
+The accepted earlier implementation commit stays in the merge history.
+
+The first selection used A's earlier nineteen-class matrix instead of its final twenty-class receipt.
+The missing metadata class is added from `abi/test-summary.json` and all seventeen cases pass.
+The completed core selections now have 557 passing cases across forty classes, with zero failures or skips in those completed results.
+The process-host class is still unresolved. The full selected minimum is 562 cases across forty-one classes.
+Completed class receipts are kept while the failed class awaits its correction.
+
+C's preflight is accepted from `r_f54be8a0f8f2`.
+It needs no additional catalogue input field.
+C-ROOT-ISOLATION extends C's integration assignment to the normal typed host entry and existing in-process capture and Status/Doctor fixture adapters.
+Those adapters forward owned Tool inputs before any composed workspace observation.
+C-ROOT-ENTRY changes D's factory input to the bound request and cancellation token and returns an asynchronous leaf operation.
+D closes that connector in `r_e886f3ce5a0c` with typed factory failures and cancellation.
+C updates the closed preflight choices in `r_6d01abc62e89` and waits for the checked core base before implementation.
+F's independent native-reader correction continues in `r_a0614d63c6b0`.
+
+## Final integration fixes
+
+D's C-ROOT-ENTRY return passes seventy binding cases and both required checks.
+Its six-file uncommitted patch is checked against `9044c04c2` and applied to the pending merge.
+The five source hashes match D's manifest.
+The earlier forty-five-case report is kept under a separate filename and isn't counted as current evidence for that changed class.
+
+A's A-R2 return passes eight process-host cases, including root and child reaping for output, timeout and cancellation.
+Source review finds a Windows exit-observation race consistent with the held directory. The original log doesn't identify its holding PID.
+The correction uses the BCL's bounded process-handle wait, drains pipes after termination and joins cleanup tasks.
+Its host/test and receipt patches are checked and applied to the pending merge.
+The old failed process-host log and temporary directories are kept.
+No shared model, constructor, global test-support or payload change is needed.
+The main worktree rebuilds once for both corrections, then reruns the affected classes and both formatting gates.
+
+F's native-reader correction is committed as `ffef620bca8ae506c611fc3f244e63a72ceae1ec`.
+E's focused check finds no material conformance gap against the tagged native functions.
+The six-file checkpoint is `c72327e8f458cb28cc1608090da61fc1a41f8ae724d16294f220215aaf3528c3`.
+The 176-case receipt and both .NET checks pass in F's worktree.
+The provider API stays unchanged. Its merge follows the core gate.
+The fresh whole-feature review, native journeys, final docs and payload captures are still pending.
+
+## Core acceptance
+
+The corrected combined Release build passes with zero warnings and errors.
+The final focused receipts contain 590 passing cases across 41 classes, with zero failures or skips.
+The changed binding class contributes seventy cases and the changed process-host class contributes eight.
+Their earlier receipts stay separate from the counted current results.
+Both required .NET checks pass on the final source.
+The final gate receipt is `artifacts/tool-setup/merge-core/gates-final.json`.
+C receives this checked core as the base for central command composition.
+Milestone four completes after that command graph is integrated.
