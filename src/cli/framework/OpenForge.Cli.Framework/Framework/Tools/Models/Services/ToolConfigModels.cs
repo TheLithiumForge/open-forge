@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Settings.Models.Permissions;
 using OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
 using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
@@ -22,6 +23,7 @@ internal sealed record ToolConfigRequest
 internal sealed record ToolConfigObservation
 {
     public required ToolConfigChange Change { get; init; }
+    public ToolConfigChange? ResolvedChange { get; init; }
     public required ToolRecordedValue Current { get; init; }
     public required ToolRecordedValue Desired { get; init; }
     public required ToolChangeDisposition Disposition { get; init; }
@@ -41,7 +43,10 @@ internal sealed record ToolConfigRemovalObservation
 internal sealed record ToolConfigPlan(
     ToolConfigRequest Request,
     IReadOnlyList<ToolConfigObservation> Changes,
-    IReadOnlyList<ToolConfigRemovalObservation> Removals);
+    IReadOnlyList<ToolConfigRemovalObservation> Removals)
+{
+    public WorkspacePermissionEvaluation Permissions { get; init; } = new([], [], WorkspacePermissionDecision.NotRequired);
+}
 
 internal sealed record ToolConfigApplyResult
 {
@@ -52,6 +57,7 @@ internal sealed record ToolConfigApplyResult
     public required IReadOnlyList<ToolNativeSettingRecord> NativeSettings { get; init; }
     public required IReadOnlyList<string> Unfinished { get; init; }
     public string? Failure { get; init; }
+    public bool Cancelled { get; init; }
 }
 
 internal sealed record ToolConfigRemoveRequest
@@ -64,7 +70,10 @@ internal sealed record ToolConfigRemoveRequest
 
 internal sealed record ToolConfigRemovePlan(
     ToolConfigRemoveRequest Request,
-    IReadOnlyList<ToolConfigRemovalObservation> Changes);
+    IReadOnlyList<ToolConfigRemovalObservation> Changes)
+{
+    public WorkspacePermissionEvaluation Permissions { get; init; } = new([], [], WorkspacePermissionDecision.NotRequired);
+}
 
 internal sealed record ToolConfigRemoveResult
 {
@@ -74,4 +83,5 @@ internal sealed record ToolConfigRemoveResult
     public required IReadOnlyList<string> Unfinished { get; init; }
     public required IReadOnlyList<ToolNativeSettingRecord> KeptNativeSettings { get; init; }
     public string? Failure { get; init; }
+    public bool Cancelled { get; init; }
 }

@@ -31,6 +31,8 @@ internal sealed record ToolRecordWriteRequest
     public ToolWorkspaceMachineState? WorkspaceMachine { get; init; }
     public required IReadOnlyList<ToolNodeRuntimeRecord> Runtimes { get; init; }
     public ToolPathState? Path { get; init; }
+    public IReadOnlyList<string> RemovedToolIds { get; init; } = [];
+    public IReadOnlyList<string> RemovedRuntimeVersions { get; init; } = [];
 }
 
 internal sealed record ToolRecordGrantRequest(
@@ -41,4 +43,5 @@ internal sealed record ToolRecordGrantRequest(
 internal sealed record ToolRecordWriteResult(IReadOnlyList<string> WrittenPaths, IReadOnlyList<string> Unfinished, string? Failure)
 {
     public required IReadOnlyList<ToolBackupCompletionRequest> PendingBackups { get; init; }
+    public bool Cancelled { get; init; }
 }

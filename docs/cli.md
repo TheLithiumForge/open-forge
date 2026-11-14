@@ -1529,7 +1529,7 @@ a trailing slash needs a manual link edit, and Repair never suggests a file in
 its place. Existing local files keep their normal checks. Web URLs stay unchecked.
 
 Index encodes local link paths, such as `old%20guide.md`.
-Doctor also accepts readable paths: `<old guide.md>` and `cafÃ©(one).md`.
+Doctor also accepts readable paths: `<old guide.md>` and `café(one).md`.
 Escape an entity-opening ampersand as `%26`: write `entity&amp;.md` as
 `entity%26amp;.md`. Keep `#`, `%` and `?` in names escaped.
 Repair writes Index's form when

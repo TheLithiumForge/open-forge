@@ -709,3 +709,26 @@ The changed source, documents and generated baselines pass UTF-8, LF and BOM che
 Full managed suites, all platform builds and Native AOT execution await hosted CI.
 The fresh adherence review hasn't started. Phase 4 simplification hasn't started and needs approval.
 After committing this checkpoint, the coordinator requests the overseer's push and stops for CI results.
+
+
+## Adherence corrections
+
+The maintainer authorizes A1-A5 from the fresh review on 2026-11-14.
+Simplification stays unapproved and unstarted.
+The corrections use the original A-D lanes on new branches from `350768fbb`.
+They run no local tests or snapshot producers. Their commit gates are the managed build and both .NET formatting checks.
+
+The shared contract adds structured permission observations to config plans, explicit machine/runtime record deletion selections and cancellation flags beside completed progress.
+A per-invocation permission list carries explicit preview grants without saving them.
+A separate resolved recipe on the observation supplies complete plan values without expanding inserted literals twice or exposing unrelated existing file contents.
+The original recipe stays the apply input.
+These fields have defaults so existing typed fakes still compile until their regression cases are updated.
+Record omission keeps its existing upsert meaning. Only selected IDs or runtime versions request guarded deletion.
+
+A handles channel cancellation. B handles destination permissions, config cancellation and resolved recipe facts.
+C handles guarded record deletion and record cancellation.
+D handles writer permission preflight, deletion publication, cancellation precedence and complete text/JSON/consent plans.
+The coordinator restores the two corrupted UTF-8 examples for A5 and keeps shared models, this Task and integration.
+Each lane has exclusive production files and its matching tests. B's config fixtures and D's real-graph fixtures get explicit grants where success requires them.
+The fresh reviewer will recheck A1-A5 against the integrated correction without running tests.
+Any hosted CI failures supplied before the push checkpoint join this correction batch.

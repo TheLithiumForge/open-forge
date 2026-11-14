@@ -10,6 +10,7 @@ internal sealed record ToolRecipeContext
     public required string MainRoot { get; init; }
     public required IReadOnlyDictionary<string, string> ClientRoots { get; init; }
     public IReadOnlyDictionary<string, string>? NativeEnvironment { get; init; }
+    public IReadOnlyList<string> AdditionalAllowInstallPaths { get; init; } = [];
 }
 
 internal static class ToolRecipeDefinitions

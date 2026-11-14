@@ -70,4 +70,5 @@ internal sealed record ToolChannelInstallResult(ToolMachineState? State, IReadOn
 {
     public required IReadOnlyList<ToolBackupCompletionRequest> PendingBackups { get; init; }
     public required IReadOnlyList<ToolNodeRuntimeRecord> Runtimes { get; init; }
+    public bool Cancelled { get; init; }
 }
