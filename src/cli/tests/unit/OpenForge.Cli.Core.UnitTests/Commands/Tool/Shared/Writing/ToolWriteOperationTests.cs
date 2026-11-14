@@ -233,6 +233,7 @@ public sealed class ToolWriteOperationTests
         Assert.False(fixture.Records.Portable!.Lock.ContainsKey(ToolWriteOperationFixture.Id));
         Assert.False(fixture.Records.Portable.Settings.ContainsKey(ToolWriteOperationFixture.Id));
         Assert.Contains(result.Data.Outcomes, outcome => outcome.Stage == ToolWriteStages.Native && outcome.State == ToolWriteStages.Skipped);
+        Assert.DoesNotContain(fixture.Calls, call => call.Call == ToolWriteCall.NativePreparation);
         if (!yes) Assert.Equal(ToolWriteConsentKind.AccountUninstall, Assert.Single(fixture.OptionalQuestions).Kind);
     }
 
@@ -248,6 +249,7 @@ public sealed class ToolWriteOperationTests
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Single(fixture.Processes);
         Assert.Equal(ToolWriteConsentKind.AccountUninstall, Assert.Single(fixture.OptionalQuestions).Kind);
+        Assert.True(fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.OptionalPrompt) < fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.NativePreparation));
         Assert.True(fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.Native) < fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.ConfigRemove));
     }
 

@@ -91,12 +91,63 @@ Every advertised path executes the accepted sequence and has focused evidence. N
 
 ## Progress
 
-Done: Implemented C-ROOT-ENTRY with typed async request and token factories and one local acquisition failure policy. The affected binding class passes all 70 cases, including the 45 accepted R5 and R6 cases.
-Now: READY_FOR_REVIEW UNCOMMITTED. The six-file integration patch against `9044c04c2b758e9414a1992b743923d4180331f3` passes the managed build, focused tests and mandatory checks.
-Next: The coordinator applies the checked LF binary patch as the integration resolution and rechecks the affected class. C consumes the async leaf map after the core main gate.
+Done: Implemented E-J4 deferred account preparation on the verified core branch. The managed build and all 71 focused cases pass. E-J3 was cancelled before edits and stays with E.
+Now: READY_FOR_REVIEW UNCOMMITTED on `feature/tool-setup-d-remove-fix`. Build, 71 focused cases and both mandatory formatter commands return exit 0.
+Next: The coordinator reviews and applies the E-J4 patch for E's actual project-only Remove rerun. Keep the correction uncommitted until further direction.
 Blocker: None identified in this continuation.
 
 ## Evidence
+
+### Account removal
+
+The coordinator assigned E-J4 after E's Windows journey showed an account uninstall dry run before its separate account choice. The preview can open HKCU, and its unchosen optional output bindings can also block project cleanup. Only live account confirmation permits concrete account preparation. CodeGraph project uninstall with incidental account telemetry keeps its native-first path. Binding, help, wording, Root, Framework models and services stay protected.
+
+The six earlier async-entry files matched core byte-for-byte through `git show` byte streams. Exact local and core copies, hashes and the duplicate patch are saved under `artifacts/lane-d-remove-baseline/adf2df87aa8a48169f2b776b60dfab5b`. Its `receipt.json` lists every path, length and SHA-256. The normal index and other tracked and untracked work were clean before the scoped restore and after branch creation. No reset, stash or broad cleanup ran. HEAD is core `885b17db3e56ceb6839ba23609e85a4380c75018` on `feature/tool-setup-d-remove-fix`.
+
+The correction handles local developer files and declared native account effects. Git, expected hashes, physical containment and pending sibling backups give the accepted recovery tools. The design keeps the complete uninstall request and supplied independent bindings. It formats only a description before account consent. After live confirmation it passes the original request to the existing setup service for full output, inventory and backup checks, then runs native uninstall before project cleanup. No new Framework contract or exceptional mechanism is needed. Unit evidence covers consent and sequencing. Integration evidence uses real owned temporary files with injected process hosts and never launches a native uninstaller or its dry run. Full Root and native journeys stay with E and integration.
+
+The local plan adds `DeferredNativeRemoval` for the original request. Its description request clears preview arguments, the installed preview invocation and output/effect preparation only for that description. The original declaration and every independent client binding stay in the deferred request. After the live account question, `RefreshAsync` uses that original request. Preparation failures stop project cleanup. Prepared native plans stay in execution data for reporting. Expected hashes, physical containment, backup preparation, native-first order, incremental publication and final backup completion still use their existing services.
+
+The question receives the original binary, all-agent-entry and persistent user PATH effects. `--yes`, JSON, unavailable interaction and a declined account choice never prepare native effects. Project cleanup can complete while keeping those account effects and settings. General plan consent still applies. Native settings, package-manager uninstall instructions and separately chosen shared-file/PATH actions keep their existing policy. No inventory-returned path becomes a client binding.
+
+The six-file baseline receipt is preserved as described above. The correction base tree is `fed4c4f890787e831288334dd4ccb0563839c20d`. All 12 changed C# files are pinned in `artifacts/lane-d-remove-source-manifest.sha256`, SHA-256 `015BAB6F4103EAD84DC07242AE3AAFB5120904DC8A0C8C277CD3C46BF62914C0`. Their hashes stayed unchanged after final compilation.
+
+The final managed build returned exit 0 with zero warnings and errors. Its log is `artifacts/lane-d-remove-build-accepted.log`. The exact command is:
+
+```text
+dotnet build OpenForge.Cli.slnx --configuration Release -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1
+```
+
+Only the four touched or created classes ran. They selected, discovered and executed 71 cases, with 60 Unit and 11 Integration cases. Every command returned exit 0, with zero failures, skips and warnings. The runtime target is managed .NET 10.0.1, x64, using SDK 10.0.101. Each process set `OPENFORGE_SNAPSHOT_UPDATE=0`. The exact commands are:
+
+```text
+dotnet run --project src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-build --no-restore -- --filter-class OpenForge.Cli.Core.UnitTests.Commands.Tool.Shared.Writing.ToolWriteOperationTests --minimum-expected-tests 36 --fail-warns on --fail-skips on --no-ansi --progress off --report-xunit-ctrf --report-xunit-ctrf-filename results.json --results-directory artifacts/lane-d-remove-final-tests/operations
+dotnet run --project src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-build --no-restore -- --filter-class OpenForge.Cli.Core.UnitTests.Commands.Tool.Shared.Writing.ToolWriteSafetyTests --minimum-expected-tests 15 --fail-warns on --fail-skips on --no-ansi --progress off --report-xunit-ctrf --report-xunit-ctrf-filename results.json --results-directory artifacts/lane-d-remove-final-tests/safety
+dotnet run --project src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-build --no-restore -- --filter-class OpenForge.Cli.Core.UnitTests.Commands.Tool.Shared.Writing.Planning.ToolWriteRemovePlanningTests --minimum-expected-tests 9 --fail-warns on --fail-skips on --no-ansi --progress off --report-xunit-ctrf --report-xunit-ctrf-filename results.json --results-directory artifacts/lane-d-remove-final-tests/removal
+dotnet run --project src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-build --no-restore -- --filter-class OpenForge.Cli.IntegrationTests.Commands.Tool.Shared.Writing.Application.ToolWriteDeferredRemovalTests --minimum-expected-tests 11 --fail-warns on --fail-skips on --no-ansi --progress off --report-xunit-ctrf --report-xunit-ctrf-filename results.json --results-directory artifacts/lane-d-remove-final-tests/deferred
+```
+
+Each report is `artifacts/lane-d-remove-final-tests/<name>/results.json`. Each log is `artifacts/lane-d-remove-final-<name>.log`. The final report hashes are:
+
+| Name       | Passed | Exit | SHA-256                                                            |
+| ---------- | -----: | ---: | ------------------------------------------------------------------ |
+| operations |     36 |    0 | `F49461CE76232A151E0413864BE7C8C452AE7A56635D311FB144668CBBE96974` |
+| safety     |     15 |    0 | `CC6F3DE1108C608722634FB1F16548F19F33F9F4B33B51F2D8326F03BA4851AF` |
+| removal    |      9 |    0 | `80879E6A7BA53DD78A875CFB871E9E334BF380CA918EBE23F66361B365ED022B` |
+| deferred   |     11 |    0 | `11D38F5F3A7D6244131CC0703F86C388CFAD5D6BBC90EF40C93A2A6266F1B4C4` |
+
+The built Unit artifact is `artifacts/bin/OpenForge.Cli.Core.UnitTests/release/OpenForge.Cli.Core.UnitTests.dll`, SHA-256 `A18484EE6265D3D0D08E8C551B011960907A528C5B03FBF13A5A4B090FB7770C`. The Integration artifact is `artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.dll`, SHA-256 `324DABADF9BD4F619CDADAC36CF4244D6E1DE3E5B67074A280C514ADD1390C42`.
+
+The initial build needed one test namespace import. The first focused run had four new assertions omit the synthetic invocation prefix. The corrected assertions compare prefix plus the original uninstall arguments. Production argument vectors stayed unchanged. The final focused runs all pass. Those initial artifacts stay under `artifacts/lane-d-remove-build.log` and `artifacts/lane-d-remove-tests/`.
+
+No constructor or leaf binding signature changes. No Framework ABI request, protected model, parent rendering whitespace fix, Inspector, E wording/help or F host change. No snapshot or payload regeneration. Existing synthetic presentation snapshots don't consume this changed planning path. The new routed report is `evidence/remove-account-planning-fix.md` for the coordinator's later Index pass.
+
+The final formatter commands returned exit 0 on the same C# source:
+
+- `npm run check:dotnet:whitespace`, log `artifacts/lane-d-remove-whitespace.log`.
+- `npm run check:dotnet:style`, log `artifacts/lane-d-remove-style.log`.
+
+Prettier checking the two changed Markdown files, `git diff --check`, strict UTF-8, LF, BOM and source identity checks also return exit 0. The LF binary patch is `artifacts/lane-d-remove-fix.patch` against core `885b17db3e56ceb6839ba23609e85a4380c75018`. Alternate-index application reproduces all 14 candidate files. The normal index stays empty and no commit or merge runs. E's real project-only Remove rerun is still pending.
 
 ### Async entry
 

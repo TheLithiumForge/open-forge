@@ -28,6 +28,7 @@ public sealed class ToolWriteSafetyTests
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Single(fixture.Processes);
         Assert.Empty(fixture.OptionalQuestions);
+        Assert.Single(fixture.Calls, call => call.Call == ToolWriteCall.NativePreparation);
         Assert.True(fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.Native) < fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.ConfigRemove));
     }
 

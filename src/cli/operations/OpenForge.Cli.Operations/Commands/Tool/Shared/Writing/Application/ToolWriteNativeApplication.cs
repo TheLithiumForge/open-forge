@@ -16,7 +16,7 @@ internal sealed class ToolWriteNativeApplication(IToolProcessHost process, ITool
     internal async ValueTask<ToolWriteToolPlan> RefreshAsync(ToolWriteToolPlan tool, ToolCommandTarget invocation, CancellationToken cancellationToken)
         => tool.Native is null ? tool : tool with
         {
-            Native = await setup.PlanAsync(tool.Native.Request with
+            Native = await setup.PlanAsync((tool.DeferredNativeRemoval ?? tool.Native.Request) with
             {
                 Invocation = invocation,
                 InstalledInvocation = invocation,

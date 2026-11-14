@@ -15,6 +15,8 @@ namespace OpenForge.Cli.Core.Commands.Tool.Shared.Writing.Application;
 
 internal static class ToolWriteProjection
 {
+    internal const string ManualNativeUninstallPurpose = "manual-native-uninstall";
+
     internal static ToolWriteResult Result(ToolWritePlan plan, ToolWriteExecution state)
     {
         var findings = plan.Findings.Concat(state.Findings).ToArray();
@@ -82,10 +84,13 @@ internal static class ToolWriteProjection
     {
         var id = tool.Entry.Identity.Id;
         var commands = new List<ToolWriteCommandView>();
+        var native = state.NativeRemovals.GetValueOrDefault(id) ?? tool.Native;
+        var deferred = tool.DeferredNativeRemoval;
+        if (state.NativeRemovals.ContainsKey(id)) deferred = null;
         var execution = tool.Channel?.Execution;
         var recorded = plan.Input.Records.Machine.GetValueOrDefault(id);
         foreach (var command in execution?.Commands ?? []) commands.Add(Command(ToolWriteStages.Channel, command));
-        if (tool.Native is { } native) commands.Add(Command(ToolWriteStages.Native, native.Command));
+        if (native is not null) commands.Add(Command(deferred is not null ? ManualNativeUninstallPurpose : ToolWriteStages.Native, native.Command));
         commands.AddRange(state.ManualCommands.Where(command => command.ToolId == id).Select(command => command.Command));
         var kept = plan.Input.Request.Kind == ToolWriteKind.Remove
             ? (state.Records.WorkspaceMachine?.NativeSettings ?? []).Where(setting => setting.ToolId == id).ToArray()
@@ -113,9 +118,9 @@ internal static class ToolWriteProjection
             ProfileDigest = tool.Digest,
             AccountReplacement = tool.Detection.Version is not null && tool.Channel is { } target && target.Version != tool.Detection.Version,
             NativeHome = tool.Context?.NativeHomePath,
-            NativePreview = tool.Native?.PreviewKind.ToString(),
+            NativePreview = native?.PreviewKind.ToString(),
             Commands = commands,
-            Effects = [.. (tool.Channel?.Effects ?? []).Concat(tool.Native?.Request.Setup.Effects ?? []).Select(effect =>
+            Effects = [.. (tool.Channel?.Effects ?? []).Concat(tool.DeferredNativeRemoval?.Setup.Effects ?? native?.Request.Setup.Effects ?? []).Select(effect =>
                 new ToolWriteEffectView(effect.Id, effect.Scope.ToString(), effect.Kind.ToString(), effect.Description, effect.PathTemplate))],
             Changes = [.. (tool.Config?.Changes ?? []).Select(change => Change(change)),
                 .. (tool.Config?.Removals ?? tool.Removal?.Changes ?? []).Select(change =>
@@ -126,7 +131,7 @@ internal static class ToolWriteProjection
             Paths = [.. new[] { execution?.CommandPath ?? recorded?.CommandPath, execution?.ToolPath ?? recorded?.ToolPath,
                     execution?.RuntimePath ?? recorded?.RuntimePath, execution?.NativeInstallDirectory }
                 .OfType<string>().Concat((execution?.Launchers ?? recorded?.Launchers ?? []).Select(launcher => launcher.LauncherPath))],
-            Backups = [.. (tool.Native?.ExpectedFileSha256.Keys ?? []).Concat(state.Backups.Select(backup => backup.Backup.BackupPath).OfType<string>()).Distinct(StringComparer.Ordinal)],
+            Backups = [.. (native?.ExpectedFileSha256.Keys ?? []).Concat(state.Backups.Select(backup => backup.Backup.BackupPath).OfType<string>()).Distinct(StringComparer.Ordinal)],
             Requirements = [.. tool.Entry.Channels.Select(channel => channel.Requirements.Runtime)
                 .OfType<ToolRuntimeRequirement>().Select(runtime => string.Concat(runtime.Runtime, " ", runtime.VersionRange))],
             KeptNativeSettings = [.. kept.Select(setting => new ToolWriteNativeSettingView(
@@ -137,9 +142,12 @@ internal static class ToolWriteProjection
                 .SelectMany(channel => channel.Requirements.Targets).Select(target => new ToolWriteTargetView(
                     target.OperatingSystem.ToString(), target.Cpu.ToString(), target.LinuxLibc?.ToString(),
                     target.MinimumOperatingSystemVersion, target.MinimumLibcVersion, target.MinimumLinuxKernelVersion, target.MinimumLibStdCppVersion))],
-            PossibleOutputs = [.. (tool.Native?.PossibleOutputs ?? []).Select(output => new ToolWriteNativeOutputView(
-                output.PathPattern, output.Scope.ToString(), output.Match.ToString(), output.Purpose.ToString(),
-                tool.Native?.DetectedClients is null))],
+            PossibleOutputs = deferred is not null
+                ? [.. deferred.Setup.PossibleOutputs.Select(output => new ToolWriteNativeOutputView(
+                    output.PathTemplate, output.Scope.ToString(), output.Match.ToString(), output.Purpose.ToString(), true))]
+                : [.. (native?.PossibleOutputs ?? []).Select(output => new ToolWriteNativeOutputView(
+                    output.PathPattern, output.Scope.ToString(), output.Match.ToString(), output.Purpose.ToString(),
+                    native?.DetectedClients is null))],
         };
     }
 

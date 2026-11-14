@@ -21,6 +21,7 @@ internal sealed record ToolWriteToolPlan
     public ToolVersionProfile? Profile { get; init; }
     public ToolRecipeContext? Context { get; init; }
     public ToolSetupPlan? Native { get; init; }
+    public ToolSetupRequest? DeferredNativeRemoval { get; init; }
     public ToolConfigPlan? Config { get; init; }
     public ToolConfigRemovePlan? Removal { get; init; }
     public string? Digest { get; init; }

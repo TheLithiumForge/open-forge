@@ -18,7 +18,7 @@ using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Tool.Shared.Writing;
 
-internal enum ToolWriteCall { Read, Grant, ChannelPlan, ChannelInstall, ConfigPlan, ConfigApply, ConfigRemovePlan, ConfigRemove, Native, Write, BackupComplete, OptionalPrompt, PlanPrompt, ManagerPrompt, SharedRemove, PathAdd, PathRemove, PathPrompt }
+internal enum ToolWriteCall { Read, Grant, ChannelPlan, ChannelInstall, ConfigPlan, ConfigApply, ConfigRemovePlan, ConfigRemove, Native, Write, BackupComplete, OptionalPrompt, PlanPrompt, ManagerPrompt, SharedRemove, PathAdd, PathRemove, PathPrompt, NativePreparation }
 internal sealed record ToolWriteCallFact(ToolWriteCall Call, string? Id = null);
 
 // The other lanes implement these frozen services independently. These doubles exercise
@@ -37,7 +37,7 @@ internal sealed class ToolWriteOperationFixture
     internal static readonly string Digest = new('a', 64);
     internal List<ToolWriteCallFact> Calls { get; } = [];
     internal string Root { get; } = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "synthetic-tool-operation", Guid.NewGuid().ToString("N")));
-    internal ToolCatalogue Catalogue { get; }
+    internal ToolCatalogue Catalogue { get; private set; }
     internal ToolWriteHostFacts Facts { get; set; }
     internal Action? OnPlanConfirmed { get; set; }
     internal bool PlacedByOpenForge { get; set; }
@@ -57,7 +57,13 @@ internal sealed class ToolWriteOperationFixture
     internal bool FailGrants { get; set; }
     internal bool CancelPlanning { get; set; }
     internal bool FailGrantRead { get; set; }
-    internal bool IncidentalTelemetry { get; set; }
+    private bool _incidentalTelemetry;
+    private bool _accountUninstall;
+    internal bool IncidentalTelemetry
+    {
+        get => _incidentalTelemetry;
+        set { _incidentalTelemetry = value; SetUninstallEffects(); }
+    }
     internal bool FailPath { get; set; }
     internal bool FailPathPublication { get; set; }
     internal bool FailBackupCompletion { get; set; }
@@ -65,7 +71,12 @@ internal sealed class ToolWriteOperationFixture
     internal List<ToolBackupCompletionRequest> CompletedBackups { get; } = [];
     internal List<ToolProcessRequest> Processes { get; } = [];
     internal List<ToolWriteConsentQuestion> OptionalQuestions { get; } = [];
-    internal bool AccountUninstall { get; set; }
+    internal bool AccountUninstall
+    {
+        get => _accountUninstall;
+        set { _accountUninstall = value; SetUninstallEffects(); }
+    }
+    internal bool FailNativePreparation { get; set; }
     internal bool FailPreflight { get; set; }
     internal bool FailChannel { get; set; }
     internal bool FailNative { get; set; }
@@ -188,6 +199,34 @@ internal sealed class ToolWriteOperationFixture
         };
     }
 
+    internal void SetUninstall(ToolSetupSpec uninstall)
+    {
+        var entry = Catalogue.Entries[Id];
+        Catalogue = Catalogue with
+        {
+            Entries = new Dictionary<string, ToolCatalogueEntry>(Catalogue.Entries)
+            {
+                [Id] = entry with { Profiles = [.. entry.Profiles.Select(profile => profile with { Uninstall = uninstall })] },
+            },
+        };
+    }
+
+    private void SetUninstallEffects()
+    {
+        IReadOnlyList<ToolDeclaredEffect> effects = [];
+        if (IncidentalTelemetry)
+            effects = [new() { Id = "synthetic-telemetry", Scope = ToolEffectScope.Account, Kind = ToolDeclaredEffectKind.Telemetry, Description = "Synthetic incidental telemetry." }];
+        if (AccountUninstall)
+            effects = [new() { Id = "synthetic-account", Scope = ToolEffectScope.Account, Kind = ToolDeclaredEffectKind.SharedFileDeletion, Description = "Synthetic account binary and all agent entries." }];
+        Catalogue = Catalogue with
+        {
+            Entries = Catalogue.Entries.ToDictionary(pair => pair.Key, pair => pair.Value with
+            {
+                Profiles = [.. pair.Value.Profiles.Select(profile => profile with { Uninstall = profile.Uninstall with { Effects = effects } })],
+            }, StringComparer.Ordinal),
+        };
+    }
+
     internal ToolBackupCompletionRequest PendingBackup(string name = "synthetic-record.json")
     {
         var backup = new ToolBackupCompletionRequest(new()
@@ -301,11 +340,7 @@ internal sealed class ToolWriteOperationFixture
     {
         public Task<ToolSetupPlan> PlanAsync(ToolSetupRequest request, CancellationToken cancellationToken)
         {
-            var setup = request.Setup;
-            if (fixture.IncidentalTelemetry && setup.Arguments[0] == "uninstall")
-                request = request with { Setup = setup with { Effects = [new() { Id = "synthetic-telemetry", Scope = ToolEffectScope.Account, Kind = ToolDeclaredEffectKind.Telemetry, Description = "Synthetic incidental telemetry." }] } };
-            if (fixture.AccountUninstall && setup.Arguments[0] == "uninstall")
-                request = request with { Setup = setup with { Effects = [new() { Id = "synthetic-account", Scope = ToolEffectScope.Account, Kind = ToolDeclaredEffectKind.SharedFileDeletion, Description = "Synthetic account binary and all agent entries." }] } };
+            if (request.InstalledInvocation is not null) fixture.Calls.Add(new(ToolWriteCall.NativePreparation));
             fixture.SetupRequests.Add(request);
             return Task.FromResult(new ToolSetupPlan
             {
@@ -322,7 +357,7 @@ internal sealed class ToolWriteOperationFixture
                 PreviewKind = request.InstalledInvocation is null ? ToolNativePreviewKind.Description : ToolNativePreviewKind.Plan,
                 PossibleOutputs = [],
                 ExpectedFileSha256 = new Dictionary<string, string?>(),
-                Problems = [],
+                Problems = fixture.FailNativePreparation && request.InstalledInvocation is not null ? ["synthetic-preparation-failure"] : [],
             });
         }
     }

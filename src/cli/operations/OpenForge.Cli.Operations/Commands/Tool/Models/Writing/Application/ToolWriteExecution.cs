@@ -10,6 +10,7 @@ internal sealed class ToolWriteExecution(ToolRecordsResult records)
     internal List<ToolWriteFinding> Findings { get; } = [];
     internal List<ToolWriteOutcome> Outcomes { get; } = [];
     internal List<ToolBackupCompletionRequest> Backups { get; } = [];
+    internal Dictionary<string, ToolSetupPlan> NativeRemovals { get; } = new(StringComparer.Ordinal);
     internal List<(string ToolId, ToolWriteCommandView Command)> ManualCommands { get; } = [];
     internal List<string> PathInstructions { get; } = [];
     internal ToolWriteGrantView? Grants { get; set; }
