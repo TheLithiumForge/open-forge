@@ -90,6 +90,33 @@ public sealed class ToolLifecycleProcessFactoryTests
         { Executable = input.Executable with { PrefixArguments = ["bad\0argument"] } }));
     }
 
+    [Fact(DisplayName = "A preview describes exact command inputs without an executable hash and execution still requires that hash")]
+    public void DescribesBeforeArtifactVerification()
+    {
+        var input = Input(ToolVocabulary.HostScope);
+        var descriptions = ToolLifecycleProcessFactory.Describe(new()
+        {
+            Lifecycle = input.Lifecycle,
+            Registration = input.Registration,
+            Action = input.Action,
+            Executable = new(input.Executable.Root, input.Executable.Entry, input.Executable.PrefixArguments),
+            Values = input.Values,
+            Hosts = input.Hosts,
+            Environment = input.Environment,
+        });
+        var commands = ToolLifecycleProcessFactory.Create(input);
+        Assert.Equal(commands.Length, descriptions.Length);
+        for (var index = 0; index < commands.Length; index++)
+        {
+            Assert.Equal(commands[index].Arguments, descriptions[index].Arguments);
+            Assert.Equal(commands[index].Environment, descriptions[index].Environment);
+            Assert.Equal(commands[index].Executable, descriptions[index].Executable);
+            Assert.Equal(commands[index].WorkingDirectory, descriptions[index].WorkingDirectory);
+        }
+        Assert.Throws<ArgumentException>(() => ToolLifecycleProcessFactory.Create(input with
+        { Executable = input.Executable with { Sha256 = string.Empty } }));
+    }
+
     [Fact(DisplayName = "Lifecycle profile environment resolves the declared cache, state and process-scope values")]
     public void ResolvesProfileScope()
     {

@@ -54,6 +54,7 @@ public sealed class ToolContractCodesTests
             ToolWriteIssueCode.RoleGuidanceDrift, ToolWriteIssueCode.StoreUnavailable, ToolWriteIssueCode.CommandFailed,
             ToolWriteIssueCode.VerificationFailed, ToolWriteIssueCode.BackupPresent, ToolWriteIssueCode.PublicationFailed,
             ToolWriteIssueCode.Interrupted, ToolWriteIssueCode.OperationFailed,
+            ToolWriteIssueCode.ConfirmationMissing, ToolWriteIssueCode.WorkspaceUnavailable, ToolWriteIssueCode.WorkspaceLockUnavailable,
         ];
         Assert.Equal(expected, Enum.GetValues<ToolWriteIssueCode>());
         Assert.Equal(expected.Length, expected.Select(ToolContractCodes.Suffix).Distinct(StringComparer.Ordinal).Count());

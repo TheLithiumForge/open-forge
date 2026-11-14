@@ -9,6 +9,7 @@ internal enum ToolWriteIssueCode
     ComponentChoiceMissing, EntryShapeUnexpected, EntryRewriteDrift, RoleGuidanceDrift,
     StoreUnavailable, CommandFailed, VerificationFailed, BackupPresent, PublicationFailed,
     Interrupted, OperationFailed,
+    ConfirmationMissing, WorkspaceUnavailable, WorkspaceLockUnavailable,
 }
 
 internal sealed record ToolWriteIssue(ToolWriteIssueCode Code, CliSemanticStatus Status, string Subject, string Cause);

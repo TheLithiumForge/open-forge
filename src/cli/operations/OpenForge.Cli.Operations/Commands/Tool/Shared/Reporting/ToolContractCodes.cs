@@ -32,6 +32,9 @@ internal static class ToolContractCodes
         ToolWriteIssueCode.PublicationFailed => "publication-failed",
         ToolWriteIssueCode.Interrupted => "interrupted",
         ToolWriteIssueCode.OperationFailed => "operation-failed",
+        ToolWriteIssueCode.ConfirmationMissing => "confirmation-missing",
+        ToolWriteIssueCode.WorkspaceUnavailable => "workspace-unavailable",
+        ToolWriteIssueCode.WorkspaceLockUnavailable => "workspace-lock-unavailable",
         _ => throw new ArgumentOutOfRangeException(nameof(code)),
     };
 }

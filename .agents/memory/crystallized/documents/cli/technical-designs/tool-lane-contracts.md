@@ -58,6 +58,10 @@ Each writing leaf has its concrete request and result under its own `Models` fol
 
 `ToolWriteData` defines the shared family payload. Each single-tool result gives mode, ID, role, pin, plan, permissions, consents, verification, remaining work and instructions. Install additionally carries per-tool results for team setup. Commands form their own concrete results and renderers consume them. No universal mutation engine or cross-command result type is added.
 
+Writer previews use `ToolLifecycleDescription` and `ToolProcessDescription` before artifact members have verified hashes. These carry the exact command paths, arguments, environment, CWD and timeout. A description can't be passed to a process host. Execution still uses `ToolLifecyclePreparation` and requires the verified executable hash. Both paths use the same command-description logic.
+
+`ToolWriteReport` projects each concrete writer result into `Commands.Tool.Models.Writing`. Rendering reads those report facts, including per-pin Install items and resolved machine finding codes. The frozen command requests, results and payload records stay unchanged. This projection adds no operation, effect or detail policy.
+
 For bare Install, the aggregate ID and pin are null. Each item in `tools` carries its exact ID, status and single-tool data. Applied effects stay separate from proposed changes. Consent records can carry an exact artifact descriptor or account-local process-scope digest. The result reports which backup path was used.
 
 ## Run dispatch
@@ -83,6 +87,8 @@ The exact machine suffixes live in `ToolReadIssueCodes`, `ToolContractCodes` and
 - Excluded output - a required command output, Skill, rewrite or role line is covered by a removal exclusion.
 
 Read findings keep existing command prefixes. Writer findings keep the writing leaf's prefix. Run has its own finite failure codes. Root Status and Doctor adapt the same missing and drift facts without starting a process.
+
+Writer findings also distinguish missing final confirmation, unavailable workspace selection and unavailable workspace locking. These add separate `ToolWriteIssueCode` members. They don't reuse download consent, destination permission or store-coverage findings.
 
 ## Implementation lanes
 
