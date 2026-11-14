@@ -18,8 +18,13 @@ internal static class ToolLifecycleProcessFactory
             ToolVocabulary.InstallAction => lifecycle.Install,
             ToolVocabulary.UninstallAction => lifecycle.Uninstall,
             ToolVocabulary.IndexCleanupAction => lifecycle.IndexCleanup,
+            ToolVocabulary.ActivateAction => input.Registration?.Activate,
+            ToolVocabulary.DeactivateAction => input.Registration?.Deactivate,
+            ToolVocabulary.TelemetryOnAction => lifecycle.TelemetryOn,
+            ToolVocabulary.TelemetryOffAction => lifecycle.TelemetryOff,
             _ => throw new ArgumentException("The action isn't a declared lifecycle command.", nameof(input)),
-        };
+        } ?? throw new ArgumentException("The selected action has no reviewed command declaration.", nameof(input));
+        ToolLifecycleValidator.Validate(command);
         Validate(input);
         ToolManifestValidator.Distinct(input.Hosts, "selected command hosts");
         ToolManifestValidator.Require(input.Hosts.All(ToolVocabulary.Hosts.Contains), "unknown selected command host");
@@ -37,7 +42,7 @@ internal static class ToolLifecycleProcessFactory
                 Executable = input.Executable.Entry,
                 EntrySha256 = input.Executable.Sha256,
                 WorkingDirectory = input.Values.Worktree,
-                Arguments = [.. command.Args.Select(argument => ToolTemplate.Render(argument, values))],
+                Arguments = [.. input.Executable.PrefixArguments, .. command.Args.Select(argument => ToolTemplate.Render(argument, values))],
                 Environment = input.Environment.ToDictionary(pair => pair.Key, pair => ToolTemplate.Render(pair.Value, values), StringComparer.Ordinal),
                 TimeoutSeconds = command.TimeoutSeconds,
             });
@@ -58,10 +63,13 @@ internal static class ToolLifecycleProcessFactory
         [ToolVocabulary.ProjectIdVariable] = input.Values.ProjectId,
         [ToolVocabulary.IndexDirNameVariable] = input.Values.IndexDirName,
         [ToolVocabulary.HostVariable] = host,
+        [ToolVocabulary.OpenForgeVariable] = input.Values.OpenForge,
     };
 
     private static void Validate(ToolLifecyclePreparation input)
     {
+        if (input.Executable.PrefixArguments.Any(argument => argument is null || argument.Contains('\0')))
+            throw new ArgumentException("Launcher arguments cannot contain null values or characters.", nameof(input));
         foreach (var path in new[] { input.Executable.Root, input.Executable.Entry, input.Values.Worktree, input.Values.CodeRoot })
             if (!Path.IsPathFullyQualified(path)) throw new ArgumentException("Tool command paths must already be absolute.", nameof(input));
         var entry = Path.GetRelativePath(input.Executable.Root, input.Executable.Entry).Replace(Path.DirectorySeparatorChar, '/');

@@ -225,3 +225,17 @@ Reproduce with the Release builds and standard runner flags under Verification. 
 - `*ToolBackupRepairTests.RequiresIgnoreAuthority`
 - `*ToolBackupRepairTests.ReportsRestorationPreview`
 - `*ToolBackupRepairTests.ReportsRepairHelp`
+
+## Writer implementation
+
+Done: The Writers lane starts from `3d9df8327`. The lane handoff, accepted Tool contracts, external-tools decisions and issue #23 comments are read. Dispatch and Registration work on separate branches. Their source folders and frozen models stay unchanged until the overseer sends their completed branches for merging.
+
+Now: Declared activation, deactivation, telemetry and fixed launcher request preparation is complete. The preparer includes the Open Forge launch value and keeps fixed launcher arguments literal. Lifecycle validation checks telemetry commands and a declared removal order containing uninstall and index cleanup exactly once. Frozen models are unchanged. Next implement the five writer operations, their parser bindings, result projections and root composition. Use the declared Registration interfaces with an unavailable production stub and controlled test implementations until that lane lands.
+
+Next: Build named and team Install, Configure and Choose, then Update and Remove in reviewable increments. Keep private Node preparation out of scope. Merge another lane only after the overseer reports it ready.
+
+Blocker: None for writer development. The complete product requires the Registration and Dispatch integrations. The writer payload also needs an additive report projection so Rendering doesn't import private command models.
+
+This work affects local tool downloads, verified account stores, tool-owned installer processes and workspace records. Git, sibling backups outside Git, re-verification and store reference records provide the decided recovery paths. Ordinary failures, cancellation, stale files and cooperating process concurrency are in scope. A malicious same-user actor is outside the Architecture's threat model. Reuse the existing BCL filesystem and process APIs, archive extractor, store publisher, workspace and store leases, backup session and paired record publisher. No dependency, native bridge, parser or exceptional machinery is planned. Focused Unit cases cover planning. Owned-filesystem Integration cases cover effects, consent, preview parity and rendered output. CI owns the complete managed and Native AOT gates.
+
+The preparation increment passes its managed Release Unit build with zero warnings and errors and 47 focused cases with zero skips. Select `*ToolLifecycleProcessFactoryTests.*`, `*ToolLifecycleTests.RejectsInvalidLifecycle`, `*ToolLifecycleTests.KeepsDeclaredRemovalOrder` and `*ToolLifecycleTests.ReadsDeclaredLifecycle` with the standard flags under Verification and a minimum of 47 tests. Both required format checks pass. No snapshot changed or flake was observed. Evidence is under `artifacts/tool-command/writers-preparation-*`.

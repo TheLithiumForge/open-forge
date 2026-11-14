@@ -10,10 +10,20 @@ internal static class ToolLifecycleValidator
         Command(lifecycle.Install);
         Command(lifecycle.Uninstall);
         Command(lifecycle.IndexCleanup);
+        if (lifecycle.TelemetryOn is { } telemetryOn) Command(telemetryOn);
+        if (lifecycle.TelemetryOff is { } telemetryOff) Command(telemetryOff);
+        if (lifecycle.RemovalOrder is { } order)
+        {
+            ToolManifestValidator.Distinct(order, "removal command order");
+            ToolManifestValidator.Require(order.Length == 2 && order.Contains(ToolVocabulary.UninstallAction, StringComparer.Ordinal)
+                && order.Contains(ToolVocabulary.IndexCleanupAction, StringComparer.Ordinal), "removal order must include uninstall and index cleanup exactly once");
+        }
         ToolManifestValidator.Require(lifecycle.IndexCleanup.Scope == ToolVocabulary.WorkspaceScope, "index cleanup must select one workspace");
         ToolManifestValidator.Distinct(lifecycle.IgnorePaths, "managed ignore paths");
         foreach (var path in lifecycle.IgnorePaths) WorkspacePath(path.EndsWith('/') ? path[..^1] : path);
     }
+
+    internal static void Validate(ToolLifecycleCommand command) => Command(command);
 
     private static void Command(ToolLifecycleCommand command)
     {

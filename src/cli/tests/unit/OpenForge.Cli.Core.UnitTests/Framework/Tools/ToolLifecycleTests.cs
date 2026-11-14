@@ -42,6 +42,10 @@ public sealed class ToolLifecycleTests
     [InlineData("host-cleanup")]
     [InlineData("unknown-variable")]
     [InlineData("bad-ignore")]
+    [InlineData("missing-removal-command")]
+    [InlineData("duplicate-removal-command")]
+    [InlineData("unexpected-removal-command")]
+    [InlineData("telemetry-timeout")]
     public void RejectsInvalidLifecycle(string situation)
     {
         var source = WithLifecycle();
@@ -61,9 +65,31 @@ public sealed class ToolLifecycleTests
             case "host-cleanup": Assert.IsType<JsonObject>(lifecycle["indexCleanup"])["scope"] = ToolVocabulary.HostScope; break;
             case "unknown-variable": install["args"] = new JsonArray("${unreviewed}"); break;
             case "bad-ignore": lifecycle["ignorePaths"] = new JsonArray("output//"); break;
+            case "missing-removal-command": lifecycle["removalOrder"] = new JsonArray(ToolVocabulary.UninstallAction); break;
+            case "duplicate-removal-command": lifecycle["removalOrder"] = new JsonArray(ToolVocabulary.UninstallAction, ToolVocabulary.UninstallAction); break;
+            case "unexpected-removal-command": lifecycle["removalOrder"] = new JsonArray(ToolVocabulary.UninstallAction, ToolVocabulary.InstallAction); break;
+            case "telemetry-timeout":
+                var telemetry = Assert.IsType<JsonObject>(install.DeepClone());
+                telemetry["timeoutSeconds"] = 0;
+                lifecycle["telemetryOff"] = telemetry;
+                break;
             default: throw new ArgumentOutOfRangeException(nameof(situation));
         }
         Assert.Throws<JsonException>(() => new ToolCatalogueReader().Definition(Encoding.UTF8.GetBytes(source.ToJsonString()), ToolFixtureSource.ManifestName, true));
+    }
+
+    [Theory(DisplayName = "A removal definition orders each required command exactly once")]
+    [InlineData(false), InlineData(true)]
+    public void KeepsDeclaredRemovalOrder(bool cleanupFirst)
+    {
+        var source = WithLifecycle();
+        var lifecycle = Assert.IsType<JsonObject>(source["lifecycle"]);
+        var order = cleanupFirst
+            ? new[] { ToolVocabulary.IndexCleanupAction, ToolVocabulary.UninstallAction }
+            : new[] { ToolVocabulary.UninstallAction, ToolVocabulary.IndexCleanupAction };
+        lifecycle["removalOrder"] = new JsonArray(order.Select(value => JsonValue.Create(value)).ToArray());
+        var definition = new ToolCatalogueReader().Definition(Encoding.UTF8.GetBytes(source.ToJsonString()), ToolFixtureSource.ManifestName, false);
+        Assert.Equal(order, Assert.IsType<ToolLifecycle>(definition.Manifest.Lifecycle).RemovalOrder);
     }
 
     [Fact(DisplayName = "Failed first-install evidence survives settings and lock round trips without an installed registration")]

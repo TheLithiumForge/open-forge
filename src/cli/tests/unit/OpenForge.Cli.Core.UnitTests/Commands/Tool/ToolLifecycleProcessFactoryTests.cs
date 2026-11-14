@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Tool.Shared.Execution;
 using OpenForge.Cli.Core.Commands.Tool.Shared.Models.Execution;
 using OpenForge.Cli.Core.Framework.Tools;
 using OpenForge.Cli.Core.Framework.Tools.Models.Lifecycle;
+using OpenForge.Cli.Core.Framework.Tools.Models.Registration;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Templates;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Validation;
 using OpenForge.Cli.TestSupport.Tools;
@@ -51,6 +52,42 @@ public sealed class ToolLifecycleProcessFactoryTests
             _ => throw new ArgumentOutOfRangeException(nameof(action)),
         };
         Assert.Equal(expected, Assert.Single(command.Arguments));
+    }
+
+    [Theory(DisplayName = "Declared activation and telemetry actions use their exact reviewed command and fixed launcher arguments")]
+    [InlineData(ToolVocabulary.ActivateAction), InlineData(ToolVocabulary.DeactivateAction)]
+    [InlineData(ToolVocabulary.TelemetryOnAction), InlineData(ToolVocabulary.TelemetryOffAction)]
+    public void FormsAdditionalActions(string action)
+    {
+        var input = Input(ToolVocabulary.WorkspaceScope) with { Action = action, Environment = [] };
+        var selected = input.Lifecycle.Install with { Args = [action, Variable(ToolVocabulary.OpenForgeVariable)], TimeoutSeconds = 23 };
+        var executable = Path.Combine(input.Executable.Root, "runtime.bin");
+        input = input with
+        {
+            Registration = new() { Activate = selected, Deactivate = selected, Rewrites = [], Components = [], RoleGuidance = [] },
+            Lifecycle = input.Lifecycle with { TelemetryOn = selected, TelemetryOff = selected },
+            Executable = input.Executable with { Entry = executable, PrefixArguments = [input.Executable.Entry, "literal ${fixture}", "repeated", "repeated"] },
+            Values = input.Values with { OpenForge = Path.GetFullPath("open forge host.exe") },
+        };
+        var command = Assert.Single(ToolLifecycleProcessFactory.Create(input));
+        Assert.Equal(action, command.Action);
+        Assert.Equal(executable, command.Executable);
+        Assert.Equal([.. input.Executable.PrefixArguments, action, input.Values.OpenForge], command.Arguments);
+        Assert.Equal(selected.TimeoutSeconds, command.TimeoutSeconds);
+    }
+
+    [Theory(DisplayName = "An undeclared activation or telemetry action blocks process preparation")]
+    [InlineData(ToolVocabulary.ActivateAction), InlineData(ToolVocabulary.DeactivateAction)]
+    [InlineData(ToolVocabulary.TelemetryOnAction), InlineData(ToolVocabulary.TelemetryOffAction)]
+    public void RejectsMissingAdditionalActions(string action)
+        => Assert.Throws<ArgumentException>(() => ToolLifecycleProcessFactory.Create(Input(ToolVocabulary.WorkspaceScope) with { Action = action }));
+
+    [Fact(DisplayName = "Launcher arguments stay literal and reject null characters before process preparation")]
+    public void RejectsInvalidLauncherArguments()
+    {
+        var input = Input(ToolVocabulary.WorkspaceScope);
+        Assert.Throws<ArgumentException>(() => ToolLifecycleProcessFactory.Create(input with
+        { Executable = input.Executable with { PrefixArguments = ["bad\0argument"] } }));
     }
 
     [Fact(DisplayName = "Lifecycle profile environment resolves the declared cache, state and process-scope values")]
