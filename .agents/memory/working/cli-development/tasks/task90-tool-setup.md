@@ -57,7 +57,7 @@ Tools add no workspace state, lease or recovery dependency under `.open-forge-st
 ## Checkpoint
 
 Done: Recorded C1 through C7 and committed the frozen packets in 2e517348e. Created five isolated worktrees and verified all five initial workers alive after dispatch.
-Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. Shared planning and native observation contracts are committed. Five implementation lanes are running. F returned the Root map. The catalogue slice is integrated. Core command integration is pending.
+Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. The catalogue and final planning interfaces are integrated. C is committed and D has commit authorization. A finishes channel checks and B fixes Gitignore coverage. F checks its home provider against the latest interfaces. Core command integration is pending.
 Next: Review the complete implementation candidates, commit and integrate their branches, then complete E's journeys and docs.
 Blocker: No implementation blocker after this contract increment. The first shipping Open Forge version is asked of the maintainer.
 
@@ -255,3 +255,52 @@ Both reported clean builds and mandatory checks. B is ready for its commit conti
 The combined shared types and catalogue caller build with zero warnings and errors.
 Thirteen affected catalogue tests, twelve documentation tests, both .NET checks, Markdown formatting and Git whitespace checks pass.
 No behavior implementation is added by this contract increment.
+
+## Integration queue
+
+The final planning interfaces are committed as `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9`.
+The active continuations are:
+
+| Lane | Run              | Scope                                                       |
+| ---- | ---------------- | ----------------------------------------------------------- |
+| A    | `r_021ff77a91c8` | npm metadata, entry paths, PATH backups and Corepack probes |
+| C    | `r_18df73167656` | Settings-only grant publication and final interface use     |
+| D    | `r_ebf7110b001f` | Removal scope, version floor, grants and pending backups    |
+| E    | `r_da8ba8d01e58` | Read-only review of B against the native catalogue          |
+| F    | `r_81083d102942` | Independent Root home and client-path provider              |
+
+B's frozen correction candidate is from `r_208391bf8dcf`.
+Its 138-test receipt and 67-test correction receipt are recorded in its packet.
+Commit continuation follows the focused catalogue review.
+The final fresh adherence review is separate and follows integration and journeys.
+
+E's review returned E-B1 and E-B2 against the unchanged 39-file B checkpoint.
+A name-specific probe match can falsely show directory coverage.
+A later negation can defeat a prepended block while byte verification succeeds.
+Both source paths were checked and routed together to B in `r_96829394863e`.
+E commits its separate review report in `r_875162c17667`.
+The rest of the native recipe, telemetry, receipt and backup checks found no further gap.
+
+## Checked returns
+
+C's 81-file implementation is committed as `9f4b0a4b192bc3875b38dcc2d0dfd82be99f6158` in `r_d8f059cc68f6`.
+Its final 69 focused tests, clean build and both .NET checks pass.
+The settings-only grant writer was checked against its expected-state helper and owned fixtures.
+It changes no tool lock, home or runtime state and returns pending backup handles.
+The six synthetic baselines are unchanged.
+
+D's `r_ebf7110b001f` return passes 153 focused tests, a clean build and both .NET checks.
+The account-effect classification, prerelease minimum check, grant sequence and PATH backup handling were checked.
+Commit continuation is `r_ba759816d60a`.
+Root supplies the actual running version and only the declared native environment values.
+Nine synthetic snapshots were reviewed. Final payload snapshots are still pending.
+
+F's provider passes 49 focused cases for all 61 declared bindings.
+Its execution-time home resolution and independent physical client bindings were checked.
+Continuation `r_3d69f04b2c96` checks the latest shared interfaces at `fd2b1e4e1`.
+E checks one reported OpenClaw syntax limit against CBM's actual tagged reader in `r_673c4611e7b4`.
+That question doesn't authorize a new parser or dependency.
+
+The separate review evidence commit is `240c78f3449147fb9993f3fecc8c45a879583241`.
+Its staged main-worktree merge passes a clean build and twelve focused documentation tests.
+Both required .NET checks pass before the merge commit.

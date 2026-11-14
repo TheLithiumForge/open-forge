@@ -90,10 +90,10 @@ The report can be used to compile complete entries and run both Windows journeys
 
 ## Progress
 
-Done: The coordinator accepted the two typed entries, twelve reviewed pins, native vectors, output declarations and 28 semantic Unit cases for staged integration. Added `CodeGraphDefinitions.NoDownloadValue` and used it in both environment declarations and their technical-value assertions. The fresh managed build, 13 affected CodeGraph tests and both .NET checks pass.
-Now: The checked catalogue slice uses base `6d007254d5ca2937f4874ba5a93161f585814d8c` and the same 19 assigned files. The coordinator authorized its local conventional commit. Root integration, native journeys and final user docs are pending. No native tool execution ran.
-Next: Return the local commit's full SHA for Root integration, then resume real journeys and the final user docs pass after Root composition lands. The later exact successful journey versions must populate `TestedVersions`.
-Blocker: None for this catalogue candidate. No additional ABI gap was found. `MinimumOpenForgeVersion` is provisionally `0.9.0-beta.19` until the maintainer replies. Package versions are unchanged.
+Done: The coordinator accepted the focused B review, revalidated E-B1 and E-B2 and routed both to B in `r_96829394863e`. The fresh managed build passed with zero warnings and errors. Both required .NET checks passed. The source checkpoint and earlier catalogue commit stay recorded below.
+Now: The two-document review slice is checked for the authorized local commit on base `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9`. Only this packet and `evidence/config-catalogue-review.md` change. No product, catalogue, test source, common Entries or Task 90 changes.
+Next: Return the review-document commit's full SHA and two-file list. Full user docs and real Windows journeys wait for checked Root composition. Successful exact journey versions must populate `TestedVersions` later.
+Blocker: None for this review-document commit. B handles E-B1 and E-B2. `MinimumOpenForgeVersion` stays provisionally `0.9.0-beta.19`. Product and package versions are unchanged.
 
 ## Evidence
 
@@ -214,6 +214,58 @@ The local commit covers only the nineteen assigned files. Its canonical receipt 
 The first shipping metadata stays provisionally `0.9.0-beta.19`. No package version changed.
 The next documentation continuation must also read `D:/Repositories/open-forge-worktrees/tool-setup/artifacts/tool-setup/dispatch/documentation-voice.md`.
 No native journey, full user docs pass, payload snapshot update, full test suite, push, merge or GitHub action ran in this continuation.
+
+The focused read-only B review uses E's base `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9` and B's frozen uncommitted candidate on `b22e1ec393280935dea93a312f2a1aa337834ad5`.
+The [config catalogue review](../evidence/config-catalogue-review.md) records E-B1 and E-B2 with severity, exact locations, source traces and the smallest corrections.
+It also records the checked telemetry schema, inherited overrides, native vectors, home binding, C7 Remove, native output and client-file bindings, complete receipt sets, backups and fixed profile digest inputs.
+The 138-test earlier receipt and 67 affected grouped checks were read from B's packet and logs. Their populations overlap. No test or build was rerun for this review.
+B's 39-file source manifest SHA-256 is `3dfd5b2341268316ecd3a31f944ff6da078a1b5983e004f24abbe231434b56ed`, unchanged at both source checkpoints.
+The new report defines its hash format and the four production subset hashes.
+Only this packet's Progress and Evidence sections and the new report are writable in this pass. The report needs the integrator's later Index pass.
+No product or peer file was changed, no native execution ran and no commit was made.
+Both changed Markdown files passed Prettier. Production References found six complete local links and two external links marked unchecked. The two external Git manual pages were read separately for the findings.
+LF, trailing whitespace, `git diff --check`, Markdown AST packet-section checks and the exact two-file change limit passed. B's final source checkpoint still matches the hash above.
+
+### Review doc checks
+
+The coordinator accepted this review and authorized one local two-document commit.
+The catalogue implementation commit is `1ec6ad921943b881f819f3a8eb66b4796eeabacb`.
+The current review-document base is `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9`, which includes the integrated npm entry caller metadata.
+This continuation changes no product or test source and performs no new review of B's routed corrections.
+
+The checked local receipt uses SDK `10.0.101`, managed Release `net10.0` on Windows x64:
+
+| Check                              | Result                                                 | Artifact                                                                               |
+| ---------------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| Release solution build             | Passed, zero warnings and errors, `00:04:39.43`        | `artifacts/task90-lane-e-review-docs/build.log`                                        |
+| `npm run check:dotnet:whitespace`  | Passed, exit 0                                         | `artifacts/task90-lane-e-review-docs/whitespace.log`                                   |
+| `npm run check:dotnet:style`       | Passed, exit 0                                         | `artifacts/task90-lane-e-review-docs/style.log`                                        |
+| Focused Markdown format            | Passed for both review documents                       | `artifacts/task90-lane-e-review-docs/markdown.log`                                     |
+| Production References              | Six complete local links, two external links unchecked | `artifacts/task90-lane-e-review-docs/packet-references.json`, `report-references.json` |
+| LF, whitespace and packet sections | Passed, exactly the two assigned files                 | `artifacts/task90-lane-e-review-docs/final-receipt.json`                               |
+
+The exact build and .NET commands are:
+
+```powershell
+dotnet build OpenForge.Cli.slnx --configuration Release -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1
+npm run check:dotnet:whitespace
+npm run check:dotnet:style
+```
+
+The focused Markdown and link commands are:
+
+```powershell
+node node_modules/prettier/bin/prettier.cjs --check .agents/memory/working/cli-development/tool-setup/packets/lane-e.md .agents/memory/working/cli-development/tool-setup/evidence/config-catalogue-review.md
+open-forge references .agents/memory/working/cli-development/tool-setup/packets/lane-e.md --direction out --format json
+open-forge references .agents/memory/working/cli-development/tool-setup/evidence/config-catalogue-review.md --direction out --format json
+git diff --check
+```
+
+The existing Prettier Markdown parser checks that packet edits stay within Progress and Evidence.
+Raw byte checks cover LF, final newlines and trailing whitespace in both files.
+The final local receipt records source hashes, the exact two-file commit list and the commit identity after creation.
+No tests were selected or run because no test source changed. No native tool, payload snapshot, push or merge ran.
+The report's original frozen B checkpoint is historical review evidence. B handles the routed fixes separately.
 
 ## Divergences
 
