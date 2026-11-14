@@ -1,12 +1,12 @@
 using System.Text.Json;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
 using OpenForge.Cli.Core.Framework.Tools.Models.Manifest;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Supply;
+using OpenForge.Cli.Core.Framework.Tools.Shared.Templates;
 
 namespace OpenForge.Cli.Core.Framework.Tools.Shared.Validation;
 
-internal static partial class ToolManifestValidator
+internal static class ToolManifestValidator
 {
     internal static void Validate(ToolManifest manifest)
     {
@@ -117,14 +117,9 @@ internal static partial class ToolManifestValidator
     internal static bool Https(string value) => Uri.TryCreate(value, UriKind.Absolute, out var uri)
         && uri.Scheme == Uri.UriSchemeHttps && uri.UserInfo.Length == 0 && uri.Query.Length == 0 && uri.Fragment.Length == 0;
 
-    internal static void Template(string value)
-    {
-        Require(value is not null && !value.Contains('\0'), "invalid template string");
-        foreach (Match match in Variables().Matches(value)) Require(ToolVocabulary.Variables.Contains(match.Groups[1].Value), "unknown template variable");
-        Require(!Variables().Replace(value, "").Contains("${", StringComparison.Ordinal), "unfinished template variable");
-    }
+    internal static void Template(string value) => ToolTemplate.Validate(value);
 
-    private static void Environment(Dictionary<string, string> values)
+    internal static void Environment(Dictionary<string, string> values)
     {
         foreach (var (key, value) in values)
         {
@@ -151,5 +146,4 @@ internal static partial class ToolManifestValidator
     {
         if (!condition) throw new JsonException($"Invalid tool definition: {cause}.");
     }
-    [GeneratedRegex(@"\$\{([^}]*)\}", RegexOptions.CultureInvariant)] private static partial Regex Variables();
 }

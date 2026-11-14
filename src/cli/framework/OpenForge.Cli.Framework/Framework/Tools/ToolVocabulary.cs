@@ -17,7 +17,18 @@ internal static class ToolVocabulary
     internal const string IndexCleanupAction = "index-cleanup";
     internal const string WorkspaceScope = "workspace";
     internal const string HostScope = "host";
-    internal const string CodeRootPrefix = "${codeRoot}/";
+    internal const string InstallVariable = "install";
+    internal const string EntryVariable = "entry";
+    internal const string WorktreeVariable = "worktree";
+    internal const string CodeRootVariable = "codeRoot";
+    internal const string StateVariable = "state";
+    internal const string CacheVariable = "cache";
+    internal const string HookSinkVariable = "hookSink";
+    internal const string ProjectIdVariable = "projectId";
+    internal const string IndexDirNameVariable = "indexDirName";
+    internal const string HostVariable = "host";
+    internal const string TargetVariable = "target";
+    internal const string CodeRootPrefix = "${" + CodeRootVariable + "}/";
     internal const int MaximumCommandTimeoutSeconds = 3600;
     internal static readonly FrozenSet<string> LifecycleActions = Set(InstallAction, UninstallAction, IndexCleanupAction);
     internal static readonly FrozenSet<string> RunActions = Set(InstallAction, ConfigureAction, UpdateAction, RemoveAction, ChooseAction);
@@ -29,7 +40,7 @@ internal static class ToolVocabulary
     internal static readonly FrozenSet<string> Roles = Set(CodeNavigationRole, "docs-search", "code-to-docs-links");
     internal static readonly FrozenSet<string> Actions = Set("render-members", "native-settings", "render-helper");
     internal static readonly FrozenSet<string> Checks = Set("artifact-hash", "installed-files", "native-settings", "host-members", "index-state", "hook-policy", "process-policy", "cache-permissions", "dependency-lock", "source-membership", "usage-skill");
-    internal static readonly FrozenSet<string> Variables = Set("install", "entry", "worktree", "codeRoot", "state", "cache", "hookSink", "projectId", "indexDirName", "host", "target");
+    internal static readonly FrozenSet<string> Variables = Set(InstallVariable, EntryVariable, WorktreeVariable, CodeRootVariable, StateVariable, CacheVariable, HookSinkVariable, ProjectIdVariable, IndexDirNameVariable, HostVariable, TargetVariable);
     internal static readonly FrozenSet<string> Hosts = Set("claude-code", "codex");
 
     private static FrozenSet<string> Set(params string[] values) => values.ToFrozenSet(StringComparer.Ordinal);

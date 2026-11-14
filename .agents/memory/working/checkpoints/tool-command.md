@@ -10,8 +10,8 @@ The Tool command core is an implementation task that adds the eight external-pro
 The selected sources are issue #23 and both comments, the complete external specification and the latest maintainer decisions. This worktree stays on `feature/tool-command`, above updated Comment Links. The overseer handles pushes and PR #26. Earlier checkpoint details and capture lists are kept in Git at `0822e0ed8:.agents/memory/working/checkpoints/tool-command.md`.
 
 Done: Contracts, models, schemas, catalogue selection and the three read commands are committed. Generic process, ignore and backup mechanics and the supply recipes are committed.
-Now: Paired control-record publication and declared-command execution are gated. The five writer leaves still need implementation.
-Next: Wire store observations, then Install, Configure, Choose, Update and Remove with consent and preview parity. The telemetry choice is recorded and reported.
+Now: Paired publication, command journaling and lifecycle request preparation are gated. All five writer leaves are unimplemented. V1 is incomplete.
+Next: Implement Install with the gated capabilities and wire passive store observations. Then implement Configure, Choose, Update and Remove with consent and preview parity. The telemetry choice is recorded and reported.
 Blocker: Choose integration switching and Unix Node archive links need maintainer decisions. Independent native artifact and writer work can continue.
 
 ## Decisions
@@ -49,6 +49,7 @@ The current history includes these review boundaries:
 | `11247f2a4` | Backup reporting and bounded Root Repair restoration |
 | `b712682e0` | Verified store publication, attachment and final release |
 | `0cb6fd810` | Ordered command journaling and paired control-record publication |
+| `e9e178ee7` | Saved telemetry choice, applied receipt and passive reporting |
 
 The Linux failure was caused by `Models/Artifacts` matching the Windows artifact ignore rule. All three types now live in tracked `Models/Supply`. No discarded parser package, context or seam survives.
 
@@ -70,6 +71,7 @@ Recent gates are:
 | Store publication | Integration build, 0 warnings/errors | Unchanged | 19 passed | Both format checks passed, no snapshots changed |
 | Execution records | Both builds, 0 warnings/errors | 6 passed | 18 passed | Both format checks passed, no snapshots changed |
 | Telemetry choice | Both builds, 0 warnings/errors | 10 passed | 18 passed | Both format checks, four schemas, site and Index passed |
+| Request preparation | Unit build, 0 warnings/errors | 19 passed | Unchanged | Both format checks and Index passed, no snapshots changed |
 
 Every listed run had zero final failures and skips. The supply Unit selection is `*ToolArtifactSourceTests`. Its initial failure used a synthetic non-GitHub repository in the positive GitHub scenario. The fixture was corrected before the final run. The mechanics build corrected one xUnit analyzer violation. Neither was a flake.
 
@@ -142,6 +144,24 @@ This increment reuses source-generated codecs and the read-only command pipeline
 Both Release builds passed with zero warnings and errors. Unit passed 10/10, selecting `*ToolTelemetrySettingsTests.*` and `*ToolReceiptTests.KeepsAppliedTelemetry`. Integration passed 18/18, selecting `*ToolTelemetryReadTests.*`, `*ToolReadCommandsTests.ReadOutput`, `*ToolReadCommandsTests.HelpStopsBeforeWorkspace` and the five affected Status/Included methods under Verification. Both runs had zero skips. Evidence is under `artifacts/tool-command/tool-telemetry-*`.
 
 Accepted three new on, off and unavailable human captures. Accepted eight candidate captures for the telemetry text row and JSON field and three help captures for the setting guidance. Accepted 56 Status captures for payload bytes, characters, tokens and ratios only. Structured comparison kept all other JSON values. The initial rendering fixture assumed a blocked report used stdout and tried to overwrite through a creation-only fixture helper. It now captures stderr and creates a separate workspace per scenario. A shared presentation fixture gives every target the same candidate data, so telemetry captures contain no unrelated platform warning. These were deterministic fixture failures, not flakes. Both required format checks, four schemas, site and Index passed. The site kept its existing Node localStorage warning. Writing review R23 corrected saved versus effective wording and passed recheck.
+
+## Request preparation
+
+Lifecycle request preparation now renders declared commands through one template reader shared with manifest validation. Variable names have one code definition. Values are substituted once. Repeated arguments stay separate, and each host gets independent argument and environment collections. Host-scoped commands use ordinal host order. Workspace-scoped commands produce one request. Unknown actions and hosts, missing used values, malformed templates, escaping paths and invalid index directory segments block preparation.
+
+The caller provides the declared lifecycle, resolved executable facts and complete reviewed profile environment. This helper selects no artifact, verifies no store binding and grants no permission. It creates no file or process. Writer planners still need to call it after resolving their facts, before consent. The executor still needs its command-leaf callers.
+
+This increment reuses the BCL regex source generator, path APIs and existing template validation. It adds no dependency or exceptional machinery. Pure Unit cases cover request construction and template admission. CI covers the complete managed and Native AOT gates. The final managed Release Unit build passed with zero warnings and errors. The 19 new `ToolLifecycleProcessFactoryTests` cases passed with zero skips. Reproduce with the Unit build and standard runner flags under Verification, selecting `*ToolLifecycleProcessFactoryTests.*`. Evidence is under `artifacts/tool-command/tool-preparation-*`. No Integration test or snapshot changed. Both required format checks and Index passed. Writing review found no material issue.
+
+The deadline checkpoint leaves these required parts unfinished:
+
+- All five writer bindings, requests, planners, results, renderers and help availability.
+- Download, signature and attestation orchestration, store publication and declared-command invocation from Install and Update. Same-pin repair must rerun the installer.
+- Configure, Choose and Remove flows, local process consent, destination grants, final confirmation and equal preview decisions.
+- Applying telemetry through reviewed profiles, managed ignore planning, removal exclusions, ownership checks and root Remove coexistence.
+- Verified passive account-store bindings, resolved Inspect paths and external instructions, shared-reference release from writer flows and private Node with the frozen npm preparation pipeline.
+
+Concrete CodeGraph and Codebase Memory definitions and adapters are excluded from this branch as directed. Tool Exec stays proposed only. No push was made. The original and rebased reporting stashes are kept as described under Resume.
 
 ## Not decided yet
 
