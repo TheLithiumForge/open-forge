@@ -41,3 +41,4 @@ Completed records and superseded analyses are in [Archived CLI Development](../.
 - [Remaining Task 85 Delivery 2 to move an established main context folder, unstarted and awaiting maintainer selection](task85-configurable-main-root.md) - #Memory #Working #Task #CLI #Install #Settings #Layout #Contextual
 - [Open Task 88 to remove the older magic strings, literal-string assertions and tier problems from the CLI tests, which the Task 86 audit counted but did not fix](task88-test-literal-cleanup.md) - #Memory #Working #Task #CLI #Testing #Evidence #Contextual
 - [Open Task 89 to let a fresh interactive Install also register one existing folder of the user's own docs as an outside route](task89-install-outside-route-question.md) - #Memory #Working #CLI #Task #Install #Routing #Include #Wizard #Contextual #Active
+- [Implement issue 23 tool setup through the round-2 spec and supervised lanes](task90-tool-setup.md) - #Memory #Working #CLI #Task #Contextual #Active
