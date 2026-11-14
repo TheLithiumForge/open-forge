@@ -9,11 +9,11 @@ open-forge:
 Root integration is the pending wiring that connects the Tool lanes to the composed CLI and its existing report pipeline.
 For example, Tool Inspect uses C's typed binding and rendering with deferred service construction, so help doesn't resolve homes or create privileged hosts.
 
-Status: Intermediate reviewable home-provider base. F-H1 and F-H2 are unresolved before final acceptance. Full Root graph and registration stay deferred.
+Status: Accepted reader correction. F-H1 and F-H2 are closed after 176 focused cases, a clean managed build, both required .NET checks and E's focused conformance review. C handles central Root graph and registration separately on the stable provider API. Whole-feature adherence review follows complete integration and journeys.
 
 ## Source checkpoint
 
-The intermediate home-provider commit uses base `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9`. The original 49-case home-provider check used `b22e1ec393280935dea93a312f2a1aa337834ad5`. The C review below describes its earlier frozen candidate on `6d007254d5ca2937f4874ba5a93161f585814d8c`.
+The native reader correction uses base `f2200252bfff42c2b260df7375b92a468cf63263`, which integrates the provider base and dated I1 contract. The intermediate home-provider commit `3afe9b3ed29cba34aca4fbe1452ae36e073d358e` used base `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9`. The original 49-case home-provider check used `b22e1ec393280935dea93a312f2a1aa337834ad5`. The C review below describes its earlier frozen candidate on `6d007254d5ca2937f4874ba5a93161f585814d8c`.
 C returned a frozen, uncommitted 77-file candidate.
 All file hashes and both test assembly hashes match C's continuation manifests.
 The focused [records review](records-review.md) checks the nine grouped fixes and records four actionable findings.
@@ -142,8 +142,11 @@ The current ABI adds npm metadata reads to the injected download host and pendin
 Only the owned unused-host fake needs the new throwing metadata method.
 That fake constructs no PATH result. The provider doesn't call either host or consume those results.
 All ten provider files stay byte-identical to the original checked slice.
-E confirmed two unresolved native-parity corrections. F-H1 covers supported JSON5 syntax and F-H2 covers zero-length config fallback. Include precedence is correct.
-F keeps provider and parser implementation. Parser work waits for the coordinator's dated contract increment and E's exact functions, licence and fixture plan. This intermediate commit changes no parser or binding.
+The I1 correction replaces the OpenClaw BCL JSON lookup with the private `Shared/OpenClaw/ToolOpenClawConfigurationReader.ReadWorkspace(ReadOnlySpan<byte>)`.
+F-H1 covers the tagged native syntax and F-H2 returns missing for zero bytes, keeping the existing fallback.
+The full document is validated before byte-key lookup. Numeric tokens aren't converted and includes aren't expanded.
+All provider constructors, immutable facts and later C/D connection calls stay unchanged.
+F handles this provider and private reader. C handles central composition. Root has retained the complete upstream MIT notice in its pending LICENSE addition and integrates it before shipping.
 
 Later, construct one provider per selected invocation.
 For C's context delegate, use its profile-specific `NativeHomePath`, `Clients.Bindings` and `NativeEnvironment`, together with C's workspace and main root and A's verified install directory.

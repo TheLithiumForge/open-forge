@@ -9,15 +9,29 @@ open-forge:
 Native home roots is a Root provider that resolves Open Forge home, profile-native home and reviewed client path bindings from injected inputs.
 For example, CBM can use HOME while CodeGraph on Windows uses USERPROFILE, without changing either child environment.
 
-Status: Intermediate reviewable base on `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9`. F-H1 and F-H2 are unresolved corrections before final acceptance.
+Status: Accepted reader correction on base `f2200252bfff42c2b260df7375b92a468cf63263`. F-H1 and F-H2 are closed. The provider API stays stable for C. Whole-feature adherence review follows complete integration and journeys.
+
+## Contents
+
+- [Applicability](#applicability)
+- [Connections](#connections)
+- [Native choices](#native-choices)
+- [Binding coverage](#binding-coverage)
+- [Sources and limits](#sources-and-limits)
+- [Original checks](#original-checks)
+- [ABI checks](#abi-checks)
+- [Reader correction](#reader-correction)
+- [Not decided yet](#not-decided-yet)
 
 ## Applicability
 
 This slice reads local developer configuration and returns paths. It writes no product files and runs no tool, process or network request.
 Git keeps the implementation and owned temporary fixtures provide recovery during focused tests.
 Malformed configuration, missing paths, links and unavailable reads return errors or unavailable binding facts before later effects.
-The existing physical-path resolver, YAML parser, BCL JSON, immutable collections and path APIs cover this slice. No new dependency or exceptional mechanism is chosen.
-Unsupported configuration syntax stays unavailable instead of being guessed.
+The existing physical-path resolver, YAML parser, immutable collections and path APIs cover home and Rovo resolution.
+The dated I1 choice accepts a private port of CBM v0.12.1's read-only JSON-like grammar for OpenClaw after ordinary readers failed native compatibility.
+Strict UTF-8 validation and codepoint encoding use BCL support. No package, writer, interpreter, native bridge or public parser API is added.
+Invalid native syntax stays unavailable instead of being guessed.
 Root Integration tests are the lowest allowed tier because they call the Root assembly and cross real owned filesystem paths.
 The full managed and native gates stay in CI under the assigned verification limits.
 
@@ -113,8 +127,9 @@ Windows Hermes keeps its legacy directory only while the native directory is abs
 OMP keeps profile precedence over its agent-directory override and the native default after an invalid profile.
 
 Rovo reads the documented YAML scalar through the existing Framework YAML parser. The shared contained-path resolver rejects the first escape from its client root, including an outside link that later re-enters. Native choices keep their lexical home input while returned bindings and the setting identity use physical paths.
-OpenClaw checks its saved workspace before environment and profile defaults.
+OpenClaw validates its complete native document, then checks its saved workspace before environment and profile defaults.
 It doesn't follow `$include` and doesn't guess a workspace through an unavailable config.
+Missing and zero-byte files use the environment and profile fallback.
 Both config reads are bounded to eight MiB and use strict UTF-8.
 Directory and file paths resolve through the existing physical-path mechanism and existing ancestors.
 Missing directories stay missing.
@@ -155,8 +170,8 @@ No downloaded source is used at product or test runtime.
 
 The current limits are:
 
-- F-H1 - Unresolved. E confirmed that CBM v0.12.1 supports additional JSON5 syntax. The current BCL reader makes that workspace binding unavailable. This is a supported-native-path gap before final acceptance. Complete injected bindings bypass config reading for owned journeys.
-- F-H2 - Unresolved. E confirmed that a zero-length CBM config falls back. The current reader makes that workspace binding unavailable. Include precedence is correct.
+- The private reader follows the tagged CBM grammar, which includes JSON5 forms and its byte-based key rules. It doesn't promise every JSON5 spelling. Full document validation precedes fixed key lookup. Unrelated numeric tokens are skipped without conversion.
+- Selected string decoding keeps the native byte result before BCL string conversion. Invalid UTF-8 output stays unavailable as the accepted managed path-string limit. Unrelated strings aren't decoded.
 - The report-only CBM runtime root is its resolved rendezvous parent, from `CBM_RUNTIME_DIR`, the given Windows LocalApplicationData capability or the native POSIX parent. CBM chooses the identity-named child. Root doesn't derive a UID or SID, read daemon contents or claim an exact child path. Later reports must keep this scope visible.
 - The normal raw-path overrides must resolve as absolute paths. Tilde expansion is applied only by the reviewed native rules that support it.
 
@@ -301,9 +316,122 @@ Full Root graph and registration still wait for checked core integration.
 The coordinator accepted these ABI checks and authorized an intermediate local commit with the existing files and reports.
 This increment records F-H1 and F-H2 without claiming full native syntax support.
 It reuses the just-passed build and mandatory checks. Only the three assigned Working statuses change before the commit.
-The coordinator chose a bounded read-only C# port of the tagged CBM grammar and path lookup after the checked published libraries failed native validation or duplicated behavior.
-F keeps provider and parser implementation. Parser work waits for the dated contract increment and E's exact functions, licence and fixture plan in `r_0a42fc165fa0`.
-This increment adds no parser, package, native runtime or writer. Central Root stays deferred.
+At that intermediate checkpoint, the coordinator chose a bounded read-only C# port of the tagged CBM grammar and path lookup after the checked published libraries failed native validation or duplicated behavior.
+Parser work waited for the dated contract increment and E's exact functions, licence and fixture plan in `r_0a42fc165fa0`.
+That increment added no parser, package, native runtime or writer.
+
+## Reader correction
+
+The coordinator integrated the provider base and the [native reader contract](../../../../crystallized/documents/cli/technical-designs/tool-setup.md#native-config-reader) with dated I1 at `f2200252bfff42c2b260df7375b92a468cf63263`.
+F implements only the six source and test files in E's closed `native-config-reader.md` plan from the read-only peer tree.
+C handles central Root composition on the existing provider API.
+No provider constructor, fact field or context delegate changes.
+
+The three new private files are below `ToolHomes/Shared/OpenClaw/`:
+
+- `ToolOpenClawConfigurationReader.cs` - Validate the document, count selected byte-key matches and read `agents.defaults.workspace`, with the root include guard on missing paths.
+- `ToolOpenClawJsonSyntax.cs` - Keep native trivia, strings, identifiers, recursive shapes, separators and numeric token skipping.
+- `ToolOpenClawJsonStrings.cs` - Keep key matching and selected string decoding as separate native paths. Use strict BCL UTF-8 validation and `Rune` encoding.
+
+`ReadWorkspace(ReadOnlySpan<byte>)` is internal to Root.
+It returns configured text, including an empty string, or `null` for a missing selected path.
+Invalid syntax, ambiguous selected names, wrong shapes and a missing path with a root include throw `IOException` into the existing unavailable result.
+Unrelated duplicate members stay valid.
+A configured workspace wins over well-formed root include values and duplicates.
+No include is opened.
+Zero bytes return missing. Whitespace-only and comment-only documents are invalid.
+
+`ToolOpenClawRoots` calls the reader after the existing bounded file snapshot.
+Its four JSON key constants move to the private reader and the replaced `Member` helper is removed.
+Home, environment, profile and physical-path choices stay with their current code.
+The root container is depth zero. Containers at depth 63 and scalar values at depth 64 are allowed. Containers at depth 64 are rejected.
+The caller's eight MiB read bound stays unchanged. Native CBM's sixteen MiB file bound is outside this syntax correction.
+Document keys aren't limited by the native lookup-argument limit.
+
+The checked primary sources are:
+
+| Tagged file                              | SHA-256                                                            |
+| ---------------------------------------- | ------------------------------------------------------------------ |
+| CBM v0.12.1 `src/cli/config_json_like.c` | `12f2f8c7e80a28a15b6ad3d5e62a8273fcd042904596dabe72748618ad3d2903` |
+| CBM v0.12.1 `src/cli/config_json_like.h` | `556b5e494b31f2fca01436da163c0e1f9cdb343d01369a9845290858fbe06e65` |
+
+The public web reader returned a cache miss. Authorized public-source retrieval saved those exact bytes under `artifacts/tool-home-roots/native-reader/`.
+The port includes no native file snapshots, writer, editor, schema matcher or test hook.
+Each derived production source identifies the tagged source and DeusData's MIT notice.
+Root has retained the complete upstream notice in its pending `LICENSE` addition, with words unchanged and line endings and trailing blank spaces normalized. That addition stays with Root. F doesn't edit the file.
+
+One source-mapped external-format oracle lives with `ToolClientConfigurationTests` at the nearest shared test scope.
+The new private-reader test class and changed owned-file class use it.
+Semantic names and depth/read limits use their production definitions.
+Cases check configured and missing values, complete validation, ambiguity, separators, native trivia, escape branches, numeric skip, UTF-8, depth, read bounds, precedence and unchanged bytes.
+No rendered text assertion or payload snapshot changes.
+
+The final managed Windows x64 build uses SDK `10.0.101` and exits zero with zero warnings and errors in `00:02:02.02`.
+Its log is `artifacts/tool-home-roots/native-reader/build-corrected.txt`.
+The exact build and focused execution commands are:
+
+```powershell
+dotnet build OpenForge.Cli.slnx --configuration Release --no-restore -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1
+dotnet run --project src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-build --no-restore -- --filter-class OpenForge.Cli.IntegrationTests.Composition.Shared.ToolHomes.Shared.OpenClaw.ToolOpenClawConfigurationReaderTests --minimum-expected-tests 151 --fail-warns on --fail-skips on --no-ansi --progress off
+dotnet run --project src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-build --no-restore -- --filter-class OpenForge.Cli.IntegrationTests.Composition.Shared.ToolHomes.ToolClientConfigurationTests --minimum-expected-tests 25 --fail-warns on --fail-skips on --no-ansi --progress off
+```
+
+Filtered `--list-tests --no-ansi --progress off` discovery first finds 151 and 25 cases.
+The corresponding discovery logs are `reader-discovery.txt` and `configuration-discovery.txt` in the same artifact folder.
+Both execution commands exit zero and execute those same counts.
+The new reader class passes 151 cases in 1.719 seconds.
+The changed owned-file class passes 25 cases in 2.328 seconds.
+All 176 cases pass with zero failures, warnings and skips.
+Their logs are `ToolOpenClawConfigurationReaderTests.txt` and `ToolClientConfigurationTests.txt`.
+No other test class runs.
+The obsolete unavailable expectation for an unquoted missing path is removed and the native missing outcome is covered by the new reader cases.
+
+Both mandatory commands exit zero on the final source:
+
+```powershell
+npm run check:dotnet:whitespace
+npm run check:dotnet:style
+```
+
+Their logs are `whitespace.txt` and `style.txt` in the same folder.
+The source and configuration hashes are checked again after execution.
+The seven build, package and formatting inputs still match the earlier `npm ci` and restore inputs.
+That dependency setup isn't repeated.
+The first build reports five fixture annotation errors after a reflection-based string serializer call triggered formatter fixes.
+The fixture now uses `JsonEncodedText.Encode`. The generated attributes and reflection-dependent serializer calls are removed.
+The corrected build and both focused classes pass. No test flake occurs.
+
+The final executable artifacts are:
+
+| Artifact                                                                                  | SHA-256                                                            |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `artifacts/bin/OpenForge.Cli/release/OpenForge.Cli.dll`                                   | `8f38b24c22c696923d4cde8d9cf3a4e943a2db71ec589a23fd99fbce3beb1871` |
+| `artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.dll` | `2610bbb73a637d3e2faa72d36909746634d9a798a78bbf383bf047b126b7918b` |
+
+The Root copy beside the test assembly matches byte for byte.
+The artifact folder keeps `changed-files.txt` for exactly nine candidate paths, `source-sha256.txt` for all six assigned source files, `configuration-sha256.txt` for seven unchanged inputs, `test-artifact-sha256.txt` for both executables, `upstream-sha256.txt` for both tagged reader sources and `report-sha256.txt` for the final three Working files.
+Prettier, local links and anchors, LF, whitespace, packet section limits and exact allowed-path checks pass before return.
+The packet keeps its original supplied build indentation as its sole formatter difference outside Progress and Evidence.
+No new routed Markdown file is added.
+
+F-H1 and F-H2 are fixed in this candidate. Include precedence stays correct.
+The provider API and privileged A hosts, central Root, protected models and contracts, LICENSE, peer files, other packets and the parent Task are unchanged.
+No native tool, real store, process host, registry or persistent PATH write, profile edit, writer, package, payload fixture update or snapshot regeneration runs in the provider or tests.
+No full suite, Native AOT, Doctor, commit, push, merge or integration runs.
+Root integrates its pending complete MIT notice before shipping.
+
+### Commit continuation
+
+The coordinator accepts this correction and authorizes the conventional local nine-file commit.
+E's focused source/native comparison in `r_73e82470b77f` reports no material conformance gap and no NR1 finding in its `evidence/native-reader-review.md`.
+The six frozen source hashes match before and after that review.
+The accepted content checkpoint is `c72327e8f458cb28cc1608090da61fc1a41f8ae724d16294f220215aaf3528c3`.
+The source manifest SHA-256 is `eab5fcc34c86b3b3b30cb74ec1c986276012a48d8304ed73e537721f8ed51376` and the nine-path manifest SHA-256 is `75e8e353210ea8ccee62007ac46388e1284132c13b0e0763dcb3248d5f5d7ab0`.
+The accepted 176 cases, clean managed build and both mandatory .NET checks stand. No executable check is repeated for this status update.
+Only the three assigned Working statuses change before the commit. The six source files stay frozen.
+Final Markdown, LF, whitespace, hashes and exact staging checks cover all nine assigned files.
+No LICENSE, central Root, A host, protected type, peer file, push, merge or payload capture is part of the commit.
+This closes F-H1 and F-H2. E's focused check doesn't replace the later whole-feature adherence review.
 
 ## Not decided yet
 
