@@ -7,6 +7,9 @@ internal sealed record ToolArtifact
 {
     public required string File { get; init; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Url { get; init; }
+
     public required long? Bytes { get; init; }
 
     public required string Integrity { get; init; }

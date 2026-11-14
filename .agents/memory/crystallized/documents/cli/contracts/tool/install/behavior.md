@@ -22,12 +22,12 @@ The operation follows these steps:
 5. Resolve separate artifact consent, daemon consent, destination grants and final confirmation.
 6. For apply, stage and hash approved artifacts outside writing leases. Reject unsafe archive members before extraction or execution.
 7. Acquire the user-store lease, then the workspace lease, and revalidate every required fact.
-8. Run the declared install command for its reviewed scope. Record each started command and exit result.
+8. Run the declared install command for its reviewed scope, including on a same-pin reinstall. Record each started command and exit result.
 9. Prepare managed-file recovery using Git or sibling backups, apply ignore changes and publish matching settings and lock records.
 10. Verify registration and child shutdown, then report external index instructions. New registrations have no chosen roles.
 
 ## Repetition
 
-A verified unchanged request is a no-op without new leases, backups, transfers or child processes. Missing receipts and foreign files don't become a verified installation through adoption. After a partial command failure, keep execution evidence and every unfinished part. A new invocation plans from current facts. It doesn't replay a saved plan or guess an inverse command.
+Every Install re-verifies the selected pin's bytes, restores missing or changed immutable files and reruns the tool's install command. Reuse verified local artifacts without a new download when possible. A matching pin alone never skips this work. There is no separate Tool repair command. Status diagnoses and Inspect shows resolved paths. Missing receipts and foreign files don't become a verified installation through adoption. After a partial command failure, keep execution evidence and every unfinished part. A new invocation plans from current facts. It doesn't replay a saved plan or guess an inverse command.
 
 The [interface](interface.md) defines caller input and output.

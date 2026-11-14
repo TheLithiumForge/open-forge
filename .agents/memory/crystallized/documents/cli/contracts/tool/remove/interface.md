@@ -35,6 +35,8 @@ The shared [tool operations](../../../shared-operation-contract.md#tool-operatio
 
 Required cases are:
 
+- Tool and private Node versions released only after the last workspace reference.
+
 - Removal without a source catalogue or existing code root.
 - Nonfinal and final shared-reference removal.
 - Missing tool output after root path Remove without restoring excluded content.

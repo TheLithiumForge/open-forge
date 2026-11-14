@@ -23,15 +23,15 @@ New files have no prior bytes to back up. Directories have no backup manifest. T
 
 ## Read backups
 
-Status and Doctor check the exact Tool control paths and known legacy Tool paths for sibling backups, including in Git workspaces. They report each leftover path without reading its contents into output or treating it as a ZIP. Reads create no files and follow no links. Unreadable paths keep their cause and unavailable coverage.
+Status and Doctor check settings, lock and `.gitignore` for sibling backups, including in Git workspaces. They report each leftover path without reading its contents into output or treating it as a ZIP. Reads create no files and follow no links. Unreadable paths keep their cause and unavailable coverage.
 
 The lock records no backup identity, path, digest or state. Backup discovery works when the current settings or lock is invalid. Existing recovery v1 stores and readers keep their behavior. Cleanup doesn't delete these backups.
 
 ## Restore files
 
-Repair can plan restoration from an ordinary sibling backup to its exact target. It shows the target and backup before confirmation and follows the existing destination permission rules. Preview writes nothing. Under the workspace lease, recheck both paths and their bytes, restore the backup bytes, validate the target and delete the backup only after success. A link, changed file, unavailable permission or ambiguous target blocks restoration.
+Repair can plan restoration from an ordinary sibling backup to its exact settings, lock or `.gitignore` target. It shows the target and backup before confirmation and follows the existing destination permission rules. Preview writes nothing. Under the workspace lease, recheck both paths and their bytes, restore the backup bytes, validate the target and delete the backup only after success. A link, changed file, unavailable permission or ambiguous target blocks restoration. Tool backup restoration never edits agent files.
 
-Repair doesn't infer an external store binding from a backup. Account-store restoration requires an independently verified local binding. Existing recovery v1 restoration keeps its format, selection and behavior.
+Tool backups don't select account-store targets. Existing recovery v1 restoration keeps its format, selection and behavior.
 
 ## Conformance
 

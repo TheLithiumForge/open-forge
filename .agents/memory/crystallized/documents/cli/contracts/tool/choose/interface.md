@@ -23,11 +23,11 @@ Exactly two operands are required. `none` clears a role. A reserved role can't a
 
 ## Choice
 
-`code-navigation` requires `code-graph`. `docs-search` and `code-to-docs-links` are reserved. At most one settings entry lists a given role. Role metadata doesn't control which entries a tool installer writes to an agent file.
+`code-navigation` requires `code-graph`. `docs-search` and `code-to-docs-links` are reserved. At most one settings entry lists a given role. Proposed for maintainer review: role metadata doesn't control which entries a tool installer writes to an agent file.
 
 The chosen pin must be installed, compatible and verified. Missing required process consent or incomplete install evidence blocks selection. No fallback occurs. Choice never restores excluded tool output.
 
-A switch moves the role between settings entries and publishes matching lock evidence. Clearing removes that role assignment only. Tools with no active roles keep `roles:[]`. Their agent files, guidance and indexes stay under the tool's installer.
+If the maintainer chooses metadata-only selection, a switch moves the role between settings entries and publishes matching lock evidence. Clearing removes that role assignment only. Tools with no active roles keep `roles:[]`. Their agent files, guidance and indexes stay under the tool's installer.
 
 The shared [tool operations](../../../shared-operation-contract.md#tool-operations) define writer data and safety. `role` names the requested role. `pin` is null when clearing. Results report the role mapping without claiming changes to agent files.
 
@@ -38,9 +38,13 @@ Required cases are:
 - First choice, switch, same-provider no-op and `none` clear.
 - Unknown, uninstalled, incompatible and reserved-role subjects.
 - Duplicate role assignments and settings and lock mismatches.
-- Agent files and guidance unchanged without installer execution.
+- If metadata-only selection is decided, agent files and guidance unchanged without installer execution.
 - Missing process consent and incomplete installation evidence.
 - Both installs and index bytes kept during switching and clearing.
 - Paired role publication and recovery after interruption.
 
 The [behavior](behavior.md) defines switch ordering.
+
+## Not decided yet
+
+Whether Choose invokes tool commands to switch agent integrations or changes role metadata only needs the maintainer's decision.

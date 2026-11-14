@@ -17,7 +17,8 @@ internal static class ToolHelp
         Usage = usage,
         Examples = string.Join("\n", examples),
         Behavior = string.Join("\n", ToolText.ReadBehavior()),
-        Details = [],
+        Details = [new(ToolText.SupplyHeading(), ToolText.SupplyDetails()), new(ToolText.StoreHeading(), ToolText.StoreDetails()),
+            new(ToolText.WriterHeading(), ToolText.WriterDetails()), new(ToolText.ExecHeading(), ToolText.ExecDetails())],
         RelatedCommands = [("open-forge tool --help", null)],
     });
 }

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Hosting;
 using System.Collections.Immutable;
 using System.Text;
 using System.Text.Json;
@@ -44,7 +45,7 @@ public sealed class ToolReadCommandsTests
             Assert.Equal(0, result.ExitCode);
             Assert.Empty(result.Error);
             snapshots[leaf.Length == 0 ? "group.help" : leaf + ".help"] = OpenForge.Cli.TestSupport.Snapshots.CommandOutputNormalization.Normalize(
-                result.Output, workspace.Path, "test");
+                result.Output, workspace.Path, CliBuildVersion.InformationalVersion);
         }
         Assert.Empty(workspace.SnapshotHashes());
         OpenForge.Cli.TestSupport.Snapshots.CommandOutputSnapshot.MatchDetailSnapshot(snapshots, testName: nameof(HelpStopsBeforeWorkspace));

@@ -25,6 +25,7 @@ internal static partial class ToolManifestValidator
         {
             Require(artifact is not null, "artifact entries cannot be null");
             Require(ToolIdentity.IsId(id), "invalid artifact ID");
+            Require(artifact.Url is null || Https(artifact.Url), "artifact url must be exact HTTPS without credentials, query or fragment");
             Require(!artifact.File.Contains('?') && !artifact.File.Contains('#')
                 && ToolIdentity.IsRelativePath(Uri.UnescapeDataString(artifact.File)), "artifact file must be a contained relative URL path");
             Require(artifact.Bytes > 0 || manifest.Admission == "blocked" && artifact.Bytes is null, "artifact bytes must be positive");

@@ -7,7 +7,7 @@ open-forge:
 # tool inspect interface
 `tool inspect` is a read command that explains one exact tool definition without launching it.
 
-It shows artifacts, destinations, runtime, processes, consent, compatibility, trust limits and readable installed facts. Candidate definitions can be examined without being enabled.
+It shows artifacts, destinations, runtime, processes, consent, compatibility, trust limits and readable installed facts. Show official sources, pinned hashes, signature and attestation requirements and the effective telemetry choice. Show resolved install, private runtime, cache, state and workspace paths, or a cause when unavailable. Candidate definitions can be examined without being enabled. There is no separate open-path command.
 
 Status: V1 core contract decided.
 

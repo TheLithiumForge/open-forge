@@ -5,15 +5,15 @@ open-forge:
 ---
 
 # tool choose behavior
-`tool choose` is a write operation that assigns or clears one role in the workspace settings without editing tool-owned files.
+`tool choose` is a write operation that assigns or clears one role in the workspace settings.
 
 A complete plan precedes consent and effects. Preview uses that same plan without transfers, processes, grants or writes.
 
 Status: V1 core contract decided.
 
-## Flow
+## Proposed flow
 
-The operation follows these steps:
+If the maintainer chooses metadata-only role selection, the operation follows these steps. Command-based integration switching needs its own decided flow before implementation:
 
 1. Validate one role and an exact installed tool ID or `none`.
 2. Read all role assignments and affected providers' settings and receipts.
@@ -29,3 +29,7 @@ The operation follows these steps:
 A verified unchanged request is a no-op without new leases, backups, transfers or child processes. Missing receipts and foreign files don't become a verified installation through adoption. After a partial command failure, keep execution evidence and every unfinished part. A new invocation plans from current facts. It doesn't replay a saved plan or guess an inverse command.
 
 The [interface](interface.md) defines caller input and output.
+
+## Not decided yet
+
+Whether role selection also switches agent integrations through declared install and uninstall commands needs the maintainer's decision. The metadata-only flow above is proposed.

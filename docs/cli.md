@@ -27,7 +27,7 @@ The primary content locations are the selected context folder and native Skills 
 
 ## Command index
 
-The external Tool family provides `tool list`, `tool inspect` and `tool status`. The [external tool reference](tools.md) describes these read commands, the pending writers, consent, Git or sibling-backup recovery and workspace records. The decided writers invoke tool-owned installers for agent configuration.
+The external Tool family provides `tool list`, `tool inspect` and `tool status`. The [external tool reference](tools.md) describes these read commands, the pending writers, consent, Git or sibling-backup recovery and workspace records. The decided supply model downloads verified official artifacts and uses tool-owned installers for agent configuration. Node tools use a private pinned runtime and frozen npm lock. Tools never self-update and telemetry defaults off with a visible opt-in. Same-pin Install repairs bytes and reruns the installer. Tool Exec is proposed only.
 
 Choose a task, then follow its command link. Each operation has the same shape:
 purpose, common examples, options, behavior notes, and next step. Read-only

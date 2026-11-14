@@ -332,6 +332,11 @@
         "stripComponents": {
           "type": "integer",
           "minimum": 0
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
         }
       }
     },

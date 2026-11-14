@@ -33,6 +33,9 @@ The shared [tool operations](../../../shared-operation-contract.md#tool-operatio
 
 Required cases are:
 
+- Exact upgrades and downgrades between pins reviewed in the current release's catalogue.
+- Old tool and private Node versions kept while another workspace references them.
+
 - Source default, exact upgrade and exact downgrade.
 - Equal-pin verified no-op without downloads or runtime state.
 - New artifact and changed process-scope consent.

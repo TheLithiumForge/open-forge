@@ -51,7 +51,12 @@ Reject missing values, repeated singleton values and flags outside this matrix. 
 
 Every leaf uses the unchanged schema-3 [result coordinates](../shared/result-coordinates/interface.md). A renderer reads one result and never repeats the operation. Detail and format can't change status. Parser errors before binding use text on stderr and exit 4.
 
-The shared [tool operation rules](../../shared-operation-contract.md#tool-operations) define preview, consent, effect ordering, exclusions and result data used by all five writers. The [manifest contracts](../shared/tool-manifest/_tool-manifest.md) define exact source selection and the settings and lock split. External search, indexing, ranking and maintenance stay in the external program. The command group adds no execution proxy or scheduler.
+The shared [tool operation rules](../../shared-operation-contract.md#tool-operations) define preview, consent, effect ordering, exclusions and result data used by all five writers. The [manifest contracts](../shared/tool-manifest/_tool-manifest.md) define official downloads, exact source selection, private runtimes and the settings and lock split. External search, indexing, ranking and maintenance stay in the external program. This branch adds no execution proxy or scheduler.
+
+## Not decided yet
+
+- Proposed: `open-forge tool exec <tool> -- <args>` runs the pinned binary and its private runtime from the current directory. Arguments stay separate. It adds no PATH entry or symlink. This is a specification proposal and isn't implemented.
+- Whether Choose switches agent integrations through declared commands or changes only the role map needs the maintainer's decision.
 
 ## Axioms
 

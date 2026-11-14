@@ -5,11 +5,23 @@ open-forge:
 ---
 
 # External tools
-External tool support is a CLI capability that installs reviewed program bytes and reconciles their workspace configuration.
+External tool support is a CLI capability that downloads verified upstream programs and runs their declared workspace installation commands.
 
 The core handles contracts, catalogue selection, records, declared commands and bounded lifecycle effects. Concrete CodeGraph and Codebase Memory definitions and adapters belong to the next stacked branch. This core ships an empty production catalogue.
 
 Status: V1 core design decided.
+
+## Supply
+
+Open Forge ships a reviewed recipe containing versions, official URLs, hashes and commands. It never ships, mirrors or rehosts a tool's bytes. Installation downloads directly from the official source so upstream serves the download. The tool's upstream license and notices still apply.
+
+Native tools use the exact asset from their project's GitHub release. Pin its version, URL, size, SHA-256 and source commit. Verify a build attestation where upstream publishes one, against the reviewed repository, commit and build identity. A required verification failure blocks execution.
+
+Node tools use an exact official portable archive from `https://nodejs.org/dist/v<version>/`. Pin the archive hash from the release's signed `SHASUMS256.txt` and keep signer evidence in the reviewed recipe. Extract the runtime into the versioned user store. Every npm and tool invocation names the absolute private Node path. The user's Node and PATH stay unchanged. musl/Alpine has no official build and is unsupported.
+
+The package and its complete dependency closure come from the npm registry. The definition pins the package manifest, lockfile and integrity values. The private Node runs its bundled npm's `npm ci` with the reviewed options, package scripts disabled and no dependency resolution or lockfile changes. A missing closure blocks installation. Native tools need no Node runtime.
+
+The [tool admission checklist](../../maintenance/tools.md) defines source review, checksum and attestation evidence, licensing checks, native tests and release admission. A local source can't widen that reviewed recipe.
 
 ## Composition
 
@@ -33,7 +45,7 @@ Default account stores are:
 
 Use the platform's native known-folder resolution. A product-level store override gives tests an owned temporary root without changing OS configuration. Every test redirects all product account stores through one shared test-support seam before use. Tests never download real artifacts or touch real account stores.
 
-Install keys are `<id>/<version>/<target>/<artifact-set-sha256>`. For one archive, the set digest is its SHA-256. For several artifacts, hash ordinally sorted UTF-8 `id=integrity` lines, each ending in LF. Archive keys use artifact digests. Account-local records bind exact physical units and keep shared references and local process consent outside Git. Custom account roots and unmanaged adoption are deferred.
+Install keys are `<id>/<version>/<target>/<artifact-set-sha256>`. For one archive, the set digest is its SHA-256. For several artifacts, hash ordinally sorted UTF-8 `id=integrity` lines, each ending in LF. Archive keys use artifact digests. Private Node runtimes use their own version, target and archive digest keys and share references by the same rules. Account-local records bind exact physical units and keep shared references and local process consent outside Git. Custom account roots and unmanaged adoption are deferred.
 
 Store bindings cover one install, archive, runtime-state or declared native-cache unit. Their hashes cover kind and resolved physical root. They never grant a whole home or global store parent. Runtime state uses physical worktree, code-root and execution-environment identities. Branch names and shared Git history aren't identities. Immutable bytes can be shared. Mutable indexes can't be shared without a tested native content-key contract.
 
@@ -43,9 +55,19 @@ Settings v6 adds the direct tool-ID map to `.agents/open-forge.json`. Lock v2 ad
 
 Account records supplement the lock with physical bindings, shared references and local process consent. An unreadable reference set is unavailable coverage. It never becomes an empty set that permits final shared deletion. Keep disappeared-worktree references until authorized cleanup resolves them.
 
+Each workspace records one version per tool. Update selects only pins reviewed in this Open Forge release's catalogue, which keeps every previously reviewed pin. An exact older pin permits a downgrade. Publish the replacement reference before releasing the old one. Keep tool bytes and private runtimes while any workspace references them. Release an unreferenced version after the last update or removal and a complete reference check.
+
+## Reinstall
+
+Running Install again on the same pin re-verifies its bytes, restores missing or changed immutable files and reruns the pinned install command. Verified local artifacts can avoid another transfer, but they don't skip the installer. Foreign bytes aren't adopted. There is no separate Tool repair command. Status diagnoses and Inspect shows resolved install, runtime, cache, state and workspace paths with a cause for any unavailable path.
+
+## Process settings
+
+Tools never self-update. Every supplied launch disables update checks according to its reviewed profile. Telemetry defaults off and Inspect shows the effective setting. The visible per-tool settings entry lets you opt in and turn it off again. The installer and later launch instructions use that choice. A recipe can't silently force telemetry on or silently replace an opt-in with off. Watching and index policy keep their separate controls.
+
 ## Host members
 
-Tool-owned installers handle agent configuration, native settings, helpers and usage guidance. Open Forge edits only its settings, lock and managed ignore section. It doesn't parse or write Codex TOML or write Claude JSON. Passive host-entry observations are information and aren't generated-member receipts.
+Tool-owned installers register their MCP server with agent hosts and handle native settings, helpers and usage guidance. Each active tool requires a Skill that explains its purpose, commands, limits and trust notes. Open Forge edits only its settings, lock and managed ignore section. It doesn't parse or write Codex TOML or write Claude JSON. Passive host-entry observations are information and aren't generated-member receipts.
 
 Definitions declare pinned install, uninstall and index-cleanup argument vectors, scope, timeout and output paths. The verified target entry runs with separate arguments, declared environment and physical workspace CWD. Exact release admission covers these declarations. The [shared Tool rules](../shared-operation-contract.md#tool-commands) define command ordering and execution evidence.
 
@@ -57,7 +79,7 @@ Extract only neutral byte-preserving section mechanics from the existing Library
 
 Adapters provide finite configuration, passive checks and external maintenance instructions. They don't provide a query proxy, scheduler or index command inside Open Forge. Required guidance names the pin, root, state, commands, process limits and language trust notes. Retrieval doesn't activate workspace instructions.
 
-CodeGraph's future profile validates a single-segment in-project index directory. It sets telemetry, daemon and watcher opt-outs together. Every supplied launch replaces hook-related child environment with an empty `GIT_CONFIG_PARAMETERS`, count one, key `core.hooksPath` and a verified private sink. Configuration and external recipes check Git's resolved hooks path with that exact environment before proceeding. File-level Git configuration and real hooks stay unchanged. The reviewed bootstrap helper creates schema only through pinned bundled APIs. The next branch chooses the pinned installer, uninstaller and index-cleanup arguments. The core contains no CodeGraph-specific invocation.
+CodeGraph's future profile validates a single-segment in-project index directory. It defaults telemetry off and applies the visible telemetry choice while keeping daemon and watcher opt-outs. Every supplied launch replaces hook-related child environment with an empty `GIT_CONFIG_PARAMETERS`, count one, key `core.hooksPath` and a verified private sink. Configuration and external recipes check Git's resolved hooks path with that exact environment before proceeding. File-level Git configuration and real hooks stay unchanged. The reviewed bootstrap helper creates schema only through pinned bundled APIs. The next branch chooses the pinned installer, uninstaller and index-cleanup arguments. The core contains no CodeGraph-specific invocation.
 
 Codebase Memory's future profile accepts only code root `.` and physical workspace CWD. Verify native project identity and index binding for both hosts. Use one exact build and resolved account cache for all active clients. Session consent covers the build, cache, process scope and final-client shutdown. Native settings turn automatic indexing, watching and UI off while keeping unrelated settings. Preflight ancestor permissions. A rejected dedicated cache requires a separate default-cache plan, never a silent switch or permission change.
 
@@ -65,12 +87,15 @@ After changed CBM sources, print an exact-project full-rebuild recipe. It delete
 
 ## Native tests
 
-Definition support and installation testing are separate from call accuracy. Concrete adapters need both host journeys on each matching native target. Cross-builds and emulation don't replace native evidence. Check pristine first index, Unicode and spaced paths, conflicting inherited hooks, no telemetry or watchers, final-client exit, offline restart and complete removal while other worktrees stay usable.
+Definition support and installation testing are separate from call accuracy. Concrete adapters need both host journeys on each matching native target. Cross-builds and emulation don't replace native evidence. Check pristine first index, Unicode and spaced paths, conflicting inherited hooks, default-off telemetry with opt-in, no watchers, final-client exit, offline restart and complete removal while other worktrees stay usable.
 
 The core uses minimal synthetic test-only definitions and local hashed artifacts. They aren't production catalogue entries or public adapters. Cover parser, records and effect mechanics at Unit and real-filesystem Integration boundaries, then small published-command journeys at EndToEnd. Trigger complete managed and host Native AOT gates for composition, serialization, stores and mutation changes.
 
 ## Not decided yet
 
-Concrete installer, uninstaller and index-cleanup vectors need native tests on the next branch. They don't change this core's generic command contract.
+- Concrete installer, uninstaller and index-cleanup vectors need native tests on the next branch. They don't change this core's generic command contract.
+- Proposed: `open-forge tool exec <tool> -- <args>` runs the workspace's pinned binary with its private runtime from the current directory. It passes arguments separately, uses absolute program paths and creates no PATH entry or symlink. This is a specification proposal only. No Exec command is implemented.
+- Whether Choose switches agent integrations through declared commands or changes only the role map needs the maintainer's decision.
+- Unix Node archive preparation needs a decision on unused launcher links. The upstream [packaging code](https://github.com/nodejs/node/blob/main/tools/install.py) creates npm and npx symlinks. The current archive rule rejects links. Proposed: a reviewed recipe can name exact unused launcher links to omit, while creating no links and rejecting every other link. Don't admit a dependent recipe before this is decided.
 
 The [CLI Architecture](../architecture.md) defines the parent layer and dependency rules.

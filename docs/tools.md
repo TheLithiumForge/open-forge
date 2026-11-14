@@ -32,24 +32,54 @@ The five write commands preview the same plan with `--dry-run`. Preview writes n
 
 The exact per-command flags, result fields and conformance cases are in the [Tool contracts](../.agents/memory/crystallized/documents/cli/contracts/tool/_tool.md).
 
-## Definitions
+## Supply
+
+Open Forge ships reviewed recipes containing versions, official URLs, hashes and commands. It never ships, mirrors or rehosts tool bytes. Installation downloads from upstream. The upstream license and notices still apply.
+
+Native tools use the exact asset from the project's own GitHub release, pinned by version, URL, size, SHA-256 and source commit. Published build attestations are checked against the reviewed source and build identity. A failed required check blocks installation.
+
+Node tools use a private pinned portable archive from `https://nodejs.org/dist/v<version>/`. Its pinned hash comes from the signed `SHASUMS256.txt`. The runtime stays in the per-user versioned store. The bundled npm runs `npm ci` from the definition's pinned package manifest and complete lockfile, using npm registry URLs and integrity hashes. It resolves no new dependency and runs no package install scripts. Every registration and command uses absolute paths to that Node and package. Your own Node and PATH stay unchanged. musl/Alpine has no official Node build and is unsupported.
+
+Missing pins, incomplete locks, unsafe archives, size or digest mismatches, failed required signature or attestation checks and missing consent block installation. The [admission checklist](../.agents/memory/crystallized/documents/maintenance/tools.md) explains how new recipes and pins are reviewed.
+
+Tools never self-update. Update checks stay disabled. Telemetry defaults off, Inspect shows its effective setting and the visible per-tool setting lets you turn it on or off.
 
 JSON and YAML definitions follow the [manifest schema](../schemas/tools/v1/manifest.schema.json). A [catalogue](../schemas/tools/v1/catalogue.schema.json) lists exact manifest hashes and one default pin per tool. Local sources select reviewed definitions and never load adapter code.
 
-## Workspace files
+## Stores and records
 
 `.agents/open-forge.json` records installed tools, exact versions and active roles. An inactive tool keeps an empty role list. `.agents/open-forge.lock.json` records verified receipts, hashes, lifecycle commands and their results. Planned Tool writes use Git as the backup in Git workspaces. Without Git, sibling `.bak` files keep prior managed-file bytes until changed content validates. Backup reporting and Repair restoration are pending. These paths and native Skills stay fixed when you choose a custom context folder.
 
-The decided writer design invokes each pinned tool's own install, uninstall and index-cleanup commands. The tool handles agent files, native settings and its guidance. Open Forge edits only its settings, lock and managed `.gitignore` section. Choose changes only the role mapping. Open Forge doesn't change Git's index.
+The decided writer design invokes each pinned tool's own install, uninstall and index-cleanup commands. The tool handles agent files, native settings and its guidance. Open Forge edits only its settings, lock and managed `.gitignore` section. The maintainer's decision on Choose and agent integrations is pending. Open Forge doesn't change Git's index.
+
+Each active tool requires a Skill describing its purpose, commands, limits and trust notes. Its installer registers MCP and supplies that Skill.
+
+Each workspace pins one version per tool. User stores keep tool and private Node versions while any workspace references them. The last update or removal releases the old version after checking all references. Missing or unreadable references never permit shared deletion.
+
+Default user-store locations are:
+
+| OS | Tools | Archives | State |
+| --- | --- | --- | --- |
+| Windows | `%LOCALAPPDATA%/OpenForge/tools` | `%LOCALAPPDATA%/OpenForge/tool-cache` | `%LOCALAPPDATA%/OpenForge/tool-state` |
+| macOS | `~/Library/Application Support/OpenForge/tools` | `~/Library/Caches/OpenForge/tools` | `~/Library/Application Support/OpenForge/tool-state` |
+| Linux | `${XDG_DATA_HOME:-~/.local/share}/open-forge/tools` | `${XDG_CACHE_HOME:-~/.cache}/open-forge/tools` | `${XDG_STATE_HOME:-~/.local/state}/open-forge/tools` |
+
+Install keys contain the tool ID, version, target and artifact-set hash. Node runtimes have their own version, target and archive hash. Workspace locks keep recipe snapshots, hashes, files, references and command results. Physical store bindings and process consent stay account-local. Inspect shows resolved paths or why a path is unavailable. There is no separate open-path command.
+
+## Reinstall and update
+
+Running `tool install` again on the same pin re-verifies its bytes, restores missing or changed immutable files and reruns the tool's install command. Verified local artifacts can avoid another download. There is no separate Tool repair command. Use Status to diagnose a problem.
+
+Update selects only pins reviewed in this Open Forge release's catalogue. The catalogue keeps every previously reviewed pin. Select an exact older reviewed pin to downgrade, subject to its install checks. Update publishes the new reference before releasing the old one.
 
 ## Keep removals
 
-Tool writers check declared command outputs against recorded file, directory and category exclusions before running the command. Root Remove leaves the provider registered. Configure can't restore excluded output through an installer. Choose changes metadata only. Tool Remove can release the registration without restoring missing content.
+Tool Remove runs the stored index-cleanup and uninstall commands, removes unused Tool ignore rules and releases store references. Other workspaces keep their shared versions. Concrete command vectors and native testing belong to the next branch.
+
+Tool writers check declared command outputs against recorded file, directory and category exclusions before running the command. Root Remove leaves the provider registered. Configure can't restore excluded output through an installer. Choose never restores excluded output. Tool Remove can release the registration without restoring missing content.
 
 ## Limits
 
 The core adds no search proxy, index scheduler, arbitrary scripts, system PATH changes or registry changes. The external program performs search and indexing. Graph answers are leads. Before an edit depends on an edge, read its caller and exact callee and check binding where it matters. Retrieved documents don't replace the workspace loader or activate rules.
 
-## Tool commands
-
-Concrete installer, uninstaller and cleanup arguments belong to the next branch. The core keeps those definitions generic and ships no concrete tool.
+Proposed for maintainer review: `open-forge tool exec <tool> -- <args>` runs the pinned binary with its pinned runtime from your current directory. It adds no PATH entry or symlink. This branch doesn't implement it.

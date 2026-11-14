@@ -37,7 +37,19 @@ Unknown tokens invalidate a definition. Reserved tokens can describe deferred de
 
 ## Values
 
-Join `downloadBase` and `file` for the exact HTTPS URL. Reject absolute file names, traversal, credentials and query overrides. Artifact references resolve inside the same manifest. Relative paths use forward slashes without dot or parent segments. Only blocked definitions can omit byte sizes or their source commit. Graph archives use SHA-256. npm tarballs can use SHA-512 SRI. Locked-package targets require a complete runtime and dependency artifact closure. Package resolution and package-manager install scripts don't run during artifact preparation. The verified tool entry can run its declared lifecycle commands after preparation.
+Each artifact can declare its exact HTTPS `url`. When omitted, join `downloadBase` and `file`. The per-artifact URL lets one recipe name both official Node and npm registry artifacts. `file` stays a contained relative name in either form. Reject absolute file names, traversal, credentials and query overrides. Artifact references resolve inside the same manifest. Relative paths use forward slashes without dot or parent segments. Only blocked definitions can omit byte sizes or their source commit. Native archives use SHA-256. npm tarballs keep their lockfile SRI values. The verified tool entry can run its declared lifecycle commands after preparation.
+
+## Supply recipes
+
+Open Forge distributes reviewed recipes and never ships, mirrors or rehosts tool bytes. Native assets come from the project's own GitHub release. Pin version, official URL, size, SHA-256, source commit and the attestation identity where published. Check published attestation evidence against that exact digest and source identity before admitting the recipe. A recipe requiring install-time verification blocks if that check is unavailable or fails.
+
+Node tools use a private pinned official portable archive from `https://nodejs.org/dist/v<version>/`. Its pinned hash comes from the signed `SHASUMS256.txt`. Keep checksum, signature and signer evidence with the reviewed recipe. No official musl/Alpine build exists, so that target is unsupported. Node and its bundled npm stay in the versioned user store. Commands use absolute paths and never select the user's Node.
+
+Locked-package targets require a complete pinned runtime and dependency closure. The definition pins the package manifest, lockfile, exact npm registry URLs and integrity values. The bundled npm runs `npm ci` with the reviewed options and package scripts disabled. It resolves no new dependency and changes no lockfile. Required artifacts come from the official Node source or npm registry. Another host, incomplete closure, hash mismatch or required signature or attestation failure blocks execution.
+
+The [admission checklist](../../../../maintenance/tools.md) defines recipe review and license checks. The upstream license and notices still apply to direct downloads.
+
+## Launch values
 
 Scalars are strings, Booleans, finite numbers or null. Template variables are `${install}`, `${entry}`, `${worktree}`, `${codeRoot}`, `${state}`, `${cache}`, `${hookSink}`, `${projectId}`, `${indexDirName}`, `${host}` and `${target}` only. Render typed values without a shell. Install and entry paths become absolute. Each argument stays separate. Index directory names contain one validated segment.
 
@@ -63,11 +75,11 @@ Require distinct tool IDs, distinct versions within each tool and distinct manif
 
 Select `--tool-version` by exact string when present. Otherwise select the source's declared default. Sort displayed IDs and versions ordinally. Array order never selects a pin.
 
-The release allow-list contains exact `(id, version, manifest SHA-256, adapter revision)` tuples. A local source can choose a supported subset and default. Another pin or program needs an Open Forge release. This core ships no concrete definition or production adapter. Synthetic fixture definitions and local hashed artifacts remain test-only and can't widen production admission.
+The release allow-list contains exact `(id, version, manifest SHA-256, adapter revision)` tuples. A local source can choose a supported subset and default. Another pin or program needs an Open Forge release. The catalogue keeps every previously reviewed pin. Update can select an exact older reviewed pin for a downgrade, subject to its current install checks. This core ships no concrete definition or production adapter. Synthetic fixture definitions and local hashed artifacts remain test-only and can't widen production admission.
 
 ## Workspace settings
 
-The fixed `.agents/open-forge.json` adds a direct `tools` map. An omitted map means no recorded tools. Each tool requires `version` and `roles`. The latest lifecycle action and exit summary records what ran. Detailed invocations belong in the lock. A separate `toolRuns` map keeps the latest action summary for failed first installs and completed removals without claiming an installed tool. Optional hosts default to both supported hosts. Optional code root defaults to `.`.
+The fixed `.agents/open-forge.json` adds a direct `tools` map. An omitted map means no recorded tools. Each tool requires `version` and `roles`. Each workspace pins one version per tool. The latest lifecycle action and exit summary records what ran. Detailed invocations belong in the lock. A separate `toolRuns` map keeps the latest action summary for failed first installs and completed removals without claiming an installed tool. Optional hosts default to both supported hosts. Optional code root defaults to `.`. The visible per-tool telemetry setting defaults off and lets you opt in or out. Inspect reports the effective choice. Declared launches disable tool self-update checks.
 
 The [settings v6 schema](../../../../../../../../schemas/v6/open-forge.schema.json) defines the exact tool-ID map and entry fields.
 

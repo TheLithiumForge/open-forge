@@ -678,7 +678,7 @@ Writing commands acquire `.open-forge-state/workspace.lock` for the selected phy
 
 ## External Tools
 
-The V1 core adds the contracted Tool family with compiled adapters and an exact reviewed catalogue. This branch carries no concrete production definition or adapter. Root composition registers each leaf directly. Host capabilities bound exact artifact transfers and finite version or settings processes. Manifests import no executable code. The [external-tools design](technical-designs/external-tools.md) defines placement, stores, process profiles, host observations and tool-owned lifecycle commands.
+The V1 core adds the contracted Tool family with compiled adapters and an exact reviewed catalogue. This branch carries no concrete production definition or adapter. Root composition registers each leaf directly. Host capabilities bound official artifact transfers and declared install, uninstall and index-cleanup commands. Open Forge ships reviewed recipes and never ships, mirrors or rehosts tool bytes. Private pinned runtimes are external tool inputs. The CLI distribution still needs no downloaded runtime. Manifests import no executable code. The [external-tools design](technical-designs/external-tools.md) defines placement, stores, process profiles, host observations and tool-owned lifecycle commands.
 
 Tool facts, settings, receipts and recovery remain in their existing Framework responsibilities. Tool commands keep plans and policy in Operations. Static serialization and Native AOT rules apply to every new model. Shared ignore-section mechanics keep each family's policy separate. Tool-owned files use the normal existing-file and ownership checks.
 

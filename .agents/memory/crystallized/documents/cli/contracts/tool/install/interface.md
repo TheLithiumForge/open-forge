@@ -7,7 +7,7 @@ open-forge:
 # tool install interface
 `tool install` is a write command that installs one exact reviewed pin and registers it without choosing a role.
 
-Installation verifies immutable bytes and runs the tool's own pinned installer. Indexing is an external step. A matching verified install can be reused offline. Matching foreign binaries aren't adopted.
+Installation verifies official upstream bytes and runs the tool's own pinned installer. Repeating it repairs missing or changed immutable files and reruns that installer. Verified local artifacts can avoid another download. Indexing is an external step. Matching foreign binaries aren't adopted.
 
 Status: V1 core contract decided.
 
@@ -34,6 +34,8 @@ The shared [tool operations](../../../shared-operation-contract.md#tool-operatio
 Required cases are:
 
 - Verified local fixture artifacts and offline immutable-install reuse.
+- Same-pin re-verification, changed or missing file restoration and installer execution.
+- Official-source enforcement, private runtime paths and frozen npm dependency installation.
 - Exact descriptor consent missing, supplied and changed between invocations.
 - Unsupported tuples, candidate admission and unqualified native targets.
 - Traversal, links, duplicate extraction destinations and hash failures.

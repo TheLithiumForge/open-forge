@@ -12,6 +12,36 @@ public static class ToolText
         "open-forge tool inspect example-tool --source ./manifest.json --tool-version 1.0.0"];
     public static string[] StatusExamples() => ["open-forge tool status --format json", "open-forge tool status example-tool"];
     public static string[] ReadBehavior() => ["Reads local facts without downloads, child processes or writes.", "Unavailable observations keep their cause and independently readable facts.", "Tool-owned installers handle agent configuration."];
+    public static string SupplyHeading() => "Tool supply";
+    public static string SupplyDetails() => """
+        Open Forge ships reviewed recipes and never ships, mirrors or rehosts tool bytes.
+        Native assets come from the project's official GitHub release with pinned version, URL, size, SHA-256, source commit and build-attestation evidence where published.
+        Node tools use a private official portable runtime from nodejs.org/dist, pinned from signed SHASUMS256.txt.
+        Its bundled npm runs npm ci from the pinned registry lock with integrity checks and package scripts disabled.
+        Every command uses absolute private runtime and package paths. Your Node and PATH stay unchanged. musl/Alpine has no official Node build.
+        Missing pins or dependencies, unsafe archives, mismatched size or hashes and failed required signatures or attestations block installation.
+        Upstream license conditions still apply.
+        """;
+    public static string StoreHeading() => "Stores and settings";
+    public static string StoreDetails() => """
+        Settings record one pin per tool and active roles. The lock keeps recipe snapshots, hashes, files, references and command results.
+        Physical store bindings and process consent stay account-local. Versioned tool and private Node bytes stay while any workspace references them.
+        Inspect shows resolved paths or why they are unavailable. Status diagnoses without repairing.
+        Tools never self-update. Telemetry defaults off with a visible per-tool opt-in and appears in Inspect.
+        """;
+    public static string WriterHeading() => "Planned writes";
+    public static string WriterDetails() => """
+        The five write commands are pending. Install downloads verified official artifacts and runs the pinned tool's installer.
+        Repeating Install verifies and repairs bytes and reruns that installer. Verified local artifacts can avoid another download.
+        Update selects reviewed catalogue pins only, including exact older pins for downgrades. Previously reviewed pins stay in the catalogue.
+        Tool installers register MCP and supply the required usage Skill. Open Forge edits only its settings, lock and managed ignore section.
+        Remove runs stored cleanup and uninstall commands, removes unused Tool ignore rules and releases the workspace's store references.
+        Preview starts no transfers or processes. Downloads, session processes and destinations need separate consent or grants. Removal exclusions still apply.
+        Git workspaces create no sibling backup. Without Git, existing managed files use sibling .bak files through write validation and restoration on failure.
+        There is no separate Tool repair or open-path command.
+        """;
+    public static string ExecHeading() => "Proposed execution";
+    public static string ExecDetails() => "Proposed for maintainer review: open-forge tool exec <tool> -- <args> runs the pinned tool and runtime from the current directory without PATH changes or symlinks. It isn't implemented.";
     public static string ListHeadline() => "Read available definitions and recorded tool installs.";
     public static string InspectHeadline() => "Read the selected tool definition and its requirements.";
     public static string StatusHeadline() => "Read passive tool installation and configuration evidence.";

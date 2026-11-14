@@ -46,5 +46,10 @@ Required cases are:
 - Unknown unrelated settings keys kept through paired writes.
 - Missing receipts and interrupted paired writes without silent host changes.
 - Test-only synthetic definitions isolated from the production allow-list.
+- Official upstream sources, pinned signature and attestation evidence and a complete frozen npm lock.
+- Private Node paths, no ambient runtime fallback and unsupported musl targets.
+- Default-off telemetry with a visible opt-in and disabled self-updates.
+- Same-pin reinstallation verifies and repairs bytes and reruns the installer.
+- Exact reviewed downgrades and tool and Node reference retention until the last workspace releases them.
 
 The [interface](interface.md) defines fields and caller outcomes.
