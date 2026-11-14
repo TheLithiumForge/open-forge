@@ -26,14 +26,101 @@ public sealed class ToolSetupPlannerTests
         Assert.False(File.Exists(scenario.Files.Combine(ToolBackupPaths.Beside("future.json"))));
     }
 
+    [Fact(DisplayName = "First-install native plans defer unavailable optional clients and keep bound conditional outputs")]
+    public async Task FirstInstallOptionalClients()
+    {
+        using var scenario = new ToolServiceScenario();
+        var bound = scenario.Files.Combine("bound-${unknown}.json");
+        scenario.Context = scenario.Context with { ClientRoots = new Dictionary<string, string> { ["bound-config"] = bound } };
+        var setup = ToolServiceScenario.Setup(
+            Output(ToolRecipeDefinitions.WorkspaceToken + "/common.json"),
+            ClientOutput("alpha"), ClientOutput("beta"), ClientOutput("bound")) with
+        { NativePlan = Inventory() };
+        var plan = await scenario.Service.PlanAsync(Request(scenario, setup), Token);
+        Assert.Empty(plan.Problems);
+        Assert.Equal(ToolNativePreviewKind.Description, plan.PreviewKind);
+        Assert.Null(plan.DetectedClients);
+        Assert.Empty(scenario.Calls);
+        Assert.Equal(2, plan.PossibleOutputs.Count);
+        Assert.Equal(2, plan.ExpectedFileSha256.Count);
+        Assert.Null(plan.ExpectedFileSha256[bound]);
+        Assert.Null(plan.ExpectedFileSha256[scenario.Files.Combine("common.json")]);
+        Assert.False(File.Exists(bound));
+    }
+
+    [Theory(DisplayName = "Missing client bindings are required without native discovery or without a conditional client declaration")]
+    [InlineData(false), InlineData(true)]
+    public async Task RequiredClientBinding(bool conditional)
+    {
+        using var scenario = new ToolServiceScenario();
+        var output = ClientOutput("alpha");
+        var setup = conditional ? ToolServiceScenario.Setup(output) : ToolServiceScenario.Setup(output with { ClientId = null }) with { NativePlan = Inventory() };
+        var plan = await scenario.Service.PlanAsync(Request(scenario, setup), Token);
+        Assert.NotEmpty(plan.Problems);
+        Assert.Empty(plan.PossibleOutputs);
+        Assert.Empty(scenario.Calls);
+    }
+
+    [Theory(DisplayName = "Unavailable optional clients do not hide invalid output tokens during first-install planning")]
+    [InlineData("${unknown}"), InlineData("${client:}"), InlineData("${client:alpha")]
+    public async Task InvalidOptionalOutput(string suffix)
+    {
+        using var scenario = new ToolServiceScenario();
+        var output = ClientOutput("alpha");
+        var setup = ToolServiceScenario.Setup(output with { PathTemplate = output.PathTemplate + "/" + suffix }) with { NativePlan = Inventory() };
+        var plan = await scenario.Service.PlanAsync(Request(scenario, setup), Token);
+        Assert.NotEmpty(plan.Problems);
+        Assert.Empty(plan.PossibleOutputs);
+        Assert.Empty(scenario.Calls);
+    }
+
+    [Theory(DisplayName = "Native discovery requires an available safe binding for every detected client's output")]
+    [InlineData(false), InlineData(true)]
+    public async Task DetectedClientBinding(bool escaping)
+    {
+        using var scenario = new ToolServiceScenario();
+        using var outside = new ToolConfigFixture("outside-client");
+        var output = ClientOutput("alpha");
+        if (escaping)
+        {
+            scenario.Context = scenario.Context with { ClientRoots = new Dictionary<string, string> { ["alpha-config"] = outside.Combine("client") } };
+            output = output with { PathTemplate = output.PathTemplate + "/../foreign.json" };
+        }
+        scenario.Inventory = new() { DetectedClients = ["alpha"], Paths = [], Problems = [] };
+        var plan = await scenario.Service.PlanAsync(Request(scenario, ToolServiceScenario.Setup(output) with { NativePlan = Inventory() })
+            with
+        { InstalledInvocation = scenario.Invocation }, Token);
+        Assert.NotEmpty(plan.Problems);
+        Assert.Equal(ToolNativePreviewKind.Plan, plan.PreviewKind);
+        Assert.Equal(scenario.Inventory.DetectedClients, plan.DetectedClients);
+        Assert.Empty(plan.ExpectedFileSha256);
+        Assert.Single(scenario.Calls);
+        Assert.Empty(Directory.EnumerateFileSystemEntries(outside.Path));
+    }
+
+    [Fact(DisplayName = "Native discovery cannot select paths through an unavailable unselected client declaration")]
+    public async Task UnselectedClientInventory()
+    {
+        using var scenario = new ToolServiceScenario();
+        scenario.Inventory = new() { DetectedClients = [], Paths = [scenario.Files.Combine("foreign.json")], Problems = [] };
+        var setup = ToolServiceScenario.Setup(ClientOutput("alpha")) with { NativePlan = Inventory() };
+        var plan = await scenario.Service.PlanAsync(Request(scenario, setup) with { InstalledInvocation = scenario.Invocation }, Token);
+        Assert.NotEmpty(plan.Problems);
+        Assert.Empty(plan.PossibleOutputs);
+        Assert.Empty(plan.ExpectedFileSha256);
+        Assert.Single(scenario.Calls);
+        Assert.False(File.Exists(scenario.Files.Combine("foreign.json")));
+    }
+
     [Fact(DisplayName = "Native inventory keeps the complete detected set and filters only declared client supplements")]
     public async Task NativeInventory()
     {
         using var scenario = new ToolServiceScenario();
         var first = scenario.Files.Combine("first.json");
+        scenario.Context = scenario.Context with { ClientRoots = new Dictionary<string, string> { ["alpha-config"] = scenario.Files.Combine("alpha.json") } };
         scenario.Inventory = new() { DetectedClients = ["alpha", "beta", "gamma"], Paths = [first], Problems = [] };
         var setup = ToolServiceScenario.Setup(Output(ToolRecipeDefinitions.WorkspaceToken + "/first.json"),
-            Output(ToolRecipeDefinitions.WorkspaceToken + "/alpha.json") with { ClientId = "alpha" }, Output(ToolRecipeDefinitions.WorkspaceToken + "/absent.json") with { ClientId = "absent" })
+            ClientOutput("alpha"), Output(ToolRecipeDefinitions.WorkspaceToken + "/absent.json") with { ClientId = "absent" })
             with
         { NativePlan = Inventory() };
         var plan = await scenario.Service.PlanAsync(Request(scenario, setup) with { InstalledInvocation = scenario.Invocation }, Token);
@@ -42,6 +129,7 @@ public sealed class ToolSetupPlannerTests
         Assert.Equal(scenario.Inventory.DetectedClients, plan.DetectedClients);
         Assert.Equal(2, plan.ExpectedFileSha256.Count);
         Assert.True(plan.ExpectedFileSha256.ContainsKey(first));
+        Assert.True(plan.ExpectedFileSha256.ContainsKey(scenario.Context.ClientRoots["alpha-config"]));
         Assert.False(plan.ExpectedFileSha256.ContainsKey(scenario.Files.Combine("absent.json")));
         Assert.Single(scenario.Calls);
     }
@@ -142,6 +230,8 @@ public sealed class ToolSetupPlannerTests
     }
 
     private static ToolSetupRequest Request(ToolServiceScenario scenario, ToolSetupSpec setup) => new() { Setup = setup, Context = scenario.Context, Invocation = scenario.Invocation };
+    private static ToolNativeOutputSpec ClientOutput(string client)
+        => Output($"{ToolRecipeDefinitions.ClientTokenPrefix}{client}-config}}") with { Scope = ToolEffectScope.Account, ClientId = client };
     private static ToolNativeOutputSpec Output(string path) => new() { PathTemplate = path, Scope = ToolEffectScope.Workspace, Match = ToolNativeOutputMatch.Exact, Purpose = ToolNativeOutputPurpose.Backup };
     private static ToolNativePlanSpec Inventory() => new() { Arguments = ["inventory"], Parser = ToolNativePlanParser.CbmInstallPlanV1, Timeout = TimeSpan.FromSeconds(5), MaximumOutputBytes = 4096 };
 }

@@ -100,7 +100,8 @@ internal sealed class ToolEffectiveIgnore(IToolProcessHost processes)
         var state = await ToolFileReader.ReadAsync(scope, internalIgnore, token).ConfigureAwait(false);
         if (!state.HasBytes) return false;
         var text = ToolConfigBytes.Utf8.GetString(state.Bytes.AsSpan()).ReplaceLineEndings("\n").TrimStart('\uFEFF').TrimEnd('\n');
-        return text is "*" or NativeDataRules;
+        var rules = string.Join('\n', text.Split('\n').Where(line => line.Length > 0 && line[0] != '#'));
+        return rules is "*" or NativeDataRules;
     }
 
     private static (string Source, string Pattern) ReadMatch(string output)

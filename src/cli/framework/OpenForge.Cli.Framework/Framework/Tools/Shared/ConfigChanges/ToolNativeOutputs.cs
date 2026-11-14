@@ -10,8 +10,16 @@ namespace OpenForge.Cli.Core.Framework.Tools.Shared.ConfigChanges;
 internal static class ToolNativeOutputs
 {
     internal static string PathFor(ToolRecipeContext context, string template, ToolEffectScope scope)
+        => Resolve(context, ToolRecipeExpansion.Expand(template, context), scope);
+
+    internal static string? AvailablePathFor(ToolRecipeContext context, string template, ToolEffectScope scope)
     {
-        var expanded = ToolRecipeExpansion.Expand(template, context);
+        var expanded = ToolRecipeExpansion.ExpandAvailable(template, context);
+        return expanded is null ? null : Resolve(context, expanded, scope);
+    }
+
+    private static string Resolve(ToolRecipeContext context, string expanded, ToolEffectScope scope)
+    {
         var path = Path.GetFullPath(expanded, context.WorkspacePath);
         if (scope == ToolEffectScope.Workspace && !PhysicalContainment.Contains(context.WorkspacePath, path))
             throw new InvalidDataException("A native workspace output escapes the workspace.");

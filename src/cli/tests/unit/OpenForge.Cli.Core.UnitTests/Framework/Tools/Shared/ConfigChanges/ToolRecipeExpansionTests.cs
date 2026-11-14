@@ -16,6 +16,25 @@ public sealed class ToolRecipeExpansionTests
     [InlineData("${bad}"), InlineData("${}"), InlineData("${mainRoot"), InlineData("${client:absent}"), InlineData("${previous}")]
     public void InvalidTokens(string source) => Assert.Throws<InvalidDataException>(() => ToolRecipeExpansion.Expand(source, Context()));
 
+    [Fact(DisplayName = "Available expansion defers only a well-formed client token without a binding")]
+    public void UnavailableClient()
+    {
+        Assert.Null(ToolRecipeExpansion.ExpandAvailable(ToolRecipeDefinitions.ClientTokenPrefix + "absent}", Context()));
+        Assert.Equal(Context().ClientRoots["alpha"], ToolRecipeExpansion.ExpandAvailable(ToolRecipeDefinitions.ClientTokenPrefix + "alpha}", Context()));
+    }
+
+    [Theory(DisplayName = "A deferred client token does not hide unknown or malformed tokens later in its template")]
+    [InlineData("${unknown}"), InlineData("${client:}"), InlineData("${client:BadKey}"), InlineData("${client:alpha"), InlineData("${previous}"), InlineData("\0")]
+    public void InvalidConditionalTokens(string suffix)
+        => Assert.Throws<InvalidDataException>(() => ToolRecipeExpansion.ExpandAvailable(ToolRecipeDefinitions.ClientTokenPrefix + "absent}/" + suffix, Context()));
+
+    [Fact(DisplayName = "Available expansion keeps dollar escapes and inserted values nonrecursive")]
+    public void AvailableDollarRules()
+    {
+        Assert.Equal("${unknown}", ToolRecipeExpansion.ExpandAvailable("$${unknown}", Context()));
+        Assert.Equal("${unknown}", ToolRecipeExpansion.ExpandAvailable(ToolRecipeDefinitions.MainRootToken, Context() with { MainRoot = "${unknown}" }));
+    }
+
     [Fact(DisplayName = "Recipe roots client roots and previous native values use their declared bindings")]
     public void Bindings()
     {

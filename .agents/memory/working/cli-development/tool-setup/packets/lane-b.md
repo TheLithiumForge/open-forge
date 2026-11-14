@@ -88,12 +88,36 @@ Test fresh apply, no-op, migration, drift and removal for all five change kinds,
 
 ## Progress
 
-Done: Completed the B implementation, all accepted grouped fixes and the named IgnoreFileName cleanup on `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9`.
-Now: Complete. This local B increment contains all 39 assigned files. The final build, 14 affected ignore cases and both mandatory .NET checks passed.
-Next: The coordinator integrates the local B commit. F uses the unchanged constructors and shared operation-scoped backup instance described below.
+Done: Kept the complete B implementation at `46834001af0470d5cff565e772339856e335fa52`, then created the journey-fix branch from integrated core `885b17db3e56ceb6839ba23609e85a4380c75018`. Implemented E-J1 and E-J2 in the assigned config paths.
+Now: Complete. The maintainer accepted the nine-file correction and authorized its local commit. The current local gate is a build and both mandatory .NET format commands. CI runs every test.
+Next: The coordinator integrates the local journey-fix commit and E reruns the actual journeys. F uses the unchanged constructors below.
 Blocker: None. There is no open CONTRACT_REQUEST.
 
 ## Evidence
+
+### Journey commit
+
+The maintainer accepted the nine-file E-J1 and E-J2 candidate and authorized its local commit on `feature/tool-setup-b-journey-fixes`. The seven accepted C# source hashes are unchanged. This continuation ran no local tests and regenerated no snapshots. CI runs every test and snapshot regeneration stays with the integrator.
+
+The fresh pre-commit commands each exited 0. The build had zero warnings and errors. Logs are `artifacts/lane-b/journey-commit/build.log`, `artifacts/lane-b/journey-commit/whitespace.log` and `artifacts/lane-b/journey-commit/style.log`:
+
+```powershell
+dotnet build OpenForge.Cli.slnx --configuration Release -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1
+npm run check:dotnet:whitespace
+npm run check:dotnet:style
+```
+
+The audit override stays on the invocation. The local conventional commit uses the actual clock. The earlier candidate test receipts below predate the maintainer's redirect and stay as historical evidence. No other lane, protected source, account setting, PATH, registry, shell profile or remote state changed.
+
+### Journey corrections
+
+The worktree was clean at the complete B commit before switching branches. `feature/tool-setup-b` still points to `46834001af0470d5cff565e772339856e335fa52`. The new `feature/tool-setup-b-journey-fixes` branch starts at integrated core `885b17db3e56ceb6839ba23609e85a4380c75018`.
+
+E-J1 defers an unavailable client output only in first-install description planning with a declared native plan and a conditional client ID. The complete template is still validated. Every detected client's output needs a safe independent binding after native discovery. Unknown or malformed tokens and native paths outside the reviewed set still block. E-J2 recognizes comment and blank lines around the same reviewed all-data rules while keeping Git's matching and precedence checks. Other active patterns stay uncertain.
+
+The [journey correction receipt](../evidence/journey-config-fixes.md) records the applicability check, focused cases, exact commands, counts, artifacts, source hashes and the patch for E. The accepted 138, 67 and 69 receipts below stay unchanged. No protected model, Root binding, native discovery, D sequencing, catalogue, E document, payload or snapshot changed. Service constructors and deferred backup completion are unchanged. The new evidence record needs the coordinator's grouped Index pass.
+
+The final managed Release build exited 0 with zero warnings and errors. `ToolRecipeExpansionTests` selected and passed 27 cases. `ToolSetupPlannerTests` selected and passed 20. `ToolEffectiveIgnoreTests` selected and passed 19. All three commands exited 0 with zero failures, skips and runner warnings. After the planner test's whitespace-only correction, the solution build and its 20 cases passed again. The other 46 cases have unchanged source hashes. Both `npm run check:dotnet:whitespace` and `npm run check:dotnet:style` were repeated after that correction and exited 0. Logs and the source-only patch are under `artifacts/lane-b/journey-fixes/`. No full suite or native journey ran in this lane.
 
 ### Commit continuation
 
