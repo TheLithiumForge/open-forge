@@ -10,8 +10,8 @@ The Tool command core is an implementation task that adds the eight external-pro
 The selected sources are issue #23 and both comments, the complete external specification and the latest maintainer decisions. This worktree stays on `feature/tool-command`, above updated Comment Links. The overseer handles pushes and PR #26. Earlier checkpoint details and capture lists are kept in Git at `0822e0ed8:.agents/memory/working/checkpoints/tool-command.md`.
 
 Done: Contracts, models, schemas, catalogue selection and the three read commands are committed. Generic process, ignore and backup mechanics and the supply recipes are committed.
-Now: Finish store publication and release, then implement the five writers.
-Next: Finish store publication and release and telemetry choice, then Install, Configure, Choose, Update and Remove with consent and preview parity.
+Now: Add paired control-record publication and declared-command execution, then implement the five writer leaves.
+Next: Add telemetry choice and wire store observations, then Install, Configure, Choose, Update and Remove with consent and preview parity.
 Blocker: Choose integration switching and Unix Node archive links need maintainer decisions. Independent native artifact and writer work can continue.
 
 ## Decisions
@@ -46,6 +46,7 @@ The current history includes these review boundaries:
 | `0822e0ed8` | Bounded process host, Git backup selection and shared ignore mechanics |
 | `391ed70f6` | Verified upstream supply recipes, admission checklist and source checks |
 | `c28e4c5fb` | Verified extraction, physical store areas and reference registry |
+| `11247f2a4` | Backup reporting and bounded Root Repair restoration |
 
 The Linux failure was caused by `Models/Artifacts` matching the Windows artifact ignore rule. All three types now live in tracked `Models/Supply`. No discarded parser package, context or seam survives.
 
@@ -64,6 +65,7 @@ Recent gates are:
 | Supply recipes | Both builds, 0 warnings/errors | 7 passed | 8 passed | Both format checks, four schemas, site and Index passed |
 | Store foundation | Both builds, 0 warnings/errors | 8 passed | 21 passed | Both format checks passed, no snapshots changed |
 | Backup reporting and Repair | Both builds, 0 warnings/errors | 1 passed | 23 passed | Both format checks, site and Index passed |
+| Store publication | Integration build, 0 warnings/errors | Unchanged | 19 passed | Both format checks passed, no snapshots changed |
 
 Every listed run had zero final failures and skips. The supply Unit selection is `*ToolArtifactSourceTests`. Its initial failure used a synthetic non-GitHub repository in the positive GitHub scenario. The fixture was corrected before the final run. The mechanics build corrected one xUnit analyzer violation. Neither was a flake.
 
@@ -90,7 +92,7 @@ Foundation evidence is under `artifacts/tool-command/store-foundation-*`. Unit s
 
 The pending writer work is:
 
-1. Add per-user stores, safe extraction, bindings, complete shared references and local process consent. Use local hashed test artifacts only.
+1. Store publication, attachment and final release are gated. Wire them into writers and passive observations. Local process-consent selection still needs its caller. Use local hashed test artifacts only.
 2. Add the visible telemetry choice and effective Inspect output. Keep private Node, frozen npm closure and official-source checks on their accepted seams.
 3. Backup reporting and bounded Root Repair restoration are gated. Only settings, lock and ignore are Tool backup targets.
 4. Add all five typed writer leaves, complete plans, consent, final confirmation, expected-state revalidation and paired control publication.
@@ -108,6 +110,14 @@ Root Repair restores the control group before other work. Automatic selection or
 The final Integration build passed with reflection disabled, zero warnings and zero errors. The latest affected run before the final result refinements executed 23 tests with 19 passes and four expected measurement snapshot failures. Accepted 56 Status captures for Skill byte, character, token and ratio totals only. Structured comparison kept every other JSON value. Accepted 37 new reporting, preview and help captures after review. The final preview refreshed four JSON captures for backup-deletion effects only. Final managed Unit passed 1/1, Integration passed 23/23, both with zero skips. Both builds had zero warnings and errors. Both required format checks and the site build passed. The site kept its existing Node localStorage warning. Index refreshed the checkpoint description while keeping both active entries. Its final preview is expected to have zero changes. Reproduction selects `*RepairFiniteMappingTests.FindingDefinitionsAreComplete` in Unit. Integration uses method filters for `*ToolBackupReportingTests.*`, `*ToolBackupRepairTests.*` and the five affected Status/Included methods listed above, excluding the unchanged Tool help test.
 
 Reports and logs use `artifacts/tool-command/tool-backup-*`. Development corrections fixed the Doctor finding category, the public Status code oracle, explicit standard detail for Doctor warning rows and fixture replacement through the real file API. These were deterministic failures, not flakes. Writing review R17-R18 and the final result-clause review passed. An incidental Windows default-encoding rewrite was corrected by restoring untouched contract bytes from HEAD with explicit UTF-8. Both Repair contract diffs now contain additions only.
+
+## Store publication
+
+The publisher now writes pending metadata before atomic member moves and rechecks destination expectations before each move. Pending metadata keeps the source stage and prior verification history. Foreign members and new changed pending bytes block retry. Previously verified immutable members can be repaired. A fresh stage can finish an interrupted first publication or interrupted repair. Final member verification includes Unix executable bits. Source-stage cleanup keeps a cause when unfinished.
+
+Attach rechecks the complete dependency closure. Nonfinal release keeps shared bytes. Final release checks complete references, known members and hashes before deleting recognized files and empty directories. Missing unit or workspace reference coverage blocks deletion. Parent removal releases reciprocal dependency references. The helpers don't run tools or choose command policy.
+
+Managed Integration build passed with reflection disabled, zero warnings and zero errors. The 19 new `ToolStorePublisherTests` cases passed with zero skips. Select only that class with the standard Release runner flags above. Both required format checks passed. No snapshots changed. Evidence is under `artifacts/tool-command/tool-publication-*`. The initial six failures came from trying to snapshot the fixture's own exclusively held lock. The fixture snapshot now excludes only that exact lock and still compares directories, metadata and all data bytes. This was deterministic, not a flake. Writing review R20 clarified unknown paths versus changed registered bytes.
 
 ## Not decided yet
 

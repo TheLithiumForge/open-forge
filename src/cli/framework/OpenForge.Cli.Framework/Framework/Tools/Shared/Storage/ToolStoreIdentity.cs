@@ -10,6 +10,13 @@ namespace OpenForge.Cli.Core.Framework.Tools.Shared.Storage;
 
 internal static class ToolStoreIdentity
 {
+    internal static string BindingKind(string kind) => kind switch
+    {
+        ToolStoreRegistryDefinitions.Install or ToolStoreRegistryDefinitions.Runtime => ToolStoreRegistryDefinitions.Install,
+        ToolStoreRegistryDefinitions.Archive => ToolStoreRegistryDefinitions.Archive,
+        _ => throw new ArgumentException("The tool store kind isn't supported.", nameof(kind)),
+    };
+
     internal static ToolStoreBinding Binding(string kind, string physicalRoot)
     {
         physicalRoot = WorkspaceIdentity.NormalizePhysicalPath(physicalRoot);

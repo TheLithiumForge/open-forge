@@ -24,6 +24,8 @@ internal sealed record ToolStoredUnit
     public required Dictionary<string, ToolLocalRegistration> Workspaces { get; init; }
     public required string[] Dependencies { get; init; }
     public required string[] Dependents { get; init; }
+    public string? StagingPath { get; init; }
+    public bool PreviouslyVerified { get; init; }
 }
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
@@ -43,4 +45,5 @@ internal static class ToolStoreRegistryDefinitions
     internal const string Archive = "archive";
     internal const string Runtime = "runtime";
     internal const string State = "state";
+    internal const string StagingDirectory = ".staging";
 }

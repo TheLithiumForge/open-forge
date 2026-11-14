@@ -87,12 +87,8 @@ internal sealed class ToolStoreRegistry
         return result;
     }
 
-    internal ToolStoreArea Area(ToolStoredUnit unit) => unit.Kind switch
-    {
-        ToolStoreRegistryDefinitions.Install or ToolStoreRegistryDefinitions.Runtime => Installs,
-        ToolStoreRegistryDefinitions.Archive => Archives,
-        _ => throw new JsonException("The tool store unit kind is invalid."),
-    };
+    internal ToolStoreArea Area(ToolStoredUnit unit) => Area(unit.Kind);
+    internal ToolStoreArea Area(string kind) => ToolStoreIdentity.BindingKind(kind) == ToolStoreRegistryDefinitions.Archive ? Archives : Installs;
 
     private ToolStoreRegistryDocument Empty() => new() { Roots = Roots(), Units = new(StringComparer.Ordinal) };
 
@@ -110,13 +106,19 @@ internal sealed class ToolStoreRegistry
         var roots = Roots();
         Require(document.Roots.Count == roots.Count && roots.All(pair => document.Roots.GetValueOrDefault(pair.Key) == pair.Value), "The tool store root bindings changed.");
         var bindings = new HashSet<string>(StringComparer.Ordinal);
+        var stages = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var (key, unit) in document.Units)
         {
             Require(unit is not null && ToolIdentity.IsSha256(key) && ToolIdentity.IsRelativePath(unit.Path)
                 && unit.Kind is ToolStoreRegistryDefinitions.Install or ToolStoreRegistryDefinitions.Archive or ToolStoreRegistryDefinitions.Runtime,
                 "A tool store unit has an invalid identity.");
             Require(key == ToolStoreIdentity.UnitKey(unit.Kind, unit.Path), "A tool store unit key doesn't match its identity.");
-            var kind = unit.Kind == ToolStoreRegistryDefinitions.Archive ? ToolStoreRegistryDefinitions.Archive : ToolStoreRegistryDefinitions.Install;
+            Require(!unit.Path.StartsWith(ToolStoreRegistryDefinitions.StagingDirectory + "/", StringComparison.Ordinal), "A registered unit cannot be a staging directory.");
+            if (unit.StagingPath is { } stage)
+                Require(ToolIdentity.IsRelativePath(stage) && stage.StartsWith(ToolStoreRegistryDefinitions.StagingDirectory + "/", StringComparison.Ordinal)
+                    && Guid.TryParseExact(stage[(ToolStoreRegistryDefinitions.StagingDirectory.Length + 1)..], "N", out _)
+                    && stages.Add(ToolStoreIdentity.BindingKind(unit.Kind) + ":" + stage), "A staging directory identity is invalid or shared.");
+            var kind = ToolStoreIdentity.BindingKind(unit.Kind);
             var binding = ToolStoreIdentity.Binding(kind, Area(unit).At(unit.Path));
             Require(unit.Binding == binding && bindings.Add(binding.Id) && ToolIdentity.IsSha256(unit.RecipeSha256), "A tool store unit has an invalid physical binding.");
             Require(unit.Files is not null && unit.Directories is not null && unit.Workspaces is not null && unit.Dependencies is not null && unit.Dependents is not null,
