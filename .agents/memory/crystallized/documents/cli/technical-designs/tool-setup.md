@@ -181,6 +181,9 @@ No command or service behavior is implemented in this phase.
 ### Shared planning
 
 A channel request includes the Open Forge home.
+Every Tool service `HomePath`, including record locations and recipe context, names the absolute Open Forge home itself.
+Root appends `.open-forge` to the OS-user home once.
+An absent Open Forge home is a missing read fact. Reading doesn't create it.
 A command resolver returns an absolute command path and its real executable invocation.
 Detection carries verified recorded-install facts and the responsible manager into channel planning.
 A successful resolution includes its executable invocation, command path, runtime, native install directory, ordered process commands, download and extraction destinations and launchers.
@@ -291,6 +294,12 @@ When that variable is absent, resolve the OS-user home with the same native rule
 CBM's `HomeThenUserProfile` policy uses the first nonempty `HOME`, then `USERPROFILE`.
 If the native home can't be resolved, block preflight.
 Resolve these policies from the injected base environment without changing normal child environment.
+Root passes only the native allow-list's declared environment variables in `ToolRecipeContext.NativeEnvironment`.
+Null means unavailable. An empty map means checked with none present.
+B evaluates native precedence and reports `ToolConfigObservation.NativeEnvironmentOverrides` separately from the stored setting.
+Its null value means unchecked or unavailable. An empty map means no effective override.
+For CodeGraph, a nonempty result has the deciding variable as its key and the effective `on` or `off` value.
+Raw environment values stay out of reports and records.
 An injected `NativeHomePath` overrides policy resolution for owned journeys.
 The journey provides child environment that makes the native tool use that same home.
 Root doesn't rewrite normal child environment to force a resolved home.

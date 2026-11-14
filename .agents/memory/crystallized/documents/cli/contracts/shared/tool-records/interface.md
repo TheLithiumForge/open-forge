@@ -92,6 +92,8 @@ Exclude machine paths, observed values and timestamps.
 ## Machine state
 
 Machine facts live under `~/.open-forge/state/`.
+`HomePath` names the Open Forge home itself, so state is directly below it.
+Reading an absent home reports missing facts without creating that folder.
 Use schema 1 files `tools/<id>.json`, `runtimes/node/<version>.json`, `path.json` and `workspaces/<key>.json`.
 They hold runtime and command paths, launchers, installed-client facts, integrity evidence, PATH history and native account-setting previous and applied values.
 Workspace keys are SHA-256 of the normalized physical workspace path in UTF-8.

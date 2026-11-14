@@ -26,6 +26,7 @@ internal sealed record ToolConfigObservation
     public required ToolRecordedValue Desired { get; init; }
     public required ToolChangeDisposition Disposition { get; init; }
     public string? Conflict { get; init; }
+    public IReadOnlyDictionary<string, string>? NativeEnvironmentOverrides { get; init; }
 }
 
 internal sealed record ToolConfigRemovalObservation

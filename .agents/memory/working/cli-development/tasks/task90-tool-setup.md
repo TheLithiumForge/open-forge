@@ -58,7 +58,7 @@ Tools add no workspace state, lease or recovery dependency under `.open-forge-st
 
 Done: Recorded C1 through C7 and committed the frozen packets in 2e517348e. Created five isolated worktrees and verified all five initial workers alive after dispatch.
 Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. The reviewed shared planning contract builds with zero warnings and errors. A, B and D have checked partial returns. C is verifying its first pass.
-Next: Build and commit the shared contract, transfer it to idle lanes and resume dependent implementation before integration and E's entries, journeys and docs.
+Next: Review the complete implementation candidates, commit and integrate their branches, then complete E's journeys and docs.
 Blocker: No implementation blocker after this contract increment. The first shipping Open Forge version is asked of the maintainer.
 
 ## Phase 1 checks
@@ -158,3 +158,36 @@ The Release solution build passed with zero warnings and errors.
 All twelve focused `ToolSetupDocumentationTests` passed.
 Both required .NET checks, Prettier, Markdown links, LF and Git whitespace checks passed.
 This increment changes shared types and defining documents. It adds no command behavior.
+
+## Continued runs
+
+The shared planning contract is committed as `09bcb9ebdb89abed343d4c228283a8ee5aeba7c9`.
+The coordinator fast-forwarded idle A, B, D, E and F worktrees to that base, keeping their changes.
+C is still finishing its initial checks and hasn't been changed underneath its worker.
+The continued runs use managed session `s_b74431d77d3a`:
+
+| Lane | Run              | Scope                                                    |
+| ---- | ---------------- | -------------------------------------------------------- |
+| A    | `r_000591b628d8` | Complete channels and pinned private Node                |
+| B    | `r_fac7d075731b` | Complete config, native setup plans and deferred backups |
+| D    | `r_cf548ae21d0d` | Complete writer commands and fix RD1                     |
+| E    | `r_fceca7f98984` | Typed catalogue entries before real journeys             |
+| F    | `r_810ecdfafa97` | Read-only Root integration map                           |
+
+The first shipping version is still asked of the maintainer.
+E uses `0.9.0-beta.19` provisionally in entry metadata and doesn't bump release files.
+
+## Records review
+
+C's first pass returned forty-two focused tests, a Release build with zero warnings and errors, both .NET checks and six reviewed new Imprint baselines.
+Its own packet records the classes and receive artifact. Final payload fixtures haven't been regenerated.
+Review queues Open Forge home alignment, missing-home reads, complete native-setting identity and unavailable runtime/PATH status.
+F's Root map also requires execution-time read bindings and deferred workspace observations.
+C's requested inherited native override fact is added to the shared observation shape.
+Root passes a narrow native environment map in recipe context. Reports carry only the deciding variable and effective on/off value.
+This keeps raw environment values and native identity out of reports and records.
+
+The additional shared types built with zero warnings and errors.
+The first focused invocation used an incorrect class name and the minimum-count gate rejected zero selected tests.
+The corrected full class name ran all twelve documentation tests successfully.
+Both required .NET checks and Prettier passed. The override stays on the local build invocation.

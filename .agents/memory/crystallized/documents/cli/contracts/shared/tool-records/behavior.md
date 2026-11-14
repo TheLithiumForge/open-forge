@@ -47,6 +47,11 @@ Don't restore an earlier repository value.
 ## Native settings
 
 Read the native setting through its authored source, keeping inherited environment overrides separate.
+Root passes only declared native variables through the recipe context's optional `NativeEnvironment` map.
+Null means unavailable. Empty means checked with none present.
+The observation's optional `NativeEnvironmentOverrides` map reports the deciding variable and effective on/off value.
+Null means unchecked or unavailable. Empty means no effective override.
+Keep raw environment values out of reports and records.
 Prefer `StoredValue` when authored.
 Otherwise use declared `ReadArguments`, `ReadEnvironment` and `ValueParserId` only through `InstalledInvocation`.
 That read target comes from verified installed detection, not a future planned write invocation.
