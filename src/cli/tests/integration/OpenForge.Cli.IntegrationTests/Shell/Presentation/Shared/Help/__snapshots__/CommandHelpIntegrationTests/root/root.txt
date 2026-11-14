@@ -16,6 +16,7 @@ Set up and manage:
              supported exclusions.
   extension  Manage optional packages of agent rules and context.
   library    Manage links from local source folders into your workspace.
+  tool       Install published tools and manage their native setup.
 
 Read and discover:
   help        List help topics or read about Open Forge concepts.

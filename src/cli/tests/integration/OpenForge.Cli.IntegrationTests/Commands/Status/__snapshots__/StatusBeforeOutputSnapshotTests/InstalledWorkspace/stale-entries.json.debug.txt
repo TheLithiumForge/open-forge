@@ -132,18 +132,18 @@
   ],
   "effects": [],
   "counts": {
-    "routedFiles": 19,
+    "routedFiles": 20,
     "startupFiles": 7,
     "startupTokens": 3977,
     "mayLoadAgainFiles": 1,
     "mayLoadAgainTokens": 243,
-    "allTokens": 28999,
-    "startupShare": 13.713285688422976456287662612,
+    "allTokens": 30137,
+    "startupShare": 13.195792477560433361538333914,
     "rootCategories": 7,
     "entriesSectionsCurrent": 10,
     "entriesSectionsStale": 2,
     "entriesSectionsMissing": 0,
-    "frameworkFilesCurrent": 19,
+    "frameworkFilesCurrent": 20,
     "frameworkFilesChanged": 1,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -190,12 +190,12 @@
         }
       },
       "allRouted": {
-        "files": 19,
-        "characters": 115996,
-        "bytes": 115997,
-        "tokens": 28999
+        "files": 20,
+        "characters": 120545,
+        "bytes": 120546,
+        "tokens": 30137
       },
-      "startupShare": 13.713285688422976456287662612,
+      "startupShare": 13.195792477560433361538333914,
       "mayLoadAgainSources": [
         {
           "sourceId": "memory/emerging",
@@ -283,6 +283,10 @@
       },
       {
         "path": ".agents/skills/open-forge-cli/references/routes.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/tools.md",
         "state": "current"
       },
       {

@@ -31,6 +31,7 @@ public sealed class PublishedRouteInitRestorationProcessTests
             ".agents/skills/open-forge-cli/references/discovery.md",
             ".agents/skills/open-forge-cli/references/packages.md",
             ".agents/skills/open-forge-cli/references/routes.md",
+            ".agents/skills/open-forge-cli/references/tools.md",
         }, payloadPaths);
         Assert.DoesNotContain(previewJson.RootElement.GetProperty("data").GetProperty("entrypoints").EnumerateArray(),
             entry => entry.GetProperty("path").GetString()?.EndsWith("SKILL.md", StringComparison.Ordinal) == true);

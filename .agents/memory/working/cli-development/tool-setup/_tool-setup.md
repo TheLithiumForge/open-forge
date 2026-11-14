@@ -15,4 +15,5 @@ Each packet gives one lane its files, accepted behavior and checks.
 
 ## Entries
 
+- [Notes in memory/working/cli-development/tool-setup/evidence](evidence/_evidence.md) - #Memory #Working #Contextual
 - [Frozen Worker Watch assignments for tool setup lanes A through E](packets/_packets.md) - #Memory #Working #Contextual

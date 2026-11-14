@@ -30,7 +30,7 @@ Frontmatter: root
   .agents/open-forge.lock.json).
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
   Bundled Framework fingerprint:
-  <sha256> (20 assets).
+  <sha256> (21 assets).
   The ownership record was published and verified.
   No recovery bundle was required.
   All written targets were verified.

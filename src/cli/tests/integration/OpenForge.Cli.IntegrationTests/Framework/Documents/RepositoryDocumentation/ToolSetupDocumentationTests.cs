@@ -71,7 +71,6 @@ public sealed class ToolSetupDocumentationTests
             ".agents/memory/crystallized/documents/maintenance/tools.md",
             ".agents/skills/open-forge-cli/references/tools.md",
             "docs/cli.md",
-            "src/cli/output-text/OpenForge.Cli.OutputText/Help/tool-setup-planned.md",
             "src/open-forge/.agents/skills/open-forge-cli/references/tools.md",
         ];
 

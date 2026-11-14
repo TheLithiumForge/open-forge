@@ -605,3 +605,107 @@ A, B, C, D and F receive the no-tests direction and commit their finished files.
 The coordinator commits the pending integration, merges every lane with `--no-ff`, produces the payload baselines once and sends the integrated SHA for CI.
 The fresh adherence review and simplification work don't start before this push checkpoint.
 Phase 4 needs approval. Its first deliverable is a proposal with file paths, expected line savings and risks for each change.
+
+
+## Integrated CI checkpoint
+
+The coordinator combines all finished lanes on `feature/tool-setup` on 2026-11-14.
+Every lane receives the maintainer's no-local-tests direction in its commit continuation.
+Each continuation runs only a managed build and both .NET formatting checks. Every check exits 0.
+E's previously active real Remove verification finishes before its commit continuation.
+No test suite runs locally after the redirect. The coordinator runs only the authorized baseline producers.
+
+The local lane commits and Worker Watch runs are:
+
+| Lane | Commit | Commit run |
+| ---- | ------ | ---------- |
+| A | `bb77c511bba6e894cdc3ae6ee5e0ffe982110cda` | `r_a27309e8c97d` |
+| B | `22b8f83a54a94a9c24aa7e03807b39b17d1ce0ee` | `r_e061a86431f2` |
+| C | `b225c371b0de9a60b977bf49b01c7a1d98cdf2d5` | `r_b7d7591b6d03` |
+| D | `1c904c7ffbd8eb024a06c8e7abc0f52e118e55f1` | `r_900c27b73893` |
+| E | `3559870e7bca266bda2e57ff0f9aff386ac3166d` | `r_f0eb4d16144b` |
+| F | `049e6c0dff5293273fced51f459477a2255cee67` | `r_3894e90e584c` |
+
+The coordinator commits its pending 50 files in `97ae832e24819a4b16279c8369d01fafcdf72f17`.
+That merge keeps F's native reader, E's reader review, the approved contract updates and the two CI whitespace fixes.
+Both compact renderer branches now use braces. Their behavior stays the same.
+The lane merge commits are `de2aa612e`, `870337a78`, `f26fbde6a`, `ee71474cb`, `941301b11` and `5c561fa5f`.
+Each uses `--no-ff`.
+A's packet conflict keeps its latest completion record and the formatted tables.
+E's three conflicts keep E's checked final group wording and help renderer.
+All other changes merge without conflict. Root composition comes from C.
+
+E's real Remove continuation is `r_81bfd04a6acf`.
+It closes E-J4. CBM project-only Remove exits 0, restores the original project additions and keeps all account installation files and settings.
+Native uninstall and its dry run never execute in the real fixture.
+The separate injected proof checks confirmed account removal and native-first order.
+Both catalogue entries now record their completed Windows journeys, CodeGraph `1.6.2` and Codebase Memory `0.12.1`.
+The [Windows journey report](../tool-setup/evidence/windows-journeys.md) gives native writes, direct command and MCP results, Update and Remove effects.
+
+### Payload generation
+
+The single generation window uses integrated HEAD `5c561fa5fabb3ad335f17abd4dca5deec1a8d9f0` plus five inventory corrections.
+Its input diff SHA-256 is `44ad3a645127fe6603ba725d72822674f516b6c36c9950e7ae7a72efc59421ed`.
+Four fixture lists add the shipped `references/tools.md` after `references/routes.md`.
+The documentation inventory drops E's deleted step-0 help outline.
+The combined managed solution build exits 0 with zero warnings and errors in 00:03:31.65.
+
+The coordinator sets `OPENFORGE_SNAPSHOT_UPDATE=1` only for the selected producers and restores both snapshot environment variables afterwards.
+The twelve serial selections execute 79 cases. Every selection exits 0, with 79 successes, zero failures and zero skips.
+There is no verification rerun or ordinary semantic-test selection.
+For the table below, I means `OpenForge.Cli.IntegrationTests` and U means `OpenForge.Cli.Core.UnitTests`.
+Each assembly is `artifacts/bin/<assembly>/release/<assembly>.dll`.
+Every command is `dotnet <assembly> <selection> --minimum-expected-tests <cases> --fail-warns on --fail-skips on --no-ansi --progress off`.
+
+| Assembly | Selection | Cases |
+| -------- | --------- | ----- |
+| I | `--filter-class OpenForge.Cli.IntegrationTests.Shell.Presentation.Shared.Help.CommandHelpIntegrationTests` | 43 |
+| I | `--filter-method OpenForge.Cli.IntegrationTests.Framework.Distribution.WorkspaceLayoutPayloadRenderingIntegrationTests.CustomGuidanceMatchesReviewedTemplates` | 1 |
+| I | `--filter-class OpenForge.Cli.IntegrationTests.Commands.Install.InstallBeforeOutputSnapshotTests` | 10 |
+| I | `--filter-class OpenForge.Cli.IntegrationTests.Commands.Install.InstallChangeOutputSnapshotTests` | 3 |
+| I | `--filter-method OpenForge.Cli.IntegrationTests.Commands.Install.InstallOperationIntegrationTests.SafeAbsentAutomaticApplyIsExactAndIdempotent` | 1 |
+| I | `--filter-class OpenForge.Cli.IntegrationTests.Commands.Install.InstallSetupRecapIntegrationTests --filter-not-method OpenForge.Cli.IntegrationTests.Commands.Install.InstallSetupRecapIntegrationTests.ResolvedEssentialsWizardRetryPreservesSelection` | 4 |
+| I | `--filter-method OpenForge.Cli.IntegrationTests.Commands.Install.InstallOutsideRouteSetupIntegrationTests.RegistersAfterInstall` | 1 |
+| I | `--filter-method OpenForge.Cli.IntegrationTests.Commands.Install.InstallOutsideRouteSetupIntegrationTests.FailedRegistration` | 1 |
+| I | `--filter-class OpenForge.Cli.IntegrationTests.Commands.Status.StatusBeforeOutputSnapshotTests` | 5 |
+| U | `--filter-class OpenForge.Cli.Core.UnitTests.Commands.Tool.Models.Read.ToolReadPresentationTests` | 2 |
+| U | `--filter-class OpenForge.Cli.Core.UnitTests.Presentation.Tool.Shared.Writing.ToolWritePresentationTests` | 6 |
+| I | `--filter-method OpenForge.Cli.IntegrationTests.Commands.Tool.ToolCompositionInteractionIntegrationTests.AccountChoice` | 2 |
+
+Each command also writes a CTRF result with `--report-xunit-ctrf --report-xunit-ctrf-filename results.json --results-directory artifacts/tool-setup/finish/snapshots/<selection-name>`.
+The selection names and full arguments are in `artifacts/tool-setup/finish/snapshot-receipts.json`.
+The final generation changes 262 snapshot files. Seven are new Tool help pages.
+The reviewed changes add Tool to root help, add the new Skill reference and its counts and update payload token totals.
+The two account-choice captures keep conditional output templates before confirmation, omit a premature backup target and label the printed command `manual-native-uninstall`.
+The semantic assertions in those two producers pass before the capture is written.
+The other 35 existing help pages have no content changes.
+Imprint's host line endings are converted to LF. Terminal newlines and all other snapshot bytes stay as generated.
+The diff and grouped review are under `artifacts/tool-setup/finish/` as `payload-snapshot-review.diff` and `semantic-baseline-review.txt`.
+
+The default-layout fixture is produced once with the built managed development executable in an owned temporary workspace and child home.
+Its child environment redirects HOME, USERPROFILE, APPDATA, LOCALAPPDATA, XDG_DATA_HOME and OPENFORGE_DATA_HOME.
+The two argument vectors are `install --automatic` and `install --automatic --format json`.
+These are Framework Install calls. No Tool or package-manager command runs.
+The capture records all workspace files except the runtime state directory and replaces the workspace path with `<workspace>` in output.
+The fixture grows from 22 to 23 files. Its lock lists 19 Framework paths.
+Decoded settings use schema v6. The lock uses schema v2.
+The changed payload bytes are the CLI Skill and new Tool reference. No old payload file disappears.
+First Install reports 19 files. The second Install stays completed with no effects or findings.
+The reviewed fixture SHA-256 is `3bb99311f1bcc47521835dc64ba2ae3b1b8b939dfb653dd3491f5b429bbf10e6`.
+The received fixture stays under `artifacts/payload-final-pass/`.
+
+Index previews, then updates only the Tool setup Working subtree.
+It creates the evidence entrypoint and includes the C Root and F packets.
+The follow-up preview exits 0 with no effects or findings.
+No repository Doctor, broad Repair, site build or unrelated check runs in this continuation.
+
+### Final gates
+
+The final managed build command is `dotnet build OpenForge.Cli.slnx --configuration Release -p:NuGetAudit=false --disable-build-servers -m:1`.
+It rebuilds the fixture resource and exits 0 with zero warnings and errors in 00:00:54.90.
+The NuGet override stays on the invocation. No release version changes.
+Both final checks, `npm run check:dotnet:whitespace` and `npm run check:dotnet:style`, exit 0.
+The changed source, documents and generated baselines pass UTF-8, LF and BOM checks and `git diff --check`.
+Full managed suites, all platform builds and Native AOT execution await hosted CI.
+The fresh adherence review hasn't started. Phase 4 simplification hasn't started and needs approval.
+After committing this checkpoint, the coordinator requests the overseer's push and stops for CI results.

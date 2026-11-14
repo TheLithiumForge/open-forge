@@ -1,0 +1,35 @@
+  Show a tool's channels, native effects and machine facts.
+
+Usage:
+  open-forge tool inspect <id> [options]
+
+Examples:
+  open-forge tool inspect codegraph
+  open-forge tool inspect codebase-memory --format json
+
+Behavior:
+  Shows requirements, setup commands, possible native outputs and Open Forge
+  additions.
+  Reports installed versions, PATH readiness and stored native settings
+  separately from inherited overrides.
+  Changes no files. An unavailable installation can produce a warning.
+
+Arguments:
+  <id>  The exact catalogue tool ID.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  tool list
+  tool inspect <id>
+  tool status [id]
+  tool install
+  tool update
+  tool remove <id>
