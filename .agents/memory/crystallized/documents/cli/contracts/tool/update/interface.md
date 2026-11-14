@@ -5,6 +5,7 @@ open-forge:
 ---
 
 # tool update interface
+
 `tool update` is a write command that replaces a registered tool pin with one exact supported pin from the chosen source.
 
 It doesn't poll for releases. A newer program or pin outside this CLI release's allow-list requires an Open Forge release. Downgrades use the same checks.
@@ -16,7 +17,7 @@ Status: V1 core contract decided.
 Proposed:
 
 ```text
-open-forge tool update <id> [--source <path>] [--tool-version <exact>] [--allow-download] [--allow-session-daemon] [--allow-path <path>...] [--automatic] [--dry-run] [global flags]
+open-forge tool update <id> [--source <path>] [--tool-version <exact>] [--allow-download] [--prompt-hook <yes|no>] [--allow-session-daemon] [--allow-path <path>...] [--automatic] [--dry-run] [global flags]
 ```
 
 Use the selected source's default unless an exact listed version is supplied. Recorded hosts, root and roles stay with this registration. The help purpose is "Update one registered tool to an exact supported pin."

@@ -5,6 +5,7 @@ open-forge:
 ---
 
 # tool configure behavior
+
 `tool configure` is a write operation that runs the registered pin's declared installer with its desired configuration.
 
 A complete plan precedes consent and effects. Preview uses that same plan without transfers, processes, grants or writes.
@@ -30,3 +31,7 @@ The operation follows these steps:
 A verified unchanged request is a no-op without new leases, backups, transfers or child processes. Missing receipts and foreign files don't become a verified installation through adoption. After a partial command failure, keep execution evidence and every unfinished part. A new invocation plans from current facts. It doesn't replay a saved plan or guess an inverse command.
 
 The [interface](interface.md) defines caller input and output.
+
+## Entry changes
+
+Resolve optional-component choices before consent. Keep saved choices when omitted on Configure or Update. A new non-interactive prompt-hook choice requires `--prompt-hook yes|no`. After the tool's installer runs, check its declared originals, remove only declined entries and apply the remaining declared command rewrites. Verify the resulting entries before publishing success. Record expected rewritten values for passive drift checks. The [manifest behavior](../../shared/tool-manifest/behavior.md#entry-rewrites) defines the format limits.

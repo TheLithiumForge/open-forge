@@ -5,11 +5,31 @@ open-forge:
 ---
 
 # External tools
+
 External tool support is a CLI capability that downloads verified upstream programs and runs their declared workspace installation commands.
 
-The core handles contracts, catalogue selection, records, declared commands and bounded lifecycle effects. Concrete CodeGraph and Codebase Memory definitions and adapters belong to the next stacked branch. This core ships an empty production catalogue.
+The core handles contracts, catalogue selection, records, declared commands and bounded lifecycle effects. Concrete CodeGraph definitions and adapters belong to the next stacked branch. This core ships an empty production catalogue.
 
 Status: V1 core design decided.
+
+## Decisions 2026-11-13
+
+These decisions define the V1 core. The current runtime exposes three read commands. The shared contracts below define the pending V1 commands.
+
+- Supply - distribute reviewed recipes only. Download exact official release bytes, verify pinned hashes and attestations where published, and keep upstream licence conditions. [Supply history](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6850220404).
+- Scope - V1 admits CodeGraph only. Codebase Memory has no installable definition, usage Skill or public tool page. Keep its research and missing upstream controls in maintenance. [Scope history](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6853898150).
+- Installation - tools register themselves. CodeGraph uses its verified archive and bundled Node, then its project-local non-interactive installer. Definitions declare all commands and outputs. Open Forge changes no PATH. [Installer history](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6853898150).
+- Entry rewrites - after Install, Configure and Update, apply only definition-declared command changes to entries the installer just wrote. Supported forms are JSON command and args members, TOML command and args lines in one named table, a hook command and one line inside a marked block. Each declares host, file, selector, exact original and replacement. Keep names, markers and unrelated content. Unexpected shapes block. Verify replacements and report drift through Status and Doctor. TOML uses exact text with no parser. Consent and Inspect disclose each entry and rewrite. [Rewrite history](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6853898150).
+- Optional components - definitions declare choices, their explanations, defaults, non-interactive flags and the exact entry to remove when declined. The prompt-hook choice defaults to yes interactively. Non-interactive requests use `--prompt-hook yes|no`. Declining removes only that hook. Its explanation covers local-index context on structural prompts, no data leaving the machine and `CODEGRAPH_NO_PROMPT_HOOK=1`. [Component history](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6853898150).
+- Origin - every definition declares `first-party` or `third-party`. List groups by origin and shows a column. Inspect shows it. Third-party consent names upstream, its licence, the official download and maintenance by its authors. [Origin history](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6853898150).
+- Run - `open-forge tool run <tool> <args...>` is required in V1. The first operand is a declared tool ID with an installed verified pin. Resolve only its recorded executable in the verified store. Paths, shell strings and unknown names are rejected. Forward arguments as an array without a shell, along with stdin, stdout, stderr, exit code and signals. A delimiter after the ID is optional. Add no successful-run output. Detect the workspace by walking upward from CWD, `CLAUDE_PROJECT_DIR` or an explicit `--workspace` before the tool ID. Cheap recorded size and timestamp checks guard each run. Status performs full hashes. Changed or missing files block execution. [Run history](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6854341850).
+- Team setup - bare `open-forge tool install` installs every declared tool at the settings pin verified against the lock, using the same separate consent as named Install. Tool Status, workspace Status, Doctor and Run report declared missing tools with the exact next step `open-forge tool install`. Interactive Run offers installation. Non-interactive Run fails clearly with a nonzero exit. [Team setup history](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6854341850).
+- Agent guidance - keep each tool's own block and rewrite only its declared shell line. Each active role adds one conditional line to Open Forge's managed AGENTS.md and CLAUDE.md block. Remove the line when the role is cleared. The required CodeGraph Skill is short and practical, with MCP and terminal exploration, index and refresh commands and source-verification trust notes. Installation internals belong in contracts and maintenance. [Guidance history](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6853898150).
+- Help pointer - the final maintainer direction via the overseer withdraws the extra help pointer after 150 trials found no improvement. Add no pointer or pointer commit. The [earlier proposal](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6854341850) is history only. The per-role conditional line stays required.
+- Recovery - Git is the backup in Git workspaces. Without Git, changed files use sibling `.bak` files through write validation and restoration on failure. Existing recovery v1 stays unchanged. [Backup history](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6849450008).
+- Process settings - tools never self-update. Telemetry defaults off and stays a visible opt-in. Inspect and consent disclose the choice. [Process history](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6850220404).
+- Role switching - Choose replaces recognized role integrations and required guidance in one checked plan, keeping both installs and indexes. Clearing removes the role integration only. The final overseer clarification keeps this [original switch contract](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6821695053). Core evidence uses a second test-only provider.
+- Versions - each workspace pins one version. Keep reviewed older pins for downgrades. Keep store and runtime versions while any workspace references them. Same-pin Install re-verifies and restores bytes and reruns installation. General Node tools use a private pinned official runtime and frozen npm closure. CodeGraph's release already bundles Node and needs no system Node or npm. [Version history](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6850220404).
 
 ## Supply
 
@@ -19,29 +39,29 @@ Native tools use the exact asset from their project's GitHub release. Pin its ve
 
 Node tools use an exact official portable archive from `https://nodejs.org/dist/v<version>/`. Pin the archive hash from the release's signed `SHASUMS256.txt` and keep signer evidence in the reviewed recipe. Extract the runtime into the versioned user store. Every npm and tool invocation names the absolute private Node path. The user's Node and PATH stay unchanged. musl/Alpine has no official build and is unsupported.
 
-The package and its complete dependency closure come from the npm registry. The definition pins the package manifest, lockfile and integrity values. The private Node runs its bundled npm's `npm ci` with the reviewed options, package scripts disabled and no dependency resolution or lockfile changes. A missing closure blocks installation. Native tools need no Node runtime.
+The package and its complete dependency closure come from the npm registry. The definition pins the package manifest, lockfile and integrity values. The private Node runs its bundled npm's `npm ci` with the reviewed options, package scripts disabled and no dependency resolution or lockfile changes. A missing closure blocks installation. A native release can include its own runtime. CodeGraph's archive includes Node. General private Node preparation is specified but waits for the maintainer's runtime decision.
 
 The [tool admission checklist](../../maintenance/tools.md) defines source review, checksum and attestation evidence, licensing checks, native tests and release admission. A local source can't widen that reviewed recipe.
 
 ## Composition
 
-Root composition directly registers the eight Tool leaves in contract order. Compiled adapters are selected by finite typed IDs and revisions. There is no reflective discovery, imported adapter code, service locator or runtime plugin registry. Local sources select exact reviewed tuples through data only.
+The complete V1 composition registers nine Tool leaves in contract order. The current runtime exposes three read commands. Compiled adapters are selected by finite typed IDs and revisions. There is no reflective discovery, imported adapter code, service locator or runtime plugin registry. Local sources select exact reviewed tuples through data only.
 
 Framework Tools handles definition facts, catalogue and allow-list checks, template values, store identity, reference records and passive host observations. Framework Settings handles the visible tool settings map. Framework Lifecycle handles verified tool receipts. Framework Tools handles sibling backup mechanics. Framework Recovery keeps existing v1 bundle mechanics. Operations Tool keeps command requests, policy, plans, findings, effects and results. Rendering Tool projects command models. OutputText contains human wording. Namespaces mirror physical paths and local support stays under `Shared/<Capability>/`.
 
 The host provides bounded network and process capabilities through typed requests. Download requests name exact HTTPS descriptors and approved redirect hosts. Process requests name reviewed finite actions, verified executable, separate arguments, complete declared environment, physical CWD, timeout and cancellation. Definitions declare pinned lifecycle argument vectors. They never choose a shell, executable from PATH or imported code. Capabilities return typed facts and don't render or decide domain status.
 
-All JSON graphs use static source generation. YAML uses the existing standard parser and static model context. Native AOT evidence covers every added graph and embedded resource. The core uses no TOML dependency or agent-config editing seam.
+All JSON graphs use static source generation. YAML uses the existing standard parser and static model context. Native AOT evidence covers every added graph and embedded resource. The core uses no TOML dependency. Declared post-install command rewrites use the bounded formats described above.
 
 ## Stores
 
 Default account stores are:
 
-| OS | Installs | Archives | Runtime state |
-| --- | --- | --- | --- |
-| Windows | `%LOCALAPPDATA%/OpenForge/tools` | `%LOCALAPPDATA%/OpenForge/tool-cache` | `%LOCALAPPDATA%/OpenForge/tool-state` |
-| macOS | `~/Library/Application Support/OpenForge/tools` | `~/Library/Caches/OpenForge/tools` | `~/Library/Application Support/OpenForge/tool-state` |
-| Linux | `${XDG_DATA_HOME:-~/.local/share}/open-forge/tools` | `${XDG_CACHE_HOME:-~/.cache}/open-forge/tools` | `${XDG_STATE_HOME:-~/.local/state}/open-forge/tools` |
+| OS      | Installs                                            | Archives                                       | Runtime state                                        |
+| ------- | --------------------------------------------------- | ---------------------------------------------- | ---------------------------------------------------- |
+| Windows | `%LOCALAPPDATA%/OpenForge/tools`                    | `%LOCALAPPDATA%/OpenForge/tool-cache`          | `%LOCALAPPDATA%/OpenForge/tool-state`                |
+| macOS   | `~/Library/Application Support/OpenForge/tools`     | `~/Library/Caches/OpenForge/tools`             | `~/Library/Application Support/OpenForge/tool-state` |
+| Linux   | `${XDG_DATA_HOME:-~/.local/share}/open-forge/tools` | `${XDG_CACHE_HOME:-~/.cache}/open-forge/tools` | `${XDG_STATE_HOME:-~/.local/state}/open-forge/tools` |
 
 Use the platform's native known-folder resolution. A product-level store override gives tests an owned temporary root without changing OS configuration. Every test redirects all product account stores through one shared test-support seam before use. Tests never download real artifacts or touch real account stores.
 
@@ -81,7 +101,7 @@ Tools never self-update. Every supplied launch disables update checks according 
 
 ## Host members
 
-Tool-owned installers register their MCP server with agent hosts and handle native settings, helpers and usage guidance. Each active tool requires a Skill that explains its purpose, commands, limits and trust notes. Open Forge edits only its settings, lock and managed ignore section. It doesn't parse or write Codex TOML or write Claude JSON. Passive host-entry observations are information and aren't generated-member receipts.
+Tool-owned installers register their MCP server with agent hosts and handle native settings, helpers and usage guidance. Each active tool requires a Skill that explains its purpose, commands, limits and trust notes. Open Forge updates its records, managed ignore section, declared command rewrites and conditional active-role guidance. It applies only declared command rewrites to existing Claude JSON and Codex TOML entries, with exact TOML text checks and no parser. Passive host-entry observations are information and aren't generated-member receipts.
 
 Definitions declare pinned install, uninstall and index-cleanup argument vectors, scope, timeout and output paths. The verified target entry runs with separate arguments, declared environment and physical workspace CWD. Exact release admission covers these declarations. The [shared Tool rules](../shared-operation-contract.md#tool-commands) define command ordering and execution evidence.
 
@@ -91,13 +111,11 @@ Extract only neutral byte-preserving section mechanics from the existing Library
 
 ## Adapter profiles
 
-Adapters provide finite configuration, passive checks and external maintenance instructions. They don't provide a query proxy, scheduler or index command inside Open Forge. Required guidance names the pin, root, state, commands, process limits and language trust notes. Retrieval doesn't activate workspace instructions.
+Adapters provide finite configuration, passive checks and external maintenance instructions. They don't provide a query proxy, scheduler or index command inside Open Forge. Required guidance stays short and practical. It explains MCP and terminal use, indexing, refresh and source-verification trust notes. Contracts and maintenance keep installation paths and process policy. Retrieval doesn't activate workspace instructions.
 
-CodeGraph's future profile validates a single-segment in-project index directory. It defaults telemetry off and applies the visible telemetry choice while keeping daemon and watcher opt-outs. Every supplied launch replaces hook-related child environment with an empty `GIT_CONFIG_PARAMETERS`, count one, key `core.hooksPath` and a verified private sink. Configuration and external recipes check Git's resolved hooks path with that exact environment before proceeding. File-level Git configuration and real hooks stay unchanged. The reviewed bootstrap helper creates schema only through pinned bundled APIs. The next branch chooses the pinned installer, uninstaller and index-cleanup arguments. The core contains no CodeGraph-specific invocation.
+CodeGraph's future profile validates a single-segment in-project index directory. It defaults telemetry off and applies the visible telemetry choice while keeping daemon and watcher opt-outs. Every supplied launch replaces hook-related child environment with an empty `GIT_CONFIG_PARAMETERS`, count one, key `core.hooksPath` and a verified private sink. Configuration and external recipes check Git's resolved hooks path with that exact environment before proceeding. File-level Git configuration and real hooks stay unchanged. The reviewed bootstrap helper creates schema only through pinned bundled APIs. The next branch pins and qualifies the decided local installer and ordered removal vectors. The core contains no CodeGraph-specific invocation.
 
-Codebase Memory's future profile accepts only code root `.` and physical workspace CWD. Verify native project identity and index binding for both hosts. Use one exact build and resolved account cache for all active clients. Session consent covers the build, cache, process scope and final-client shutdown. Native settings turn automatic indexing, watching and UI off while keeping unrelated settings. Preflight ancestor permissions. A rejected dedicated cache requires a separate default-cache plan, never a silent switch or permission change.
-
-After changed CBM sources, print an exact-project full-rebuild recipe. It deletes the selected native project, verifies that project's database absent, then indexes the exact workspace. It never deletes the account cache. CodeGraph uses external manual sync. Neither profile treats database presence as fresh completion evidence.
+Codebase Memory research is kept in the maintenance admission document. It provides no V1 installable definition.
 
 ## Native tests
 
@@ -105,11 +123,13 @@ Definition support and installation testing are separate from call accuracy. Con
 
 The core uses minimal synthetic test-only definitions and local hashed artifacts. They aren't production catalogue entries or public adapters. Cover parser, records and effect mechanics at Unit and real-filesystem Integration boundaries, then small published-command journeys at EndToEnd. Trigger complete managed and host Native AOT gates for composition, serialization, stores and mutation changes.
 
+## Shared contracts
+
+The [Tool lane contracts](tool-lane-contracts.md) define source placement, request and result types, rewrite and component records, process dispatch and finding codes for the three implementation lanes. They add no command implementation. Choose keeps the specified integration switch. Core tests use a test-only second provider because V1 production supports CodeGraph only. This clarification comes from the overseer after the [original role-switch specification](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6821695053).
+
 ## Not decided yet
 
-- Concrete installer, uninstaller and index-cleanup vectors need native tests on the next branch. They don't change this core's generic command contract.
-- Proposed: `open-forge tool exec <tool> -- <args>` runs the workspace's pinned binary with its private runtime from the current directory. It passes arguments separately, uses absolute program paths and creates no PATH entry or symlink. This is a specification proposal only. No Exec command is implemented.
-- Whether Choose switches agent integrations through declared commands or changes only the role map needs the maintainer's decision.
+- Private Node runtime preparation waits for the maintainer. Keep the supply requirements above, but build no private Node preparation in this step.
 - Unix Node archive preparation needs a decision on unused launcher links. The upstream [packaging code](https://github.com/nodejs/node/blob/main/tools/install.py) creates npm and npx symlinks. The current archive rule rejects links. Proposed: a reviewed recipe can name exact unused launcher links to omit, while creating no links and rejecting every other link. Don't admit a dependent recipe before this is decided.
 
 The [CLI Architecture](../architecture.md) defines the parent layer and dependency rules.

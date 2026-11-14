@@ -53,18 +53,29 @@ Details:
   Verified local artifacts can avoid another download.
   Update selects reviewed catalogue pins only, including exact older pins for
   downgrades. Previously reviewed pins stay in the catalogue.
-  Tool installers register MCP and supply the required usage Skill. Open Forge
-  edits only its settings, lock and managed ignore section.
-  Remove runs stored cleanup and uninstall commands, removes unused Tool ignore
-  rules and releases the workspace's store references.
+  Tool installers register MCP. Open Forge supplies the required short usage
+  Skill and updates its records, managed ignore section, declared command
+  rewrites and conditional role lines.
+  Definitions declare first-party or third-party origin. Consent names
+  third-party upstream software, its repository, licence, official release and
+  authors.
+  After installation, only declared command parts are rewritten. Unexpected
+  shapes stop the write. No independent host entry or TOML parser is added.
+  Optional prompt hooks use an interactive choice or --prompt-hook yes|no.
+  Declining removes only that entry.
+  Bare open-forge tool install restores every declared lock-verified pin with
+  the same consent. Choose switches role integrations and guidance while keeping
+  both installs and indexes.
+  Remove runs its stored commands in definition-declared order, removes unused
+  Tool ignore rules and releases the workspace's store references.
   Preview starts no transfers or processes. Downloads, session processes and
   destinations need separate consent or grants. Removal exclusions still apply.
   Git workspaces create no sibling backup. Without Git, existing managed files
   use sibling .bak files through write validation and restoration on failure.
   There is no separate Tool repair or open-path command.
-  Proposed execution: Proposed for maintainer review: open-forge tool exec
-  <tool> -- <args> runs the pinned tool and runtime from the current directory
-  without PATH changes or symlinks. It isn't implemented.
+  Tool Run: V1 Tool Run is pending. It runs only a declared, installed and
+  verified workspace pin by ID, forwards arguments and streams without a shell
+  and adds no success output. Missing tools require open-forge tool install.
 
 Automation:
   --format json: one minified schema-3 JSON result on stdout for every status.

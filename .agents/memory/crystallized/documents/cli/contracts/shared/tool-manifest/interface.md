@@ -5,6 +5,7 @@ open-forge:
 ---
 
 # Tool manifest interface
+
 A tool manifest is a versioned data definition that names exact artifacts and selects reviewed compiled adapter behavior.
 
 A catalogue selects supported definitions and their defaults. Workspace settings record installed pins and active roles. The lock records what Open Forge wrote and verified. These three records answer different questions.
@@ -23,15 +24,15 @@ Tool, role and artifact IDs use the group ID grammar. `none` can't be a tool ID.
 
 Adapter and template tokens have separate finite vocabularies:
 
-| Type | Values |
-| --- | --- |
-| AdapterId | `codegraph-1.6`, `cbm-0.12`, reserved `qmd-2.8` |
-| TemplateId | `codegraph-manual-v1`, `cbm-manual-v1`, reserved `qmd-inventory-v1` |
-| SkillId | `code-graph-usage-v1`, reserved `docs-search-usage-v1` |
-| CapabilityId | `code-graph`, reserved `docs-search`, reserved `code-to-docs-links` |
-| RoleId | `code-navigation`, reserved `docs-search`, reserved `code-to-docs-links` |
-| ActionId | `render-members`, `native-settings`, `render-helper` |
-| CheckId | `artifact-hash`, `installed-files`, `native-settings`, `host-members`, `index-state`, `hook-policy`, `process-policy`, `cache-permissions`, `dependency-lock`, `source-membership`, `usage-skill` |
+| Type         | Values                                                                                                                                                                                            |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AdapterId    | `codegraph-1.6`, reserved `cbm-0.12`, reserved `qmd-2.8`                                                                                                                                          |
+| TemplateId   | `codegraph-manual-v1`, reserved `cbm-manual-v1`, reserved `qmd-inventory-v1`                                                                                                                      |
+| SkillId      | `code-graph-usage-v1`, reserved `docs-search-usage-v1`                                                                                                                                            |
+| CapabilityId | `code-graph`, reserved `docs-search`, reserved `code-to-docs-links`                                                                                                                               |
+| RoleId       | `code-navigation`, reserved `docs-search`, reserved `code-to-docs-links`                                                                                                                          |
+| ActionId     | `render-members`, `native-settings`, `render-helper`                                                                                                                                              |
+| CheckId      | `artifact-hash`, `installed-files`, `native-settings`, `host-members`, `index-state`, `hook-policy`, `process-policy`, `cache-permissions`, `dependency-lock`, `source-membership`, `usage-skill` |
 
 Unknown tokens invalidate a definition. Reserved tokens can describe deferred definitions but can't activate in V1. A manifest can't widen its reviewed command or output scope. Tool installers handle their helpers and agent files.
 
@@ -51,7 +52,7 @@ The [admission checklist](../../../../maintenance/tools.md) defines recipe revie
 
 ## Launch values
 
-Scalars are strings, Booleans, finite numbers or null. Template variables are `${install}`, `${entry}`, `${worktree}`, `${codeRoot}`, `${state}`, `${cache}`, `${hookSink}`, `${projectId}`, `${indexDirName}`, `${host}` and `${target}` only. Render typed values without a shell. Install and entry paths become absolute. Each argument stays separate. Index directory names contain one validated segment.
+Scalars are strings, Booleans, finite numbers or null. Template variables are `${install}`, `${entry}`, `${worktree}`, `${codeRoot}`, `${state}`, `${cache}`, `${hookSink}`, `${projectId}`, `${indexDirName}`, `${host}`, `${target}` and `${openForge}` only. Render typed values without a shell. Install and entry paths become absolute. Each argument stays separate. Index directory names contain one validated segment.
 
 Merge process and MCP environment maps. Equal duplicate values are allowed. Unequal duplicates block. Declared values override inheritance, including empty strings. The command is the verified absolute target entry. CWD is the selected physical workspace. Both hosts need evidence for the resulting launch environment.
 
@@ -83,9 +84,9 @@ The fixed `.agents/open-forge.json` adds a direct `tools` map. An omitted map me
 
 The [settings v6 schema](../../../../../../../../schemas/v6/open-forge.schema.json) defines the exact tool-ID map and entry fields.
 
-An installed inactive tool has `roles:[]`. At most one tool lists a given role. `code-navigation` requires `code-graph`. Reserved roles can't activate in V1. Reject unknown fields inside tool entries, duplicate keys, duplicate array values and incompatible role assignments. Keep unrelated settings keys under the shared tolerant settings contract. CBM permits only `.` in V1.
+An installed inactive tool has `roles:[]`. At most one tool lists a given role. `code-navigation` requires `code-graph`. Reserved roles can't activate in V1. Reject unknown fields inside tool entries, duplicate keys, duplicate array values and incompatible role assignments. Keep unrelated settings keys under the shared tolerant settings contract. V1 admits CodeGraph only. Codebase Memory is blocked pending project-scoped upstream controls.
 
-Hand edits don't install bytes or approve downloads. Tool-owned commands handle host entries. Install adds a tool after verification. Update changes its pin. Configure changes recorded hosts and root. Choose moves or clears a role. Remove deletes the entry after verified removal.
+Hand edits declare desired pins but don't install bytes or approve downloads. Tool-owned commands handle host registrations. Install publishes verified local installation evidence. Bare Install restores every declared pin against the lock. Update changes its pin. Configure changes recorded hosts, root and component choices. Choose switches or clears role integrations and guidance. Remove deletes the declaration after verified removal.
 
 ## Lock records
 
@@ -99,12 +100,16 @@ Without Git, settings and lock changes keep their sibling backups until both rec
 
 Source outcomes are:
 
-| Condition | Status and exit |
-| --- | --- |
+| Condition                                                                                                            | Status and exit    |
+| -------------------------------------------------------------------------------------------------------------------- | ------------------ |
 | Unknown ID, absent exact version, invalid shape or default, duplicate identity, digest or manifest identity mismatch | `invalid-input`, 4 |
-| Well-formed unreviewed tuple, unavailable adapter revision or unqualified activation target | `blocked`, 5 |
-| Unreadable required source bytes | `incomplete`, 3 |
+| Well-formed unreviewed tuple, unavailable adapter revision or unqualified activation target                          | `blocked`, 5       |
+| Unreadable required source bytes                                                                                     | `incomplete`, 3    |
 
 Read commands keep independently readable installed facts. A readable definition's activation requirements remain reportable even when activation is blocked.
 
 The [behavior](behavior.md) defines validation order and conformance.
+
+## Final V1 decisions
+
+Definitions declare `first-party` or `third-party` origin. The registration record declares command rewrites, optional components, activation commands and conditional role guidance. The [Tool lane contracts](../../../technical-designs/tool-lane-contracts.md) define their shared records and callable interfaces. The [dated decisions](../../../technical-designs/external-tools.md#decisions-2026-11-13) record the issue history.

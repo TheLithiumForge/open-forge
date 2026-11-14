@@ -1,10 +1,11 @@
 ---
 open-forge:
-  description: Review and admit tool recipes, official downloads, pinned runtimes and lifecycle commands
+  description: Review and accept tool recipes, official downloads, pinned runtimes and lifecycle commands
   tags: [Memory, Document, CurrentTruth, Maintenance, Tool, Supply]
 ---
 
 # Tool admission
+
 Tool admission is a maintenance process that reviews an exact download recipe before an Open Forge release can install it.
 
 For example, changing a release asset's hash creates a new recipe to review. A local manifest with that hash can't bypass release admission. Open Forge distributes recipes and never ships, mirrors or rehosts tool bytes.
@@ -27,7 +28,7 @@ Complete these checks before adding a tool or changing a pin:
 4. For a native asset with an attestation, verify the asset digest, expected repository, source commit and build identity. Record the verification method and evidence. A published attestation that can't be verified blocks admission or installation according to the recipe's declared check.
 5. For Node, verify the signature on `SHASUMS256.txt` against the upstream release keys, then pin the portable archive's listed hash. Record the checksum document, signature and signer evidence. Mark a target unsupported when no official archive exists. This includes musl/Alpine.
 6. For a Node package, review the pinned `package.json`, complete lockfile, resolved registry URLs, integrity values and npm options. Run the private runtime's bundled npm through that absolute Node path. Use `npm ci` without dependency resolution, lockfile rewriting or package install scripts.
-7. Review every install, uninstall and index-cleanup argument vector, timeout, environment override, output path and process scope. Check that the tool's installer registers its MCP server and supplies the required usage Skill. Open Forge edits no agent configuration.
+7. Review every install, uninstall and index-cleanup argument vector, timeout, environment override, output path and process scope. Check that the tool's installer registers its MCP server. Review the required short Open Forge usage Skill separately. Review the exact original and replacement for every declared command rewrite. Keep selectors, entry names, markers and unrelated values unchanged. Check decline-only removal for optional components and drift reporting.
 8. Verify disabled self-update checks and default-off telemetry. Test the visible telemetry opt-in and opt-out. Confirm that watching, automatic indexing and hooks follow the declared process policy.
 9. Test each admitted target natively. Cover first install, same-pin reinstall, configuration, update, downgrade, cancellation, command failure, removal and another workspace sharing the same store. Use the declared process consent and final-client shutdown rules.
 10. Check safe extraction, exact hashes, account-store containment, reference release, removal exclusions and the managed ignore section. Confirm that preview makes the same pre-effect decisions and starts no network requests or processes.
@@ -60,6 +61,37 @@ Use synthetic test-only definitions and local hashed artifacts for core tests. T
 
 ## Not decided yet
 
-- Proposed: `open-forge tool exec <tool> -- <args>` runs a pinned tool and runtime from the current directory. It avoids PATH changes and symlinks. It isn't implemented in this branch.
-- The maintainer needs to decide whether Choose also switches agent integrations through tool commands or changes only role metadata.
+- General private Node runtime preparation waits for the maintainer.
 - Unix Node archive preparation needs a decision on exact unused launcher links. The current extraction rule rejects links.
+
+## V1 scope
+
+CodeGraph is the only V1 tool. Its recipe pins the official archive and bundled Node. Review local installation with `--yes --no-permissions`, both target hosts, telemetry off by default and explicit prompt-hook choice. Review command-only rewrites to `open-forge tool run codegraph`, with an absolute Open Forge executable when it is not on PATH. Keep the literal substring `codegraph prompt-hook` so upstream uninstall recognises its hook. Removal runs the declared local uninstall with `--keep-cli`, then forced root uninitialisation, before store release and ignore cleanup.
+
+Codebase Memory research stays available for upstream work. Its current installer is account-wide, writes `~/.codex/AGENTS.md`, profiles and hooks, and has no hook opt-out. Missing controls are project-scoped install, project-scoped uninstall and a hook opt-out. Ship no installable definition, usage Skill or public tool page. The [scope decision](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6853898150) replaces earlier graph-installer decisions. Earlier [trial evidence](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6821695053) stays research rather than V1 admission.
+
+Record CodeGraph upstream requests for a launch-command or absolute-launcher option and `--no-prompt-hook` for non-interactive installation. Do not contact upstream without a separate request. Review `first-party` or `third-party` origin and the third-party consent disclosure. The [dated decisions](../cli/technical-designs/external-tools.md#decisions-2026-11-13) cover Run limits, team restore, missing-tool reports and agent guidance. The final help-pointer experiment is withdrawn.
+
+## Retained research
+
+The earlier research below describes a blocked future profile. It gives no V1 installation permission.
+
+Codebase Memory's future profile accepts only code root `.` and physical workspace CWD. Verify native project identity and index binding for both hosts. Use one exact build and resolved account cache for all active clients. Session consent covers the build, cache, process scope and final-client shutdown. Native settings turn automatic indexing, watching and UI off while keeping unrelated settings. Preflight ancestor permissions. A rejected dedicated cache requires a separate default-cache plan, never a silent switch or permission change.
+
+After changed CBM sources, print an exact-project full-rebuild recipe. It deletes the selected native project, verifies that project's database absent, then indexes the exact workspace. It never deletes the account cache. CodeGraph uses external manual sync. Neither profile treats database presence as fresh completion evidence.
+
+## CodeGraph recipe
+
+The next branch reviews and qualifies these declared commands and entries:
+
+- Install - `install --location local --target claude,codex --yes --no-permissions`, from the verified archive's bundled-runtime launcher. `--yes` skips upstream PATH setup.
+- Claude MCP - rewrite only `command` and `args` in server `codegraph` from `codegraph serve --mcp` to `open-forge tool run codegraph serve --mcp`.
+- Codex MCP - replace only `command` and `args` lines inside `[mcp_servers.codegraph]` as exact text. Stop on any unexpected shape.
+- Prompt hook - rewrite the Claude `UserPromptSubmit` command to `open-forge tool run codegraph prompt-hook`. Keep the literal substring `codegraph prompt-hook` for upstream removal. Explain that structural prompts get context from the local index, nothing leaves the machine and `CODEGRAPH_NO_PROMPT_HOOK=1` disables it. Ask whether to keep it, default yes. Non-interactive new choices require `--prompt-hook yes|no`. On no, remove just this hook entry.
+- Tool blocks - keep `<!-- CODEGRAPH_START -->` and `<!-- CODEGRAPH_END -->` in `CLAUDE.md` and `AGENTS.md`. Rewrite only their `codegraph explore` shell line through Tool Run. Subagents read these files, so MCP instructions alone don't replace this guidance.
+- Open Forge launch - use its command name when available on PATH. Otherwise use the running executable's absolute path. Keep arguments separate in MCP records and quote command strings for their declared host syntax.
+- Telemetry - run the tool's `telemetry off` unless the visible saved setting opts in. Disclose the command and choice in consent and Inspect.
+- Removal - run `uninstall --location local --target claude,codex --yes --keep-cli`, then `uninit <root> --force`, through the same verified Tool Run path. Release final store references and the `.codegraph/` managed ignore entry afterwards.
+- Skill - keep it about the size of the upstream block. Explain `codegraph_explore`, terminal exploration through Tool Run and the verified real index and refresh commands. Confirm call sites in source. C# recall was 41% in the trial. Keep installation internals and process policy here.
+
+These are review requirements, not a production definition on the core branch. The [final graph decision](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6853898150) replaces independent host registration. The [Run decision](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6854341850) replaces the earlier dispatch name.

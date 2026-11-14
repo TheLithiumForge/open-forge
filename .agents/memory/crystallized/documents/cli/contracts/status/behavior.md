@@ -743,3 +743,7 @@ Read the workspace store at `.open-forge-state/recovery/v1/<workspace key>/` and
 Read Tool settings independently from lock details and project only passive facts. Keep configured roles separate from verified installation. Report unavailable stores and counts with causes. Never create an index journal, launch a version probe or repair required guidance during observation. The [Tool Status behavior](../tool/status/behavior.md) defines passive checks.
 
 Report leftover Tool sibling `.bak` paths through passive findings, even when the current settings or lock is invalid. Keep saved contents out of output and keep unavailable coverage with its cause. The [Tool backups design](../../technical-designs/tool-backups.md#read-backups) defines discovery. Existing v1 and legacy recovery observation stays unchanged.
+
+## Tool declarations
+
+Report declared but locally missing Tool pins separately from unavailable verification. Give the exact next step `open-forge tool install`. Compare declared post-install command rewrites and report drift without changing entries. Check leftover sibling backups for safely identified Tool targets. These checks run no external process. The [dated Tool decisions](../../technical-designs/external-tools.md#decisions-2026-11-13) define team setup and registration.

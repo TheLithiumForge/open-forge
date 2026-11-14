@@ -5,6 +5,7 @@ open-forge:
 ---
 
 # tool list interface
+
 `tool list` is a read command that lists available tool definitions and recorded installs for the selected workspace.
 
 A broken catalogue still permits readable installed rows. A missing lock doesn't hide a settings entry or make it a verified install.
@@ -35,18 +36,18 @@ Invalid source shape or selection is `invalid-input`. Unreadable required bytes 
 
 Each code names one failed observation. The message carries its exact cause:
 
-| Code | Status | Situation | Message |
-| --- | --- | --- | --- |
-| `tool-list.invalid-input` | `invalid-input` | A bound operand or local flag is invalid | `<cause>` |
-| `tool-list.workspace-unavailable` | `blocked` | The exact workspace cannot be selected | `<cause>` |
-| `tool-list.settings-unavailable` | `incomplete` | Settings cannot be safely read or decoded | `<cause>` |
-| `tool-list.lock-unavailable` | `incomplete` | The required receipt lock cannot be read | `<cause>` |
-| `tool-list.receipt-missing` | `incomplete` | A recorded install has no matching receipt | `<cause>` |
-| `tool-list.receipt-mismatch` | `completed-with-warnings` | The settings pin differs from the receipt pin | `<cause>` |
-| `tool-list.cancelled` | `cancelled` | The read was cancelled | `<cause>` |
-| `tool-list.read-unavailable` | `incomplete` | A required local read failed | `<cause>` |
-| `tool-list.catalogue-invalid` | `invalid-input` | The selected catalogue is malformed | `<cause>` |
-| `tool-list.catalogue-unavailable` | `incomplete` | Required catalogue bytes cannot be read | `<cause>` |
+| Code                              | Status                    | Situation                                     | Message   |
+| --------------------------------- | ------------------------- | --------------------------------------------- | --------- |
+| `tool-list.invalid-input`         | `invalid-input`           | A bound operand or local flag is invalid      | `<cause>` |
+| `tool-list.workspace-unavailable` | `blocked`                 | The exact workspace cannot be selected        | `<cause>` |
+| `tool-list.settings-unavailable`  | `incomplete`              | Settings cannot be safely read or decoded     | `<cause>` |
+| `tool-list.lock-unavailable`      | `incomplete`              | The required receipt lock cannot be read      | `<cause>` |
+| `tool-list.receipt-missing`       | `incomplete`              | A recorded install has no matching receipt    | `<cause>` |
+| `tool-list.receipt-mismatch`      | `completed-with-warnings` | The settings pin differs from the receipt pin | `<cause>` |
+| `tool-list.cancelled`             | `cancelled`               | The read was cancelled                        | `<cause>` |
+| `tool-list.read-unavailable`      | `incomplete`              | A required local read failed                  | `<cause>` |
+| `tool-list.catalogue-invalid`     | `invalid-input`           | The selected catalogue is malformed           | `<cause>` |
+| `tool-list.catalogue-unavailable` | `incomplete`              | Required catalogue bytes cannot be read       | `<cause>` |
 
 ## Conformance
 
@@ -60,3 +61,7 @@ Required cases are:
 - One JSON result with no files, leases, network or child processes created.
 
 The [behavior](behavior.md) defines result formation.
+
+## Final V1 requirements
+
+Every available row includes the definition's `first-party` or `third-party` origin. Installed rows use the verified stored definition and report unavailable origin with its cause if it cannot be read. Human output groups first-party rows before third-party rows, with unavailable rows last, and includes an Origin column. Within each group, sort by ID and exact version. JSON keeps the independent arrays and adds the origin fact to each row.

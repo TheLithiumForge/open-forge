@@ -192,3 +192,7 @@ status, exit, stream, or coordinate rules.
 ## Tool results
 
 The contracted Tool leaves keep schema 3, exact envelope field order, null rules, source locations, seven statuses, exits and streams. Command payloads come from the [Tool interfaces](../../tool/_tool.md). Writers include complete plan, consent, verification and unfinished-work data at every detail level. Tool settings v6, lock v2 and sibling backups don't change the result envelope version.
+
+## Tool Run exception
+
+Tool Run is process dispatch with raw child streams. It emits no schema-3 envelope and adds no successful-run output. Its process exit is the child's exit code. Pre-launch failures use stderr and the finite exits in the [Run interface](../../tool/run/interface.md). The other Tool leaves keep schema 3.

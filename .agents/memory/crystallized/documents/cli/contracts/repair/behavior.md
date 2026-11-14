@@ -757,3 +757,7 @@ Writing commands acquire `.open-forge-state/workspace.lock` for the selected phy
 ## Tool backups
 
 Read the bounded Tool backup group independently of current settings and lock validity. Offer it in the wizard and select it with `--automatic`. Include only known Tool paths and independently verified account bindings. Group related settings and lock restorations together. Reject conflicts with selected reference, maintenance or Library effects. Repair restores each selected ordinary sibling `.bak` to its exact target. Preview shows the proposed restoration without writes. Apply follows destination permissions, final confirmation, the workspace lease and expected-byte revalidation. Validate restored bytes before deleting the backup. The [Tool backups design](../../technical-designs/tool-backups.md#restore-files) defines the checks. Existing recovery v1 restoration stays unchanged.
+
+## Tool entry backups
+
+Restore Tool control backups first. A later invocation can use validated stored definitions and receipts to identify exact contained rewrite, optional-entry, required Skill and managed-block targets. Preview and apply follow destination grants, exclusions, expected-byte checks and saved-document validation. Invalid control records leave this target coverage unavailable. The Tool backups design defines discovery and restoration.

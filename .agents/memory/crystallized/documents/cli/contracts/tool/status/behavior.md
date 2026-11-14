@@ -5,6 +5,7 @@ open-forge:
 ---
 
 # tool status behavior
+
 `tool status` is a read operation that compares recorded tool facts with current passive evidence.
 
 A settings entry selects the subject. Only matching verified receipts establish an installation. Missing receipts keep the settings row but make verification unavailable.
@@ -28,3 +29,7 @@ The operation follows these steps:
 No probe, repair, extraction, journal, cache, runtime folder or lease can be created. If a safe read isn't available, report that check unavailable. Backup observation reports sibling `.bak` paths without disclosing saved contents or following links.
 
 The [interface](interface.md) defines syntax and evidence states.
+
+## Final V1 requirements
+
+Fully re-hash the recorded immutable files and compare declared rewritten entries, declined-component absence and conditional role guidance. Missing local bytes for a declared pin produce `tool-status.declared-tool-missing` and the exact next step `open-forge tool install`. Rewrite drift produces `tool-status.entry-rewrite-drift`. Keep missing bytes separate from unavailable evidence.

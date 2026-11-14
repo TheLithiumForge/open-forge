@@ -5,6 +5,7 @@ open-forge:
 ---
 
 # tool choose interface
+
 `tool choose` is a write command that assigns one installed compatible provider to a workspace role or clears that role.
 
 A switch moves the role between settings entries in one checked plan. It keeps both installs and their separate indexes. Installation order, language and scores never choose a provider.
@@ -23,13 +24,13 @@ Exactly two operands are required. `none` clears a role. A reserved role can't a
 
 ## Choice
 
-`code-navigation` requires `code-graph`. `docs-search` and `code-to-docs-links` are reserved. At most one settings entry lists a given role. Proposed for maintainer review: role metadata doesn't control which entries a tool installer writes to an agent file.
+`code-navigation` requires `code-graph`. `docs-search` and `code-to-docs-links` are reserved. At most one settings entry lists a given role.
 
 The chosen pin must be installed, compatible and verified. Missing required process consent or incomplete install evidence blocks selection. No fallback occurs. Choice never restores excluded tool output.
 
-If the maintainer chooses metadata-only selection, a switch moves the role between settings entries and publishes matching lock evidence. Clearing removes that role assignment only. Tools with no active roles keep `roles:[]`. Their agent files, guidance and indexes stay under the tool's installer.
+A switch replaces the recognized role integrations and required Skill in one checked plan. Use the stored providers' declared deactivation and activation commands for tool-owned entries. Apply the target's declared command rewrites after activation. Keep both installs and their indexes. `none` removes the role's integrations, Skill and conditional line without uninstalling its stored bytes or cleaning its index. Tools with no active roles keep `roles:[]`.
 
-The shared [tool operations](../../../shared-operation-contract.md#tool-operations) define writer data and safety. `role` names the requested role. `pin` is null when clearing. Results report the role mapping without claiming changes to agent files.
+The shared [tool operations](../../../shared-operation-contract.md#tool-operations) define writer data and safety. `role` names the requested role. `pin` is null when clearing. Results distinguish verified integration changes from the published role mapping.
 
 ## Conformance
 
@@ -38,13 +39,10 @@ Required cases are:
 - First choice, switch, same-provider no-op and `none` clear.
 - Unknown, uninstalled, incompatible and reserved-role subjects.
 - Duplicate role assignments and settings and lock mismatches.
-- If metadata-only selection is decided, agent files and guidance unchanged without installer execution.
+- A test-only second provider switches recognized role integrations and required guidance.
+- Declared deactivation before activation, command rewrites and conditional role lines.
 - Missing process consent and incomplete installation evidence.
 - Both installs and index bytes kept during switching and clearing.
 - Paired role publication and recovery after interruption.
 
 The [behavior](behavior.md) defines switch ordering.
-
-## Not decided yet
-
-Whether Choose invokes tool commands to switch agent integrations or changes role metadata only needs the maintainer's decision.

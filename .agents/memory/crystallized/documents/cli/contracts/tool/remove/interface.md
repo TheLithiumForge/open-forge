@@ -5,6 +5,7 @@ open-forge:
 ---
 
 # tool remove interface
+
 `tool remove` is a write command that runs one provider's declared cleanup and uninstall commands, then clears its roles and registration.
 
 The final reference also releases recognized shared install and archive bytes. Other registrations stay usable. Removal needs neither its original catalogue nor an available code root.
@@ -25,7 +26,7 @@ Source, pin, host, root, download and daemon consent flags aren't accepted. Remo
 
 Use stored definitions and verified receipts. Unsafe declared outputs, busy processes or unreadable references block complete removal. Recognized missing content can be released without restoring it. Persistent removal exclusions stay effective.
 
-Run the stored index-cleanup and uninstall commands, then remove unused managed ignore rules before releasing the registration. Tool-owned commands handle agent files and state. Remove shared bytes only after a complete empty reference set is rechecked. Keep disappeared-worktree references until authorized cleanup resolves them.
+Run the stored commands in definition-declared removal order, then remove unused managed ignore rules before releasing the registration. Tool-owned commands handle agent files and state. Remove shared bytes only after a complete empty reference set is rechecked. Keep disappeared-worktree references until authorized cleanup resolves them.
 
 Report zero selected leftovers only after every required check passes. Keep other registrations' kept artifacts and historical recovery separate from selected leftovers. A later failure reports partial removal. Repeating a verified completed removal is a no-op.
 

@@ -5,14 +5,15 @@ open-forge:
 ---
 
 # Tool command core
+
 The Tool command core is an implementation task that adds the eight external-program commands without concrete production tools.
 
 The selected sources are issue #23 and both comments, the complete external specification and the latest maintainer decisions. This worktree stays on `feature/tool-command`, above updated Comment Links. The overseer handles pushes and PR #26. Earlier checkpoint details and capture lists are kept in Git at `0822e0ed8:.agents/memory/working/checkpoints/tool-command.md`.
 
 Done: Contracts, models, schemas, catalogue selection and the three read commands are committed. Generic process, ignore and backup mechanics and the supply recipes are committed.
-Now: Paired publication, command journaling and lifecycle request preparation are gated. All five writer leaves are unimplemented. V1 is incomplete.
+Now: Rebased onto Comment Links `75f6677ad`. Final V1 decisions are recorded in accepted contracts. Tool Run, the new generic features and all five writer leaves are unimplemented. V1 is incomplete.
 Next: Implement Install with the gated capabilities and wire passive store observations. Then implement Configure, Choose, Update and Remove with consent and preview parity. The telemetry choice is recorded and reported.
-Blocker: Choose integration switching and Unix Node archive links need maintainer decisions. Independent native artifact and writer work can continue.
+Blocker: Unix Node archive links still need a decision. The latest maintainer direction settles Tool Run, declared rewrites and active-role guidance.
 
 ## Decisions
 
@@ -32,24 +33,24 @@ The latest decisions are:
 
 The current history includes these review boundaries:
 
-| Commit | Result |
-| --- | --- |
-| `dee176dc7` | Initial contracts, rebased from the original contracts commit |
-| `6b70cdec5` | Models, schemas and exact catalogue selection |
-| `b8edc22a9` | List, Inspect and Status |
-| `5fa5a0bcf` | Plain-backup contracts replacing the discarded bundle design |
-| `87cecdbea` | Sibling backup mechanics |
-| `9adb49e08` | Overseer's whitespace formatting on updated Comment Links |
-| `de4065cd9` | Tool-owned lifecycle contracts and docs |
-| `d8c7ba60b` | Lifecycle vectors and separate execution records, agent parser removed |
-| `489e785d6` | Linux clean-checkout fix for three ignored supply model files |
-| `0822e0ed8` | Bounded process host, Git backup selection and shared ignore mechanics |
+| Commit      | Result                                                                  |
+| ----------- | ----------------------------------------------------------------------- |
+| `dee176dc7` | Initial contracts, rebased from the original contracts commit           |
+| `6b70cdec5` | Models, schemas and exact catalogue selection                           |
+| `b8edc22a9` | List, Inspect and Status                                                |
+| `5fa5a0bcf` | Plain-backup contracts replacing the discarded bundle design            |
+| `87cecdbea` | Sibling backup mechanics                                                |
+| `9adb49e08` | Overseer's whitespace formatting on updated Comment Links               |
+| `de4065cd9` | Tool-owned lifecycle contracts and docs                                 |
+| `d8c7ba60b` | Lifecycle vectors and separate execution records, agent parser removed  |
+| `489e785d6` | Linux clean-checkout fix for three ignored supply model files           |
+| `0822e0ed8` | Bounded process host, Git backup selection and shared ignore mechanics  |
 | `391ed70f6` | Verified upstream supply recipes, admission checklist and source checks |
-| `c28e4c5fb` | Verified extraction, physical store areas and reference registry |
-| `11247f2a4` | Backup reporting and bounded Root Repair restoration |
-| `b712682e0` | Verified store publication, attachment and final release |
-| `0cb6fd810` | Ordered command journaling and paired control-record publication |
-| `e9e178ee7` | Saved telemetry choice, applied receipt and passive reporting |
+| `c28e4c5fb` | Verified extraction, physical store areas and reference registry        |
+| `11247f2a4` | Backup reporting and bounded Root Repair restoration                    |
+| `b712682e0` | Verified store publication, attachment and final release                |
+| `0cb6fd810` | Ordered command journaling and paired control-record publication        |
+| `e9e178ee7` | Saved telemetry choice, applied receipt and passive reporting           |
 
 The Linux failure was caused by `Models/Artifacts` matching the Windows artifact ignore rule. All three types now live in tracked `Models/Supply`. No discarded parser package, context or seam survives.
 
@@ -59,19 +60,19 @@ CI is the full gate. Local evidence uses Release managed builds, the authorized 
 
 Recent gates are:
 
-| Increment | Build | Unit | Integration | Other checks |
-| --- | --- | --- | --- | --- |
-| Tool-owned contracts | 0 warnings/errors | Unchanged | 66 passed | Both format checks, site and Index passed |
-| Lifecycle models | 0 warnings/errors | 139 passed | 52 passed | Both format checks and four schemas passed |
-| Linux source fix | 0 warnings/errors | 48 passed | Unchanged | Both format checks passed |
-| Generic mechanics | Both builds, 0 warnings/errors | 18 passed | 79 passed | Both format checks passed, no snapshots changed |
-| Supply recipes | Both builds, 0 warnings/errors | 7 passed | 8 passed | Both format checks, four schemas, site and Index passed |
-| Store foundation | Both builds, 0 warnings/errors | 8 passed | 21 passed | Both format checks passed, no snapshots changed |
-| Backup reporting and Repair | Both builds, 0 warnings/errors | 1 passed | 23 passed | Both format checks, site and Index passed |
-| Store publication | Integration build, 0 warnings/errors | Unchanged | 19 passed | Both format checks passed, no snapshots changed |
-| Execution records | Both builds, 0 warnings/errors | 6 passed | 18 passed | Both format checks passed, no snapshots changed |
-| Telemetry choice | Both builds, 0 warnings/errors | 10 passed | 18 passed | Both format checks, four schemas, site and Index passed |
-| Request preparation | Unit build, 0 warnings/errors | 19 passed | Unchanged | Both format checks and Index passed, no snapshots changed |
+| Increment                   | Build                                | Unit       | Integration | Other checks                                              |
+| --------------------------- | ------------------------------------ | ---------- | ----------- | --------------------------------------------------------- |
+| Tool-owned contracts        | 0 warnings/errors                    | Unchanged  | 66 passed   | Both format checks, site and Index passed                 |
+| Lifecycle models            | 0 warnings/errors                    | 139 passed | 52 passed   | Both format checks and four schemas passed                |
+| Linux source fix            | 0 warnings/errors                    | 48 passed  | Unchanged   | Both format checks passed                                 |
+| Generic mechanics           | Both builds, 0 warnings/errors       | 18 passed  | 79 passed   | Both format checks passed, no snapshots changed           |
+| Supply recipes              | Both builds, 0 warnings/errors       | 7 passed   | 8 passed    | Both format checks, four schemas, site and Index passed   |
+| Store foundation            | Both builds, 0 warnings/errors       | 8 passed   | 21 passed   | Both format checks passed, no snapshots changed           |
+| Backup reporting and Repair | Both builds, 0 warnings/errors       | 1 passed   | 23 passed   | Both format checks, site and Index passed                 |
+| Store publication           | Integration build, 0 warnings/errors | Unchanged  | 19 passed   | Both format checks passed, no snapshots changed           |
+| Execution records           | Both builds, 0 warnings/errors       | 6 passed   | 18 passed   | Both format checks passed, no snapshots changed           |
+| Telemetry choice            | Both builds, 0 warnings/errors       | 10 passed  | 18 passed   | Both format checks, four schemas, site and Index passed   |
+| Request preparation         | Unit build, 0 warnings/errors        | 19 passed  | Unchanged   | Both format checks and Index passed, no snapshots changed |
 
 Every listed run had zero final failures and skips. The supply Unit selection is `*ToolArtifactSourceTests`. Its initial failure used a synthetic non-GitHub repository in the positive GitHub scenario. The fixture was corrected before the final run. The mechanics build corrected one xUnit analyzer violation. Neither was a flake.
 
@@ -163,8 +164,26 @@ The deadline checkpoint leaves these required parts unfinished:
 
 Concrete CodeGraph and Codebase Memory definitions and adapters are excluded from this branch as directed. Tool Exec stays proposed only. No push was made. The original and rebased reporting stashes are kept as described under Resume.
 
-## Not decided yet
+## Superseded questions
 
-- Whether Choose switches agent integrations through declared tool commands or changes role metadata only. A user question is pending. Don't implement the dependent flow before the answer.
-- Whether exact reviewed unused Node launcher links can be omitted from Unix archives. The current spec rejects archive links. Upstream packaging creates npm/npx links. A user question is pending. Don't silently relax extraction.
-- Proposed `open-forge tool exec <tool> -- <args>` remains specification only.
+The earlier Choose question is answered. Keep the specified checked integration switch and test it with a second synthetic provider. Tool Run is required V1 behavior. General private Node runtime preparation waits for the maintainer, including the Unix launcher-link question. The latest narrowed step covers the rebase, specification and shared source contracts only.
+
+## Final decision update
+
+The final 2026-11-13 direction is recorded in the external-tools design with issue #23 history links, the Tool Run contracts, affected tool contracts, workspace-state decision and admission maintenance. V1 admits CodeGraph only. Codebase Memory stays blocked research. Tool Run replaces the proposed Tool Exec. Team install restores declared pins from the lock. Origin, optional components, declared command rewrites and conditional role lines are required. The help pointer is withdrawn and no pointer or template commit was made.
+
+Backup branch `backup/tool-command-before-comment-links-20261113-1808` keeps the pre-rebase head. Rebase preserved the newer encoded Repair relink and weak-label rules plus Tool backup restoration. Conflicting generated captures and default-layout bytes are regenerated from this tree. The original stash stays untouched. No push was made.
+
+The current implementation still lacks Tool Run, its fast verified dispatch and missing-tool installation offer, origin fields and grouping, generic command rewrites and drift reports, optional-component choices, bare team install and active-role managed-block lines. These are required continuation work, along with the five writers already listed.
+
+## Narrowed qualification
+
+Done: Rebase onto `75f6677ad` is complete. The checkpoint index keeps Comment Links and Tool Command. The Repair prose conflict keeps encoded relinks, weak evidence labels and Tool backup restoration. Generated values were refreshed from fresh output. The default-layout fixture comes from an isolated install with all account stores redirected. It contains 23 files. Status accepts 56 refreshed captures for payload measurements and the added CLI Skill Tool reference. Tool help accepts three captures for the final Run, registration, consent and removal wording.
+
+Now: The specification and contracts record the final decisions with issue history. Runtime command work stays pending. The shared source contract increment follows this documentation checkpoint. No Tool writer or Tool Run binding is added in this step.
+
+Next: Finish the shared model and interface increment, then hand off Dispatch, Registration and Writers as described in the Tool lane contracts. Concrete CodeGraph definitions and adapters follow on their separate branch. Codebase Memory has no V1 definition, Skill or public tool page. Private Node preparation waits for the maintainer. Add no help pointer.
+
+Blocker: None for the narrowed step. Full managed and Native AOT gates belong to CI. No push is authorized.
+
+The fresh Release Integration and EndToEnd builds pass without warnings or errors. Focused Integration verification passes 22 cases, with zero skips. This includes the five former snapshot failures, the unaffected outside and included-file captures, Tool backup Repair and two encoded Repair relink cases. Both published default-layout compatibility cases pass. Evidence is under `artifacts/tool-command/narrow-*`. The writing review closes R24-R33. Both required format checks pass. The documentation site build passes with the existing Node localStorage warning. Index preview has zero effects and findings. Changed relative link destinations resolve.

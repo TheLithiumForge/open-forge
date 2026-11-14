@@ -5,6 +5,7 @@ open-forge:
 ---
 
 # tool inspect interface
+
 `tool inspect` is a read command that explains one exact tool definition without launching it.
 
 It shows artifacts, destinations, runtime, processes, consent, compatibility, trust limits and readable installed facts. Show official sources, pinned hashes, signature and attestation requirements and the saved telemetry choice. Show resolved install, private runtime, cache, state and workspace paths, or a cause when unavailable. Candidate definitions can be examined without being enabled. There is no separate open-path command.
@@ -33,19 +34,19 @@ Malformed IDs, unknown IDs and absent exact versions are `invalid-input`. Unread
 
 Each code names one failed observation. The message carries its exact cause:
 
-| Code | Status | Situation | Message |
-| --- | --- | --- | --- |
-| `tool-inspect.invalid-input` | `invalid-input` | A bound operand or local flag is invalid | `<cause>` |
-| `tool-inspect.workspace-unavailable` | `blocked` | The exact workspace cannot be selected | `<cause>` |
-| `tool-inspect.settings-unavailable` | `incomplete` | Settings cannot be safely read or decoded | `<cause>` |
-| `tool-inspect.lock-unavailable` | `incomplete` | The required receipt lock cannot be read | `<cause>` |
-| `tool-inspect.receipt-missing` | `incomplete` | A recorded install has no matching receipt | `<cause>` |
-| `tool-inspect.receipt-mismatch` | `completed-with-warnings` | The settings pin differs from the receipt pin | `<cause>` |
-| `tool-inspect.cancelled` | `cancelled` | The read was cancelled | `<cause>` |
-| `tool-inspect.read-unavailable` | `incomplete` | A required local read failed | `<cause>` |
-| `tool-inspect.definition-invalid` | `invalid-input` | The definition or exact pin selection is invalid | `<cause>` |
-| `tool-inspect.pin-not-supported` | `blocked` | The release does not support the exact tuple or adapter revision | `<cause>` |
-| `tool-inspect.catalogue-unavailable` | `incomplete` | Required definition source bytes cannot be read | `<cause>` |
+| Code                                 | Status                    | Situation                                                        | Message   |
+| ------------------------------------ | ------------------------- | ---------------------------------------------------------------- | --------- |
+| `tool-inspect.invalid-input`         | `invalid-input`           | A bound operand or local flag is invalid                         | `<cause>` |
+| `tool-inspect.workspace-unavailable` | `blocked`                 | The exact workspace cannot be selected                           | `<cause>` |
+| `tool-inspect.settings-unavailable`  | `incomplete`              | Settings cannot be safely read or decoded                        | `<cause>` |
+| `tool-inspect.lock-unavailable`      | `incomplete`              | The required receipt lock cannot be read                         | `<cause>` |
+| `tool-inspect.receipt-missing`       | `incomplete`              | A recorded install has no matching receipt                       | `<cause>` |
+| `tool-inspect.receipt-mismatch`      | `completed-with-warnings` | The settings pin differs from the receipt pin                    | `<cause>` |
+| `tool-inspect.cancelled`             | `cancelled`               | The read was cancelled                                           | `<cause>` |
+| `tool-inspect.read-unavailable`      | `incomplete`              | A required local read failed                                     | `<cause>` |
+| `tool-inspect.definition-invalid`    | `invalid-input`           | The definition or exact pin selection is invalid                 | `<cause>` |
+| `tool-inspect.pin-not-supported`     | `blocked`                 | The release does not support the exact tuple or adapter revision | `<cause>` |
+| `tool-inspect.catalogue-unavailable` | `incomplete`              | Required definition source bytes cannot be read                  | `<cause>` |
 
 ## Conformance
 
@@ -59,3 +60,7 @@ Required cases are:
 - Rejection of consent flags, side effects and child processes.
 
 The [behavior](behavior.md) defines passive resolution.
+
+## Final V1 requirements
+
+Show the definition's origin and third-party consent disclosure. List each installer-owned entry, its exact command rewrite, optional component, saved or required choice and resolved Open Forge launch path. Explain telemetry, hook behavior and each unavailable path without starting a process.
