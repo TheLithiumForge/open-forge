@@ -90,14 +90,130 @@ The report can be used to compile complete entries and run both Windows journeys
 
 ## Progress
 
-Done: Packet prepared from the accepted design.
-Now: Awaiting the assigned Worker Watch run.
-Next: Verify the execution base and complete the ordered steps.
-Blocker: None identified before implementation.
+Done: The coordinator accepted the two typed entries, twelve reviewed pins, native vectors, output declarations and 28 semantic Unit cases for staged integration. Added `CodeGraphDefinitions.NoDownloadValue` and used it in both environment declarations and their technical-value assertions. The fresh managed build, 13 affected CodeGraph tests and both .NET checks pass.
+Now: The checked catalogue slice uses base `6d007254d5ca2937f4874ba5a93161f585814d8c` and the same 19 assigned files. The coordinator authorized its local conventional commit. Root integration, native journeys and final user docs are pending. No native tool execution ran.
+Next: Return the local commit's full SHA for Root integration, then resume real journeys and the final user docs pass after Root composition lands. The later exact successful journey versions must populate `TestedVersions`.
+Blocker: None for this catalogue candidate. No additional ABI gap was found. `MinimumOpenForgeVersion` is provisionally `0.9.0-beta.19` until the maintainer replies. Package versions are unchanged.
 
 ## Evidence
 
-No implementation or focused tests have run for this lane yet.
+The catalogue continuation uses the shared contract introduced at `09bcb9ebdb89abed343d4c228283a8ee5aeba7c9` and keeps the prior evidence, including supplementary run `r_fec5e0e39de0`. The reviewed commit continuation uses current base `6d007254d5ca2937f4874ba5a93161f585814d8c`.
+This pass handles static recipe data used by a local developer CLI. An incorrect declaration could affect later account or project writes, so focused Unit tests cover the exact pins, native vectors, bounds, home policies, additions and output declarations. Git keeps this code reversible. No native effects run in these tests.
+The BCL and protected shared models cover this data. Exceptional machinery: none. Shared setup/config/record behavior stays with A through D. A supplies private Node pins to the factory. This slice selects a managed solution build and only the new catalogue test classes. The full managed and Native AOT gates stay with CI.
+
+The first research run started clean at `2e517348ef19e34afa6297c7efa7d0db5451b45c`. The first catalogue candidate used `09bcb9ebdb89abed343d4c228283a8ee5aeba7c9`. The coordinator fast-forwarded the idle worktree to `6d007254d5ca2937f4874ba5a93161f585814d8c`, with all 19 candidate files kept.
+The [research report](../evidence/upstream-recipes.md) records official URLs, publication dates, twelve hashes, native vectors, native file inventories, additions, model gaps and later Windows journeys.
+The report is one new routed file for the integrator's Index pass. Common catalogues and parent state are unchanged.
+
+The first-run checks are:
+
+- `npm ci` passed. It reported 9 moderate and 1 high advisory. No dependency files changed.
+- `dotnet build OpenForge.Cli.slnx --configuration Release -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1` passed on the managed target with zero warnings and errors. Build artifacts are under `artifacts/bin/`.
+- `npm run check:dotnet:whitespace` passed with exit 0.
+- `npm run check:dotnet:style` passed with exit 0.
+- The focused Integration command below passed 12 tests, with zero failures, skips and warnings. It covers the packet's existing documentation source set. The report's source-list addition is proposed to the integrator, so its links also have a separate production References check.
+- A source-only checksum cross-check compared both downloaded checksum files, GitHub release asset digests and the report. All 12 selected assets matched. Receipt: `artifacts/task90-lane-e/upstream-checks.json`.
+- Prettier, final production References reports and LF/Git whitespace results are included in the final check receipt under `artifacts/task90-lane-e/`.
+
+The exact focused command is:
+
+```powershell
+dotnet run --project src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-build --no-restore -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true -- --filter-class OpenForge.Cli.IntegrationTests.Framework.Documents.RepositoryDocumentation.ToolSetupDocumentationTests --minimum-expected-tests 12 --fail-warns on --fail-skips on --no-ansi --progress off --results-directory artifacts/test-results/task90-lane-e-final --report-xunit-trx --report-xunit-trx-filename lane-e-documentation.trx
+```
+
+The initial test invocation used unsupported `--report-trx` and exited before running tests. The corrected invocation above passed and produced `artifacts/test-results/task90-lane-e-final/lane-e-documentation.trx` with 12 passed, zero failed and zero skipped.
+No test source, snapshot or fixture changed. No full suite or Native AOT run was selected.
+No upstream binary was downloaded or installed, and no native setup, uninstall or telemetry command ran.
+The earlier executable checks above weren't rerun for this Markdown-only continuation.
+The report replaces the former confirmed-uninstall journey blocker with the maintainer's injected production-operation test choice.
+No upstream binary changes, registry test keys, protected model edits, parent Task edits or other packet edits were made.
+
+The continuation's focused source evidence is:
+
+- CodeGraph v1.6.2 `docs/design/telemetry.md:112-150`, `src/telemetry/index.ts:211-255,402-426` and `src/bin/codegraph.ts:228-250,2792-2830` establish the stored file, default, field validation, status output and read-only behavior. The report separates native malformed-file fallback from the proposed Open Forge blocking rule and inherited overrides.
+- Node v24.16.0 `doc/api/os.md:206-220` establishes USERPROFILE/current-profile resolution on Windows and HOME/effective-UID resolution on POSIX.
+- CodeGraph v1.6.2 `scripts/build-bundle.sh:99-150` and `scripts/npm-shim.js:44-107` establish executable and JS paths, the two ordered runtime flags and host-PID forwarding. These are tagged packaging facts, not an archive-execution claim.
+- CBM v0.12.1 `src/cli/cli.c:10980-11098,11298-11347` establishes the complete `agent.install.plan.v1` object, file-array overlap, hook object fields and the read-only early exit. The report records exact legacy and profile supplements with source links at each path rule.
+- Supplementary run `r_fec5e0e39de0` reported 20 registry profiles. The catalogue pass rechecked the published CBM v0.12.1 `src/cli/agent_clients.c` initializer and counted 19 records. The array-bound enum token is excluded. `src/cli/cli.c:1597-1671,1752-1759` limits old Skill cleanup to empty directories, correcting the earlier broad wording.
+
+No CodeGraph or CBM command, binary download, archive extraction, account file read, PATH edit or registry action ran in this continuation.
+
+The continuation's document checks are:
+
+- `node node_modules/prettier/bin/prettier.cjs --check .agents/memory/working/cli-development/tool-setup/packets/lane-e.md .agents/memory/working/cli-development/tool-setup/evidence/upstream-recipes.md` passes for both files.
+- The focused Markdown AST check passes for 2 files, 1 fenced JSON object, 4 local links and 33 fetched tagged-source line ranges. It also passes LF, trailing-whitespace and packet-section checks. Packet edits stay within Progress and Evidence.
+- `git diff --check` passes. HEAD is unchanged at the execution base. The fresh document receipt is `artifacts/task90-lane-e/continuation-document-checks.json`.
+
+The catalogue candidate adds these primary entry points:
+
+- `ToolCatalogueFactory.Create(IReadOnlyList<ToolPrivateNodeSpec> nodeRuntimes)` returns the shared `ToolCatalogue`. F supplies A's approved runtime list. The factory copies it and builds the ordinal frozen entry dictionary. No private Node pin is defined by E.
+- `CodeGraphCatalogueEntry.Create()` returns the CodeGraph `1.6.x` profile from `1.6.2`, with the Node native home policy, two channels, six pins, typed bundled Node metadata, native local setup and stored telemetry metadata.
+- `CodebaseMemoryCatalogueEntry.Create()` returns the Codebase Memory `0.12.x` profile from `0.12.1`, with HomeThenUserProfile, GitHub only, six pins, native plan plus default all-client discovery and separate uninstall declarations.
+
+Both profiles use provisional first shipping build `0.9.0-beta.19`. Their `TestedVersions` arrays are empty until native journey evidence exists. The minimum reviewed patches and the twelve exact archive pins are complete.
+The report's Catalogue factory and Client bindings sections give F the composition details. File-valued `<id>-config` bindings and directory-valued client roots must match the native overrides and reviewed path choices before setup.
+CodeGraph has only telemetry off, archive union and conditional index-ignore additions. CBM has only its marked archive-ignore addition. Native outputs don't become Open Forge config changes.
+Cline v0.12.1 withholds new context hooks and removes only recognized existing adapters. The entry declares its four platform-specific legacy hook paths. No upstream setup vector or watcher default changed.
+
+The first catalogue candidate's managed checks were:
+
+| Check                             | Result                                      | Artifact                                                                                                       |
+| --------------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Release solution build            | Passed, zero warnings and errors            | `artifacts/bin/`, final build duration `00:04:49.51`                                                           |
+| `ToolCatalogueTests`              | 3 passed, zero failed, skipped or warnings  | `artifacts/test-results/task90-lane-e-catalogue/ToolCatalogueTests/ToolCatalogueTests.trx`                     |
+| `CodeGraphCatalogueTests`         | 13 passed, zero failed, skipped or warnings | `artifacts/test-results/task90-lane-e-catalogue/CodeGraphCatalogueTests/CodeGraphCatalogueTests.trx`           |
+| `CodebaseMemoryCatalogueTests`    | 12 passed, zero failed, skipped or warnings | `artifacts/test-results/task90-lane-e-catalogue/CodebaseMemoryCatalogueTests/CodebaseMemoryCatalogueTests.trx` |
+| `npm run check:dotnet:whitespace` | Passed, exit 0                              | Final receipt                                                                                                  |
+| `npm run check:dotnet:style`      | Passed, exit 0                              | Final receipt                                                                                                  |
+
+The exact final build command is:
+
+```powershell
+dotnet build OpenForge.Cli.slnx --configuration Release -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1
+```
+
+The exact focused commands are:
+
+```powershell
+dotnet run --project src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-build --no-restore -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true -- --filter-class OpenForge.Cli.Core.UnitTests.Framework.Tools.Catalogue.ToolCatalogueTests --minimum-expected-tests 3 --fail-warns on --fail-skips on --no-ansi --progress off --results-directory artifacts/test-results/task90-lane-e-catalogue/ToolCatalogueTests --report-xunit-trx --report-xunit-trx-filename ToolCatalogueTests.trx
+dotnet run --project src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-build --no-restore -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true -- --filter-class OpenForge.Cli.Core.UnitTests.Framework.Tools.Catalogue.CodeGraphCatalogueTests --minimum-expected-tests 13 --fail-warns on --fail-skips on --no-ansi --progress off --results-directory artifacts/test-results/task90-lane-e-catalogue/CodeGraphCatalogueTests --report-xunit-trx --report-xunit-trx-filename CodeGraphCatalogueTests.trx
+dotnet run --project src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-build --no-restore -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true -- --filter-class OpenForge.Cli.Core.UnitTests.Framework.Tools.Catalogue.CodebaseMemoryCatalogueTests --minimum-expected-tests 12 --fail-warns on --fail-skips on --no-ansi --progress off --results-directory artifacts/test-results/task90-lane-e-catalogue/CodebaseMemoryCatalogueTests --report-xunit-trx --report-xunit-trx-filename CodebaseMemoryCatalogueTests.trx
+```
+
+`npm ci` ran again successfully without a dependency-file change. Its advisory counts were unchanged.
+The new tests are pure Unit checks of catalogue facts and synthetic runtime injection. They read no real per-user store and launch no upstream process. No rendered-text assertion or snapshot regeneration was added. No full suite, Native AOT gate, Doctor, user docs pass or real journey ran.
+No flake was observed. The fresh final receipt, source hashes, local-link results and exact changed-file list are under `artifacts/task90-lane-e-catalogue/`.
+One new routed Markdown file still needs the integrator's Index pass. Protected Models, schemas, composition, parent Task and other packets are unchanged. No shared contract commit, package version bump, push or GitHub mutation was made.
+
+The coordinator accepted the staged catalogue candidate, then requested one grouped fix before its local commit.
+`CodeGraphDefinitions.NoDownloadValue` now defines the enabled value for `CODEGRAPH_NO_DOWNLOAD`.
+Both production environment declarations and both technical-value assertions use it.
+The reviewed candidate comparison shows only those three C# files and the two assigned Markdown files changed since review. The other fourteen candidate files are byte-identical.
+No protected type changed. The optional native environment facts added at current base were read before the fix.
+
+The fresh commit-continuation checks are:
+
+| Check                             | Result                                          | Artifact                                                                                          |
+| --------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Release solution build            | Passed, zero warnings and errors, `00:07:03.68` | `artifacts/task90-lane-e-commit/build.log`                                                        |
+| `CodeGraphCatalogueTests`         | 13 passed, zero failed, skipped or warnings     | `artifacts/test-results/task90-lane-e-commit/CodeGraphCatalogueTests/CodeGraphCatalogueTests.trx` |
+| `npm run check:dotnet:whitespace` | Passed, exit 0                                  | `artifacts/task90-lane-e-commit/dotnet-whitespace.log`                                            |
+| `npm run check:dotnet:style`      | Passed, exit 0                                  | `artifacts/task90-lane-e-commit/dotnet-style.log`                                                 |
+
+The build uses the exact managed build command recorded above.
+The only fresh test selection is:
+
+```powershell
+dotnet run --project src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-build --no-restore -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true -- --filter-class OpenForge.Cli.Core.UnitTests.Framework.Tools.Catalogue.CodeGraphCatalogueTests --minimum-expected-tests 13 --fail-warns on --fail-skips on --no-ansi --progress off --results-directory artifacts/test-results/task90-lane-e-commit/CodeGraphCatalogueTests --report-xunit-trx --report-xunit-trx-filename CodeGraphCatalogueTests.trx
+```
+
+The earlier 3 `ToolCatalogueTests` and 12 `CodebaseMemoryCatalogueTests` results stay green for their unchanged cases. They weren't rerun in this continuation.
+The Markdown format, production References, LF, packet-section and Git whitespace receipts are under `artifacts/task90-lane-e-commit/`.
+The local commit covers only the nineteen assigned files. Its canonical receipt records the final source hashes and commit identity.
+`TestedVersions` stays empty in both entries. The later entry update must add each exact version with a successful native journey.
+The first shipping metadata stays provisionally `0.9.0-beta.19`. No package version changed.
+The next documentation continuation must also read `D:/Repositories/open-forge-worktrees/tool-setup/artifacts/tool-setup/dispatch/documentation-voice.md`.
+No native journey, full user docs pass, payload snapshot update, full test suite, push, merge or GitHub action ran in this continuation.
 
 ## Divergences
 

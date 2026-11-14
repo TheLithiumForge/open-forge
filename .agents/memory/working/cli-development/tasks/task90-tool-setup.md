@@ -57,7 +57,7 @@ Tools add no workspace state, lease or recovery dependency under `.open-forge-st
 ## Checkpoint
 
 Done: Recorded C1 through C7 and committed the frozen packets in 2e517348e. Created five isolated worktrees and verified all five initial workers alive after dispatch.
-Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. The reviewed shared planning contract builds with zero warnings and errors. A, B and D have checked partial returns. C is verifying its first pass.
+Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. Shared planning and native observation contracts are committed. Five implementation lanes are running. F returned the Root map. The catalogue slice is integrated. Core command integration is pending.
 Next: Review the complete implementation candidates, commit and integrate their branches, then complete E's journeys and docs.
 Blocker: No implementation blocker after this contract increment. The first shipping Open Forge version is asked of the maintainer.
 
@@ -163,7 +163,7 @@ This increment changes shared types and defining documents. It adds no command b
 
 The shared planning contract is committed as `09bcb9ebdb89abed343d4c228283a8ee5aeba7c9`.
 The coordinator fast-forwarded idle A, B, D, E and F worktrees to that base, keeping their changes.
-C is still finishing its initial checks and hasn't been changed underneath its worker.
+C completed its first pass, then received the shared contract while idle.
 The continued runs use managed session `s_b74431d77d3a`:
 
 | Lane | Run              | Scope                                                    |
@@ -191,3 +191,36 @@ The additional shared types built with zero warnings and errors.
 The first focused invocation used an incorrect class name and the minimum-count gate rejected zero selected tests.
 The corrected full class name ran all twelve documentation tests successfully.
 Both required .NET checks and Prettier passed. The override stays on the local build invocation.
+
+## Current dispatch
+
+The home and native override contract is committed as `6d007254d5ca2937f4874ba5a93161f585814d8c`.
+C continued in run `r_bd49f34db450` after its idle worktree advanced to that commit.
+Its grouped review covers contract adaptation, native inventory parsing, home alignment, deferred construction and read findings.
+F returned `PREPARATION_READY` for run `r_810ecdfafa97`.
+Its Root map records constructor and composition prerequisites. F's implementation starts after the checked lanes merge.
+A, B, D and E are still running against `09bcb9ebd` and receive the optional observation addition when idle.
+
+The read-only issue snapshot includes the body and all nine comments.
+The latest comment is still the round-2 summary `issuecomment-6868316792` from 14 November 2026.
+The review bundle and draft fresh-review packet are kept under `artifacts/tool-setup/` until dispatch.
+No GitHub content was changed.
+
+## Catalogue integration
+
+E's reviewed catalogue slice is committed as `1ec6ad921943b881f819f3a8eb66b4796eeabacb` in continuation run `r_a9c85c87d42c`.
+It contains nineteen assigned files, twelve pinned assets, unchanged native recipes and twenty-eight focused Unit cases.
+The final symbolic no-download value update passed a fresh build, thirteen affected cases and both .NET checks. The other fifteen accepted cases were unchanged.
+Both tested-version arrays stay empty until actual native journeys succeed.
+The metadata minimum is still provisional `0.9.0-beta.19`. Release files weren't bumped.
+The combined catalogue tree passed its Release build with zero warnings and errors, all twenty-eight new catalogue tests, twelve documentation tests and both required .NET checks. The coordinator closes the no-fast-forward merge after those checks.
+The [upstream recipe report](../tool-setup/evidence/upstream-recipes.md) gives F the exact client bindings.
+
+Review A-R1 queues Corepack read-probe controls from its official documentation.
+Review D-R2 separates project uninstall with incidental account telemetry from destructive account removal.
+D-R3 checks the callable parameter limit. D-R4 checks minimum Open Forge preflight enforcement.
+These grouped reviews wait for the corresponding worker to return idle.
+
+C returned the full grouped continuation with seventy-two focused tests, a clean build, both .NET checks and six reviewed synthetic Imprint baselines.
+F reviews that frozen candidate in run `r_aeb323402330` before its commit continuation.
+Final payload snapshots and native journeys are still pending.
