@@ -9,7 +9,7 @@ open-forge:
 Tool list is an operation that lists catalogue tools and declarations.
 For example, codeGraph and Codebase Memory appear in ID order. Rune has no V1 row.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 The [Interface](interface.md) defines inputs and reports.
 The [Behavior](behavior.md) defines execution.

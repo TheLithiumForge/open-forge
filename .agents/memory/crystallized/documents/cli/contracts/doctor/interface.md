@@ -7,13 +7,17 @@ open-forge:
 
 # Doctor Interface Contract
 
-## Planned tool checks
+Doctor is a command that diagnoses workspace issues and gives next steps.
+For example, a missing declared tool gets an Install next step without a workspace change.
+
+## Tool checks
 
 The round-2 Tool checks report missing declared tools, unsupported detected versions, exact lock differences, additive config drift and unavailable native machine facts.
 A missing tool offers `open-forge tool install`.
+When settings declare no tools, skip Tool checks before resolving the Tool home or reading machine state.
 Use the same bounded probes as Tool Status, including CodeGraph's no-download probe environment.
 These checks don't configure tools, create Tool state or acquire a Tool lease.
-The [Tool contracts](../tool/_tool.md) define the planned read operations.
+The [Tool contracts](../tool/_tool.md) define the read operations.
 
 The local-reference domain also checks [comment links](../shared/source-references/interface.md#comment-links) in eligible workspace files. Missing paths and fragments keep their existing finding kinds. `reference.legacy-anchor` reports an older ID-style target with suggested file paths when available. Git file moves, heading changes, section content matches and unique slugs retain separate evidence for review.
 

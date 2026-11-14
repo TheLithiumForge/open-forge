@@ -154,6 +154,8 @@ The [entry review checklist](../../maintenance/tools.md) controls entry evidence
 
 Run a build and only tests touched or created by the lane.
 Run both `npm run check:dotnet:whitespace` and `npm run check:dotnet:style` before every commit.
+Keep both command exit codes and bind their receipts to the final source before the commit.
+Run them again after any source correction. The integrator repeats both on each merged state.
 A local NU1903 override stays on the invocation.
 Use reviewed Imprint snapshots for literal output.
 Keep LF line endings and separate test tiers.
@@ -216,3 +218,7 @@ The maintainer decided C1 through C7 on 14 November 2026:
 
 The former Q1 through Q14 are resolved by R2-01 through R2-16 and C1 through C7.
 No C1 through C7 question stays open.
+
+The maintainer approved I1's bounded native-config reader and the minimum Open Forge version `0.9.0-beta.19` in the task conversation on 14 November 2026.
+B's generic allow-listed config changes also cover turning off declared behavior, with telemetry as the first disclosed V1 case.
+E documents those changes and the actual native installer effects separately.

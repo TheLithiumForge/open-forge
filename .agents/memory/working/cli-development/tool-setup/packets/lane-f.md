@@ -48,7 +48,7 @@ Run npm ci in your worktree. For the later site pass also run npm ci in src/docu
 Use a managed solution build, then only tests you touch or create. Never run complete Unit, Integration, EndToEnd or native suites, unrelated test classes or build:native. CI is the full gate. Before a commit run npm run check:dotnet:whitespace and npm run check:dotnet:style.
 
 A local build can use:
-    dotnet build OpenForge.Cli.slnx --configuration Release -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1
+dotnet build OpenForge.Cli.slnx --configuration Release -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1
 Never commit that local NU1903 override. Never change PATH to make builds pass.
 
 Use independently selectable tests with the right tier. For each touched class run the corresponding managed test project with --filter-class <qualified-class>, --minimum-expected-tests <actual-count>, --fail-warns on, --fail-skips on, --no-ansi and --progress off. Name the exact command, counts, artifact and result in your receipt. New tests use synthetic entries and owned temporary files, homes and processes. Never use a real per-user store. Avoid production test switches that alter semantics.
@@ -123,10 +123,10 @@ Return PROPOSAL_READY, uncommitted, then wait for the coordinator's continuation
 
 ## Progress
 
-Done: The coordinator accepted the 26-case ABI continuation and prior 49-case evidence, clean Release build and both required .NET checks. All ten provider files stay unchanged. Recorded E's confirmed F-H1 and F-H2 as unresolved corrections before final acceptance.
-Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. Intermediate reviewable home-provider base with F-H1 and F-H2 unresolved. Full native syntax support and final acceptance aren't complete.
-Next: Await the dated contract increment and E's exact functions, licence and fixture plan in r_0a42fc165fa0. F keeps provider and parser implementation. Central Root stays deferred to a separate assignment.
-Blocker: F-H1 needs supported JSON5 syntax and F-H2 needs zero-length config fallback. Include precedence is correct. Parser implementation waits for the dated contract increment.
+Done: The coordinator accepted F-H1 and F-H2 after all 176 cases, the clean managed build, both mandatory .NET checks and E's focused review with no material conformance gap or NR1 finding. The six frozen source hashes match the accepted checkpoint.
+Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. Accepted F-H1/F-H2 correction, with the local commit continuation authorized. C handles central Root composition on the stable provider API.
+Next: Return the full commit SHA and source manifest. Whole-feature adherence review follows complete integration and journeys.
+Blocker: None for F-H1/F-H2. Root integrates its pending complete MIT notice before shipping.
 
 ## Evidence
 
@@ -329,6 +329,71 @@ Git whitespace checks cover the 20 non-patch files. The unchanged historical uni
 The commit includes all 21 expected existing F files. The full SHA and file list are returned after Git creates the commit.
 This is an intermediate reviewable base, not full native syntax support or final acceptance.
 No central Root, A host, protected type, peer file, parent Task, parser implementation, push, merge or payload regeneration is part of this increment.
+
+### Native reader preflight
+
+The current base is `f2200252bfff42c2b260df7375b92a468cf63263` with a clean initial worktree.
+I1 accepts the smallest bounded native-format port after ordinary readers failed the required outcomes.
+This read-only local developer-file adapter reuses the bounded eight MiB file read and physical paths. Git keeps prior source and owned fixtures keep test files separate from real stores.
+The three private support files port only validation, fixed byte-key lookup and selected string decoding. Numbers are skipped without conversion. Strict UTF-8 validation and codepoint encoding use BCL support.
+No package, writer, include expansion, interpreter, native bridge or public parser API is added.
+The Integration project is required by its existing Root reference. One new pure-reader class and the changed owned-file class cover syntax and caller effects at that allowed tier.
+Full suites and Native AOT stay for CI. No live native process or user store is used.
+E's complete source, function, licence and fixture plan is `evidence/native-config-reader.md` in the read-only peer E tree. The current design's Native config reader section and I1 define this implementation.
+Root keeps the upstream MIT notice in LICENSE before shipping. Each derived source identifies the tagged native path and that notice.
+Only the six assigned source and test files and F's packet and two reports can change.
+
+### Native reader checks
+
+F-H1 and F-H2 are fixed in the uncommitted candidate on `f2200252bfff42c2b260df7375b92a468cf63263`, tree `4ac0207e0f6deb51620f3f8cc118aa770ee3048d`.
+The three new private files port native document validation, fixed byte-key lookup and selected string decoding. The caller keeps existing home, environment, include and profile precedence.
+Key matching and value decoding keep separate native escape branches. Unrelated values and numeric tokens are validated and skipped without conversion. Strict UTF-8 validation and codepoint encoding use BCL support.
+The caller's eight MiB file bound and the native 64-depth grammar are covered through their production constants.
+The syntax cursor stays in its one assigned file because lexical and recursive validation share native byte offsets and depth. The one source-mapped fixture oracle serves both focused classes from their nearest shared test scope.
+The obsolete BCL syntax-limit claim is removed from the current receipt. Its unquoted missing-path case now has native missing coverage instead of an unavailable expectation.
+All provider constructors and immutable fact fields stay unchanged. C keeps central Root composition on that API.
+
+Final managed Windows x64 checks use SDK `10.0.101`:
+
+- `dotnet build OpenForge.Cli.slnx --configuration Release --no-restore -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1` exits zero with zero warnings and errors in `00:02:02.02`. Log: `artifacts/tool-home-roots/native-reader/build-corrected.txt`.
+- `dotnet run --project src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-build --no-restore -- --filter-class OpenForge.Cli.IntegrationTests.Composition.Shared.ToolHomes.Shared.OpenClaw.ToolOpenClawConfigurationReaderTests --minimum-expected-tests 151 --fail-warns on --fail-skips on --no-ansi --progress off` passes all 151 selected and executed cases. Log: `artifacts/tool-home-roots/native-reader/ToolOpenClawConfigurationReaderTests.txt`.
+- `dotnet run --project src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-build --no-restore -- --filter-class OpenForge.Cli.IntegrationTests.Composition.Shared.ToolHomes.ToolClientConfigurationTests --minimum-expected-tests 25 --fail-warns on --fail-skips on --no-ansi --progress off` passes all 25 selected and executed cases. Log: `artifacts/tool-home-roots/native-reader/ToolClientConfigurationTests.txt`.
+- Both execution commands exit zero with zero failures, warnings and skips. The total is 176. Filtered `--list-tests --no-ansi --progress off` discovery confirms the same 151 and 25 counts in `reader-discovery.txt` and `configuration-discovery.txt` in the same artifact folder.
+- `npm run check:dotnet:whitespace` and `npm run check:dotnet:style` exit zero on the final source. Logs: `artifacts/tool-home-roots/native-reader/whitespace.txt` and `style.txt`.
+- The seven build, package and formatting inputs still match the earlier `npm ci` and restore hashes. Dependency setup isn't repeated.
+- Prettier, local links and anchors, LF, whitespace, packet section limits and the exact nine-file assignment pass before return. The packet's supplied build indentation stays its sole formatter difference outside Progress and Evidence.
+
+The first build finds five fixture annotation errors after a reflection-dependent string serializer call triggers formatter fixes. The fixture now uses `JsonEncodedText.Encode`, and all generated AOT attributes and reflection-dependent serializer calls are removed.
+The corrected build and first focused executions pass. No test flake occurs.
+The final Root assembly is `artifacts/bin/OpenForge.Cli/release/OpenForge.Cli.dll`, SHA-256 `8f38b24c22c696923d4cde8d9cf3a4e943a2db71ec589a23fd99fbce3beb1871`.
+The final Integration assembly is `artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.dll`, SHA-256 `2610bbb73a637d3e2faa72d36909746634d9a798a78bbf383bf047b126b7918b`.
+Its Root copy matches the built Root assembly byte for byte.
+The native reader artifact folder keeps `changed-files.txt` for all nine candidate paths, `source-sha256.txt` for the six assigned source files, `configuration-sha256.txt` for seven unchanged inputs, `test-artifact-sha256.txt` for both binaries, `upstream-sha256.txt` for the two checked tagged sources and `report-sha256.txt` for the three final Working files.
+The final native-home receipt SHA-256 is `3e791faab40d08e7c106614e00ef2b51ec4b1b841dcb5d5f0b0b17c58fb9ea4d`.
+The final Root map SHA-256 is `3d91a7224880ce2b8469948284b65912e1bca8f3705724ff1d42df7f13980b1e`.
+No new routed Markdown file is added.
+Only the six assigned source and test files and the three assigned Working files change. Protected models and contracts, LICENSE, central Root, A hosts, peers, other packets and the parent Task stay unchanged.
+Root appends the complete upstream MIT notice before shipping. Every derived production source identifies the tagged native source and that notice. This remains a Root integration task.
+No native tool, real user store, process host, network request, persistent PATH or registry write, profile edit, package, writer, interpreter or native bridge is used by the provider or tests.
+No full suite, Native AOT, Doctor, payload fixture or snapshot regeneration, commit, push, merge or integration runs.
+Return READY_FOR_REVIEW, uncommitted. Full Root wiring proceeds separately through C.
+
+### Reader commit
+
+The coordinator accepts the correction and authorizes the conventional local commit of exactly nine assigned files.
+Read E's complete focused report at `evidence/native-reader-review.md` in its read-only peer tree.
+Its `r_73e82470b77f` check reports no material conformance gap and no NR1 finding.
+The six frozen source hashes match before and after review and again before this commit.
+The accepted checkpoint is `c72327e8f458cb28cc1608090da61fc1a41f8ae724d16294f220215aaf3528c3`.
+The unchanged source manifest SHA-256 is `eab5fcc34c86b3b3b30cb74ec1c986276012a48d8304ed73e537721f8ed51376`.
+The unchanged nine-path manifest SHA-256 is `75e8e353210ea8ccee62007ac46388e1284132c13b0e0763dcb3248d5f5d7ab0`.
+Only this packet and the two assigned report statuses change in the continuation. The accepted build, 176 cases and both mandatory checks stand without unrelated reruns.
+Final Markdown, links, LF, whitespace, frozen hashes, packet section limits and exact nine-file staging checks pass before the commit.
+Root has retained the complete DeusData MIT notice in its pending LICENSE addition, with words unchanged and line endings and trailing blank spaces normalized. F doesn't edit LICENSE or central Root.
+The full local SHA and unchanged source manifest are returned after Git creates the commit.
+F-H1 and F-H2 are closed. The provider API stays stable for C.
+No native execution, new test run, payload capture, push, merge or integration is part of this continuation.
+E's focused conformance check isn't the later fresh whole-feature adherence review.
 
 ## Divergences
 

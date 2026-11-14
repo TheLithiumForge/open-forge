@@ -9,7 +9,7 @@ open-forge:
 Tool record behavior is the set of rules that records additions and removes only those additions.
 For example, Remove deletes an archive exclusion only when it appears in the lock's added-item list and is still present.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 ## Apply
 

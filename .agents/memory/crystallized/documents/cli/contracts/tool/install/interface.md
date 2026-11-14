@@ -9,11 +9,9 @@ open-forge:
 Tool install is a command that installs tools and runs their native setup.
 A teammate runs bare Install and receives the exact CodeGraph version in the lock. Named Install selects latest support.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 ## Syntax
-
-Proposed:
 
 ```text
 open-forge tool install [<id[@version]>] [--channel <channel>] [--yes] [--allow-path <path>...] [--dry-run] [global flags]
@@ -29,8 +27,6 @@ The [common Interface](../interface.md) defines consent, repetition and result c
 The sibling [Behavior](behavior.md) defines execution.
 
 ## Example
-
-Proposed:
 
 ```text
 open-forge tool install

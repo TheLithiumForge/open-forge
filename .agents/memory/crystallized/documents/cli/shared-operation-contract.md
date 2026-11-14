@@ -7,9 +7,12 @@ open-forge:
 
 # Shared CLI Operation Contract
 
+The shared CLI operation contract is the set of rules that defines command inputs, execution and results.
+For example, `open-forge status --format json` uses the same workspace selection as text output.
+
 ## Workspace Layout
 
-Every workspace operation uses the context folder selected by the optional settings v4 `mainRoot`, defaulting to `.agents`, together with native Skills at `.agents/skills`. Settings and ownership stay at `.agents/open-forge.json` and `.agents/open-forge.lock.json`. Host files and `.open-forge-state/` stay at the workspace root. New settings declare v4 without inserting an absent default `mainRoot`. Unrelated rewrites preserve existing declarations. Older CLIs do not support custom roots.
+Every workspace operation uses the context folder selected by the optional settings v4 `mainRoot`, defaulting to `.agents`, together with native Skills at `.agents/skills`. Settings and ownership stay at `.agents/open-forge.json` and `.agents/open-forge.lock.json`. Host files and `.open-forge-state/` stay at the workspace root. New settings declare v6 without inserting an absent default `mainRoot`. Unrelated rewrites preserve existing declarations. Older CLIs do not support custom roots.
 
 Literal workspace operands and recorded installed paths remain literal. Package coordinates map to installed destinations before exclusions, permissions, collisions and ownership checks. Loading membership and mutation permission remain separate from content placement.
 
@@ -173,7 +176,7 @@ current grouped families are:
 - `extension` with `list`, `inspect`, `create`, `install`, `update`, and
   `remove` operations.
 - `library` with `list`, `inspect`, `attach`, `sync`, and `detach` operations.
-- Planned `tool` with `list`, `inspect`, `status`, `install`, `update` and `remove` operations.
+- `tool` with `list`, `inspect`, `status`, `install`, `update` and `remove` operations.
 
 The `library` family composes ordinary consumer paths from one registered
 contained source root. Its command-local contracts own the exact source

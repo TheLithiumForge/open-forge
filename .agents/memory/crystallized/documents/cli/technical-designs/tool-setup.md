@@ -176,7 +176,7 @@ Framework supplies catalogue, channel, config and record services.
 Operations supplies command requests, selection, consent, plans and results.
 Rendering and OutputText supply presentation.
 The frozen interfaces are in `Framework/Tools/Models/Services/ToolServiceContracts.cs`.
-No command or service behavior is implemented in this phase.
+Root constructs the implemented services only for selected execution.
 
 ### Shared planning
 
@@ -255,6 +255,10 @@ Collect config, instruction, Skill, agent and prompt file arrays and hook paths.
 Add declared profile, legacy-cleanup and malformed-JSON backup destinations omitted by native inventory.
 A supplement's optional client ID matches the complete native detected-client set.
 Without native inventory, show it as conditional potential output and keep the detected-client set unavailable.
+For a declared native plan, defer an unavailable client-specific output until the verified binary can report detected clients.
+Don't invent a path for an absent client.
+After verified placement, refresh the native plan before setup and require safe independent bindings for every detected client's outputs.
+A missing required binding or an output outside the reviewed set blocks native writes.
 Install and uninstall have separate declarations. An install plan isn't an uninstall inventory.
 Keep native discovery and the full client set.
 Declarations cover possible writes without selecting clients or reproducing discovery.
@@ -318,10 +322,16 @@ Root doesn't rewrite normal child environment to force a resolved home.
 Resolve production known folders once in Root.
 Changing a child environment doesn't relocate .NET Windows known folders.
 `TestDataHome` covers legacy stores and isn't a Tool home resolver.
+Workspace Status and Doctor check project declarations before constructing the Tool graph.
+With no declared tools, they skip Tool home resolution, machine-state reads and external Tool hosts.
+Declared tools keep their normal observations through supplied homes and hosts.
 
 Test live CBM account-uninstall consent and native-first ordering with an injected process host.
 The real Windows journey uses `--yes` project-only removal.
 Upstream confirmed uninstall writes persistent user PATH, so it stays outside that real journey.
+Before live account consent, an optional account uninstall is a description and manual command.
+Project-only removal runs no native uninstall preview and requires no unchosen account output bindings.
+Prepare its concrete paths, expected-state checks and backups only after that separate live choice.
 These inputs add no command flag or production test mode.
 
 ### Native config reader
@@ -395,7 +405,14 @@ The mastermind makes these reversible choices under the maintainer's instruction
 | --- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | I1  | 2026-11-14 | Port only CBM's read-only JSON-like validation and path lookup for Root's OpenClaw paths after the BCL and two package readers fail native compatibility. Keep the adapter bounded and add no dependency |
 
+The maintainer approved I1 in the task conversation on 14 November 2026.
+The maintainer also approved `0.9.0-beta.19` as the minimum Open Forge version for the first profiles.
+It is the next beta. This task doesn't change the release version itself.
+
+The generic config mechanism can turn off declared tool behavior through allow-listed native commands or settings.
+Every change is disclosed. Telemetry is the first V1 case and stays the decided default.
+Native installer behavior stays unchanged before those declared config changes.
+
 ## Not decided yet
 
-- Should we keep the bounded native-reader port as the V1 format adapter?
-- Should the catalogue's minimum Open Forge version be `0.9.0-beta.19`?
+- Does this beta also need a user-selectable command or settings field for other behavior changes? The current reversible choice keeps the generic mechanism and the telemetry case.

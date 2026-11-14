@@ -9,15 +9,17 @@ open-forge:
 Tool remove behavior is the flow that runs native uninstall and removes Open Forge additions.
 CodeGraph removes its project setup through its own uninstaller, then Open Forge removes its recorded archive exclusion.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 ## Flow
 
-Preflight the native uninstall and recorded additions.
+Preflight required project uninstall and recorded additions.
+Describe optional account uninstall until its separate live choice.
+Before that choice, run no native uninstall preview and require no unchosen account output bindings.
 Show the plan.
 Codebase Memory's native uninstall removes its account-wide binary and all agent entries.
 Only without `--yes` and with a live terminal, offer confirmation naming those account-wide effects.
-If confirmed, run the native uninstall before Open Forge cleanup.
+If confirmed, prepare its concrete account paths, expected-state checks and backups, then run the native uninstall before Open Forge cleanup.
 With `--yes`, without a terminal or after declining, skip that uninstall and print its command.
 Then remove Open Forge's recorded project additions.
 Keep account-wide native settings, say so and print the command to change them back.

@@ -9,7 +9,7 @@ open-forge:
 Tool list behavior is the flow that lists catalogue tools and declarations.
 CodeGraph and Codebase Memory appear in ID order. Rune has no V1 row.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 ## Flow
 

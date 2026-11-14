@@ -9,7 +9,7 @@ open-forge:
 Tool update is an operation that updates tools through their published channel.
 For example, update replaces the active version and rewrites absolute launchers while recording the new exact version.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 The [Interface](interface.md) defines inputs and reports.
 The [Behavior](behavior.md) defines execution.

@@ -9,7 +9,7 @@ open-forge:
 Tool status behavior is the flow that checks versions and additive configuration.
 A missing declared CodeGraph produces bare Install as the next step without creating Tool state.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 ## Flow
 

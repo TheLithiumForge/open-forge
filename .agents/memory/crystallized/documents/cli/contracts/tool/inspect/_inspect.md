@@ -9,7 +9,7 @@ open-forge:
 Tool inspect is an operation that shows one tool's complete setup picture.
 For example, inspect Codebase Memory discloses its account-wide installer, native Skills and hooks, and watcher defaults.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 The [Interface](interface.md) defines inputs and reports.
 The [Behavior](behavior.md) defines execution.

@@ -9,7 +9,7 @@ open-forge:
 Tool install behavior is the flow that installs tools and runs their native setup.
 A teammate runs bare Install and receives the exact CodeGraph version in the lock. Named Install selects latest support.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 ## Flow
 

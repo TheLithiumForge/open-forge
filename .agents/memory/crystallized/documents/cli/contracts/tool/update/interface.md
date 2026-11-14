@@ -9,11 +9,9 @@ open-forge:
 Tool update is a command that updates tools through their published channel.
 Update replaces the active version and rewrites absolute launchers while recording the new exact version.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 ## Syntax
-
-Proposed:
 
 ```text
 open-forge tool update [<id[@version]>] [--channel <channel>] [--yes] [--allow-path <path>...] [--dry-run] [global flags]
@@ -29,8 +27,6 @@ The [common Interface](../interface.md) defines consent, repetition and result c
 The sibling [Behavior](behavior.md) defines execution.
 
 ## Example
-
-Proposed:
 
 ```text
 open-forge tool update

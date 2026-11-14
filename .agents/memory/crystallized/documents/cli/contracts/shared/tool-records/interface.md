@@ -9,7 +9,7 @@ open-forge:
 Tool records are the three data sets that separate project intent, project additions and machine facts.
 For example, the lock records the exclusion strings Open Forge added without storing an earlier JSON array.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 ## Settings
 
@@ -19,7 +19,7 @@ The optional `tools` map has one entry per ID.
 Each entry requires `version`, a supported major.minor range.
 An absent or empty map declares no tools.
 
-Proposed:
+Illustrative:
 
 ```json
 {
@@ -45,7 +45,7 @@ Channel names the published channel, such as `npm` or `github-release`.
 The actual npm client and runtime paths stay in machine state.
 `profileDigest` is an optional SHA-256 of the applied profile.
 
-Proposed:
+Illustrative:
 
 ```json
 {

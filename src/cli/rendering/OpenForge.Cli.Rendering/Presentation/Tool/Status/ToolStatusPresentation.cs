@@ -76,8 +76,11 @@ internal static class ToolStatusPresentation
                 builder.AppendLine(CliText.Escape(ToolStatusText.StoredChange(change.Id, change.Disposition, change.Current, change.Desired, change.Conflict)));
                 if (change.NativeEnvironmentOverrides is null) builder.AppendLine(CliText.Escape(ToolStatusText.OverrideUnavailable()));
                 else if (change.NativeEnvironmentOverrides.Count == 0) builder.AppendLine(CliText.Escape(ToolStatusText.OverrideNone()));
-                else foreach (var environment in change.NativeEnvironmentOverrides)
+                else
+                {
+                    foreach (var environment in change.NativeEnvironmentOverrides)
                         builder.AppendLine(CliText.Escape(ToolStatusText.Override(environment.Key, environment.Value)));
+                }
             }
             foreach (var removal in tool.Removals)
                 builder.AppendLine(CliText.Escape(ToolStatusText.RetiredAddition(removal.Id, removal.Disposition, removal.Conflict)));

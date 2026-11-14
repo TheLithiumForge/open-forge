@@ -9,11 +9,9 @@ open-forge:
 Tool remove is a command that runs native uninstall and removes Open Forge additions.
 CodeGraph removes its project setup through its own uninstaller, then Open Forge removes its recorded archive exclusion.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 ## Syntax
-
-Proposed:
 
 ```text
 open-forge tool remove <id> [--yes] [--allow-path <path>...] [--dry-run] [global flags]
@@ -29,8 +27,6 @@ The [common Interface](../interface.md) defines consent, repetition and result c
 The sibling [Behavior](behavior.md) defines execution.
 
 ## Example
-
-Proposed:
 
 ```text
 open-forge tool remove codegraph

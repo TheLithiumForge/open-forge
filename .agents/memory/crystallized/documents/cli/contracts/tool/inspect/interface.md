@@ -9,11 +9,9 @@ open-forge:
 Tool inspect is a command that shows one tool's complete setup picture.
 Inspect Codebase Memory discloses its account-wide installer, native Skills and hooks, and watcher defaults.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 ## Syntax
-
-Proposed:
 
 ```text
 open-forge tool inspect <id> [global flags]
@@ -29,8 +27,6 @@ The [common Interface](../interface.md) defines consent, repetition and result c
 The sibling [Behavior](behavior.md) defines execution.
 
 ## Example
-
-Proposed:
 
 ```text
 open-forge tool inspect codebase-memory

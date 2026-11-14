@@ -283,11 +283,11 @@ The checksum sources are [Node 24.22.3 signed SHASUMS](https://nodejs.org/dist/v
 
 Review artifacts are under `artifacts/tool-setup-lane-a/node-review/`:
 
-| File | SHA-256 |
-| --- | --- |
+| File                              | SHA-256                                                            |
+| --------------------------------- | ------------------------------------------------------------------ |
 | `24-latest.asc` and `24.22.3.asc` | `aaaff9ec5c8c5f0997786c06088134ddb4b21a41f74e872b30ed1acca309e2b5` |
 | `22-latest.asc` and `22.23.5.asc` | `fa48c3ebf4d3246b12090c0a5e0de342b65c7a035737d5fc7d24d6af8c60b884` |
-| `pubring.kbx` | `610b8d249da3d5733f5a128def2dd0294dbbf5b5713e6ca2529db8db419dee00` |
+| `pubring.kbx`                     | `610b8d249da3d5733f5a128def2dd0294dbbf5b5713e6ca2529db8db419dee00` |
 
 The successful status logs are `24-latest.verify.txt` and `22-latest.verify.txt`. The command uses Git's `gpg.exe`, `--batch --no-auto-key-retrieve`, an absolute owned `--homedir`, an absolute `--keyring`, `--no-default-keyring`, `--status-fd 1` and `--verify <signed-file>`. An initial relative-keyring attempt created an empty 32-byte keyring beside the worktree. Its exact path and creation details were checked and that new empty file was removed. A later redundant verification with Windows backslash paths looped on a GPG lock error. Only that owned verifier was stopped. The version files were instead matched by SHA-256 to the successful signed review. No real per-user GPG store was used.
 
@@ -301,27 +301,27 @@ The managed Release solution build passed with zero warnings and zero errors. Th
 
 The 19 independently selected classes passed 162 distinct tests. The runs have zero failures or skips. Each command uses `--fail-warns on` and `--fail-skips on` and exits zero. The measured counts are:
 
-| Tier | Class | Minimum | Passed | Failed | Skipped |
-| --- | --- | ---: | ---: | ---: | ---: |
-| unit | `ToolVersionServiceTests` | 34 | 34 | 0 | 0 |
-| unit | `ToolRuntimeRangeTests` | 16 | 16 | 0 | 0 |
-| unit | `ToolPackageManagerPolicyTests` | 16 | 16 | 0 | 0 |
-| unit | `ToolArtifactIntegrityTests` | 7 | 7 | 0 | 0 |
-| unit | `ToolTargetPolicyTests` | 8 | 8 | 0 | 0 |
-| unit | `ToolLauncherRenderingTests` | 1 | 1 | 0 | 0 |
-| unit | `ToolNodeRuntimeCatalogueTests` | 2 | 2 | 0 | 0 |
-| integration | `ToolLauncherWriterTests` | 2 | 2 | 0 | 0 |
-| integration | `ToolArchiveExtractorTests` | 15 | 15 | 0 | 0 |
-| integration | `ToolPrivateNodeInstallerTests` | 3 | 3 | 0 | 0 |
-| integration | `ToolProcessHostTests` | 5 | 5 | 0 | 0 |
-| integration | `ToolHttpTransferTests` | 5 | 5 | 0 | 0 |
-| integration | `ToolPathHostTests` | 7 | 7 | 0 | 0 |
-| integration | `ToolCommandResolverTests` | 4 | 4 | 0 | 0 |
-| integration | `ToolTargetObserverTests` | 8 | 8 | 0 | 0 |
-| integration | `ToolChannelServiceTests` | 12 | 12 | 0 | 0 |
-| integration | `ToolNpmChannelTests` | 10 | 10 | 0 | 0 |
-| integration | `ToolManagedFilesRemovalTests` | 4 | 4 | 0 | 0 |
-| integration | `ToolPackageManagerDetectorTests` | 3 | 3 | 0 | 0 |
+| Tier        | Class                             | Minimum | Passed | Failed | Skipped |
+| ----------- | --------------------------------- | ------: | -----: | -----: | ------: |
+| unit        | `ToolVersionServiceTests`         |      34 |     34 |      0 |       0 |
+| unit        | `ToolRuntimeRangeTests`           |      16 |     16 |      0 |       0 |
+| unit        | `ToolPackageManagerPolicyTests`   |      16 |     16 |      0 |       0 |
+| unit        | `ToolArtifactIntegrityTests`      |       7 |      7 |      0 |       0 |
+| unit        | `ToolTargetPolicyTests`           |       8 |      8 |      0 |       0 |
+| unit        | `ToolLauncherRenderingTests`      |       1 |      1 |      0 |       0 |
+| unit        | `ToolNodeRuntimeCatalogueTests`   |       2 |      2 |      0 |       0 |
+| integration | `ToolLauncherWriterTests`         |       2 |      2 |      0 |       0 |
+| integration | `ToolArchiveExtractorTests`       |      15 |     15 |      0 |       0 |
+| integration | `ToolPrivateNodeInstallerTests`   |       3 |      3 |      0 |       0 |
+| integration | `ToolProcessHostTests`            |       5 |      5 |      0 |       0 |
+| integration | `ToolHttpTransferTests`           |       5 |      5 |      0 |       0 |
+| integration | `ToolPathHostTests`               |       7 |      7 |      0 |       0 |
+| integration | `ToolCommandResolverTests`        |       4 |      4 |      0 |       0 |
+| integration | `ToolTargetObserverTests`         |       8 |      8 |      0 |       0 |
+| integration | `ToolChannelServiceTests`         |      12 |     12 |      0 |       0 |
+| integration | `ToolNpmChannelTests`             |      10 |     10 |      0 |       0 |
+| integration | `ToolManagedFilesRemovalTests`    |       4 |      4 |      0 |       0 |
+| integration | `ToolPackageManagerDetectorTests` |       3 |      3 |      0 |       0 |
 
 Each class has `command.txt`, `run.log` and `results.json` in `artifacts/tool-setup-lane-a/current/<Class>/`. The combined machine-readable receipt is `test-summary.json`. The first 19-class run's assembly hashes are in `first-assembly-hashes.json`. After replacing two test literals with shared constants, the solution build passed again and only the affected `ToolNpmChannelTests` class was repeated. Its 10 tests passed. The final Linux library correction reads the default `libstdc++.so.6` alias and keeps an unknown floor when it can't identify that library. It ignores unused newer files. An owned-file regression was added, the managed solution build passed again and only `ToolTargetObserverTests` was repeated. All eight tests passed. An overlapping edit and build had produced a stale Root reference before that successful build. Final assembly hashes are in `assembly-hashes.json`. The exact commands are:
 

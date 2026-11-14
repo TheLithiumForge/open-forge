@@ -9,7 +9,7 @@ open-forge:
 Tool remove is an operation that runs native uninstall and removes Open Forge additions.
 For example, CodeGraph removes its project setup through its own uninstaller, then Open Forge removes its recorded archive exclusion.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 The [Interface](interface.md) defines inputs and reports.
 The [Behavior](behavior.md) defines execution.

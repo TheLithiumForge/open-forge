@@ -7,6 +7,9 @@ open-forge:
 
 # CLI Command Contract Set
 
+The CLI command contract set is the list of commands and the rules for their interfaces and behavior.
+For example, Tool has six leaves that share the same result conventions.
+
 This accepted Crystallized Document is the single concise `#Evergreen` overview
 of the replacement CLI command-contract set. It defines the contract roles,
 topology, and authority boundaries, and links to the detailed command-local
@@ -102,7 +105,7 @@ complete detailed source set remains under [`contracts/`](contracts/_contracts.m
 
 ## Current topology
 
-The planned [Tool group](contracts/tool/_tool.md) has six leaves in this order:
+The [Tool group](contracts/tool/_tool.md) has six leaves in this order:
 `list`, `inspect`, `status`, `install`, `update` and `remove`.
 Each leaf has its own Interface and Behavior.
 The 14 November 2026 round-2 contracts use native setup, `id@version`, `--yes` and additive records in the committed lock.

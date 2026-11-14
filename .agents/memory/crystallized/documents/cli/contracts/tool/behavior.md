@@ -9,7 +9,7 @@ open-forge:
 Tool behavior is the common flow that detects a tool, plans setup and checks its additions.
 For example, CodeGraph runs its own local installer before Open Forge adds its archive exclusion.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 ## Detection
 
@@ -24,7 +24,7 @@ Native cache behavior stays with the tool.
 Status detects self-updates against the lock and machine facts.
 Inside support, offer reapply through named Install.
 Outside support, warn and keep the existing install.
-Don't disable native update checks, hooks, permissions, watchers or daemons.
+Detection leaves native update checks, hooks, permissions, watchers and daemons unchanged.
 
 ## Channel choice
 
@@ -63,6 +63,7 @@ Only known support in a newer catalogue justifies "update Open Forge first".
 ## Preview
 
 Dry-run describes the channel, exact version where known, command vectors, files and additions.
+An unchosen account uninstall stays description-only and runs no native preview.
 Use the upstream dry run when its profile declares one and the installed tool is available.
 Otherwise give a description.
 Network access is allowed only when latest must be resolved, and the report discloses it.
@@ -81,6 +82,8 @@ It adds no tool Skill or managed-block line.
 
 Use the [native output plan](../../technical-designs/tool-setup.md#native-outputs) for possible destinations and available native inventory.
 Back up its concrete targets before invoking native setup.
+Before the binary is available, a declared native plan leaves unavailable client-specific outputs conditional.
+After verified placement, refresh that plan and require safe independent bindings for detected clients before native writes.
 Run a chosen native uninstall before removing Open Forge additions.
 Codebase Memory's account-wide uninstall needs the live confirmation defined by the common Interface.
 With `--yes` or without a terminal, skip that uninstall and remove only Open Forge's project additions.
@@ -91,6 +94,8 @@ Never request deletion of every project's indexes.
 ## Additions
 
 Use only the additive rules in [Tool record behavior](../shared/tool-records/behavior.md).
+Declared config changes can turn off tool behavior through allow-listed native commands or settings.
+Disclose every change. Telemetry off is the first V1 case and the decided default.
 The committed lock stores what Open Forge added.
 Machine state stores native account-setting previous values, paths and PATH history.
 There is no Tool folder, lease, journal or recovery dependency under `.open-forge-state/`.

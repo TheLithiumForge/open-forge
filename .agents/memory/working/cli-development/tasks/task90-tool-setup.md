@@ -56,10 +56,10 @@ Tools add no workspace state, lease or recovery dependency under `.open-forge-st
 
 ## Checkpoint
 
-Done: Recorded C1 through C7 and started the supervised lanes. The catalogue, records and home provider are integrated. The combined channel, config and writer services pass 590 cases across 41 focused classes.
-Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. The checked core merge is ready. C connects the composed CLI on that exact base.
-Next: Integrate the native reader and central command graph, then complete E's journeys and docs.
-Blocker: No implementation blocker. The first shipping Open Forge version is asked of the maintainer. The provisional minimum is 0.9.0-beta.19.
+Done: The core is committed. The native reader and C's full Root candidate are checked. The CI whitespace correction passes both formatting commands. The maintainer approved I1 and the minimum Open Forge version 0.9.0-beta.19.
+Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. E completes final docs and real Windows journeys. F diagnoses the observed Codebase Memory preflight failure.
+Next: Integrate the checked reader and Root, close the native journey gap, then run the one payload pass and fresh adherence review.
+Blocker: Codebase Memory planning reports an unavailable recipe value before writes. Its exact cause is under investigation. CodeGraph's real journey completes.
 
 ## Phase 1 checks
 
@@ -437,3 +437,171 @@ Both required .NET checks pass on the final source.
 The final gate receipt is `artifacts/tool-setup/merge-core/gates-final.json`.
 C receives this checked core as the base for central command composition.
 Milestone four completes after that command graph is integrated.
+
+## Native reader integration
+
+Core integration is committed as `885b17db3e56ceb6839ba23609e85a4380c75018`.
+C starts central command composition from that exact base in `r_30c5d61f744c`.
+The independent native reader and its source review merge without conflicts from F `ffef620bca8ae506c611fc3f244e63a72ceae1ec` and E `3a6469a8e1e7119281b842640f069c6d0456ad44`.
+That next merge stays separate from the core CI checkpoint.
+
+Its fresh Release build passes with zero warnings and errors.
+Its two touched classes pass 176 cases and the touched Tool documentation class passes twelve.
+The first reader selection omitted its `Shared.OpenClaw` namespace and the minimum-count policy rejected zero tests.
+That receipt is kept separately. The corrected selection supplies the counted result.
+Markdown formatting removes one pre-existing extra indentation in F's packet command.
+Both required .NET checks pass with exit zero on the final reader source.
+Receipts live under `artifacts/tool-setup/merge-native-reader/`.
+No payload regeneration, real tool journey or final whole-feature review has run yet.
+The core CI checkpoint requests `feature/tool-setup` at `885b17db3e56ceb6839ba23609e85a4380c75018`.
+The later reader merge is checked but uncommitted at that request.
+Phase three continues after the overseer returns CI results.
+
+## CI correction
+
+The overseer reports run `43573635294` on PR 32 for `885b17db3`.
+Only `check:dotnet:whitespace` failed, in the compact native-environment loops of Tool Inspect and Status presentation.
+The checks job stopped platform builds, so no full-suite result is available.
+The integrator expands both branches into braced blocks without changing behavior.
+Both required formatter commands run on this corrected source before integration.
+Every resumed lane records both command exit codes before each commit and repeats them after source corrections.
+
+The corrected Release build and both formatter commands pass with exit zero.
+The twelve Tool documentation cases also pass.
+Receipts are under `artifacts/tool-setup/ci-43573635294/`.
+Repository-wide `format:check` reports seventy files.
+One is this feature's A packet table alignment, which the integrator formats.
+The other sixty-nine paths are unchanged from `75f6677ad` and stay outside this task.
+The changed Markdown check passes. The full formatter result isn't reported as green.
+
+The maintainer approves I1 and the next beta's minimum `0.9.0-beta.19` in the task conversation.
+The design and lane plan record both answers.
+Generic allow-listed native config changes can turn off declared behavior with disclosure. Telemetry is the first case.
+
+## Root acceptance
+
+C returns 34 files and 113 passing focused cases from `r_30c5d61f744c`.
+The integrator checks the lazy graph, typed request factories, host injection, optional consent, workspace appenders and synthetic snapshots.
+The candidate and the bounded synthetic minimum-version correction in `r_0ec339952fb4` are accepted.
+That correction keeps the real running version and uses one fixture-owned `0.1.0` minimum.
+Its seven interaction cases pass under normal beta.18, prospective beta.19 and restored beta.18 builds.
+All three builds and both final formatter commands pass.
+Only the fixture, its two reviewed synthetic baselines and the receipt change.
+The final 34-file frozen manifest is `artifacts/tool-setup/c-root-reviewed-inputs-v2/manifest.json`, SHA-256 `7a10709564a7c5108dd579b78e77b5f222a397cc7662e5a29d0de8fa66a37da6`.
+Two workspace-journey cases still await `references/tools.md` in the final payload inventory.
+They aren't counted as passing evidence.
+
+E starts journeys and final docs in `r_222c03e86918` on the exact core base with frozen reviewed C and reader inputs.
+The input patch SHA-256 is `d17391264d0044123887ea0a11b8d1f1a7a868180599171e13fc1a4584230707`.
+The C input manifest SHA-256 is `422e0d7db326a8f07f13d0a91232c2dafa51a8c82e6ea09c7020c48e47bbe5a9`.
+E keeps those other lanes' files as protected build inputs and stages only E's assigned files after review.
+The coordinator compares the tested inputs with the final merged tree.
+
+## Payload preparation
+
+F returns the [single final pass plan](../tool-setup/evidence/payload-final-pass.md) from `r_de752f710493`.
+It identifies four payload inventory corrections, the 43-page help class after E's additions, the affected snapshots and the 23-file default-layout fixture.
+The plan distinguishes normal build embedding from baseline mutation.
+It also gives Index, link, site and focused verification commands.
+No product files, fixtures, snapshots or Git state changed during that preparation.
+The coordinator copies the checked report and waits for E's final wording before executing the pass.
+
+## Journey checkpoint
+
+E's real CodeGraph Install, Status, Update and Remove reports are completed.
+Its direct command and MCP captures are produced in the owned Windows fixture.
+The native uninstall runs before Open Forge cleanup. The CLI and index stay installed.
+The original exclusion stays. Telemetry stays off and the result prints the native command to change it.
+The final E report will separate native writes from Open Forge additions and removals.
+
+Codebase Memory Install is blocked before writes by `tool-install.native-plan-blocked`.
+The cause names an unknown or unavailable recipe token without the token itself.
+F investigates the exact input and responsible source in `r_8b1b64214346` while E finishes independent help and docs.
+No protected implementation changes are authorized by that diagnostic assignment.
+
+E records E-J1 for the unavailable fresh-client bindings, E-J2 for CodeGraph's commented native ignore form and E-J3 for required parser arity blocking Inspect and Remove help.
+B receives the grouped config corrections in `r_ea945188d402` on a new branch from the core base.
+The design clarifies deferred client-specific outputs before native inventory and the required post-placement refresh before native writes.
+E keeps both help-binding files and receives the arity corrections in its next grouped follow-up.
+The coordinator stops newly assigned C `r_640877561762` and D `r_87ee4e95fe5c` before source edits because those paths had already transferred to E.
+Both processes stop. C's 34-file manifest is unchanged and D's six existing async-entry files still match the committed core.
+This keeps the final help corrections with one file assignment.
+
+F's [exact token diagnosis](../tool-setup/evidence/cbm-journey-blocker.md) confirms E-J1 without adding another finding.
+`${client:continue-config}` is Windows output declaration 209 after 208 resolved declarations.
+The before/after file manifests match and `usedNetwork` is false.
+The provider correctly leaves absent Continue, TRAE, Roo and Cody configuration paths unavailable.
+B's repair must keep that native path behavior and the post-placement inventory guard.
+
+F also confirms F-P1, a published-process isolation gap, without opening a real store.
+The planned `PublishedInstallProcessTests.LegacyFilesAreNeitherReadNorDeleted` case reaches workspace Status and Doctor.
+Their current combined record read reaches the real known-folder Tool store before checking declarations.
+The other four planned published classes don't reach that reader.
+The affected class stays unrun until the correction and final payload inventories are ready.
+C receives F-P1 in `r_8c12583d9180`.
+Its bounded correction checks project declarations before graph and home construction and leaves all declared-tool and Tool command observations unchanged.
+The design and Status/Doctor contracts record the no-tools eligibility rule.
+No new option, environment flag or production test mode is authorized.
+
+## Grouped correction returns
+
+B's `r_ea945188d402` return closes E-J1 and E-J2 in nine uncommitted files.
+The integrator checks complete token validation, conditional deferral and post-discovery requirements, plus Git-backed recognition of comments around the reviewed ignore forms.
+Its 27 expansion, 20 setup and 19 ignore cases pass, with a clean build and both final-source formatter exits zero.
+Constructors and frozen models are unchanged.
+The source-only seven-file patch SHA-256 is `27b3c7a09eb374d8e61f95b852cef21ff6315d0dafada8a727371c18b2c4cabc`.
+The checked nine-file candidate is frozen under `artifacts/tool-setup/b-journey-reviewed-inputs/`.
+
+E's first final return has 31 uncommitted assigned files, a clean build, site, links and format gates, 24 passing focused cases and the two E-J3 help failures.
+The integrator finds I-R1, the required literal-help assertion migration is incomplete, and I-R2, two CLI Skill statements need version-selection and fixed settings-path scope corrections.
+E receives those grouped fixes, the checked B patch, C's four v2 input corrections and both E-J3 arity edits in `r_585cef10e61b`.
+Its full CBM journey and confirmed-account injected evidence are still required before catalogue acceptance.
+No shipped payload baseline has been accepted.
+
+C's F-P1 production correction is accepted from `r_8c12583d9180`.
+The integrator requires its eleven file-backed eligibility cases to move from Unit to Integration.
+`r_2025b6b17cff` makes that exact move and updates the namespace and Evidence traits.
+All eleven Integration cases pass, with a clean build and both formatter exits zero.
+The unchanged eighteen actual-Root cases keep their prior passing receipt.
+The earlier Unit result is historical evidence, not the accepted tier.
+The complete 36-file C candidate is frozen under `artifacts/tool-setup/c-root-reviewed-inputs-v3/`.
+Its production bytes, synthetic snapshots and cancelled Inspector binding stay unchanged by the move.
+
+E's grouped run closes E-J1, E-J2, E-J3, I-R1 and I-R2 in its recorded rechecks.
+CBM installs in an owned private fixture after the upstream activation check rejects the shared temporary parent's ACL.
+The safety check stays intact. Its MCP transcript is produced.
+E-J4 then blocks real `--yes` project-only Remove.
+The planner calls optional account uninstall dry run before choosing whether to skip it.
+That upstream path opens HKCU even in dry run, so the safety host refuses it before execution.
+An injected preview also exposes unchosen optional client-binding validation.
+D receives E-J4 in `r_9bcb4010c5bb` with the exact writer-only file assignment.
+It must keep optional account uninstall descriptive until live choice, preserving concrete validation and native-first order only for chosen effects.
+The design and Remove contract record that rule. E's help binding files stay protected.
+
+E's `r_92a413f6ccfa` incorporates exactly five accepted C v3 inputs and checks the combined graph.
+Its eleven reader, eighteen Root workspace and ten help Integration cases all pass.
+The prospective beta.19 build and both final formatter exits pass. Unchanged docs and site receipts are retained.
+All 55 protected inputs match, and E's 33-path candidate is preserved under `artifacts/tool-setup/e-reviewed-before-remove/`.
+E-J4 and CBM's final tested-version update stay open pending D's return and the real removal recheck.
+
+D's `r_9bcb4010c5bb` returns the checked E-J4 correction in fourteen uncommitted files.
+The integrator checks the descriptive request, original deferred declaration, live-choice preparation, prepared-state reporting and unchanged CodeGraph project path.
+Its build and 71 focused cases pass. Both final-source formatter exits are zero.
+Bindings, constructors, authored wording and frozen Framework models stay unchanged.
+The twelve-file C# patch SHA-256 is `eeb35af0156d5b8e0615cdc1896baa41ba216ae0d02d706276c64f4f888dae2c`.
+The full fourteen-file candidate is frozen under `artifacts/tool-setup/d-remove-reviewed-inputs/`, with manifest SHA-256 `a25a59f7b34d6376d3b85460f58253dc5daa81c8f077e9bc58012da1fc23edf7`.
+E receives only the checked source inputs in `r_81bfd04a6acf` and reruns real project-only CBM Remove.
+The live native account command and its dry run stay forbidden in the real fixture.
+Final tested-version metadata still waits for that successful recheck.
+
+
+## Finishing direction
+
+The maintainer redirects Phase 3 on 2026-11-14.
+CI runs every test. Local execution uses only the managed build and both .NET formatting checks before each commit.
+The one local exception produces the payload snapshots and default-layout fixture after all lane changes are combined.
+E finishes its active real Remove verification before receiving the commit continuation.
+A, B, C, D and F receive the no-tests direction and commit their finished files.
+The coordinator commits the pending integration, merges every lane with `--no-ff`, produces the payload baselines once and sends the integrated SHA for CI.
+The fresh adherence review and simplification work don't start before this push checkpoint.
+Phase 4 needs approval. Its first deliverable is a proposal with file paths, expected line savings and risks for each change.

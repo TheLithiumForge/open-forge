@@ -9,11 +9,11 @@ open-forge:
 Tool is a command group that installs published tools and adds configuration.
 For example, bare Install restores teammates' exact locked versions.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 ## Commands
 
-The planned commands appear in this order:
+The commands appear in this order:
 
 - `list` - show the catalogue.
 - `inspect <id>` - show the complete setup picture.

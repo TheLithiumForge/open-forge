@@ -90,10 +90,10 @@ The report can be used to compile complete entries and run both Windows journeys
 
 ## Progress
 
-Done: The B review documents were committed locally as `240c78f3449147fb9993f3fecc8c45a879583241`. The coordinator accepted F-H1, F-H2 and the bounded C# port plan after two ordinary JSON5 readers failed required native behavior. Root has authored the dated contract choice. Both required .NET checks pass for this design evidence commit. The exact prior build receipt is kept.
-Now: The two-document design evidence increment is checked for its authorized local commit on base `240c78f3449147fb9993f3fecc8c45a879583241`. Only the new report and this packet's Progress and Evidence change. Formatting, local links, LF, packet-section and exact two-file checks pass. Root keeps the implementation choice as a maintainer question under the user delegation.
-Next: Return the local commit's full SHA, two-file list and checked native licence cache path and SHA-256. F handles the private reader and tests through Root's contract increment. Full user docs and real Windows journeys wait for Root wiring. Successful exact journey versions must populate `TestedVersions` later.
-Blocker: None for this local design evidence increment. Product source, dependencies, root `LICENSE` and F files are unchanged. `MinimumOpenForgeVersion` stays provisionally `0.9.0-beta.19`. Product and package versions are unchanged.
+Done: The coordinator accepted the focused reader review with no material gap. F's exact checkpoint and 176-case receipt were consumed without rerun. Both required .NET checks pass for this separate evidence increment. The prior exact E build receipt is kept.
+Now: The authorized two-document commit is checked on base `973d223de7c59eb01e29d1f124106d28acff943f`. Only this packet's Progress and Evidence and `evidence/native-reader-review.md` change.
+Next: Return the full local commit SHA and clean status. Final docs and real Windows journeys wait for the composed Root gate.
+Blocker: None for this local evidence increment. The fresh final whole-feature adherence review is separate.
 
 ## Evidence
 
@@ -334,6 +334,48 @@ Its SHA-256 is `1f58f9911dc5e3bcb96de28bb28e7b6bb7eb323952d29569c5d7214a152146bb
 Its Git blob `0b95352746a97a8cf2d1f3ba568bc7bb5e514d1f` matches the tagged native tree.
 The final local receipt records the exact cache path, final source hashes, commit identity and two-file list.
 No new build, tests, native tool, account action, product edit, dependency change, root licence edit, F source edit, push or merge ran.
+
+### Native reader review
+
+The [native reader review](../evidence/native-reader-review.md) checks only F's three new reader files, changed caller and two test files against tagged CBM and the accepted plan.
+All six hashes match before and after review. The content checkpoint is `c72327e8f458cb28cc1608090da61fc1a41f8ae724d16294f220215aaf3528c3`.
+No NR1 finding is raised.
+F's 176-case receipt, clean build and both .NET checks were consumed without rerunning them.
+The source review ran no product edits, tests, build, package or native execution, account actions or commit.
+Only the assigned review report and this packet change.
+Prettier, six local links, LF, whitespace, packet-section and two-file checks pass. Six external source links stay marked unchecked by References.
+
+### Reader review commit
+
+The coordinator authorized a separate local commit of the accepted review report and this packet.
+The exact prior E build receipt stays unchanged at `artifacts/task90-lane-e-review-docs/final-receipt.json`.
+It records SDK `10.0.101`, managed Release `net10.0` on Windows x64, zero warnings and errors and duration `00:04:39.43`.
+The build log still matches SHA-256 `2e4c1792b39e2b7d2376de25a9cb0df5fdee6da02a2d95a70fa909c8940ba482`.
+Only Markdown changed since that build's source base `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9`.
+Product source and build configuration are unchanged, so no new build ran.
+
+Fresh pre-commit checks are:
+
+| Check                             | Result                                                  | Artifact under `artifacts/task90-lane-e-native-reader-review/` |
+| --------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------- |
+| `npm run check:dotnet:whitespace` | Passed, exit 0                                          | `whitespace.log`                                               |
+| `npm run check:dotnet:style`      | Passed, exit 0                                          | `style.log`                                                    |
+| Focused Markdown formatting       | Passed for both files                                   | `markdown.log`                                                 |
+| Production References             | Six complete local links, six external links unchecked  | `report-references.json`, `packet-references.json`             |
+| LF, whitespace and Markdown AST   | Passed, only Progress and Evidence change in the packet | `document-checks.json`                                         |
+| Exact file limit and commit list  | Only the two assigned documents                         | `final-receipt.json`                                           |
+
+The exact document and link commands are:
+
+```powershell
+node node_modules/prettier/bin/prettier.cjs --check .agents/memory/working/cli-development/tool-setup/evidence/native-reader-review.md .agents/memory/working/cli-development/tool-setup/packets/lane-e.md
+open-forge references .agents/memory/working/cli-development/tool-setup/evidence/native-reader-review.md --direction out --format json
+open-forge references .agents/memory/working/cli-development/tool-setup/packets/lane-e.md --direction out --format json
+git diff --check
+```
+
+The final local receipt records the full commit SHA, parent, two-file list, source hashes and clean status.
+No tests, native tools, catalogue, Root, grammar, shared-file or snapshot edits, GitHub actions, account actions, push or merge ran.
 
 ## Divergences
 

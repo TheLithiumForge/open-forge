@@ -9,7 +9,7 @@ open-forge:
 Tool update behavior is the flow that updates tools through their published channel.
 Update replaces the active version and rewrites absolute launchers while recording the new exact version.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 ## Flow
 

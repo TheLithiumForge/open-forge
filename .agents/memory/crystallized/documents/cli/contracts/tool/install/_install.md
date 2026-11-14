@@ -9,7 +9,7 @@ open-forge:
 Tool install is an operation that installs tools and runs their native setup.
 For example, a teammate runs bare Install and receives the exact CodeGraph version in the lock. Named Install selects latest support.
 
-Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
+Status: Round-2 design decided on 14 November 2026.
 
 The [Interface](interface.md) defines inputs and reports.
 The [Behavior](behavior.md) defines execution.
