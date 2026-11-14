@@ -1,0 +1,3 @@
+Run synthetic-tool's account-wide uninstall? It removes its binary and all agent entries. The declared native PATH changes also apply.
+Keep these account or shared effects unchanged
+Apply this separately confirmed change
