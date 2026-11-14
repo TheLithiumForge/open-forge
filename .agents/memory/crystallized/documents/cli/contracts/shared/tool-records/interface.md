@@ -89,6 +89,13 @@ Hash authored token strings and resource bytes before expansion.
 Use declared array order and ordinal object-key order for authored JSON values.
 Exclude machine paths, observed values and timestamps.
 
+## Explicit grants
+
+The settings-only `ToolRecordGrantRequest` carries locations, expected records and explicit `AllowInstallPaths`.
+`IToolRecordService.AddAllowInstallPathsAsync` returns the existing `ToolRecordWriteResult` with pending backups.
+It reuses the existing workspace grant schema and publishes no tool or machine records.
+The [explicit grant behavior](behavior.md#explicit-grants) defines ordering and verification.
+
 ## Machine state
 
 Machine facts live under `~/.open-forge/state/`.
@@ -120,6 +127,7 @@ Native-setting lists are complete for that tool and keep the original previous v
 C replaces that tool's receipt set with the returned complete set and keeps other tools unchanged.
 An empty complete set removes all of that tool's project receipts.
 A successful no-op keeps its existing receipts.
+PATH add and removal results return pending file-backup handles through the same completion lifecycle.
 
 ## Publication
 

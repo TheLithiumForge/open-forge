@@ -4,6 +4,7 @@ namespace OpenForge.Cli.Core.Framework.Tools.Catalogue.Shared.CodeGraph;
 
 internal static class CodeGraphDefinitions
 {
+    internal const string NpmEntryPath = "npm-shim.js";
     internal const string Id = "codegraph";
     internal const string Version = "1.6.2";
     internal const string ProfileId = "codegraph-1.6";

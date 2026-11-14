@@ -32,6 +32,8 @@ public sealed class CodeGraphCatalogueTests
         var entry = CodeGraphCatalogueEntry.Create();
         var npm = Assert.Single(entry.Channels.OfType<ToolNpmChannel>());
         Assert.Equal(CodeGraphDefinitions.Package, npm.Package);
+        Assert.True(OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths.PortableWorkspacePath.TryNormalize(npm.EntryRelativePath, out var entryPath));
+        Assert.Equal(npm.EntryRelativePath, entryPath);
         Assert.Equal(new(ToolCatalogueDefinitions.NodeRuntime, CodeGraphDefinitions.WrapperNodeRange), npm.Requirements.Runtime);
         Assert.Empty(npm.MinimumClientVersions);
         Assert.Null(npm.RequiredClient);

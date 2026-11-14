@@ -31,6 +31,7 @@ internal static class CodeGraphCatalogueEntry
                     Id = ToolCatalogueDefinitions.NpmChannelId,
                     Kind = ToolChannelKind.Npm,
                     Package = CodeGraphDefinitions.Package,
+                    EntryRelativePath = CodeGraphDefinitions.NpmEntryPath,
                     MinimumClientVersions = ImmutableDictionary<ToolNpmClient, string>.Empty,
                     Requirements = new() { Runtime = new(ToolCatalogueDefinitions.NodeRuntime, CodeGraphDefinitions.WrapperNodeRange), Targets = targets },
                 },

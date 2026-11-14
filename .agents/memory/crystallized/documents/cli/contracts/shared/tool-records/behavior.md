@@ -44,6 +44,23 @@ B returns removal observations with current and desired values, disposition and 
 Remove takes that read-only plan and revalidates each observation before effects.
 Don't restore an earlier repository value.
 
+## Explicit grants
+
+Tool writers keep the existing [`--allow-path` authoring rules](../workspace-permissions/behavior.md#explicit-authored-edits).
+D publishes these requested workspace grants through `IToolRecordService.AddAllowInstallPathsAsync` before tool planning and effects.
+Dry-run describes the edit without calling that method.
+The explicit settings edit stays separate from tool consent and survives a later blocked or cancelled tool operation.
+Whole-batch preflight still prevents tool effects when a tool is blocked.
+
+C uses the existing settings codec and path grammar.
+The request carries locations, the expected record observation and the requested grants.
+Check the settings file's expected bytes or absence and reject malformed, unavailable or nonordinary settings.
+Keep unrelated settings and their order.
+Publish only settings. Don't create or change the tool lock, machine records, runtime records or Open Forge home for this edit.
+Return verified paths and pending backup handles through the normal write result.
+D reports saved grants and keeps their backup handles through the final outcome.
+This path uses expected-state checks, atomic replacement and the shared Tool backup service, with no Tool workspace lease or recovery bundle.
+
 ## Native settings
 
 Read the native setting through its authored source, keeping inherited environment overrides separate.

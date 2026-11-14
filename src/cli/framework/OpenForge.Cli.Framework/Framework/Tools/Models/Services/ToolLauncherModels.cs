@@ -14,10 +14,16 @@ internal sealed record ToolPathSetupRequest
     public ToolPathState? Previous { get; init; }
 }
 
-internal sealed record ToolPathSetupResult(ToolPathState? State, IReadOnlyList<string> ManualLines, bool RestartRequired, string? Failure);
+internal sealed record ToolPathSetupResult(ToolPathState? State, IReadOnlyList<string> ManualLines, bool RestartRequired, string? Failure)
+{
+    public required IReadOnlyList<ToolBackupCompletionRequest> PendingBackups { get; init; }
+}
 
 internal sealed record ToolPathRemoveRequest(ToolPathState Expected);
-internal sealed record ToolPathRemoveResult(IReadOnlyList<string> RemovedTargets, IReadOnlyList<string> KeptTargets, bool RestartRequired, string? Failure);
+internal sealed record ToolPathRemoveResult(IReadOnlyList<string> RemovedTargets, IReadOnlyList<string> KeptTargets, bool RestartRequired, string? Failure)
+{
+    public required IReadOnlyList<ToolBackupCompletionRequest> PendingBackups { get; init; }
+}
 
 internal sealed record ToolManagedFilesRemoveRequest
 {

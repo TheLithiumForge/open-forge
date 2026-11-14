@@ -33,6 +33,11 @@ internal sealed record ToolRecordWriteRequest
     public ToolPathState? Path { get; init; }
 }
 
+internal sealed record ToolRecordGrantRequest(
+    ToolRecordsRequest Locations,
+    ToolRecordsResult Expected,
+    IReadOnlyList<string> AllowInstallPaths);
+
 internal sealed record ToolRecordWriteResult(IReadOnlyList<string> WrittenPaths, IReadOnlyList<string> Unfinished, string? Failure)
 {
     public required IReadOnlyList<ToolBackupCompletionRequest> PendingBackups { get; init; }

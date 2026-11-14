@@ -224,3 +224,34 @@ These grouped reviews wait for the corresponding worker to return idle.
 C returned the full grouped continuation with seventy-two focused tests, a clean build, both .NET checks and six reviewed synthetic Imprint baselines.
 F reviews that frozen candidate in run `r_aeb323402330` before its commit continuation.
 Final payload snapshots and native journeys are still pending.
+
+## Core review fixes
+
+The catalogue merge is `b22e1ec393280935dea93a312f2a1aa337834ad5`.
+F's focused review confirmed all nine C mechanisms and found four corrections.
+C-R1 clears omitted known ownership fields while keeping unknown data. C-R2 keeps unknown PATH, region and route fields by typed identity.
+C-R3 moves new wording to OutputText. C-R4 rejects null machine-array elements at ingress.
+C fixes the group in run `r_f7ac869adb14` after its idle worktree advanced to the catalogue merge.
+
+F's independent Root provider starts in run `r_81083d102942` on that same base.
+Its exclusive new files are root `Composition/Shared/ToolHomes/**` and matching Integration tests.
+A keeps `Composition/Shared/Tools/**`. F resolves homes and declared client paths. It doesn't discover clients or wire the full graph yet.
+This independent slice uses the committed catalogue while the core lanes finish. Full Root composition still follows their integration.
+
+## Planning completion
+
+A's full candidate returned 162 passing focused tests and three shared requests.
+The combined contract adds an authored package-relative npm entry, bounded npm metadata reads without a client and pending PATH backup handles.
+The catalogue's known `npm-shim.js` entry and its portability check move with that required field. E is idle during this one-time caller update.
+A supplies twelve signed-checksum Node pins for 22.23.5 and 24.22.3. Its own packet records the GPG evidence.
+
+D returned 105 passing focused tests and a request for explicit path-grant publication.
+The existing Tool interface already keeps `--allow-path`. A separate `ToolRecordGrantRequest` and record-service call publish only settings using the existing codec.
+It touches no tool lock, machine state or runtime. Dry-run doesn't call it. C implements it and D reports the separate explicit edit before tool planning.
+This avoids adding unrelated tool records as a side effect of authoring a grant.
+
+B's three grouped fixes returned 67 passing affected tests. C's four fixes returned 47 passing affected tests with unchanged snapshots.
+Both reported clean builds and mandatory checks. B is ready for its commit continuation. C also needs the new grant method.
+The combined shared types and catalogue caller build with zero warnings and errors.
+Thirteen affected catalogue tests, twelve documentation tests, both .NET checks, Markdown formatting and Git whitespace checks pass.
+No behavior implementation is added by this contract increment.

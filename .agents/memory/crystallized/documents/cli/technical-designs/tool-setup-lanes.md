@@ -9,7 +9,7 @@ open-forge:
 Tool setup lanes are the file assignments for implementing native tool setup and additive configuration.
 For example, lane D builds against the frozen A, B and C interfaces while their implementations run in separate worktrees.
 
-Status: Phase 1 accepted on 14 November 2026. Phase 2 prepares and starts isolated Worker Watch lanes.
+Status: Phase 3 integration is in progress. Phase 1 is accepted and Phase 2 started the isolated Worker Watch lanes.
 
 ## Source and phases
 
@@ -60,12 +60,16 @@ Leaf help and output text initially belong to the same lane as that leaf.
 | C          | Framework `Framework/Tools/Shared/{Records,Observation,Serialization}/**`, `Framework/Settings/**` and `Framework/Ownership/**`; Operations `Commands/Tool/{List,Inspect,Status}/**`, `Commands/Tool/Shared/Observation/**`, `Commands/Tool/Models/Read/**`; workspace Status and Doctor tool appenders | Record service, codecs and read operations                                     |
 | D          | Operations `Commands/Tool/{Install,Update,Remove}/**`, `Commands/Tool/Shared/Writing/**`, `Commands/Tool/Models/Writing/**`                                                                                                                                                                             | Writer operations, plan consent, native setup and failure ordering             |
 | E          | Framework `Framework/Tools/Catalogue/**`; tool catalogue tests and real Windows journey evidence; then final `docs/cli.md`, site CLI pages, both CLI Skill copies and Tool help wording                                                                                                                 | Real entries, direct-command and MCP journeys and user documentation           |
+| F          | Root `Composition/Shared/ToolHomes/**` and matching Integration tests, plus F's packet and reports. Central Root wiring transfers after the core branches integrate                                                                                                                                     | Native home and client-path resolution, then Root integration                  |
 | Integrator | All frozen models and schemas, shared contracts, root `CliToolComposer` and command composition, shared rendering wiring, actual workspace controls and payload-dependent snapshots                                                                                                                     | Cross-lane wiring and acceptance                                               |
 
 Framework paths start at `src/cli/framework/OpenForge.Cli.Framework/`.
 Operations paths start at `src/cli/operations/OpenForge.Cli.Operations/`.
-A alone edits root shared Tool host capabilities.
+A alone edits root `Composition/Shared/Tools/**` host capabilities.
 A also supplies the reviewed private Node version pins and command resolution.
+After E's catalogue integrates, F can build the independent native-home and client-path provider before the command graph.
+F resolves the declared directory and file bindings from supplied environment and known-folder inputs.
+Native inventory still discovers clients. F doesn't select or restrict them.
 C alone edits Settings and Ownership codecs. B returns typed addition records and never writes their JSON files.
 D uses C's record service and B's config service.
 D applies one planned removal or config change at a time and publishes the complete remaining receipt set through C before starting the next change.

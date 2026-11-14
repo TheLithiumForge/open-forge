@@ -188,14 +188,26 @@ A command resolver returns an absolute command path and its real executable invo
 Detection carries verified recorded-install facts and the responsible manager into channel planning.
 A successful resolution includes its executable invocation, command path, runtime, native install directory, ordered process commands, download and extraction destinations and launchers.
 Install takes that resolution and executes the checked plan.
+Each npm channel declares its entry path relative to the installed package root.
+An exact selector uses that declared path and needs no metadata network call.
+For latest resolution without a runnable client, Root can read bounded npm metadata through `IToolDownloadHost.ReadNpmMetadataAsync`.
+The result gives versions, their package-relative entries, optional Node ranges and the registry used, or a failure.
+Honor registry and proxy trust settings. Block unsupported authenticated configuration without reading or returning credentials.
+This read adds no package-manager installation or configuration change.
 A returns verified private-runtime records with its tool state.
 Shared-file removal receives C's locations and expected records, then checks the current launcher inventory before removing an unused runtime.
 A handles package-manager paths and supply ordering.
 D uses those facts for reporting and native setup.
+PATH add and removal results also return pending file-backup handles.
+D keeps those handles until their machine record and the final operation verify.
 For reused CBM, the native install directory contains its verified existing command.
 Setup `--dir` points there without creating another installation.
 
-Planning checks files and backup feasibility without creating backups.
+Tool planning checks files and backup feasibility without creating backups.
+Explicit `--allow-path` remains an existing authored settings edit.
+C exposes a separate settings-only grant request so it doesn't create a tool lock or machine records before tool effects.
+D publishes and reports that edit before tool planning, using the existing grant grammar and Tool backups.
+It writes nothing in dry-run and stays saved if later tool work can't proceed.
 A missing future executable isn't invoked.
 Whole-batch preflight checks every available requirement before effects.
 Later native discovery or execution can still fail.

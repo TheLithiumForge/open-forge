@@ -61,6 +61,7 @@ internal interface IToolBackupService
 
 internal interface IToolRecordService
 {
+    Task<ToolRecordWriteResult> AddAllowInstallPathsAsync(ToolRecordGrantRequest request, CancellationToken cancellationToken);
     Task<ToolRecordsResult> ReadAsync(ToolRecordsRequest request, CancellationToken cancellationToken);
     Task<ToolRecordWriteResult> WriteAsync(ToolRecordWriteRequest request, CancellationToken cancellationToken);
 }
@@ -73,6 +74,7 @@ internal interface IToolProcessHost
 
 internal interface IToolDownloadHost
 {
+    Task<ToolNpmMetadataResult> ReadNpmMetadataAsync(ToolNpmMetadataRequest request, CancellationToken cancellationToken);
     Task<ToolDownloadResult> DownloadAsync(ToolDownloadRequest request, CancellationToken cancellationToken);
 }
 
