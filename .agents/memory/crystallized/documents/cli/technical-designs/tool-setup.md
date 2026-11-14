@@ -9,7 +9,7 @@ open-forge:
 Tool setup is a CLI capability that installs published tools and adds configuration.
 For example, bare Install restores the exact CodeGraph version in the lock, then runs its native setup.
 
-Status: Round-2 design decided on 14 November 2026. This phase updates contracts and compile-only types before implementation.
+Status: Phase 1 accepted on 14 November 2026. The maintainer's C1 through C7 answers below govern implementation.
 
 ## Catalogue
 
@@ -132,11 +132,15 @@ Use its documented configuration-only binary mode after the verified binary is p
 Disclose its global MCP entries, Skills, hooks, instructions and watcher defaults.
 Open Forge writes no MCP entry or Codex TOML section for either tool.
 
-Remove runs the native uninstall before Open Forge cleanup.
+Remove runs a chosen native uninstall before Open Forge cleanup.
 A native command's PATH and shared-binary effects are part of its declared plan.
-If they require live confirmation, ask separately when a TTY is available.
-Without live confirmation, print the native command and leave removal pending.
-The [lane choices](tool-setup-lanes.md#recorded-choices) record the Codebase Memory case.
+Codebase Memory uninstall removes its account-wide binary and all agent entries.
+Offer it only without `--yes` and with a live terminal, naming those effects in the confirmation.
+With `--yes`, no terminal or a declined confirmation, skip it and print the command.
+Then remove Open Forge's project additions.
+Keep account-wide native settings on every project Remove and print their manual change commands.
+Other projects can rely on telemetry off, so there is no automatic restoration or cross-project setting registry.
+The [lane decisions](tool-setup-lanes.md#recorded-choices) assign these rules.
 Don't request all-project index deletion.
 
 ## Additions and records
@@ -187,7 +191,7 @@ These decisions override the earlier [redesign](https://github.com/TheLithiumFor
 | R2-04 | 2026-11-14 | Use only `--yes` for unattended consent, including downloads. It never accepts PATH edits or shared deletion                                                                    |
 | R2-05 | 2026-11-14 | Install and Update use `id@version`, with a bare name selecting latest support                                                                                                  |
 | R2-06 | 2026-11-14 | Dry-run describes work, uses native dry run where available and discloses any latest-resolution network access                                                                  |
-| R2-07 | 2026-11-14 | Native uninstall runs before Open Forge cleanup. Shared deletion and final PATH removal require confirmation                                                                    |
+| R2-07 | 2026-11-14 | A chosen native uninstall runs before cleanup. C2 governs Codebase Memory's account-wide confirmation and project-only cleanup                                                  |
 | R2-08 | 2026-11-14 | Skip Node archive links and invoke npm through Node and its CLI script. Keep extractor link rejection                                                                           |
 | R2-09 | 2026-11-14 | Accept both native installers as they are, including Codebase Memory account setup. Add only Open Forge configuration                                                           |
 | R2-10 | 2026-11-14 | Add no Open Forge tool Skills or managed-block lines in V1. Reconsider through evals                                                                                            |
@@ -198,5 +202,17 @@ These decisions override the earlier [redesign](https://github.com/TheLithiumFor
 | R2-15 | 2026-11-14 | Detect npm, pnpm, Yarn Classic and bun, prefer project lockfiles, ask about multiple clients and check global-bin PATH                                                          |
 | R2-16 | 2026-11-14 | Keep the round-1 home, absolute launchers, private Node and chosen marked PATH setup                                                                                            |
 
-The lane plan records the remaining reversible choices.
+The maintainer accepted Phase 1 and answered C1 through C7 in the task conversation on 14 November 2026.
+These answers override the earlier R2-07 interpretation and per-project native-setting restoration:
+
+| ID  | Date       | Decided rule                                                                                                                                                                                                    |
+| --- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C1  | 2026-11-14 | CLI selectors are major.minor or exact stable SemVer. A bare ID selects latest support. No dist-tags or full npm range syntax                                                                                   |
+| C2  | 2026-11-14 | Codebase Memory uninstall is account-wide. Only live interactive confirmation naming that effect permits it. With `--yes` or no terminal, remove only Open Forge project additions and print the native command |
+| C3  | 2026-11-14 | Keep optional profileDigest and its fixed JSON projection                                                                                                                                                       |
+| C4  | 2026-11-14 | Keep the machine-state filenames and workspace physical-path SHA-256 keys                                                                                                                                       |
+| C5  | 2026-11-14 | Keep `--channel` on named Install and Update and schema-3 results with `data.tools`                                                                                                                             |
+| C6  | 2026-11-14 | Start at CodeGraph 1.6.2 and Codebase Memory 0.12.1. CodeGraph's wrapper needs Node 20 or newer. Review every three months                                                                                      |
+| C7  | 2026-11-14 | Project Remove keeps account-wide native settings, reports them and prints native change commands. No per-project restoration or cross-project registry                                                         |
+
 Old #26 and #30 branches are copy sources, not the current design.

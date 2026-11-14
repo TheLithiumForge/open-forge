@@ -9,14 +9,15 @@ open-forge:
 Tool setup is Task 90, which implements published tool installation and additive configuration through supervised lanes.
 For example, bare Install restores the exact lock versions while tools run through their direct commands.
 
-Status: Task 90 “Tool setup” (phase 1/3): milestone 1/7.
+Status: Task 90 “Tool setup” (phase 2/3): milestone 1/7.
 
 ## Outcome
 
 Implement the [Tool setup design](../../../crystallized/documents/cli/technical-designs/tool-setup.md), updated by the maintainer's [round-2 decisions](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6868316792).
 The detailed 14 November 2026 source is `of-tool-setup-decisions-2.md`.
 It overrides the earlier respec.
-Report and stop after each of the user's three phases.
+The maintainer accepted Phase 1 and authorized Phases 2 and 3 on 14 November 2026.
+Report at each phase boundary and stop for the overseer's CI results at PUSH REQUEST.
 
 ## Milestones
 
@@ -36,6 +37,8 @@ Phase 1 is direct work by the mastermind.
 Phase 2 uses `gpt-6.1-sol` with `xhigh` effort through Worker Watch in PowerShell.
 The user's model choice overrides the older workspace roster.
 Each worker has its own worktree and strict file assignment.
+The [lane packets](../tool-setup/packets/_packets.md) define their scope and focused checks.
+Workers return a checked candidate before the coordinator sends their commit continuation.
 The mastermind integrates shared composition and final payload snapshots.
 The user authorizes local lane merges, overriding the lane file's earlier no-merge rule.
 No worker pushes, opens a PR or changes GitHub.
@@ -53,10 +56,10 @@ Tools add no workspace state, lease or recovery dependency under `.open-forge-st
 
 ## Checkpoint
 
-Done: Folded R2-01 through R2-16 into contracts, schemas, lock, compile-only models, planned docs and strict lane assignments. Local checks pass.
-Now: Task 90 “Tool setup” (phase 1/3): milestone 1/7. Phase 1 is complete for the maintainer's report.
-Next: Stop with the Phase 1 report. On continuation, write final packets and start the Phase 2 Worker Watch swarm.
-Blocker: None. Reversible choices are recorded for review.
+Done: Phase 1 is accepted. Recorded the maintainer's C1 through C7 decisions, including project-only unattended removal and kept account-wide settings.
+Now: Task 90 “Tool setup” (phase 2/3): milestone 1/7. Freezing worker packets and the implementation base.
+Next: Verify and commit the updated base, create isolated worktrees and start the Sol xhigh swarm.
+Blocker: None. C1 through C7 are decided.
 
 ## Phase 1 checks
 
@@ -70,10 +73,25 @@ The final local checks on 14 November 2026 passed:
 - LF and Git whitespace checks, all 26 copy-source paths and matching CLI Skill reference copies.
 
 No command implementation, real tool installation or payload-snapshot regeneration ran in Phase 1.
-The [recorded choices](../../../crystallized/documents/cli/technical-designs/tool-setup-lanes.md#recorded-choices) keep C1 through C7 as maintainer questions.
-Codebase Memory native uninstall needs separate live confirmation for its protected effects.
-Without it, the planned operation stays pending instead of removing Open Forge additions first.
+The [recorded choices](../../../crystallized/documents/cli/technical-designs/tool-setup-lanes.md#recorded-choices) now contain the maintainer's C1 through C7 answers.
+Codebase Memory account uninstall needs live interactive confirmation naming its effects.
+With `--yes` or no terminal, remove only Open Forge project additions and print that command.
+Project Remove keeps account-wide settings and prints their manual change commands.
 
 ## Runs
 
-No Worker Watch agent or run has started for this task.
+The managed Worker Watch session is `s_b74431d77d3a`.
+No worker agent or run has started yet.
+
+## Phase 2 base
+
+The C1 through C7 contract update and five lane packets passed these local checks:
+
+- Release solution build with zero warnings and errors.
+- `ToolSetupDocumentationTests`, 12 passed, zero failed and zero skipped.
+- Both required .NET formatting checks, Prettier and the Docusaurus production build.
+- Markdown links, current packet catalogues, LF and matching CLI Skill copies.
+
+The frozen interfaces now carry the entry and workspace for channel installation, the invocation for native config, file hash expectations and backup completion.
+Native setting change arguments are named as manual instructions.
+These are compile-only changes before the worker execution base is created.

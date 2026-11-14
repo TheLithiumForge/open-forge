@@ -96,7 +96,8 @@ On Windows use the existing physical-path comparison form before hashing.
 The physical path stays in machine state so readers can check the binding.
 
 PATH records keep the exact chosen files and the prior and applied PATH entry or marked block.
-Native-setting records keep the previous setting and allow-listed restore arguments per workspace.
+Native-setting records keep the previous setting and allow-listed manual change arguments per workspace.
+Project Remove keeps account-wide settings and reports those commands instead of running them.
 A missing or unreadable native previous value blocks that change.
 This doesn't create an executable-version reference registry.
 

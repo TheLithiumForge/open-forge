@@ -6,7 +6,7 @@ internal sealed record ToolNativeSettingRecord
     public required string ChangeId { get; init; }
     public required ToolRecordedValue Previous { get; init; }
     public required ToolRecordedValue Applied { get; init; }
-    public required IReadOnlyList<string> RestoreArguments { get; init; }
+    public required IReadOnlyList<string> ManualRestoreArguments { get; init; }
 }
 
 internal sealed record ToolWorkspaceMachineState

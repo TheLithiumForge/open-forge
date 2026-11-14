@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
+using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 
 namespace OpenForge.Cli.Core.Framework.Tools.Models.Services;
@@ -11,6 +12,7 @@ internal sealed record ToolConfigRequest
     public required string WorkspacePath { get; init; }
     public required string MainRoot { get; init; }
     public required string ProfileDigest { get; init; }
+    public ToolCommandTarget? Invocation { get; init; }
     public required IReadOnlyList<ToolConfigChange> Changes { get; init; }
     public required IReadOnlyList<ToolAppliedChange> AppliedChanges { get; init; }
     public required IReadOnlyList<ToolNativeSettingRecord> NativeSettings { get; init; }

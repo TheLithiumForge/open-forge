@@ -19,6 +19,7 @@ internal sealed record ToolRecordsResult
     public required ToolRecordReadState PathRecordState { get; init; }
     public ToolPathState? Path { get; init; }
     public required IReadOnlyList<string> Problems { get; init; }
+    public required IReadOnlyDictionary<string, string?> ExpectedFileSha256 { get; init; }
 }
 
 internal sealed record ToolRecordWriteRequest

@@ -16,13 +16,13 @@ Status: Round-2 design decided on 14 November 2026. Command implementation is pe
 Each profile declares stable change IDs in execution order.
 Use these five additive cases:
 
-| Case             | Apply                                                                                | Remove                                                 |
-| ---------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------ |
-| JSON array union | Append missing items and record only those items                                     | Delete only recorded items still present               |
-| JSON value set   | Set only an absent member, otherwise report a conflict                               | Delete only while equal to the recorded value          |
-| Marked block     | Add one uniquely marked block                                                        | Delete that unambiguous block                          |
-| Managed file     | Create only if absent                                                                | Delete only while its hash matches                     |
-| Native command   | Run an allow-listed command and record the previous account setting in machine state | Restore that setting only while current equals applied |
+| Case             | Apply                                                                                | Remove                                                       |
+| ---------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------ |
+| JSON array union | Append missing items and record only those items                                     | Delete only recorded items still present                     |
+| JSON value set   | Set only an absent member, otherwise report a conflict                               | Delete only while equal to the recorded value                |
+| Marked block     | Add one uniquely marked block                                                        | Delete that unambiguous block                                |
+| Managed file     | Create only if absent                                                                | Delete only while its hash matches                           |
+| Native command   | Run an allow-listed command and record the previous account setting in machine state | Keep the account setting and print its manual change command |
 
 Keep unrelated JSON members, array items and bytes outside a marked block.
 JSON null is a present value and conflicts with an initial set.
@@ -48,7 +48,10 @@ For CodeGraph telemetry, read the tool's status with its telemetry override vari
 Normal tool invocations keep their environment.
 Record the stored previous on/off value in machine state.
 Disclose that telemetry off deletes the upstream identity and unsent queues.
-Restoration covers the setting, not deleted telemetry history.
+Project Remove keeps the account setting because other projects can rely on it.
+Report the kept setting and print the native command to change it back.
+Changing the setting can't restore deleted telemetry history.
+Add no cross-project native-setting registry.
 If previous state is unavailable, block before effects.
 
 ## Backups
@@ -64,8 +67,10 @@ Tools don't add a Repair action or depend on the existing workspace lock or reco
 
 ## Remove
 
-Run the upstream uninstall first.
+Run a confirmed native uninstall before removing project additions.
+For Codebase Memory, `--yes`, no terminal or a declined account-wide confirmation skips native uninstall and prints its command.
 Then remove only additions recorded for this tool.
+Keep account-wide native settings and print their manual change commands.
 Keep changed JSON sets and managed files and report conflicts.
 Delete a uniquely marked block as the managed span, including its interior.
 Leave unrelated data and every unrecorded value alone.
@@ -96,6 +101,7 @@ Required tests cover:
 - Added-item accounting, absent-only sets, marker uniqueness and file hashes.
 - Reapply, migration and removal without repository previous values.
 - Native previous values only in per-user state.
+- Kept account-wide settings and project-only removal when account uninstall is skipped.
 - Dirty tracked files, untracked files and sequential sibling backups.
 - Partial completion and unchanged unrelated bytes.
 - No Tool writes or locks under `.open-forge-state/`.

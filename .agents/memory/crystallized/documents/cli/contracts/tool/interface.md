@@ -22,7 +22,8 @@ The global version flag keeps its existing meaning.
 
 A tool spec is `id` or `id@version`.
 IDs are exact catalogue keys, not paths or source IDs.
-The V1 version selector accepts `major.minor`, `major.minor.x` or an exact stable SemVer.
+The V1 version selector accepts `major.minor` or an exact stable SemVer.
+Settings and catalogue profiles keep the `major.minor.x` range notation.
 A bare ID selects the latest supported version.
 An explicit selector must match an available supported profile and its minimum tool version.
 Unknown IDs or channels, empty selectors, prereleases, extra operands and repeated singleton values are invalid input.
@@ -42,12 +43,14 @@ Show the plan before asking or applying.
 It chooses npm when manager selection is unresolved and npm is usable, then the first usable client in the fixed npm, pnpm, Yarn Classic, bun order.
 A single usable project-lockfile preference wins before that fallback.
 Without `--yes`, ask when several compatible managers are possible.
-Without a TTY or `--yes`, apply reports missing consent and performs no effects.
+If neither a live terminal nor `--yes` is available, apply reports missing consent and performs no effects.
 
 Even with `--yes`, unattended execution never changes PATH or deletes shared tool files or runtimes.
 Print exact instructions and keep those optional actions unselected.
-If a required upstream uninstall itself has one of those effects, ask for separate live confirmation when a TTY is available.
-Without that confirmation, leave removal pending and print its native command.
+Codebase Memory uninstall removes its account-wide binary and all agent entries.
+Run it only after live interactive confirmation that names those effects, and never when `--yes` is present.
+With `--yes`, without a terminal or after declining, remove only Open Forge's project additions and print the native uninstall command.
+Keep account-wide native settings on every project Remove and print the native command to change them back.
 The [recorded choices](../../technical-designs/tool-setup-lanes.md#recorded-choices) explain this guarded native-uninstall case.
 
 ## Reports

@@ -14,3 +14,6 @@ internal sealed record ToolBackupResult
 
 internal sealed record ToolBackupRestoreRequest(ToolBackupResult Backup, string ExpectedAppliedSha256);
 internal sealed record ToolBackupRestoreResult(bool Restored, bool Conflict, string? Failure);
+
+internal sealed record ToolBackupCompletionRequest(ToolBackupResult Backup, string? ExpectedAppliedSha256, bool Verified);
+internal sealed record ToolBackupCompletionResult(bool Discarded, string? KeptPath, string? Failure);

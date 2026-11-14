@@ -9,19 +9,20 @@ open-forge:
 Tool setup lanes are the file assignments for implementing native tool setup and additive configuration.
 For example, lane D builds against the frozen A, B and C interfaces while their implementations run in separate worktrees.
 
-Status: Phase 1 updates the round-2 spec. Phase 2 starts workers only after the phase report.
+Status: Phase 1 accepted on 14 November 2026. Phase 2 prepares and starts isolated Worker Watch lanes.
 
 ## Source and phases
 
 The detailed source is the maintainer's `of-tool-setup-decisions-2.md`, dated 14 November 2026.
 The [design decision record](tool-setup.md#decisions) records R2-01 through R2-16.
 They override step 0.
+The maintainer's Phase 1 acceptance and C1 through C7 answers in the task conversation override earlier removal rules.
 The [Task 90 record](../../../../working/cli-development/tasks/task90-tool-setup.md) keeps phase progress and runs.
 
 The three phases are:
 
-1. Fold in decisions, verify and commit. Report and stop.
-2. Write final packets, create worker worktrees and start the swarm. Report and stop.
+1. Fold in decisions, verify and commit. Phase 1 is accepted.
+2. Write final packets, create worker worktrees and start the swarm. Report the phase boundary.
 3. Integrate lanes, run E's journeys and final docs, regenerate payload snapshots once and complete one fresh adherence review. Request CI through the overseer and stop.
 
 ## Frozen interfaces
@@ -37,6 +38,10 @@ Workers don't silently change these files or schemas.
 A required change goes in a separate `contract(tool): ...` commit, with the reason, affected consumers and no implementation based on an unintegrated contract.
 The mastermind checks and integrates that contract before dependent work.
 Workers use agreed fakes at their typed interfaces until implementations merge.
+Channel requests carry their workspace and install entry, so registry config and package identity stay with the plan.
+Config requests carry the resolved invocation for native commands.
+B implements the frozen backup interface and profile digest method for D.
+C returns file SHA-256 expectations, with null for absence, for its own expected-state writes.
 Each worker reads the complete C# catalogue, design and style Directives independently.
 
 ## File assignments
@@ -169,7 +174,7 @@ Every decision below is dated 14 November 2026:
 | R2-04    | D uses `--yes`; A never changes PATH or shared files unattended                                                           |
 | R2-05    | C/D parse the frozen `id@version` shape                                                                                   |
 | R2-06    | A/D disclose latest lookups and use native dry run where declared                                                         |
-| R2-07    | D runs native uninstall first and obtains live protected-effect consent                                                   |
+| R2-07    | D runs chosen native uninstall first. C2 skips Codebase Memory account uninstall with `--yes` or no terminal              |
 | R2-08    | A skips Node links before extraction and invokes npm CLI through Node                                                     |
 | R2-09    | E declares both native installers unchanged and their account effects                                                     |
 | R2-10    | E delivers no Open Forge usage Skill or managed-block line                                                                |
@@ -182,17 +187,17 @@ Every decision below is dated 14 November 2026:
 
 ## Recorded choices
 
-The mastermind chose these reversible details on 14 November 2026:
+The maintainer decided C1 through C7 on 14 November 2026:
 
-| ID  | Choice                                                                                                                                     | Review question                                                              |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| C1  | V1 version selectors are major.minor, major.minor.x or exact stable SemVer. Bare name means latest                                         | Does V1 also need full npm range expressions or tags?                        |
-| C2  | Codebase Memory's native uninstall needs live consent for its binary/PATH effects. Without it, print the command and leave removal pending | Is pending unattended removal the desired reconciliation of R2-04 and R2-07? |
-| C3  | Lock keys are version, channel, changes and optional profileDigest. Digest uses a fixed UTF-8 JSON projection                              | Is a digest useful enough to keep in the first codec?                        |
-| C4  | Machine files are tools, runtimes/node, path and workspaces keyed by physical-path SHA-256                                                 | Are these filenames acceptable?                                              |
-| C5  | `--channel` stays on named Install and Update. Result data uses tools plus writer preview, plan and outcomes                               | Are these local interface choices acceptable?                                |
-| C6  | Initial minimum patches are 1.6.2 and 0.12.1, with a three-month review. CodeGraph wrapper support starts at Node 20                       | Does current latest mean this patch floor as well as the minor profile?      |
-| C7  | Native previous values are per workspace in user state. Restore only a matching applied value and disclose account scope                   | Should shared native-setting restoration need a later cross-project policy?  |
+| ID  | Decision                                                                                                                                                                                                | Lane consequence                                                                             |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| C1  | CLI version selectors are major.minor or exact stable SemVer. Bare ID selects latest. No tags or full npm ranges                                                                                        | A parses, D accepts specs. Settings still use minor.x                                        |
+| C2  | Codebase Memory account uninstall needs live interactive confirmation naming its binary and all agent entries. `--yes`, no terminal or a decline skips it and removes only Open Forge project additions | D chooses the native step, B removes project additions and E tests both paths                |
+| C3  | Keep optional profileDigest with the fixed JSON projection                                                                                                                                              | B computes it and C serializes it                                                            |
+| C4  | Keep the machine-state filenames and physical-path SHA-256 workspace keys                                                                                                                               | C writes them                                                                                |
+| C5  | Keep `--channel` on named Install and Update and schema-3 `data.tools` results                                                                                                                          | C/D form results and the integrator wires output                                             |
+| C6  | CodeGraph starts at 1.6.2 with Node 20, Codebase Memory at 0.12.1 and reviews run every three months                                                                                                    | A checks requirements and E declares profiles                                                |
+| C7  | Project Remove keeps account-wide native settings, names them and prints manual change commands. No per-project restoration or cross-project registry                                                   | B returns kept native facts and manual arguments. D reports them without executing a restore |
 
 The former Q1 through Q14 are resolved by R2-01 through R2-16 and C1 through C7.
-No prior pending choice is silently carried forward.
+No C1 through C7 question stays open.

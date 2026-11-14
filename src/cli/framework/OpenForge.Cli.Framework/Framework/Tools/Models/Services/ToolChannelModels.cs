@@ -19,6 +19,7 @@ internal sealed record ToolDetectionResult
 internal sealed record ToolChannelRequest
 {
     public required ToolCatalogueEntry Entry { get; init; }
+    public required string WorkspacePath { get; init; }
     public required ToolVersionSelection Selection { get; init; }
     public required ToolDetectionResult Existing { get; init; }
     public required ToolTarget Target { get; init; }
@@ -43,5 +44,5 @@ internal sealed record ToolChannelResolution
     public required IReadOnlyList<ToolDeclaredEffect> Effects { get; init; }
 }
 
-internal sealed record ToolChannelInstallRequest(ToolChannelResolution Resolution, string HomePath);
+internal sealed record ToolChannelInstallRequest(ToolCatalogueEntry Entry, ToolChannelResolution Resolution, string HomePath, string WorkspacePath);
 internal sealed record ToolChannelInstallResult(ToolMachineState? State, IReadOnlyList<string> CompletedEffects, string? Failure);

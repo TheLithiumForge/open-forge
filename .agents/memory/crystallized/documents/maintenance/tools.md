@@ -33,12 +33,14 @@ Before adding or updating a profile, complete these checks:
 9. Check JSON union and absent-only set, marked blocks, absent-only files and native account settings against their additive removal rules.
 10. Verify exact lock versions, channels and added items, keys, markers and hashes. Keep native previous values in machine state.
 11. Test absolute launchers, private runtime compatibility, PATH choices and unattended instructions. Never edit real user PATH or shell profiles in journeys.
-12. Run real direct-command and MCP journeys, update and native-first removal. Keep full suites in CI.
+12. Run real direct-command and MCP journeys, update, confirmed native-first removal and unattended project-only removal. Keep full suites in CI.
 
 Open Forge adds no per-tool Skill or managed-block line.
 It doesn't rewrite upstream integrations.
 The normal process runner uses argument vectors, not shell strings.
 A native uninstall that requires PATH or shared-binary effects needs live confirmation.
+Codebase Memory account uninstall is skipped with `--yes` or no terminal, while Open Forge project additions are removed.
+Project Remove keeps account-wide native settings and prints manual change commands.
 
 ### Review interval
 
@@ -127,7 +129,8 @@ Open Forge writes no MCP entry, Codex TOML section, hook, instruction block or u
 Keep the native watcher defaults.
 
 Native uninstall includes binary removal and, on Windows, persistent user PATH cleanup.
-Without live confirmation, print its command and leave removal pending.
+Only live interactive confirmation naming the account-wide binary and all agent entries permits it.
+With `--yes`, no terminal or a declined confirmation, print its command and remove only Open Forge project additions.
 Never pass `--delete-indexes`.
 The native command keeps indexes by default.
 

@@ -77,7 +77,10 @@ Open Forge writes no replacement MCP entries or Codex TOML sections.
 It adds no tool Skill or managed-block line.
 
 Back up declared changed files before invoking native setup.
-Run native uninstall before removing Open Forge additions.
+Run a chosen native uninstall before removing Open Forge additions.
+Codebase Memory's account-wide uninstall needs the live confirmation defined by the common Interface.
+With `--yes` or without a terminal, skip that uninstall and remove only Open Forge's project additions.
+Keep account-wide native settings and print their manual change commands.
 Guard any native PATH or shared-binary effects under the common consent rule.
 Never request deletion of every project's indexes.
 

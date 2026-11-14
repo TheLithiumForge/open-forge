@@ -20,7 +20,7 @@ The planned commands appear in this order:
 - `status [id]` - check versions and additions.
 - `install [id[@version]]` - run native setup and add configuration.
 - `update [id[@version]]` - choose the latest or an explicit supported version.
-- `remove <id>` - run native uninstall, then remove additions.
+- `remove <id>` - remove project additions and offer account-wide native uninstall when interactive.
 
 The bare group shows help.
 The [Interface](interface.md) defines tool specs, `--yes` and results.

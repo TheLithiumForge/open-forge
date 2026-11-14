@@ -24,7 +24,7 @@ The help purpose is "Uninstall tool setup and remove its additions."
 
 ## Report
 
-Report native uninstall and account scope, additions to remove, conflicts to keep, native settings to restore, shared-file choices, PATH instructions and package-manager uninstall instructions.
+Report chosen or skipped native uninstall and account scope, additions to remove, conflicts to keep, kept account-wide native settings and their manual commands, shared-file choices, PATH instructions and package-manager uninstall instructions.
 The [common Interface](../interface.md) defines consent, repetition and result coordinates.
 The sibling [Behavior](behavior.md) defines execution.
 

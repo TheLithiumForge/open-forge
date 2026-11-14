@@ -30,9 +30,16 @@ internal interface IToolChannelService
 
 internal interface IToolConfigService
 {
+    string ComputeProfileDigest(ToolVersionProfile profile);
     Task<ToolConfigPlan> PlanAsync(ToolConfigRequest request, CancellationToken cancellationToken);
     Task<ToolConfigApplyResult> ApplyAsync(ToolConfigPlan plan, CancellationToken cancellationToken);
     Task<ToolConfigRemoveResult> RemoveAsync(ToolConfigRemoveRequest request, CancellationToken cancellationToken);
+}
+
+internal interface IToolBackupService
+{
+    Task<ToolBackupResult> PrepareAsync(ToolBackupRequest request, CancellationToken cancellationToken);
+    Task<ToolBackupCompletionResult> CompleteAsync(ToolBackupCompletionRequest request, CancellationToken cancellationToken);
 }
 
 internal interface IToolRecordService

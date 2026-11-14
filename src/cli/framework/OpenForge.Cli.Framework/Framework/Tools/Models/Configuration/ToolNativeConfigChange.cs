@@ -8,5 +8,5 @@ internal sealed record ToolNativeConfigChange : ToolConfigChange
     public required IReadOnlyDictionary<string, string?> ReadEnvironment { get; init; }
     public required string ValueParserId { get; init; }
     public required string DesiredValue { get; init; }
-    public required IReadOnlyList<string> RestoreArgumentsTemplate { get; init; }
+    public required IReadOnlyList<string> ManualRestoreArgumentsTemplate { get; init; }
 }
