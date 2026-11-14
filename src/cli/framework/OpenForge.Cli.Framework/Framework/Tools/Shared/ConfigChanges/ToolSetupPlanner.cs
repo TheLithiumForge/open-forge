@@ -52,7 +52,11 @@ internal sealed class ToolSetupPlanner(IToolProcessHost processes, IToolNativePl
                 if (declaration.OperatingSystem is { } operatingSystem && !CurrentPlatform(operatingSystem)) continue;
                 if (declaration.ClientId is { } client && clients is not null && !clients.Contains(client, StringComparer.Ordinal)) continue;
                 if (declaration.Purpose is not (ToolNativeOutputPurpose.Backup or ToolNativeOutputPurpose.ReportOnly)) throw new ArgumentOutOfRangeException(nameof(request));
-                var pattern = ToolNativeOutputs.PathFor(request.Context, declaration.PathTemplate, declaration.Scope);
+                var conditionalDescription = request.InstalledInvocation is null && request.Setup.NativePlan is not null && declaration.ClientId is not null;
+                var pattern = conditionalDescription
+                    ? ToolNativeOutputs.AvailablePathFor(request.Context, declaration.PathTemplate, declaration.Scope)
+                    : ToolNativeOutputs.PathFor(request.Context, declaration.PathTemplate, declaration.Scope);
+                if (pattern is null) continue;
                 ToolNativeOutputs.ValidatePattern(pattern, declaration.Match);
                 outputs.Add(new(pattern, declaration.Scope, declaration.Match, declaration.Purpose, declaration.ClientId));
             }

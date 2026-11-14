@@ -48,6 +48,52 @@ public sealed class ToolEffectiveIgnoreTests
         Assert.False(File.Exists(scenario.Files.Combine("generated/" + ProbeName)));
     }
 
+    [Theory(DisplayName = "Commented native all-data ignore files avoid an unnecessary Open Forge block")]
+    [InlineData(false, false), InlineData(false, true), InlineData(true, false), InlineData(true, true)]
+    public async Task CommentedNativeCoverage(bool keepIgnoreFile, bool windowsLines)
+    {
+        using var scenario = new ToolServiceScenario();
+        var host = new ToolGitTestHost(scenario.Files.Combine("git-home"));
+        Assert.Equal(0, (await GitAsync(host, scenario, ["init", "--quiet", "--template="])).ExitCode);
+        Directory.CreateDirectory(scenario.Files.Combine("generated"));
+        var rules = keepIgnoreFile ? $"*\n\n# synthetic keep rule\n!{ToolEffectiveIgnore.IgnoreFileName}" : "*";
+        var content = $"# synthetic generated data\n\n# synthetic explanation\n{rules}\n# synthetic footer\n";
+        if (windowsLines) content = content.ReplaceLineEndings("\r\n");
+        var original = Encoding.UTF8.GetBytes(content);
+        var path = scenario.Files.Combine($"generated/{ToolEffectiveIgnore.IgnoreFileName}");
+        await File.WriteAllBytesAsync(path, original, Token);
+        scenario.Files.WriteText("generated/index-data", "synthetic data");
+        Assert.True(await new ToolEffectiveIgnore(host).IsIgnoredAsync(scenario.Context, "generated/", Token));
+        var service = new ToolConfigService(host, new ToolBackupService(host), scenario);
+        var plan = await service.PlanAsync(scenario.Request(Block()), Token);
+        Assert.Equal(ToolChangeDisposition.NoChange, Assert.Single(plan.Changes).Disposition);
+        var applied = await service.ApplyAsync(plan, Token);
+        Assert.Null(applied.Failure);
+        Assert.Empty(applied.RemainingAdditions);
+        Assert.Empty(applied.PendingBackups);
+        Assert.Equal(original, await File.ReadAllBytesAsync(path, Token));
+        Assert.False(File.Exists(scenario.Files.Combine(ToolEffectiveIgnore.IgnoreFileName)));
+    }
+
+    [Fact(DisplayName = "Comments do not make a partial internal ignore file cover all directory data")]
+    public async Task CommentedPartialCoverage()
+    {
+        using var scenario = new ToolServiceScenario();
+        var host = new ToolGitTestHost(scenario.Files.Combine("git-home"));
+        Assert.Equal(0, (await GitAsync(host, scenario, ["init", "--quiet", "--template="])).ExitCode);
+        Directory.CreateDirectory(scenario.Files.Combine("generated"));
+        var original = Encoding.UTF8.GetBytes($"# synthetic all-data start\n\n*\n!{ToolEffectiveIgnore.IgnoreFileName}\n# synthetic exception\n!index-data\n");
+        var path = scenario.Files.Combine($"generated/{ToolEffectiveIgnore.IgnoreFileName}");
+        await File.WriteAllBytesAsync(path, original, Token);
+        scenario.Files.WriteText("generated/index-data", "synthetic data");
+        Assert.Equal(1, (await GitAsync(host, scenario, ["check-ignore", "--no-index", "--quiet", "--", "generated/index-data"])).ExitCode);
+        Assert.False(await new ToolEffectiveIgnore(host).IsIgnoredAsync(scenario.Context, "generated/", Token));
+        var service = new ToolConfigService(host, new ToolBackupService(host), scenario);
+        var plan = await service.PlanAsync(scenario.Request(Block()), Token);
+        Assert.Equal(ToolChangeDisposition.Add, Assert.Single(plan.Changes).Disposition);
+        Assert.Equal(original, await File.ReadAllBytesAsync(path, Token));
+    }
+
     [Theory(DisplayName = "A probe-only root rule or partial internal ignore does not cover directory data")]
     [InlineData(0), InlineData(1), InlineData(2), InlineData(3)]
     public async Task NarrowCoverage(int mode)

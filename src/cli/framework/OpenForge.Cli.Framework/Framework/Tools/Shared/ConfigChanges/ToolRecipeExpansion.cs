@@ -14,13 +14,17 @@ internal static class ToolRecipeExpansion
             if (!Path.IsPathFullyQualified(path) || path.Contains('\0')) throw new InvalidDataException("Recipe roots must be resolved absolute paths.");
         if (!PortableWorkspacePath.TryNormalize(context.MainRoot, out _)) throw new InvalidDataException("The recipe main root must be a portable relative path.");
         foreach (var key in context.ClientRoots.Keys)
-            if (key.Length == 0 || key[0] is not (>= 'a' and <= 'z') || key.Any(character => character is not (>= 'a' and <= 'z' or >= '0' and <= '9' or '-')))
+            if (!IsClientKey(key))
                 throw new InvalidDataException("A recipe client key is invalid.");
     }
 
     internal static string Expand(string text, ToolRecipeContext context, string? previous = null)
+        => ExpandAvailable(text, context, previous) ?? throw new InvalidDataException("A recipe token is unknown or its value is unavailable.");
+
+    internal static string? ExpandAvailable(string text, ToolRecipeContext context, string? previous = null)
     {
         var output = new StringBuilder();
+        var unavailable = false;
         for (var index = 0; index < text.Length; index++)
         {
             if (text[index] != '$' || index + 1 == text.Length) { output.Append(text[index]); continue; }
@@ -40,12 +44,17 @@ internal static class ToolRecipeExpansion
                 ToolRecipeDefinitions.PreviousValueToken when previous is not null => previous,
                 _ => Client(token, context),
             };
-            if (value.Contains('\0')) throw new InvalidDataException("A recipe value contains a null character.");
-            output.Append(value);
+            if (value is null) unavailable = true;
+            else
+            {
+                if (value.Contains('\0')) throw new InvalidDataException("A recipe value contains a null character.");
+                output.Append(value);
+            }
             index = end;
         }
-        if (output.ToString().Contains('\0')) throw new InvalidDataException("A recipe contains a null character.");
-        return output.ToString();
+        var expanded = output.ToString();
+        if (expanded.Contains('\0')) throw new InvalidDataException("A recipe contains a null character.");
+        return unavailable ? null : expanded;
     }
 
     internal static ToolConfigChange Change(ToolConfigChange change, ToolRecipeContext context) => change switch
@@ -70,15 +79,18 @@ internal static class ToolRecipeExpansion
         return result.RootElement.Clone();
     }
 
-    private static string Client(string token, ToolRecipeContext context)
+    private static string? Client(string token, ToolRecipeContext context)
     {
         if (token.StartsWith(ToolRecipeDefinitions.ClientTokenPrefix, StringComparison.Ordinal))
         {
             var key = token[ToolRecipeDefinitions.ClientTokenPrefix.Length..^1];
-            if (context.ClientRoots.TryGetValue(key, out var value)) return value;
+            if (IsClientKey(key)) return context.ClientRoots.GetValueOrDefault(key);
         }
         throw new InvalidDataException("A recipe token is unknown or its value is unavailable.");
     }
+
+    private static bool IsClientKey(string key)
+        => key.Length > 0 && key[0] is >= 'a' and <= 'z' && key.All(character => character is >= 'a' and <= 'z' or >= '0' and <= '9' or '-');
 
     private static void Write(Utf8JsonWriter writer, JsonElement value, ToolRecipeContext context)
     {
