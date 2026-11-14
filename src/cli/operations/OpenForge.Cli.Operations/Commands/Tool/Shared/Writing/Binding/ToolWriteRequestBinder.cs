@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Binding;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Request;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Result;
 using OpenForge.Cli.Core.Commands.Tool.Shared.Writing.Application;
+using OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -14,7 +15,7 @@ namespace OpenForge.Cli.Core.Commands.Tool.Shared.Writing.Binding;
 internal static class ToolWriteRequestBinder
 {
     internal static CliBindResult<ToolWriteRequest, ToolWriteResult> Bind(
-        ToolWriteSymbols symbols, IToolVersionService versions, CliBindingParse parse, CliInvocation invocation)
+        ToolWriteSymbols symbols, ToolCatalogue catalogue, IToolVersionService versions, CliBindingParse parse, CliInvocation invocation)
     {
         var repeatedChannel = symbols.Channel is { } channelOption && CliOptionResultFactsReader.Read(parse.Result, channelOption).IdentifierCount > 1;
         if (parse.Result.Errors.Count != 0 || repeatedChannel)
@@ -31,6 +32,16 @@ internal static class ToolWriteRequestBinder
         {
             return CliBindResult<ToolWriteRequest, ToolWriteResult>.Invalid(ToolWriteResults.Invalid(
                 symbols.Kind, new(ToolWriteFindingCode.InvalidInput, CliSemanticStatus.Invalid), invocation.Workspace));
+        }
+        if (spec is not null)
+        {
+            if (!catalogue.Entries.TryGetValue(spec.Id, out var entry)
+                || !string.Equals(spec.Id, entry.Identity.Id, StringComparison.Ordinal))
+                return CliBindResult<ToolWriteRequest, ToolWriteResult>.Invalid(ToolWriteResults.Invalid(
+                    symbols.Kind, new(ToolWriteFindingCode.UnknownTool, CliSemanticStatus.Invalid, spec.Id), invocation.Workspace));
+            if (channel is not null && !entry.Channels.Any(candidate => string.Equals(candidate.Id, channel, StringComparison.Ordinal)))
+                return CliBindResult<ToolWriteRequest, ToolWriteResult>.Invalid(ToolWriteResults.Invalid(
+                    symbols.Kind, new(ToolWriteFindingCode.ChannelInvalid, CliSemanticStatus.Invalid, spec.Id), invocation.Workspace));
         }
         if (invocation.Workspace is not { } workspace)
             return CliBindResult<ToolWriteRequest, ToolWriteResult>.Invalid(ToolWriteResults.Invalid(

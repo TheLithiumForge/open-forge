@@ -91,14 +91,110 @@ Every advertised path executes the accepted sequence and has focused evidence. N
 
 ## Progress
 
-Done: Implemented the writer candidate and corrected D-R2 and D-R4. Adopted the separate settings-only grant ABI, PATH backup handles and Root's native environment and running-version facts. Kept D-R3's four-parameter application.
-Now: Accepted for local integration. The managed build, 153 focused cases and final checks pass.
-Next: Return the local implementation commit SHA and constructor and leaf binding map for F. Combined Root and native evidence follows integration.
+Done: Kept the accepted D-R5 factories and added D-R6 catalogue checks before execution. The affected binding class passes all 45 cases. The implementation commit keeps D-R2, D-R3 and D-R4.
+Now: The combined seven-file R5 and R6 correction passes the required checks for its authorized local commit and Root integration.
+Next: Return the correction SHA and five-parameter leaf map. The coordinator reviews the committed correction before integration and C wires the bindings.
 Blocker: None identified in this continuation.
 
 ## Evidence
 
-### Commit continuation
+### Catalogue binding
+
+The coordinator accepted D-R5 and requested D-R6 on the same uncommitted correction. Named unknown IDs and unadvertised channels need to fail typed binding before Root resolves home or native hosts. Bare Install and Update still need record-based selection during execution.
+
+This correction is local input validation for a developer CLI. It reuses the pure catalogue, stable version service, existing findings and typed Shell binding. Source changes are reversible through Git. The BCL dictionary lookup and ordinal channel comparison meet the requirement without a new dependency or exceptional mechanism. The cheapest decisive evidence is the affected Unit binding class. Combined Root and native evidence stays with integration under the coordinator's focused-check limits.
+
+Each leaf has five behavioral parameters. `ToolCatalogue` passes through the common binding into `ToolWriteRequestBinder.Bind`. Syntax checks run first. A named spec must match a catalogue entry's ID, and its optional channel must be advertised by that entry. Failures return the existing `UnknownTool` or `ChannelInvalid` finding with Invalid status and the requested tool ID. The operation delegate and contextual invalid-result factory keep the R5 behavior. Requests without a spec don't inspect declared records during binding.
+
+The exact leaf signatures for C are:
+
+```text
+ToolInstallBinding.CreateRequestBinding(ToolWriteSymbols, Func<ToolInstallOperation>, ToolCatalogue, IToolVersionService, CliHelpContent)
+ToolUpdateBinding.CreateRequestBinding(ToolWriteSymbols, Func<ToolUpdateOperation>, ToolCatalogue, IToolVersionService, CliHelpContent)
+ToolRemoveBinding.CreateRequestBinding(ToolWriteSymbols, Func<ToolRemoveOperation>, ToolCatalogue, IToolVersionService, CliHelpContent)
+```
+
+Each returns `CliRequestBinding<ToolWriteRequest, ToolWriteResult>`. `CreateSymbols(Command)` and all operation constructors stay unchanged. There is no old overload, Root parser change or substitute host fact.
+
+The combined correction changes seven existing files. These are the five files listed in the R5 evidence and the two production files `Shared/Writing/Binding/ToolWriteBinding.cs` and `ToolWriteRequestBinder.cs`. The seven new Unit cases cover unknown named IDs on all three leaves, unadvertised channels on Install and Update and bare Install and Update executing both declared records. The 38 accepted R5 cases stay in place. No consent, planning, effect, Framework, shared-model or snapshot file changed. No payload regeneration ran. There are no new routed files or contract requests.
+
+The managed solution build returned exit zero with zero warnings and errors in `artifacts/lane-d-r6-build.log`. Its exact command is:
+
+```text
+dotnet build OpenForge.Cli.slnx --configuration Release -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1
+```
+
+Only the affected binding class ran. It selected, discovered and executed 45 managed Unit cases. All 45 passed, with zero failures, skips and warnings and exit zero. The target is .NET 10.0.1, x64, using SDK 10.0.101. The process set `OPENFORGE_SNAPSHOT_UPDATE=0`. The exact command is:
+
+```text
+dotnet run --project src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-build --no-restore -- --filter-class OpenForge.Cli.Core.UnitTests.Commands.Tool.Shared.Writing.Binding.ToolWriteBindingTests --minimum-expected-tests 45 --fail-warns on --fail-skips on --no-ansi --progress off --report-xunit-ctrf --report-xunit-ctrf-filename results.json --results-directory artifacts/lane-d-r6-tests/binding
+```
+
+The execution log is `artifacts/lane-d-r6-binding.log`. The report is `artifacts/lane-d-r6-tests/binding/results.json`, SHA-256 `4CA86DFD81AA2C1132E8B97850EE52A886431D75D320457F89EE9D47E2DC0EB7`. The artifact is `artifacts/bin/OpenForge.Cli.Core.UnitTests/release/OpenForge.Cli.Core.UnitTests.dll`, SHA-256 `9C9CB874F8A370BDCE436333618C366F3DD4A910C5EC6E0B1125EF00D35EAE98`.
+
+The base commit is `41ef63a7fc8987836e74315ea3450fe8bdd7273c` and its tree is `46378694b23dcddd3814b1288af44f6f9d175bd7`. The six changed C# files are pinned in `artifacts/lane-d-r6-source-manifest.sha256`, SHA-256 `DE02D0B71F445F615864F84EA01A954D150B25B0CE25D0E04FCC26DF9D37FF17`. Those source hashes stayed unchanged after compilation. All seven changed files use LF without a UTF-8 BOM. The coordinator authorized one combined local R5 and R6 correction commit after these gates, without another review return.
+
+The final required checks returned exit zero:
+
+- `npm run check:dotnet:whitespace`, with log `artifacts/lane-d-r6-whitespace.log`.
+- `npm run check:dotnet:style`, with log `artifacts/lane-d-r6-style.log`.
+- `npx --no-install prettier --check .agents/memory/working/cli-development/tool-setup/packets/lane-d.md`.
+- `git diff --check`, the seven-file scope check, LF and UTF-8 BOM checks and the six-source hash check.
+
+### Deferred factories
+
+D-R5 starts from implementation commit `41ef63a7fc8987836e74315ea3450fe8bdd7273c`. The starting worktree was clean. Root integration found that passing operation instances into leaf binding creation resolved native-home facts during composition.
+
+Each leaf now takes its typed `Func<ToolLeafOperation>`. The leaf wraps that factory in the existing `Operation` delegate and calls it only when execution reaches that delegate. The stable version service stays in the pure binder. The contextual invalid-result factory stays unchanged. The instance-taking signatures were replaced without an old overload or a Root workaround.
+
+The four-parameter signatures at the accepted R5 review were:
+
+```text
+ToolInstallBinding.CreateRequestBinding(ToolWriteSymbols, Func<ToolInstallOperation>, IToolVersionService, CliHelpContent)
+ToolUpdateBinding.CreateRequestBinding(ToolWriteSymbols, Func<ToolUpdateOperation>, IToolVersionService, CliHelpContent)
+ToolRemoveBinding.CreateRequestBinding(ToolWriteSymbols, Func<ToolRemoveOperation>, IToolVersionService, CliHelpContent)
+```
+
+Each returns `CliRequestBinding<ToolWriteRequest, ToolWriteResult>`. `CreateSymbols(Command)` and all operation constructors stay unchanged.
+
+The correction edits only these five assigned files:
+
+- `Commands/Tool/Install/ToolInstallBinding.cs`
+- `Commands/Tool/Update/ToolUpdateBinding.cs`
+- `Commands/Tool/Remove/ToolRemoveBinding.cs`
+- `Commands/Tool/Shared/Writing/Binding/ToolWriteBindingTests.cs` in the Unit project
+- This packet
+
+The source change adds no dependency, service, model, state or effect. Unit evidence uses the existing provider fakes and typed Shell stages. The 24 new cases cover all three leaves during construction, help and unrelated selection, parser and semantic binding errors, missing workspace, contextual invalid results and valid execution. The original 14 input cases stay in the same class. Valid execution checks one factory call, and every non-execution case checks zero calls and no provider calls.
+
+The final managed solution build passed with zero warnings and zero errors. The command returned exit zero and its log is `artifacts/lane-d-r5-build-final.log`:
+
+```text
+dotnet build OpenForge.Cli.slnx --configuration Release -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1
+```
+
+Only the affected binding class ran. It selected, discovered and executed 38 Unit cases. All 38 passed, with zero failures, skips and warnings and exit zero. The target is managed .NET 10.0.1, x64, using SDK 10.0.101. The exact command is:
+
+```text
+dotnet run --project src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/OpenForge.Cli.Core.UnitTests.csproj --configuration Release --no-build --no-restore -- --filter-class OpenForge.Cli.Core.UnitTests.Commands.Tool.Shared.Writing.Binding.ToolWriteBindingTests --minimum-expected-tests 38 --fail-warns on --fail-skips on --no-ansi --progress off --report-xunit-ctrf --report-xunit-ctrf-filename results.json --results-directory artifacts/lane-d-r5-tests/binding
+```
+
+The test process set `OPENFORGE_SNAPSHOT_UPDATE=0`. The execution log is `artifacts/lane-d-r5-final-binding.log`. The report is `artifacts/lane-d-r5-tests/binding/results.json`, SHA-256 `A003220D0C2DE5FBA4276C272855341BA66F43DB03481636FCB3799E1A8DCDD8`. The built artifact is `artifacts/bin/OpenForge.Cli.Core.UnitTests/release/OpenForge.Cli.Core.UnitTests.dll`, SHA-256 `2E90B8D701769674DC701469FF6FBBC92F4A398A55D2E017025567938A2FC9F0`.
+
+The base tree is `46378694b23dcddd3814b1288af44f6f9d175bd7`. The four changed C# files and their hashes are in `artifacts/lane-d-r5-source-manifest.sha256`, SHA-256 `A750A43C77DADF0FAA40F01E51EDBBBB74C6D01B18AA28BB963D37569B47E7A2`. No C# source changed after final compilation. The five changed files use LF without a UTF-8 BOM.
+
+The first focused run passed 37 cases and failed one extra assertion about the shared Remove help validator returning no finding when its required operand is absent. That assertion was outside D-R5's factory contract and was removed. The case still runs help selection, terminal validation and help-content lookup and checks zero factory and provider calls. Shared Shell behavior wasn't changed. The final run passed all 38 cases without flakes.
+
+The required final checks returned exit zero:
+
+- `npm run check:dotnet:whitespace`, with log `artifacts/lane-d-r5-final-whitespace.log`.
+- `npm run check:dotnet:style`, with log `artifacts/lane-d-r5-final-style.log`.
+- `npx --no-install prettier --check .agents/memory/working/cli-development/tool-setup/packets/lane-d.md`.
+- `git diff --check`, LF and UTF-8 BOM checks on all five changed files and source-manifest hash verification.
+
+No consent, planning, effect, Framework or shared-model code changed. No snapshots or payload fixtures were changed or regenerated. There are no new files or routed Markdown sources. R5 was left uncommitted for the coordinator's continuation. The implementation commit is `41ef63a7fc8987836e74315ea3450fe8bdd7273c`.
+
+### Prior commit
 
 The coordinator accepted the exact 153-test candidate and authorized its local implementation commit. D-R2 and D-R4 are closed. D-R3 stays closed with four application stages. No extra review or payload update was requested.
 

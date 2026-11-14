@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Shared;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Binding;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Request;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Result;
+using OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Pipeline;
@@ -51,14 +52,14 @@ internal static class ToolWriteBinding
     }
 
     internal static CliRequestBinding<ToolWriteRequest, ToolWriteResult> Create(
-        ToolWriteSymbols symbols, IToolVersionService versions,
+        ToolWriteSymbols symbols, ToolCatalogue catalogue, IToolVersionService versions,
         CliOperation<ToolWriteRequest, ToolWriteResult> operation, CliHelpContent help)
         => new()
         {
             Command = symbols.Command,
             Help = help,
             WorkspaceRequirement = CliWorkspaceRequirement.Required,
-            Binder = (parse, invocation) => ToolWriteRequestBinder.Bind(symbols, versions, parse, invocation),
+            Binder = (parse, invocation) => ToolWriteRequestBinder.Bind(symbols, catalogue, versions, parse, invocation),
             InvalidResultFactory = input => ToolWriteRequestBinder.Invalid(symbols.Kind, input),
             Operation = operation,
         };
