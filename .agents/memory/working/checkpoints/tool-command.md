@@ -10,7 +10,7 @@ The Tool command core is an implementation task that adds the eight external-pro
 The selected sources are issue #23 and both comments, the complete external specification and the latest maintainer decisions. This worktree stays on `feature/tool-command`, above updated Comment Links. The overseer handles pushes and PR #26. Earlier checkpoint details and capture lists are kept in Git at `0822e0ed8:.agents/memory/working/checkpoints/tool-command.md`.
 
 Done: Contracts, models, schemas, catalogue selection and the three read commands are committed. Generic process, ignore and backup mechanics and the supply recipes are committed.
-Now: Add paired control-record publication and declared-command execution, then implement the five writer leaves.
+Now: Paired control-record publication and declared-command execution are gated. The five writer leaves still need implementation.
 Next: Add telemetry choice and wire store observations, then Install, Configure, Choose, Update and Remove with consent and preview parity.
 Blocker: Choose integration switching and Unix Node archive links need maintainer decisions. Independent native artifact and writer work can continue.
 
@@ -47,6 +47,7 @@ The current history includes these review boundaries:
 | `391ed70f6` | Verified upstream supply recipes, admission checklist and source checks |
 | `c28e4c5fb` | Verified extraction, physical store areas and reference registry |
 | `11247f2a4` | Backup reporting and bounded Root Repair restoration |
+| `b712682e0` | Verified store publication, attachment and final release |
 
 The Linux failure was caused by `Models/Artifacts` matching the Windows artifact ignore rule. All three types now live in tracked `Models/Supply`. No discarded parser package, context or seam survives.
 
@@ -66,6 +67,7 @@ Recent gates are:
 | Store foundation | Both builds, 0 warnings/errors | 8 passed | 21 passed | Both format checks passed, no snapshots changed |
 | Backup reporting and Repair | Both builds, 0 warnings/errors | 1 passed | 23 passed | Both format checks, site and Index passed |
 | Store publication | Integration build, 0 warnings/errors | Unchanged | 19 passed | Both format checks passed, no snapshots changed |
+| Execution records | Both builds, 0 warnings/errors | 6 passed | 18 passed | Both format checks passed, no snapshots changed |
 
 Every listed run had zero final failures and skips. The supply Unit selection is `*ToolArtifactSourceTests`. Its initial failure used a synthetic non-GitHub repository in the positive GitHub scenario. The fixture was corrected before the final run. The mechanics build corrected one xUnit analyzer violation. Neither was a flake.
 
@@ -118,6 +120,16 @@ The publisher now writes pending metadata before atomic member moves and recheck
 Attach rechecks the complete dependency closure. Nonfinal release keeps shared bytes. Final release checks complete references, known members and hashes before deleting recognized files and empty directories. Missing unit or workspace reference coverage blocks deletion. Parent removal releases reciprocal dependency references. The helpers don't run tools or choose command policy.
 
 Managed Integration build passed with reflection disabled, zero warnings and zero errors. The 19 new `ToolStorePublisherTests` cases passed with zero skips. Select only that class with the standard Release runner flags above. Both required format checks passed. No snapshots changed. Evidence is under `artifacts/tool-command/tool-publication-*`. The initial six failures came from trying to snapshot the fixture's own exclusively held lock. The fixture snapshot now excludes only that exact lock and still compares directories, metadata and all data bytes. This was deterministic, not a flake. Writing review R20 clarified unknown paths versus changed registered bytes.
+
+## Execution records
+
+This increment uses managed file replacement, the existing workspace lease and the bounded process host. It adds no dependency, native bridge or exceptional machinery. The supported cases are malformed records, failed commands, cancellation, interrupted writes and cooperating-process changes. Concurrent edits are kept. Tool-owned external effects have no guessed inverse. CI covers the full managed and Native AOT gates. Local Unit cases cover ordered execution. Integration cases use owned files, leases and child processes.
+
+Paired publication validates the settings and lock before writes and rechecks both expected files under the workspace lease. Git workspaces create no sibling backups. Other workspaces use the existing backup session. Failure restores only bytes still matching this operation's writes and reports unfinished recovery. First publication creates only the fixed control parent. Execution records don't claim a successful installation.
+
+The command executor records the complete proposed list before launch. The process host reports actual child creation before the executor saves started evidence. Each result is saved before another command can start. A failed command or failed record write stops the sequence. In-memory results keep an outcome that couldn't be saved. Lifecycle decoding now rejects a null command record before summary creation.
+
+Both managed Release builds passed with zero warnings and errors. Unit passed 6/6 in the new `ToolCommandExecutorTests`. Integration passed 18/18 using method filters for `*ToolRecordPublisherTests.*`, `*ToolProcessRunnerTests.RefusesChangedExecutable`, `*ToolProcessRunnerTests.ReportsActualStart` and `*ToolProcessRunnerTests.ReapsChildAfterNotificationFailure`. Both runs had zero skips. Reports and logs use `artifacts/tool-command/tool-execution-*`. Both required format checks passed. No snapshots changed. An initial fixture teardown tried to delete files after its newly created parent had already been removed. The fixture now checks existence before deletion. This was deterministic, not a flake. Writing review R21-R22 corrected recovery limits and plan-before-consent order and passed recheck.
 
 ## Not decided yet
 

@@ -63,6 +63,10 @@ Settings v6 adds the direct tool-ID map to `.agents/open-forge.json`. Lock v2 ad
 
 Account records supplement the lock with physical bindings, shared references and local process consent. An unreadable reference set is unavailable coverage. It never becomes an empty set that permits final shared deletion. Keep disappeared-worktree references until authorized cleanup resolves them.
 
+Paired record publication checks Tool pins, hosts, roots and execution summaries against the detailed lock before changing files. It rechecks both expected records under the workspace lease, then writes and validates the pair through the Tool backup flow. After failure or cancellation, restore prior bytes only while the target still matches this operation's writes. Keep concurrent changes and report any unfinished restoration or kept backup. A first publication creates only the fixed control parent and removes its unchanged new files after failure.
+
+Command planners form the ordered process requests before consent. Execution starts after consent and permission checks pass. Execution saves the complete proposed command list before launch. The process host reports a start after creating the child. That notification saves started evidence. Exit, failure and interruption update the command record before another command can start. A failed command or failed evidence write stops the sequence. In-memory results keep any outcome that couldn't be saved. Record recovery never guesses an inverse tool command.
+
 Each workspace records one version per tool. Update selects only pins reviewed in this Open Forge release's catalogue, which keeps every previously reviewed pin. An exact older pin permits a downgrade. Publish the replacement reference before releasing the old one. Keep tool bytes and private runtimes while any workspace references them. Release an unreferenced version after the last update or removal and a complete reference check.
 
 ## Reinstall

@@ -73,7 +73,7 @@ internal sealed partial class ToolBackupSession
         }
     }
 
-    internal async ValueTask ApplyAsync(CancellationToken token)
+    internal async ValueTask ApplyAsync(CancellationToken token, Action<PlannedFileChange>? completed = null)
     {
         RequireLease();
         foreach (var change in _changes)
@@ -86,6 +86,7 @@ internal sealed partial class ToolBackupSession
             if (change.Kind == PlannedFileChangeKind.Delete) File.Delete(target);
             else await WriteAsync(change.Expectation, change.IntendedBytes.AsMemory(), token).ConfigureAwait(false);
             await CheckAsync(Intended(change, target), token).ConfigureAwait(false);
+            completed?.Invoke(change);
         }
     }
 

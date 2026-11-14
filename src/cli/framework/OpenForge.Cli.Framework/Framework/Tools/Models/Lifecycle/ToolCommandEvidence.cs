@@ -49,4 +49,7 @@ internal sealed record ToolRunRecord
     public required string Action { get; init; }
     public required ToolCommandState State { get; init; }
     public required ToolCommandReceipt[] Commands { get; init; }
+
+    internal ToolRunSummary ToSummary() => new(Action, State,
+        [.. Commands.Select(command => new ToolCommandSummary(command.Action, command.Host, command.State, command.ExitCode))]);
 }

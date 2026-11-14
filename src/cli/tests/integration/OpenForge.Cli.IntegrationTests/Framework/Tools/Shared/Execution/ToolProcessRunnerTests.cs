@@ -106,9 +106,58 @@ public sealed class ToolProcessRunnerTests
     {
         using var temporary = TemporaryWorkspace.Create("tool-process-hash");
         var request = await RequestAsync(temporary, ToolCommandProbe.Success, []);
-        var outcome = await ToolProcessRunner.RunAsync(request with { EntrySha256 = new string('0', 64) }, Token);
+        var notified = false;
+        var outcome = await ToolProcessRunner.RunAsync(request with
+        {
+            EntrySha256 = new string('0', 64),
+            Started = _ => { notified = true; return ValueTask.CompletedTask; },
+        }, Token);
         Assert.Equal(ToolCommandState.Failed, outcome.State);
+        Assert.False(notified);
         Assert.Empty(temporary.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "The process host reports an actual successful start exactly once")]
+    public async Task ReportsActualStart()
+    {
+        using var temporary = TemporaryWorkspace.Create("tool-process-start");
+        var notifications = 0;
+        var request = await RequestAsync(temporary, ToolCommandProbe.Success, []);
+        try
+        {
+            var outcome = await ToolProcessRunner.RunAsync(request with
+            { Started = _ => { notifications++; return ValueTask.CompletedTask; } }, Token);
+            Assert.True(outcome.Succeeded, outcome.Cause);
+            Assert.Equal(1, notifications);
+        }
+        finally { Cleanup(temporary); }
+    }
+
+    [Fact(DisplayName = "A failed start notification reaps the owned child before returning")]
+    public async Task ReapsChildAfterNotificationFailure()
+    {
+        using var temporary = TemporaryWorkspace.Create("tool-process-start-failure");
+        Process? child = null;
+        var request = await RequestAsync(temporary, ToolCommandProbe.Wait, []);
+        try
+        {
+            var outcome = await ToolProcessRunner.RunAsync(request with
+            {
+                Started = async token =>
+                {
+                    using var ready = CancellationTokenSource.CreateLinkedTokenSource(token);
+                    ready.CancelAfter(TimeSpan.FromSeconds(15));
+                    while (!File.Exists(temporary.Combine(ToolCommandProbe.Witness))) await Task.Delay(10, ready.Token);
+                    using var witness = JsonDocument.Parse(await File.ReadAllBytesAsync(temporary.Combine(ToolCommandProbe.Witness), ready.Token));
+                    child = Process.GetProcessById(witness.RootElement.GetProperty(ToolCommandProbe.PidKey).GetInt32());
+                    throw new IOException("fixture notification failure");
+                },
+            }, Token);
+            Assert.Equal(ToolCommandState.Failed, outcome.State);
+            Assert.NotNull(child);
+            Assert.True(child.HasExited);
+        }
+        finally { child?.Dispose(); Cleanup(temporary); }
     }
 
     private static async Task<ToolProcessRequest> RequestAsync(TemporaryWorkspace temporary, string mode, string[] payload)

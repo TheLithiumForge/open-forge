@@ -56,6 +56,7 @@ internal static class ToolProcessRunner
             // Reap the child before disposing pipes, including after cancellation on Windows.
             output = process.StandardOutput.BaseStream.CopyToAsync(Stream.Null, CancellationToken.None);
             error = process.StandardError.BaseStream.CopyToAsync(Stream.Null, CancellationToken.None);
+            if (request.Started is { } notifyStarted) await notifyStarted(timeout.Token).ConfigureAwait(false);
             await process.WaitForExitAsync(timeout.Token).ConfigureAwait(false);
             await Task.WhenAll(output, error).WaitAsync(timeout.Token).ConfigureAwait(false);
             return new(ToolCommandState.Exited, process.ExitCode, null);

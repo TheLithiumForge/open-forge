@@ -61,10 +61,10 @@ internal static class ToolLifecycleValidator
             ToolManifestValidator.Require(run.CodeRoot == "." || ToolIdentity.IsRelativePath(run.CodeRoot), "invalid command code root");
             ToolManifestValidator.Distinct(run.Hosts, "command hosts");
             ToolManifestValidator.Require(run.Hosts.All(ToolVocabulary.Hosts.Contains), "invalid command host");
+            ToolManifestValidator.Require(run.Commands.All(command => command is not null), "a command receipt cannot be null");
             Validate(new Dictionary<string, ToolRunSummary>(StringComparer.Ordinal)
             {
-                [id] = new(run.Action, run.State, [.. run.Commands.Select(command => command is null
-                    ? throw new JsonException("A command receipt cannot be null.") : new ToolCommandSummary(command.Action, command.Host, command.State, command.ExitCode))]),
+                [id] = run.ToSummary(),
             });
             foreach (var command in run.Commands)
             {

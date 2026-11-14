@@ -9,6 +9,10 @@ internal static class ToolVocabulary
     internal const string CodeGraphCapability = "code-graph";
     internal const string JsonMembers = "json-members";
     internal const string InstallAction = "install";
+    internal const string ConfigureAction = "configure";
+    internal const string ChooseAction = "choose";
+    internal const string UpdateAction = "update";
+    internal const string RemoveAction = "remove";
     internal const string UninstallAction = "uninstall";
     internal const string IndexCleanupAction = "index-cleanup";
     internal const string WorkspaceScope = "workspace";
@@ -16,7 +20,7 @@ internal static class ToolVocabulary
     internal const string CodeRootPrefix = "${codeRoot}/";
     internal const int MaximumCommandTimeoutSeconds = 3600;
     internal static readonly FrozenSet<string> LifecycleActions = Set(InstallAction, UninstallAction, IndexCleanupAction);
-    internal static readonly FrozenSet<string> RunActions = Set(InstallAction, "configure", "update", "remove", "choose");
+    internal static readonly FrozenSet<string> RunActions = Set(InstallAction, ConfigureAction, UpdateAction, RemoveAction, ChooseAction);
     internal static readonly FrozenSet<string> Targets = Set("win-x64", "win-arm64", "osx-x64", "osx-arm64", "linux-x64", "linux-arm64");
     internal static readonly FrozenSet<string> Adapters = Set("codegraph-1.6", "cbm-0.12", "qmd-2.8");
     internal static readonly FrozenSet<string> Templates = Set("codegraph-manual-v1", "cbm-manual-v1", "qmd-inventory-v1");

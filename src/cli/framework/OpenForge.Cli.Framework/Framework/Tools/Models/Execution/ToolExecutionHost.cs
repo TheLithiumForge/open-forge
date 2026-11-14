@@ -13,6 +13,7 @@ internal sealed record ToolProcessRequest
     public required string[] Arguments { get; init; }
     public required Dictionary<string, string> Environment { get; init; }
     public required int TimeoutSeconds { get; init; }
+    internal Func<CancellationToken, ValueTask>? Started { get; init; }
 }
 
 internal sealed record ToolProcessOutcome(ToolCommandState State, int? ExitCode, string? Cause)
