@@ -17,8 +17,8 @@ internal static class ToolStatusBinding
 {
     internal static ToolStatusSymbols CreateSymbols(Command parent)
     {
-        var command = new Command(ToolStatusDefinitions.CommandName, ToolStatusDefinitions.Purpose);
-        var id = new Argument<string?>("id") { Arity = ArgumentArity.ZeroOrOne };
+        var command = new Command(ToolStatusDefinitions.CommandName, "Check tool versions, project additions and PATH readiness.");
+        var id = new Argument<string?>("id") { Description = "The exact catalogue tool ID.", Arity = ArgumentArity.ZeroOrOne };
         command.Arguments.Add(id);
         parent.Subcommands.Add(command);
         return new(command, id);

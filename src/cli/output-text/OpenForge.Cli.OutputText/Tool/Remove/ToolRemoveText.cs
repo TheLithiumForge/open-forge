@@ -3,13 +3,12 @@ namespace OpenForge.Cli.OutputText.Tool.Remove;
 internal static class ToolRemoveText
 {
     internal static string Syntax() => "open-forge tool remove <id> [--yes] [--allow-path <path>...] [--dry-run]";
-    internal static string Examples() => """
-        open-forge tool remove <id>
-        open-forge tool remove <id> --dry-run
-        """;
+    internal static string Examples() => "open-forge tool remove codegraph --dry-run\nopen-forge tool remove codegraph --yes\nopen-forge tool remove codebase-memory --yes";
     internal static string Behavior() => """
-        Review the complete plan before applying. --yes accepts downloads and declared native setup.
-        PATH changes and shared file deletion require separate live choices.
-        Account-wide uninstall requires a live choice naming its binary and all agent entries. Otherwise project cleanup continues and the native command is printed. Account settings are kept.
+        Removes recorded Open Forge project additions and offers the declared native uninstall.
+        Codebase Memory uninstall removes the account binary and all agent entries. It needs a live confirmation naming those effects.
+        With --yes, no terminal or a declined account confirmation, only project additions are removed and the native command is printed.
+        Project removal keeps account settings, including telemetry off, and prints manual change commands.
+        Shared file deletion and PATH edits need separate live choices. Changes aren't rolled back automatically.
         """;
 }

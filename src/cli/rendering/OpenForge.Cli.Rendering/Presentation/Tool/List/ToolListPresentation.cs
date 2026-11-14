@@ -23,7 +23,7 @@ internal static class ToolListPresentation
         Shape = CliCommandShape.Data,
     };
 
-    internal static CliHelpContent CreateHelp() => CliHelpContent.Empty;
+    internal static CliHelpContent CreateHelp() => global::OpenForge.Cli.Core.Presentation.Tool.Shared.Help.ToolHelpSections.CreateList();
 
     private static CliReport<ToolReadPayload> Select(ToolListResult result, CliSelection selection) => new()
     {

@@ -15,8 +15,8 @@ Commands follow the [context folder chosen at installation](../getting-started/i
 
 ## Start with these commands
 
-Tool setup has a [planned command outline](tools.md).
-Its six commands wait for the implementation lanes.
+Tool setup installs published tools, runs their native setup and records project additions.
+To install a tool, use its direct command and share exact versions with your team, follow the [Tool setup walkthrough](tools.md).
 
 | When you want to                               | Run                                                   |
 | ---------------------------------------------- | ----------------------------------------------------- |
@@ -36,7 +36,7 @@ a trailing slash needs a manual edit, and Repair does not suggest a file for it.
 Web URLs stay unchecked.
 
 Index encodes local link paths, such as `old%20guide.md`.
-Doctor also accepts readable paths: `<old guide.md>` and `café(one).md`.
+Doctor also accepts readable paths: `<old guide.md>` and `cafÃ©(one).md`.
 Escape an entity-opening ampersand as `%26`: write `entity&amp;.md` as
 `entity%26amp;.md`. Keep `#`, `%` and `?` in names escaped.
 Repair writes Index's form when

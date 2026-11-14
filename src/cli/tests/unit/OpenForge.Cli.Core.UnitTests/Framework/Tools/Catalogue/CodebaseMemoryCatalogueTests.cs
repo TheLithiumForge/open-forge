@@ -69,7 +69,7 @@ public sealed class CodebaseMemoryCatalogueTests
         Assert.Equal(new ToolVersionRange(0, 12), profile.Range);
         Assert.Equal(CodebaseMemoryDefinitions.Version, profile.MinimumToolVersion);
         Assert.Equal(ToolCatalogueDefinitions.MinimumOpenForgeVersion, profile.MinimumOpenForgeVersion);
-        Assert.Empty(profile.TestedVersions);
+        Assert.Equal(CodebaseMemoryDefinitions.Version, Assert.Single(profile.TestedVersions));
     }
 
     [Fact(DisplayName = "Codebase Memory declares account uninstall separately from install inventory and index deletion"), Trait("Feature", "tool-catalogue"), Trait("Evidence", "Unit")]

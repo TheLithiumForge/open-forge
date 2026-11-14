@@ -46,7 +46,7 @@ internal static class CodebaseMemoryCatalogueEntry
                 MinimumToolVersion = CodebaseMemoryDefinitions.Version,
                 MinimumOpenForgeVersion = ToolCatalogueDefinitions.MinimumOpenForgeVersion,
                 NativeHomePolicy = ToolNativeHomePolicy.HomeThenUserProfile,
-                TestedVersions = ImmutableArray<string>.Empty,
+                TestedVersions = ImmutableArray.Create(CodebaseMemoryDefinitions.Version),
                 Setup = CodebaseMemoryNativeSetup.Create(uninstall: false),
                 Uninstall = CodebaseMemoryNativeSetup.Create(uninstall: true),
                 Changes = ImmutableArray.Create<ToolConfigChange>(new ToolMarkedBlockChange

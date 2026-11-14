@@ -17,7 +17,7 @@ internal static class ToolListBinding
 {
     internal static Command CreateSymbols(Command parent)
     {
-        var command = new Command(ToolListDefinitions.CommandName, ToolListDefinitions.Purpose);
+        var command = new Command(ToolListDefinitions.CommandName, "List supported tools and their setup profiles.");
         parent.Subcommands.Add(command);
         return command;
     }
