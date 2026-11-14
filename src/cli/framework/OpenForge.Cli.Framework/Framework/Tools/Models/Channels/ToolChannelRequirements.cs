@@ -18,6 +18,5 @@ internal sealed record ToolRuntimeRequirement(string Runtime, string VersionRang
 internal sealed record ToolChannelRequirements
 {
     public ToolRuntimeRequirement? Runtime { get; init; }
-    public string? MinimumPackageManagerVersion { get; init; }
     public required IReadOnlyList<ToolTarget> Targets { get; init; }
 }

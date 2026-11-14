@@ -8,11 +8,11 @@ open-forge:
 
 ## Context
 
-Tool setup extends the two portable files with declared supported ranges in settings and exact tested versions plus config-profile digests in the lock.
+Tool setup extends settings with supported ranges and the lock with exact installed versions, channels and additive change records.
 The [Tool records contract](../../documents/cli/contracts/shared/tool-records/interface.md) defines these additions.
-Prior config values stay in workspace-local ignored state.
-Channels, paths, launchers and PATH history stay in per-user machine state.
-The lock's tool baseline is separate from existing file-ownership records.
+Repository configuration keeps no prior-value records.
+Native previous account settings, channels' local paths, launchers and PATH history stay in per-user machine state.
+Tools create no new workspace state folder and don't use the existing workspace lease or recovery mechanism.
 
 A workspace accumulated four files under one naming convention:
 a generated lifecycle record (17 KB of baselines),

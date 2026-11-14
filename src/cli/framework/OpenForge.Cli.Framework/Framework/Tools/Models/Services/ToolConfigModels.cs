@@ -3,7 +3,7 @@ using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 
 namespace OpenForge.Cli.Core.Framework.Tools.Models.Services;
 
-internal enum ToolChangeDisposition { Apply, NoChange, Migrate, Conflict, Restore, Keep }
+internal enum ToolChangeDisposition { Add, NoChange, Migrate, Conflict, Remove, Keep }
 
 internal sealed record ToolConfigRequest
 {
@@ -12,7 +12,8 @@ internal sealed record ToolConfigRequest
     public required string MainRoot { get; init; }
     public required string ProfileDigest { get; init; }
     public required IReadOnlyList<ToolConfigChange> Changes { get; init; }
-    public required IReadOnlyList<ToolWorkspaceEditRecord> Previous { get; init; }
+    public required IReadOnlyList<ToolAppliedChange> AppliedChanges { get; init; }
+    public required IReadOnlyList<ToolNativeSettingRecord> NativeSettings { get; init; }
 }
 
 internal sealed record ToolConfigObservation
@@ -25,7 +26,27 @@ internal sealed record ToolConfigObservation
 }
 
 internal sealed record ToolConfigPlan(ToolConfigRequest Request, IReadOnlyList<ToolConfigObservation> Changes);
-internal sealed record ToolConfigApplyResult(IReadOnlyList<ToolWorkspaceEditRecord> Edits, IReadOnlyList<string> Unfinished, string? Failure);
 
-internal sealed record ToolConfigRemoveRequest(string WorkspacePath, ToolWorkspaceState Previous);
-internal sealed record ToolConfigRemoveResult(IReadOnlyList<string> RestoredChanges, IReadOnlyList<ToolWorkspaceEditRecord> KeptEdits, string? Failure);
+internal sealed record ToolConfigApplyResult
+{
+    public required IReadOnlyList<ToolAppliedChange> Additions { get; init; }
+    public required IReadOnlyList<ToolNativeSettingRecord> NativeSettings { get; init; }
+    public required IReadOnlyList<string> Unfinished { get; init; }
+    public string? Failure { get; init; }
+}
+
+internal sealed record ToolConfigRemoveRequest
+{
+    public required string ToolId { get; init; }
+    public required string WorkspacePath { get; init; }
+    public required ToolLockRecord Lock { get; init; }
+    public required IReadOnlyList<ToolNativeSettingRecord> NativeSettings { get; init; }
+}
+
+internal sealed record ToolConfigRemoveResult
+{
+    public required IReadOnlyList<string> RemovedChanges { get; init; }
+    public required IReadOnlyList<ToolAppliedChange> KeptAdditions { get; init; }
+    public required IReadOnlyList<ToolNativeSettingRecord> KeptNativeSettings { get; init; }
+    public string? Failure { get; init; }
+}

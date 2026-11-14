@@ -6,27 +6,27 @@ open-forge:
 
 # Tool update behavior
 
-Tool update behavior is the flow that moves tools to the newest supported range.
-Update moves a tool to its newest supported range and rewrites its launcher to the new absolute runtime and entry paths.
+Tool update behavior is the flow that updates tools through their published channel.
+Update replaces the active version and rewrites absolute launchers while recording the new exact version.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
 ## Flow
 
-Check drift before replacing executable bytes. Resolve and disclose the exact supported target. Use the existing channel unless a valid override is given. Update the active installation, rewrite generated launchers and migrate only values equal to the last applied values. Verify before recording the new baseline. A newer upstream release alone never implies that a newer Open Forge catalogue supports it.
-Use the [common Behavior](../behavior.md) for detection, channel selection, safe edits and verification.
-Keep this command's public meaning in its [Interface](interface.md).
+Preflight all selected tools, including config drift. Resolve the target, show the plan and obtain confirmation or --yes. Use the existing channel unless an override or unavailable prerequisite requires a disclosed alternative. Replace bytes, rewrite launchers, run the target's own setup and migrate recorded additions. Keep older supported catalogue profiles. A newer upstream release alone doesn't justify 'update Open Forge first'.
+Use the [common Behavior](../behavior.md) for detection, channels, native setup and additive effects.
+Keep syntax and reports in the [Interface](interface.md).
 
 ## Results
 
-Read-only checks create no state. Writers publish only verified facts.
-An independently completed effect stays in the result if a later step fails.
-Use the shared semantic statuses without hiding unavailable facts or unfinished work.
+Use the common status precedence and shared schema-3 exits.
+Keep actual effects, conflicts and unstarted work separate.
+Dry-run changes no Tool configuration or records.
 
 ## Conformance
 
 Required cases cover:
 
-- No available update, newest range selection, known newer catalogue, unknown support, self-updated tool, changed requirements, config migration and partial completion.
-- Stable ID order, no duplicate effects and unchanged unrelated bytes.
-- Shared text and JSON facts, global flags and schema-3 exits.
+- No update, latest support, older explicit spec, known newer catalogue, no duplicate install, changed requirements and failed config migration.
+- Stable ordering and unchanged unrelated data.
+- Shared text and JSON facts and global flags.

@@ -1,30 +1,28 @@
 ---
 open-forge:
-  description: Define tool declarations, tested baselines and local state
+  description: Define supported ranges, exact locks and additive change records
   tags: [Memory, Document, CLI, Tool, CurrentTruth]
 ---
 
 # Tool record interface
 
-Tool records are the four data sets that separate project intent from local installation facts.
-A committed `codegraph` range can be shared across machines without recording a user's home directory.
+Tool records are the three data sets that separate project intent, project additions and machine facts.
+For example, the lock records the exclusion strings Open Forge added without storing an earlier JSON array.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
 ## Settings
 
 Settings stay at `.agents/open-forge.json`, including with a custom context root.
-Settings v6 derives freshly from released v5.
-All v5 fields and unknown fields keep their meanings.
-The optional `tools` map has one entry per tool ID.
+Settings v6 derives freshly from released v5 and keeps existing fields and unknown keys.
+The optional `tools` map has one entry per ID.
 Each entry requires `version`, a supported major.minor range.
-An omitted or empty map declares no tools.
+An absent or empty map declares no tools.
 
 Proposed:
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v6/open-forge.schema.json",
   "schemaVersion": 6,
   "tools": {
     "codegraph": { "version": "1.6.x" },
@@ -33,63 +31,81 @@ Proposed:
 }
 ```
 
-This declares compatibility. It doesn't install bytes.
-Settings contain neither role assignments nor machine paths.
+A declaration doesn't install bytes.
+Named installation records the chosen profile's range.
+It doesn't put paths, client discovery or native account settings into settings.
 
 ## Lock
 
 The committed lock stays at `.agents/open-forge.lock.json`.
-Lock v2 derives freshly from released v1.
-Existing ownership and Library records keep their meanings.
-Each optional `tools.<id>` entry records `version`, the exact tested version, and `profileDigest`, the SHA-256 of the applied config profile.
-The digest covers the setup vector and effects, config changes, templates and guidance resource content in deterministic order.
-It excludes machine paths, current file values and timestamps.
-The digest encoding is a review proposal.
+Lock v2 derives freshly from released v1 and keeps existing ownership and Library records.
+Each `tools.<id>` entry requires `version`, `channel` and `changes`.
+Version is the exact installed version, not a separate tested baseline.
+Channel names the published channel, such as `npm` or `github-release`.
+The actual npm client and runtime paths stay in machine state.
+`profileDigest` is an optional SHA-256 of the applied profile.
 
 Proposed:
 
-```text
-tools.codegraph = {
-  version: "1.6.2",
-  profileDigest: "<64 lowercase SHA-256 hex characters>"
+```json
+{
+  "version": "1.6.2",
+  "channel": "npm",
+  "changes": [
+    {
+      "kind": "json-union",
+      "id": "archived-memory",
+      "path": "codegraph.json",
+      "pointer": "/exclude",
+      "items": [".agents/memory/archived/**"]
+    }
+  ]
 }
 ```
 
-The exact version is a tested baseline, not a separate executable pin for every project.
-A detected compatible patch can be reused and reported as distinct from the baseline.
-For a missing installation, the proposed team-install rule selects the baseline when it is still available and reviewed.
-Update resolves a new baseline and supported range.
-A missing or inconsistent baseline requires a reviewed plan. It never becomes a silent latest-version selection.
-Whether a newly resolved package patch becomes the tested baseline, or the lock keeps a catalogue-tested patch, is part of Q1.
-The machine's installed version and the lock's tested baseline stay separate until that choice is made.
+Each change records only what Open Forge added:
 
-## Workspace state
+| Kind             | Required data                                                                 |
+| ---------------- | ----------------------------------------------------------------------------- |
+| `json-union`     | ID, workspace-relative path, JSON Pointer and added items                     |
+| `json-value`     | ID, workspace-relative path, JSON Pointer and applied value                   |
+| `marked-block`   | ID, workspace-relative path, unique start and end markers and content SHA-256 |
+| `managed-file`   | ID, workspace-relative path and applied file SHA-256                          |
+| `native-command` | ID and allow-list ID, with previous account value in machine state            |
 
-Workspace edit history lives at `.open-forge-state/tools/<id>.json`.
-This uses the existing fixed workspace state directory, including with a custom context root.
-Its local `.gitignore` excludes the state from Git.
-Keep schema 1 edit records with ID, profile digest, target scope, file and selector, prior presence and value, applied presence and value and verification state.
-Keep the typed removal recipe for an Open Forge change so later catalogue changes don't erase its restoration rules.
-JSON null is a present value. Absence is separate.
-Text records keep the exact block or managed-file bytes, not a diff.
-Native-command records keep the read-back prior and applied values and allow-listed restoration vector.
-A value already desired before the first apply is borrowed. It gains no removal permission.
-Recorded setup outputs distinguish upstream changes from Open Forge's added changes.
+There are no repository preimages or stored prior values in the lock.
+Union receipts omit items already present before apply.
+A JSON value receipt exists only for a member that Open Forge created.
+Native setup outputs stay under upstream control and aren't rewritten as Open Forge addition receipts.
 
-If local history is lost, committed settings and the lock can't reconstruct prior values.
-Report the missing history and keep unrelated configuration.
-Self-identifying managed blocks can be found without machine state, but discovery alone doesn't permit deleting changed content.
+Bare Install uses each exact lock version.
+A declared tool without a lock entry gets the latest version supported by its declaration.
+Named Install or Update without a version gets latest support.
+The optional digest detects profile changes. It isn't an executable pin.
+Its fixed UTF-8 JSON projection covers profile ID, range, minimum versions, setup and uninstall vectors, declared effects and config recipes with template hashes.
+Use declared array order and ordinal object-key order for authored JSON values.
+Exclude machine paths, observed values and timestamps.
 
 ## Machine state
 
-Machine facts live under `~/.open-forge/state/`, never in a repository file.
-The proposed files are `tools/<id>.json`, `runtimes/node/<version>.json` and `path.json`.
-They record channel, exact observed version, tool and runtime paths, generated launchers, integrity evidence and what PATH entries or shell blocks Open Forge added.
-Runtime use comes from the launchers, not a cross-project reference registry.
-PATH records include the exact chosen files and the prior and applied entry or block.
-State schema 1 keeps prior absence separate from an empty value.
-The machine filenames are a review proposal.
+Machine facts live under `~/.open-forge/state/`.
+Use schema 1 files `tools/<id>.json`, `runtimes/node/<version>.json`, `path.json` and `workspaces/<key>.json`.
+They hold runtime and command paths, launchers, installed-client facts, integrity evidence, PATH history and native account-setting previous and applied values.
+Workspace keys are SHA-256 of the normalized physical workspace path in UTF-8.
+On Windows use the existing physical-path comparison form before hashing.
+The physical path stays in machine state so readers can check the binding.
 
-Before any shared deletion, check current launcher uses and ask for confirmation.
-Lost or unreadable state cannot be treated as zero uses.
-The [record Behavior](behavior.md) defines reapply, removal and publication.
+PATH records keep the exact chosen files and the prior and applied PATH entry or marked block.
+Native-setting records keep the previous setting and allow-listed restore arguments per workspace.
+A missing or unreadable native previous value blocks that change.
+This doesn't create an executable-version reference registry.
+
+## Publication
+
+Repository facts go in the committed lock.
+Machine facts go only in the per-user files.
+There is no workspace Tool edit state and no Tool expansion of `.open-forge-state/`.
+Don't acquire the existing workspace lease or recovery bundle for Tool operations.
+Write through normal expected-state checks, backups and atomic file replacement.
+The lock in this checkout declares schema v2 with an empty tool map until a tool is actually installed.
+The [Behavior](behavior.md) defines failure and removal.

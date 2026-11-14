@@ -21,32 +21,173 @@
     "extensions": {
       "type": "array",
       "description": "One entry per installed Extension. A path owned by several Extensions is not recorded as shared; that is derived by intersecting these lists.",
-      "items": { "$ref": "#/$defs/extensionOwnership" }
+      "items": {
+        "$ref": "#/$defs/extensionOwnership"
+      }
     },
     "tools": {
       "type": "object",
-      "description": "Exact tested tool baselines and applied config-profile digests. This is not a per-project executable pin.",
+      "description": "Exact installed versions, published channels and Open Forge additions. Native previous settings and machine paths stay in user state.",
       "additionalProperties": {
         "type": "object",
         "additionalProperties": true,
-        "required": ["version", "profileDigest"],
+        "required": ["version", "channel", "changes"],
         "properties": {
-          "version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(\\+[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?$" },
-          "profileDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+          "version": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(\\+[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?$"
+          },
+          "channel": {
+            "type": "string",
+            "minLength": 1
+          },
+          "profileDigest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "required": ["kind", "id", "path", "pointer", "items"],
+                  "properties": {
+                    "kind": {
+                      "const": "json-union"
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "pointer": {
+                      "type": "string"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {}
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "required": ["kind", "id", "path", "pointer", "value"],
+                  "properties": {
+                    "kind": {
+                      "const": "json-value"
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "pointer": {
+                      "type": "string"
+                    },
+                    "value": {}
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "required": ["kind", "id", "path", "startMarker", "endMarker", "contentSha256"],
+                  "properties": {
+                    "kind": {
+                      "const": "marked-block"
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "startMarker": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "endMarker": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "contentSha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "required": ["kind", "id", "path", "sha256"],
+                  "properties": {
+                    "kind": {
+                      "const": "managed-file"
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "required": ["kind", "id", "allowListId"],
+                  "properties": {
+                    "kind": {
+                      "const": "native-command"
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "allowListId": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              ]
+            }
+          }
         }
       }
     },
     "libraries": {
       "type": "array",
       "description": "One entry per attached Library.",
-      "items": { "$ref": "#/$defs/libraryOwnership" }
+      "items": {
+        "$ref": "#/$defs/libraryOwnership"
+      }
     }
   },
   "$defs": {
     "ownedPaths": {
       "type": "array",
       "description": "Workspace-relative paths the CLI created in full. These may be deleted when nothing else owns them.",
-      "items": { "type": "string", "minLength": 1 },
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
       "uniqueItems": true
     },
     "ownedRegions": {
@@ -57,7 +198,10 @@
         "additionalProperties": true,
         "required": ["path", "region"],
         "properties": {
-          "path": { "type": "string", "minLength": 1 },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
           "region": {
             "type": "string",
             "minLength": 1,
@@ -76,15 +220,22 @@
           "additionalProperties": true,
           "required": ["id"],
           "properties": {
-            "id": { "type": "string", "minLength": 1 },
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
             "version": {
               "type": ["string", "null"],
               "description": "The release that wrote these entries. Compared by version alone; no payload hash is recorded, because the lock records ownership rather than integrity."
             }
           }
         },
-        "paths": { "$ref": "#/$defs/ownedPaths" },
-        "regions": { "$ref": "#/$defs/ownedRegions" },
+        "paths": {
+          "$ref": "#/$defs/ownedPaths"
+        },
+        "regions": {
+          "$ref": "#/$defs/ownedRegions"
+        },
         "gitIgnoredRoutes": {
           "type": "array",
           "description": "Private route directories with one shared direct entrypoint. Install registers these before applying Gitignore. Generated shared navigation omits their private contents. These records grant no ownership or deletion authority. Absent means no sharing policy.",
@@ -94,8 +245,14 @@
             "additionalProperties": true,
             "required": ["directory", "entrypoint"],
             "properties": {
-              "directory": { "type": "string", "minLength": 1 },
-              "entrypoint": { "type": "string", "minLength": 1 }
+              "directory": {
+                "type": "string",
+                "minLength": 1
+              },
+              "entrypoint": {
+                "type": "string",
+                "minLength": 1
+              }
             }
           }
         }
@@ -106,19 +263,31 @@
       "additionalProperties": true,
       "required": ["id"],
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "version": { "type": ["string", "null"] },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": ["string", "null"]
+        },
         "source": {
           "type": ["string", "null"],
           "description": "Where the Extension was installed from, such as \"bundled\" or an explicit source path."
         },
         "dependencies": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "uniqueItems": true
         },
-        "paths": { "$ref": "#/$defs/ownedPaths" },
-        "regions": { "$ref": "#/$defs/ownedRegions" }
+        "paths": {
+          "$ref": "#/$defs/ownedPaths"
+        },
+        "regions": {
+          "$ref": "#/$defs/ownedRegions"
+        }
       }
     },
     "libraryOwnership": {
@@ -126,9 +295,18 @@
       "additionalProperties": true,
       "required": ["id", "sourceRoot", "destinationRoot"],
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "sourceRoot": { "type": "string", "minLength": 1 },
-        "destinationRoot": { "type": "string", "minLength": 1 },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceRoot": {
+          "type": "string",
+          "minLength": 1
+        },
+        "destinationRoot": {
+          "type": "string",
+          "minLength": 1
+        },
         "paths": {
           "$ref": "#/$defs/ownedPaths",
           "description": "Source-relative eligible paths projected as leaf links beneath destinationRoot. Their workspace destinations combine destinationRoot with each path (or use the path directly when destinationRoot is .). Directories are not recorded, because detach does not remove them."
@@ -140,11 +318,20 @@
     {
       "schemaVersion": 1,
       "framework": {
-        "source": { "id": "open-forge", "version": "0.1.0" },
+        "source": {
+          "id": "open-forge",
+          "version": "0.1.0"
+        },
         "paths": [".agents/loader.md"],
         "regions": [
-          { "path": ".agents/directives/_directives.md", "region": "entries" },
-          { "path": "AGENTS.md", "region": "open-forge" }
+          {
+            "path": ".agents/directives/_directives.md",
+            "region": "entries"
+          },
+          {
+            "path": "AGENTS.md",
+            "region": "open-forge"
+          }
         ]
       },
       "extensions": [

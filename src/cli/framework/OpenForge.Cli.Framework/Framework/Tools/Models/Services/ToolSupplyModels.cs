@@ -5,7 +5,8 @@ namespace OpenForge.Cli.Core.Framework.Tools.Models.Services;
 
 internal sealed record ToolDownloadRequest(ToolReleaseAsset Asset, string DestinationPath);
 internal sealed record ToolDownloadResult(string? VerifiedPath, ToolIntegrityEvidence? Integrity, string? Failure);
-internal sealed record ToolExtractionRequest(ToolReleaseAsset Asset, string ArchivePath, string DestinationPath);
+internal enum ToolArchivePreparation { Original, OmitLinks }
+internal sealed record ToolExtractionRequest(ToolReleaseAsset Asset, string ArchivePath, string DestinationPath, ToolArchivePreparation Preparation);
 internal sealed record ToolExtractionResult(IReadOnlyList<string> ExtractedPaths, string? Failure);
 internal sealed record ToolPrivateNodeRequest(ToolPrivateNodeSpec Runtime, string HomePath);
 internal sealed record ToolPrivateNodeResult(string? NodePath, string? NpmCliPath, ToolNodeRuntimeRecord? Record, string? Failure);

@@ -25,8 +25,8 @@ public behavior that belongs to those sources.
 - [Exact shared formation and projection design for Generated Navigation](generated-navigation.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #GeneratedNavigation #Routing
 - [Ownership receipts and operation-time Framework source alignment](lifecycle-provenance.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Framework #Lifecycle #Provenance
 - [Exact BCL-first locking, recovery-bundle, expected-state, atomic-file, receipt, and guarded-deletion design](mutation-and-recovery.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Mutation #Recovery #Filesystem #Lock
-- [Assign tool setup files and exact copy sources after maintainer review](tool-setup-lanes.md) - #Memory #Document #CLI #Tool #CurrentTruth
-- [Define published tool installation and additive project configuration](tool-setup.md) - #Memory #Document #CLI #Tool #CurrentTruth
+- [Freeze round-2 interfaces and strict Worker Watch file assignments](tool-setup-lanes.md) - #Memory #Document #CLI #Tool #CurrentTruth
+- [Define round-2 native tool setup and additive lock records](tool-setup.md) - #Memory #Document #CLI #Tool #CurrentTruth
 - [Resolve one context folder with fixed native Skills and controls, retain layout evidence, and map installed destinations](workspace-layout.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Layout #Settings
 - [Exact local-only Workspace Libraries record, inventory, projection, and recovery design](workspace-libraries.md) - #Memory #Crystallized #Document #CurrentTruth #Evergreen #CLI #TechnicalDesign #Framework #Library #Workspace #Filesystem #Mutation #Recovery
 - [Realize shared destination admission through authored settings and existing mutation receipts](workspace-permissions.md) - #Memory #Crystallized #CLI #TechnicalDesign #Permissions #Settings #CurrentTruth

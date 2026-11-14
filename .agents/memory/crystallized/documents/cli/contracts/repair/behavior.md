@@ -7,10 +7,11 @@ open-forge:
 
 # Repair Behavior Contract
 
-## Planned tool checks
+## Tool recovery
 
-The planned tool-backup action rechecks the exact target, backup and expected applied value under the workspace lease. Restore only an unchanged failed write. Keep concurrent edits and an occupied restoration target. Report restored, conflicting and unfinished paths separately. Native package rollback, tool setup and account-wide deletion aren't Repair actions.
-The [Tool contracts](../tool/_tool.md) define setup and removal. These additions wait for the implementation lanes.
+Tool failures report sibling backups and guarded manual restoration instructions.
+Repair gains no Tool action, lease or recovery record.
+The round-2 [Tool contracts](../tool/_tool.md) define native reapply and removal.
 
 Authored relinks also cover [comment links](../shared/source-references/interface.md#comment-links). Change only the target word. Relinks write a repository-root path. Existing selection, protection, dry-run, revalidation, recovery and verification apply to these edits. Legacy IDs require a chosen path. Weak move or heading suggestions require selection.
 

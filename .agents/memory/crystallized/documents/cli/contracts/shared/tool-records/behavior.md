@@ -1,97 +1,101 @@
 ---
 open-forge:
-  description: Define config changes, drift, backups and record publication
+  description: Define additive changes and removal without repository preimages
   tags: [Memory, Document, CLI, Tool, CurrentTruth]
 ---
 
 # Tool record behavior
 
-Tool record behavior is the set of rules that keeps tool configuration reversible while it stays unchanged.
-For example, Remove restores a JSON member's prior value only if the member still equals the value Open Forge applied.
+Tool record behavior is the set of rules that records additions and removes only those additions.
+For example, Remove deletes an archive exclusion only when it appears in the lock's added-item list and is still present.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
-## Change kinds
+## Apply
 
-Each profile declares an ordered list of changes with stable IDs and scopes.
-Only these four kinds are supported:
+Each profile declares stable change IDs in execution order.
+Use these five additive cases:
 
-| Kind                  | Selector                                         | Desired result           |
-| --------------------- | ------------------------------------------------ | ------------------------ |
-| JSON value            | File and JSON Pointer                            | Set a value or delete it |
-| Marked block          | File and unique start and end markers            | Exact region content     |
-| Managed file          | File and template resource                       | Exact file bytes         |
-| Native config command | Allow-listed argument vector and read-back probe | Verified native value    |
+| Case             | Apply                                                                                | Remove                                                 |
+| ---------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| JSON array union | Append missing items and record only those items                                     | Delete only recorded items still present               |
+| JSON value set   | Set only an absent member, otherwise report a conflict                               | Delete only while equal to the recorded value          |
+| Marked block     | Add one uniquely marked block                                                        | Delete that unambiguous block                          |
+| Managed file     | Create only if absent                                                                | Delete only while its hash matches                     |
+| Native command   | Run an allow-listed command and record the previous account setting in machine state | Restore that setting only while current equals applied |
 
-A JSON array union is a set operation on the one selected value.
-Keep existing elements in order and append missing desired elements once.
-Record the original array and resulting array.
-There are no text diffs, merge-patches or regex key edits.
-A malformed or duplicate marked region conflicts.
-A pre-existing unrelated managed-file destination conflicts.
-A native change needs a bounded read-back probe and a declared restore action before it can be reversible.
-An unavailable prior value blocks that change.
+Keep unrelated JSON members, array items and bytes outside a marked block.
+JSON null is a present value and conflicts with an initial set.
+An existing matching value without a receipt is still a conflict for a set or managed file.
+A non-array union destination conflicts.
+Malformed or duplicated markers conflict.
+There are no JSON delete recipes, text diffs, merge-patches or regex key edits.
 
 ## Reapply
 
-Compare each current value with desired, then with the last applied value:
+With a matching receipt and matching current result, return no change.
+For a union, add newly required missing items and extend its receipt without claiming pre-existing items.
+For a set, managed file or block migration, change only a matching recorded value or hash.
+A new set still requires absence.
+Anything else is drift and stays unchanged.
+When a profile drops an addition, use its removal rule.
+Don't restore an earlier repository value.
 
-| Current state       | Action                           |
-| ------------------- | -------------------------------- |
-| Equals desired      | No change                        |
-| Equals last applied | Migrate to desired               |
-| Anything else       | Show a conflict and keep current |
+## Native settings
 
-On a first apply, use the declared precondition.
-Preserve unrelated members and surrounding bytes.
-An initial union reads the array before computing the desired value.
-On later applies, compare against the recorded applied array before extending it.
-When a profile drops a change, use guarded removal before its replacement.
-
-## Removal
-
-Restore prior presence and value only while current equals applied.
-Borrowed values stay in place.
-Changed values stay in place and keep their history as unfinished removal.
-Without trustworthy local history, don't invent prior values.
-Open Forge-added config can be restored. Upstream behavior remains controlled by the tool.
-While active, the native CodeGraph setup outputs keep their hooks and permissions.
-On Remove, restore only the unchanged setup additions recorded for this project.
-Whether to run a local native uninstall as well is a review question.
+Read the stored native setting, keeping an inherited environment override separate.
+For CodeGraph telemetry, read the tool's status with its telemetry override variables removed for that probe only.
+Normal tool invocations keep their environment.
+Record the stored previous on/off value in machine state.
+Disclose that telemetry off deletes the upstream identity and unsent queues.
+Restoration covers the setting, not deleted telemetry history.
+If previous state is unavailable, block before effects.
 
 ## Backups
 
-For a tracked file whose current bytes match HEAD, Git provides the backup.
-For an untracked file or a file with uncommitted bytes, prepare a sibling `.bak` before changing it.
+Git covers a tracked file whose current bytes match HEAD.
+Other existing bytes get a sibling `.bak` before a write.
 Git can't recover uncommitted bytes.
-An occupied or unreadable backup destination blocks replacement.
-Keep backups until verification completes.
+An occupied backup destination blocks replacement.
+Keep one original backup across sequential edits to the same file.
 After successful verification, discard only this operation's unchanged backup.
-On failure, offer guarded restoration through Repair. Never overwrite concurrent edits.
-This uses the existing recovery-v1 boundaries for other operations and adds no recovery-v2 format.
+On failure, keep it and print guarded manual restoration instructions.
+Tools don't add a Repair action or depend on the existing workspace lock or recovery mechanism.
+
+## Remove
+
+Run the upstream uninstall first.
+Then remove only additions recorded for this tool.
+Keep changed JSON sets and managed files and report conflicts.
+Delete a uniquely marked block as the managed span, including its interior.
+Leave unrelated data and every unrecorded value alone.
+Keep failed or conflicting receipts until removal completes.
+Package-manager uninstall stays a printed command.
+Shared tool bytes and runtimes require live confirmation.
+Unattended runs print instructions and keep them.
 
 ## Publication
 
-Before effects, save local edit preimages and pending steps.
-After each effect, record its actual outcome so interruption doesn't manufacture a completed setup.
-Verify config and direct-command readiness before publishing the portable tool baseline.
-Write settings and lock with the existing writers under the workspace lease.
-A failed second write is reported as incomplete records. Reapply reconciles from actual facts and saved local history.
-Machine records stay outside the workspace.
-They don't grant project write permission or show another project's compatibility.
+After each verified addition, save its actual receipt in the lock and any native setting facts in machine state.
+A later failure keeps completed receipts and reports unfinished work.
+An interruption between an effect and its receipt doesn't authorize guessing or deleting that unrecorded value.
+Report that gap for manual checking.
+Don't add a Tool journal, lease or recovery folder.
+Commands don't run concurrently by design.
 
-Readers accept unknown keys and report unrecognized schema versions while using understood keys.
-Invalid fields they act on block the dependent effect.
-The [Interface](interface.md) defines locations and shapes.
+Readers keep unknown keys and report unrecognized schema versions while using understood keys.
+Validate fields before using them and keep unrelated settings and ownership data.
+The [Interface](interface.md) defines shapes and locations.
 
 ## Conformance
 
-Required evidence covers:
+Required tests cover:
 
-- Released v5 and v1 unchanged, plus the new v6 and v2 additions.
-- Lower, higher and absent schema versions and unknown fields.
-- Prior absence, JSON null, borrowed values and array union.
-- No-op, migration, drift and guarded removal for all four kinds.
-- Tracked unchanged, tracked dirty, untracked and missing files.
-- Interrupted local and portable writes, unavailable history and concurrent edits.
-- No machine paths, PATH history or preimages in committed records.
+- Fresh derivation from released settings v5 and lock v1.
+- Exact team restore and latest fresh selection.
+- Added-item accounting, absent-only sets, marker uniqueness and file hashes.
+- Reapply, migration and removal without repository previous values.
+- Native previous values only in per-user state.
+- Dirty tracked files, untracked files and sequential sibling backups.
+- Partial completion and unchanged unrelated bytes.
+- No Tool writes or locks under `.open-forge-state/`.

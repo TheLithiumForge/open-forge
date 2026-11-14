@@ -1,17 +1,18 @@
 ---
 open-forge:
-  description: Route portable declarations and local tool setup records
+  description: Route settings, additive lock records and per-user machine facts
   tags: [Memory, Document, CLI, Tool, CurrentTruth]
 ---
 
 # Tool records
 
-Tool records are the settings, lock, workspace edit history and machine facts used by tool setup.
-For example, two teammates share a supported range and tested baseline while keeping their runtime paths on their own machines.
+Tool records are the settings, committed addition records and machine facts used by tool setup.
+For example, a teammate shares an exact lock version while keeping runtime paths on their own machine.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
-The [Interface](interface.md) defines the four shapes. The [Behavior](behavior.md) defines drift and publication rules.
+The [Interface](interface.md) defines the three locations.
+The [Behavior](behavior.md) defines apply, reapply and removal.
 
 ## Axioms
 
@@ -19,5 +20,5 @@ The [Interface](interface.md) defines the four shapes. The [Behavior](behavior.m
 
 ## Entries
 
-- [Define config changes, drift, backups and record publication](behavior.md) - #Memory #Document #CLI #Tool #CurrentTruth
-- [Define tool declarations, tested baselines and local state](interface.md) - #Memory #Document #CLI #Tool #CurrentTruth
+- [Define additive changes and removal without repository preimages](behavior.md) - #Memory #Document #CLI #Tool #CurrentTruth
+- [Define supported ranges, exact locks and additive change records](interface.md) - #Memory #Document #CLI #Tool #CurrentTruth

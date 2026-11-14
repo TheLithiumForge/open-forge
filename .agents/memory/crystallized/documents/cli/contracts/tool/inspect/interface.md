@@ -6,10 +6,10 @@ open-forge:
 
 # Tool inspect interface
 
-Tool inspect is a command that shows one tool's full setup picture.
-Inspect CodeGraph shows its local installer, retained hook and permissions, and account-wide telemetry-off action.
+Tool inspect is a command that shows one tool's complete setup picture.
+Inspect Codebase Memory discloses its account-wide installer, native Skills and hooks, and watcher defaults.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
 ## Syntax
 
@@ -19,13 +19,13 @@ Proposed:
 open-forge tool inspect <id> [global flags]
 ```
 
-Inspect requires exactly one catalogue ID and has no local flags.
+Require exactly one known catalogue ID. There are no local flags.
 The help purpose is "Show one tool's full setup picture."
 
 ## Report
 
-Show identity, all channels and requirements, profiles and tested versions, minimum Open Forge version, bin folder, current PATH readiness, resolved runtime and tool paths, installer writes, Open Forge changes, telemetry and agent guidance. Missing machine paths stay absent with a reason.
-The [common Interface](../interface.md) defines report structure, repetition, result meanings and consent.
+Report identity, channels, client and runtime requirements, supported profiles, bin and manager-global-bin readiness, runtime and tool paths, native setup and uninstall vectors, declared writes, Open Forge additions and telemetry.
+The [common Interface](../interface.md) defines consent, repetition and result coordinates.
 The sibling [Behavior](behavior.md) defines execution.
 
 ## Example
@@ -33,7 +33,7 @@ The sibling [Behavior](behavior.md) defines execution.
 Proposed:
 
 ```text
-open-forge tool inspect codegraph
+open-forge tool inspect codebase-memory
 ```
 
-Inspect CodeGraph shows its local installer, retained hook and permissions, and account-wide telemetry-off action.
+Inspect Codebase Memory discloses its account-wide installer, native Skills and hooks, and watcher defaults.

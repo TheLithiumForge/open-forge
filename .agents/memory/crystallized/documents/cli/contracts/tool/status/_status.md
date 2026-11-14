@@ -6,12 +6,13 @@ open-forge:
 
 # Tool status
 
-Tool status is an operation that checks tool versions, configuration and launch readiness.
-A teammate with a declared but missing CodeGraph gets bare Install as the next step, with no files written.
+Tool status is an operation that checks versions and additive configuration.
+For example, a missing declared CodeGraph produces bare Install as the next step without creating Tool state.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
-The [Interface](interface.md) defines inputs and results. The [Behavior](behavior.md) defines execution.
+The [Interface](interface.md) defines inputs and reports.
+The [Behavior](behavior.md) defines execution.
 
 ## Axioms
 

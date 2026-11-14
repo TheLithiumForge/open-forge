@@ -6,12 +6,13 @@ open-forge:
 
 # Tool update
 
-Tool update is an operation that moves tools to the newest supported range.
-Update moves a tool to its newest supported range and rewrites its launcher to the new absolute runtime and entry paths.
+Tool update is an operation that updates tools through their published channel.
+For example, update replaces the active version and rewrites absolute launchers while recording the new exact version.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
-The [Interface](interface.md) defines inputs and results. The [Behavior](behavior.md) defines execution.
+The [Interface](interface.md) defines inputs and reports.
+The [Behavior](behavior.md) defines execution.
 
 ## Axioms
 
@@ -20,4 +21,4 @@ The [Interface](interface.md) defines inputs and results. The [Behavior](behavio
 ## Entries
 
 - [Define Tool update checks and effects](behavior.md) - #Memory #Document #CLI #Tool #CurrentTruth
-- [Move tools to the newest supported range](interface.md) - #Memory #Document #CLI #Tool #CurrentTruth
+- [Update tools to a supported version](interface.md) - #Memory #Document #CLI #Tool #CurrentTruth

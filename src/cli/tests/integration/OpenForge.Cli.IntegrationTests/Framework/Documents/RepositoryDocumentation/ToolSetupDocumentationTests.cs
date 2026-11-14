@@ -16,6 +16,9 @@ public sealed class ToolSetupDocumentationTests
         var repositoryRoot = RepositoryRoot();
         string[] sources =
         [
+            ".agents/memory/working/cli-development/tasks/task90-tool-setup.md",
+            ".agents/memory/working/cli-development/project-control.md",
+            ".agents/memory/working/cli-development/plan.md",
             ".agents/memory/crystallized/documents/cli/contracts/_contracts.md",
             ".agents/memory/crystallized/documents/cli/contracts/shared/_shared.md",
             ".agents/memory/crystallized/documents/cli/technical-designs/_technical-designs.md",
@@ -128,6 +131,50 @@ public sealed class ToolSetupDocumentationTests
         Assert.NotNull(pattern);
 
         Assert.Equal(expected, Regex.IsMatch(version, pattern, RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1)));
+    }
+
+    [Fact(DisplayName = "Tool lock schema records exact versions, channels and additive receipts")]
+    [Trait("Boundary", "Host"), Trait("Feature", "tool-documentation"), Trait("Evidence", "Integration")]
+    public void LockSchemaDefinesAdditiveRecords()
+    {
+        var fileName = Path.GetFileName(new Uri(WorkspaceOwnershipDefinitions.SchemaUrl).LocalPath);
+        var schema = Assert.IsType<JsonObject>(JsonNode.Parse(File.ReadAllText(
+            Path.Combine(RepositoryRoot(), WorkspaceSettingsDefinitions.SchemaDirectoryName,
+                $"v{ToolRecordDefinitions.LockSchemaVersion}", fileName))));
+        var entry = Assert.IsType<JsonObject>(schema["properties"]?[ToolRecordDefinitions.ToolsProperty]?["additionalProperties"]);
+        var required = Assert.IsType<JsonArray>(entry["required"]).Select(value => value?.GetValue<string>()).ToArray();
+
+        Assert.Equal(
+            [ToolRecordDefinitions.VersionProperty, ToolRecordDefinitions.ChannelProperty, ToolRecordDefinitions.ChangesProperty],
+            required);
+
+        var cases = Assert.IsType<JsonArray>(
+            entry["properties"]?[ToolRecordDefinitions.ChangesProperty]?["items"]?["oneOf"]);
+        var actualKinds = cases.Select(value =>
+            value?["properties"]?[ToolRecordDefinitions.KindProperty]?["const"]?.GetValue<string>())
+            .Order(StringComparer.Ordinal).ToArray();
+        var expectedKinds = new[]
+        {
+            ToolRecordDefinitions.JsonUnionKind,
+            ToolRecordDefinitions.JsonValueKind,
+            ToolRecordDefinitions.MarkedBlockKind,
+            ToolRecordDefinitions.ManagedFileKind,
+            ToolRecordDefinitions.NativeCommandKind,
+        }.Order(StringComparer.Ordinal).ToArray();
+        Assert.Equal(expectedKinds, actualKinds);
+
+        var native = Assert.Single(cases, value =>
+            value?["properties"]?[ToolRecordDefinitions.KindProperty]?["const"]?.GetValue<string>()
+                == ToolRecordDefinitions.NativeCommandKind);
+        var nativeProperties = Assert.IsType<JsonObject>(native?["properties"]);
+        Assert.Equal(
+            new[]
+            {
+                ToolRecordDefinitions.KindProperty,
+                ToolRecordDefinitions.IdProperty,
+                ToolRecordDefinitions.AllowListIdProperty,
+            }.Order(StringComparer.Ordinal),
+            nativeProperties.Select(pair => pair.Key).Order(StringComparer.Ordinal));
     }
 
     private static string RepositoryRoot()

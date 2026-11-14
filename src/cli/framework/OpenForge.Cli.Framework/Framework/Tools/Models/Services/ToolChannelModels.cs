@@ -19,14 +19,16 @@ internal sealed record ToolDetectionResult
 internal sealed record ToolChannelRequest
 {
     public required ToolCatalogueEntry Entry { get; init; }
-    public required ToolVersionRange Range { get; init; }
+    public required ToolVersionSelection Selection { get; init; }
     public required ToolDetectionResult Existing { get; init; }
     public required ToolTarget Target { get; init; }
-    public required IReadOnlyList<string> ProjectManagers { get; init; }
+    public required IReadOnlyList<ToolNpmClient> ProjectManagers { get; init; }
+    public required ToolManagerChoiceMode ManagerChoice { get; init; }
+    public required bool AllowLatestLookup { get; init; }
     public required IReadOnlyList<ToolPackageManagerFacts> AvailableManagers { get; init; }
     public required IReadOnlyList<ToolPrivateNodeSpec> AvailableNodeRuntimes { get; init; }
     public string? ChannelOverride { get; init; }
-    public string? TestedBaseline { get; init; }
+    public ToolNpmClient? ChosenManager { get; init; }
 }
 
 internal sealed record ToolChannelResolution

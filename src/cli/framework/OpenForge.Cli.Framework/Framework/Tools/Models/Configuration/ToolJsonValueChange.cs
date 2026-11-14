@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
 
-internal enum ToolJsonValueOperation { Set, Delete, Union }
+internal enum ToolJsonValueOperation { SetIfAbsent, Union }
 
 internal sealed record ToolJsonValueChange : ToolConfigChange
 {

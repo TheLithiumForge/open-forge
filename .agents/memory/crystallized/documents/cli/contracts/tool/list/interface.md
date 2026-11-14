@@ -6,10 +6,10 @@ open-forge:
 
 # Tool list interface
 
-Tool list is a command that lists catalogue tools and project declarations.
-List returns CodeGraph and Codebase Memory in ID order. Rune has no V1 row.
+Tool list is a command that lists catalogue tools and declarations.
+CodeGraph and Codebase Memory appear in ID order. Rune has no V1 row.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
 ## Syntax
 
@@ -19,13 +19,13 @@ Proposed:
 open-forge tool list [global flags]
 ```
 
-List has no operands or local flags. It can show the catalogue without an installed workspace.
+No operands or local flags. It can show the catalogue without an installed workspace.
 The help purpose is "List catalogue tools and project declarations."
 
 ## Report
 
-Show ID, name, first-party or third-party origin, upstream, licence, channels, supported ranges and whether the workspace declares the tool.
-The [common Interface](../interface.md) defines report structure, repetition, result meanings and consent.
+Report ID, name, origin, upstream, licence, channels, supported profiles and declaration state.
+The [common Interface](../interface.md) defines consent, repetition and result coordinates.
 The sibling [Behavior](behavior.md) defines execution.
 
 ## Example
@@ -36,4 +36,4 @@ Proposed:
 open-forge tool list
 ```
 
-List returns CodeGraph and Codebase Memory in ID order. Rune has no V1 row.
+CodeGraph and Codebase Memory appear in ID order. Rune has no V1 row.

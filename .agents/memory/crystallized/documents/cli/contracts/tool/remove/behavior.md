@@ -6,27 +6,36 @@ open-forge:
 
 # Tool remove behavior
 
-Tool remove behavior is the flow that undoes this project's tool configuration.
-Remove detaches CodeGraph from this project, keeps a package-manager installation and prints its native uninstall command.
+Tool remove behavior is the flow that runs native uninstall and removes Open Forge additions.
+CodeGraph removes its project setup through its own uninstaller, then Open Forge removes its recorded archive exclusion.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
 ## Flow
 
-Read local edit records before forming removal. Restore each prior value only while current equals applied. Keep drift and its records as unfinished removal. Remove this project's Skill and conditional line with the same guards. Never uninstall a package-manager install. Ask before deleting any Open Forge-placed tool files or runtime, since other projects can use them. Delete a runtime only when no launcher uses it. Offer confirmed PATH removal only after the last tool is removed.
-Use the [common Behavior](../behavior.md) for detection, channel selection, safe edits and verification.
-Keep this command's public meaning in its [Interface](interface.md).
+Preflight the native uninstall and recorded additions.
+Show the plan.
+If the native uninstall needs PATH changes or shared deletion, obtain separate live confirmation before starting it.
+Without that confirmation, print its command and leave removal pending.
+Run the tool's own uninstall first, then remove only recorded additions and guarded native settings.
+Never automatically run a package-manager uninstaller.
+Ask before deleting Open Forge-placed tool files or runtimes, since other projects can use them.
+Remove a runtime only when no launcher uses it.
+Offer PATH removal after the last tool.
+`--yes` never supplies live confirmation for PATH or shared deletion.
+Use the [common Behavior](../behavior.md) for detection, channels, native setup and additive effects.
+Keep syntax and reports in the [Interface](interface.md).
 
 ## Results
 
-Read-only checks create no state. Writers publish only verified facts.
-An independently completed effect stays in the result if a later step fails.
-Use the shared semantic statuses without hiding unavailable facts or unfinished work.
+Use the common status precedence and shared schema-3 exits.
+Keep actual effects, conflicts and unstarted work separate.
+Dry-run changes no Tool configuration or records.
 
 ## Conformance
 
 Required cases cover:
 
-- Prior absence and value restoration, borrowed values, drift preservation, missing local records, other-project use, refusal of shared deletion and final PATH confirmation.
-- Stable ID order, no duplicate effects and unchanged unrelated bytes.
-- Shared text and JSON facts, global flags and schema-3 exits.
+- Native-first ordering, account scope, union item removal, changed set/file retention, block deletion, --yes protected effects, shared runtime use and repeated removal.
+- Stable ordering and unchanged unrelated data.
+- Shared text and JSON facts and global flags.

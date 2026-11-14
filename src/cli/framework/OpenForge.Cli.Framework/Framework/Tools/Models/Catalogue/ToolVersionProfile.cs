@@ -8,7 +8,8 @@ internal sealed record ToolVersionProfile
     public required ToolVersionRange Range { get; init; }
     public required IReadOnlyList<string> TestedVersions { get; init; }
     public required string MinimumOpenForgeVersion { get; init; }
-    public ToolSetupSpec? Setup { get; init; }
+    public required string MinimumToolVersion { get; init; }
+    public required ToolSetupSpec Setup { get; init; }
+    public required ToolSetupSpec Uninstall { get; init; }
     public required IReadOnlyList<ToolConfigChange> Changes { get; init; }
-    public required ToolAgentGuidance Guidance { get; init; }
 }

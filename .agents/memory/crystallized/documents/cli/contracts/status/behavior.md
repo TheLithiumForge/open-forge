@@ -9,8 +9,11 @@ open-forge:
 
 ## Planned tool checks
 
-The planned tool summary consumes the same read-only facts as Tool Status. Keep missing, unsupported, drifted and unavailable states distinct. Don't acquire a lease or create machine or workspace edit state. A known missing declaration gets bare Tool Install as its next step.
-The [Tool contracts](../tool/_tool.md) define setup and removal. These additions wait for the implementation lanes.
+The round-2 Tool checks report missing declared tools, unsupported detected versions, exact lock differences, additive config drift and unavailable native machine facts.
+A missing tool offers `open-forge tool install`.
+Use the same bounded probes as Tool Status, including CodeGraph's no-download probe environment.
+These checks don't configure tools, create Tool state or acquire a Tool lease.
+The [Tool contracts](../tool/_tool.md) define the planned read operations.
 
 ## Workspace Layout
 

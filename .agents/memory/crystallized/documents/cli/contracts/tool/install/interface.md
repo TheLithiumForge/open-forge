@@ -1,31 +1,31 @@
 ---
 open-forge:
-  description: Install tools and add their project configuration
+  description: Install tools and add configuration
   tags: [Memory, Document, CLI, Tool, CurrentTruth]
 ---
 
 # Tool install interface
 
-Tool install is a command that installs tools and adds their project configuration.
-With CodeGraph 1.6.x declared, a teammate runs bare Install and receives a working direct `codegraph` command plus project configuration.
+Tool install is a command that installs tools and runs their native setup.
+A teammate runs bare Install and receives the exact CodeGraph version in the lock. Named Install selects latest support.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
 ## Syntax
 
 Proposed:
 
 ```text
-open-forge tool install [<id>] [--version <range>] [--channel <channel>] [--allow-download] [--allow-path <path>...] [--automatic] [--dry-run] [global flags]
+open-forge tool install [<id[@version]>] [--channel <channel>] [--yes] [--allow-path <path>...] [--dry-run] [global flags]
 ```
 
-A named ID uses its declared range when present, otherwise the newest supported range. `--version` selects an earlier supported range. Bare Install selects every declared tool. Version and channel overrides require a named ID.
-The help purpose is "Install tools and add their project configuration."
+A bare name selects latest support, even when an older version is recorded. A spec such as codegraph@1.6 or codegraph@1.6.2 selects that supported range or exact version. Bare Install selects declarations and restores exact lock versions. A declared tool without a lock selects latest within its declared range. A channel override requires a named spec.
+The help purpose is "Install tools and add configuration."
 
 ## Report
 
-Show the exact selected patch before approval, existing installation reuse, channel and prerequisites, account-wide effects, setup outputs, telemetry, config changes, guidance, local state and portable record changes.
-The [common Interface](../interface.md) defines report structure, repetition, result meanings and consent.
+Report requested spec, resolved exact version, channel, npm client, account-wide effects, native commands and outputs, additive changes, telemetry, downloads, PATH instructions and record changes.
+The [common Interface](../interface.md) defines consent, repetition and result coordinates.
 The sibling [Behavior](behavior.md) defines execution.
 
 ## Example
@@ -36,4 +36,4 @@ Proposed:
 open-forge tool install
 ```
 
-With CodeGraph 1.6.x declared, a teammate runs bare Install and receives a working direct `codegraph` command plus project configuration.
+A teammate runs bare Install and receives the exact CodeGraph version in the lock. Named Install selects latest support.

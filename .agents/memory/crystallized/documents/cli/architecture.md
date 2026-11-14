@@ -91,11 +91,13 @@ and evidence costs.
 
 ## Tool setup
 
-The planned [Tool setup design](technical-designs/tool-setup.md) adds typed catalogue facts and shared service shapes to Framework.
-Operations keeps command requests, consent, plans and results.
-The root hosts processes, transfers and platform PATH changes.
-Tools run through their own direct commands after setup. Open Forge takes no part at run time.
-Step 0 adds data types only. It registers no commands or service implementations.
+The [Tool setup design](technical-designs/tool-setup.md) defines the round-2 catalogue and frozen Framework service interfaces.
+Operations keeps command requests, plans, --yes consent and results.
+Root hosts process, transfer and platform PATH capabilities.
+Tools run directly through their own commands after setup.
+Tool writers don't use workspace leases or recovery state, because Open Forge commands don't run concurrently by design.
+The committed lock holds additive change records. Native previous account values and paths stay in user state.
+This phase changes contracts and compile-only shapes. Command implementations follow in supervised lanes.
 
 ## Layer Model
 

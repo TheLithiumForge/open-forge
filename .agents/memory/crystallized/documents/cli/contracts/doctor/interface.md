@@ -9,8 +9,11 @@ open-forge:
 
 ## Planned tool checks
 
-The planned tool findings report declared but missing tools, unsupported detected versions, config conflicts, missing required guidance and incomplete local edit history. A missing tool offers `open-forge tool install`. Tool backup findings identify the sibling backup, affected target and whether guarded Repair is available. This is read-only diagnosis.
-The [Tool contracts](../tool/_tool.md) define setup and removal. These additions wait for the implementation lanes.
+The round-2 Tool checks report missing declared tools, unsupported detected versions, exact lock differences, additive config drift and unavailable native machine facts.
+A missing tool offers `open-forge tool install`.
+Use the same bounded probes as Tool Status, including CodeGraph's no-download probe environment.
+These checks don't configure tools, create Tool state or acquire a Tool lease.
+The [Tool contracts](../tool/_tool.md) define the planned read operations.
 
 The local-reference domain also checks [comment links](../shared/source-references/interface.md#comment-links) in eligible workspace files. Missing paths and fragments keep their existing finding kinds. `reference.legacy-anchor` reports an older ID-style target with suggested file paths when available. Git file moves, heading changes, section content matches and unique slugs retain separate evidence for review.
 

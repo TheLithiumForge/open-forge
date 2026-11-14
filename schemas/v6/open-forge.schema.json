@@ -126,7 +126,7 @@
     },
     "tools": {
       "type": "object",
-      "description": "Declared tools and their supported major.minor ranges. Machine paths and edit history stay local.",
+      "description": "Declared tools and their supported major.minor ranges. Project additions go in the committed lock. Machine paths and native previous settings stay in per-user state.",
       "additionalProperties": {
         "type": "object",
         "additionalProperties": true,

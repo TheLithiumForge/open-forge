@@ -6,27 +6,27 @@ open-forge:
 
 # Tool status behavior
 
-Tool status behavior is the flow that checks tool versions, configuration and launch readiness.
-A teammate with a declared but missing CodeGraph gets bare Install as the next step, with no files written.
+Tool status behavior is the flow that checks versions and additive configuration.
+A missing declared CodeGraph produces bare Install as the next step without creating Tool state.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
 ## Flow
 
-Run bounded version and native read probes. Compare current config values with desired and last applied values. A missing declared tool gives the next step `open-forge tool install`. Self-updates inside support offer `open-forge tool install <id>` to reapply. Outside support warns without downgrading.
-Use the [common Behavior](../behavior.md) for detection, channel selection, safe edits and verification.
-Keep this command's public meaning in its [Interface](interface.md).
+Use bounded native probes. CodeGraph's version probe sets CODEGRAPH_NO_DOWNLOAD=1. Compare additions with the lock and native previous/applied state with machine records. Missing declared tools offer `open-forge tool install`. A supported self-update offers named Install to reapply. An unsupported one warns without downgrading.
+Use the [common Behavior](../behavior.md) for detection, channels, native setup and additive effects.
+Keep syntax and reports in the [Interface](interface.md).
 
 ## Results
 
-Read-only checks create no state. Writers publish only verified facts.
-An independently completed effect stays in the result if a later step fails.
-Use the shared semantic statuses without hiding unavailable facts or unfinished work.
+Use the common status precedence and shared schema-3 exits.
+Keep actual effects, conflicts and unstarted work separate.
+Dry-run changes no Tool configuration or records.
 
 ## Conformance
 
 Required cases cover:
 
-- Self-updates inside and outside support, absent declarations, missing tools, config conflicts, missing guidance and unavailable observations.
-- Stable ID order, no duplicate effects and unchanged unrelated bytes.
-- Shared text and JSON facts, global flags and schema-3 exits.
+- Self-updates inside and outside support, missing additions, changed managed files, missing native machine facts and no Tool state writes.
+- Stable ordering and unchanged unrelated data.
+- Shared text and JSON facts and global flags.

@@ -6,27 +6,27 @@ open-forge:
 
 # Tool inspect behavior
 
-Tool inspect behavior is the flow that shows one tool's full setup picture.
-Inspect CodeGraph shows its local installer, retained hook and permissions, and account-wide telemetry-off action.
+Tool inspect behavior is the flow that shows one tool's complete setup picture.
+Inspect Codebase Memory discloses its account-wide installer, native Skills and hooks, and watcher defaults.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
 ## Flow
 
-Read catalogue and available local records, then perform bounded detection and declared read-only config checks. Show missing and unavailable facts separately. Never create state or fetch updates.
-Use the [common Behavior](../behavior.md) for detection, channel selection, safe edits and verification.
-Keep this command's public meaning in its [Interface](interface.md).
+Read catalogue and local records, then run bounded version and declared read-only checks. Show missing and unavailable facts separately. Don't install, configure or fetch latest.
+Use the [common Behavior](../behavior.md) for detection, channels, native setup and additive effects.
+Keep syntax and reports in the [Interface](interface.md).
 
 ## Results
 
-Read-only checks create no state. Writers publish only verified facts.
-An independently completed effect stays in the result if a later step fails.
-Use the shared semantic statuses without hiding unavailable facts or unfinished work.
+Use the common status precedence and shared schema-3 exits.
+Keep actual effects, conflicts and unstarted work separate.
+Dry-run changes no Tool configuration or records.
 
 ## Conformance
 
 Required cases cover:
 
-- Both origins, every requirement field, missing runtime, unavailable files and the complete installer-effects disclosure.
-- Stable ID order, no duplicate effects and unchanged unrelated bytes.
-- Shared text and JSON facts, global flags and schema-3 exits.
+- Missing paths, failed probes, every requirement field, native account scope and separate Open Forge additions.
+- Stable ordering and unchanged unrelated data.
+- Shared text and JSON facts and global flags.

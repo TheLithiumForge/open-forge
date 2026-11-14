@@ -6,12 +6,13 @@ open-forge:
 
 # Tool remove
 
-Tool remove is an operation that undoes this project's tool configuration.
-Remove detaches CodeGraph from this project, keeps a package-manager installation and prints its native uninstall command.
+Tool remove is an operation that runs native uninstall and removes Open Forge additions.
+For example, CodeGraph removes its project setup through its own uninstaller, then Open Forge removes its recorded archive exclusion.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
-The [Interface](interface.md) defines inputs and results. The [Behavior](behavior.md) defines execution.
+The [Interface](interface.md) defines inputs and reports.
+The [Behavior](behavior.md) defines execution.
 
 ## Axioms
 
@@ -20,4 +21,4 @@ The [Interface](interface.md) defines inputs and results. The [Behavior](behavio
 ## Entries
 
 - [Define Tool remove checks and effects](behavior.md) - #Memory #Document #CLI #Tool #CurrentTruth
-- [Undo this project's tool configuration](interface.md) - #Memory #Document #CLI #Tool #CurrentTruth
+- [Uninstall tool setup and remove its additions](interface.md) - #Memory #Document #CLI #Tool #CurrentTruth

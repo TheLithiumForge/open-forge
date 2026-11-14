@@ -1,68 +1,77 @@
 ---
 open-forge:
-  description: Check catalogue entries before adding supported tool versions
+  description: Review native installer recipes and additive configuration every few months
   tags: [Memory, Document, CLI, Tool, CurrentTruth]
 ---
 
 # Tool entry review
 
-Tool entry review is a process that checks a tool's published channels and additive configuration recipe.
-For example, CodeGraph's supported range can be declared while its 1.6.2 release archive still waits for its attestation finding to be resolved.
+Tool entry review is a process that checks published installation channels and additive configuration.
+For example, a CodeGraph release uses pinned asset hashes while its native installer keeps its own hook and permissions.
 
-Status: V1 catalogue specified. Entries are implemented and reviewed in lane E after step 0 review.
+Status: Round-2 rules decided on 14 November 2026. Catalogue entries and native journeys follow implementation.
 
 ## Source
 
-The [Tool setup design](../cli/technical-designs/tool-setup.md) defines the catalogue and installation flow.
-The [Tool records](../cli/contracts/shared/tool-records/interface.md) define portable and local facts.
-The typed catalogue will live under `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Catalogue/`.
+The [Tool setup design](../cli/technical-designs/tool-setup.md) defines the catalogue.
+The [record contracts](../cli/contracts/shared/tool-records/_tool-records.md) define exact versions and additive receipts.
+The current releases checked on 14 November 2026 are [CodeGraph 1.6.2](https://github.com/colbymchenry/codegraph/releases/tag/v1.6.2) and [Codebase Memory 0.12.1](https://github.com/DeusData/codebase-memory-mcp/releases/tag/v0.12.1).
+The detailed round-2 decision source is `of-tool-setup-decisions-2.md`.
 
 ## Contract
 
-Before admitting a profile, check each item:
+Before adding or updating a profile, complete these checks:
 
-1. Record ID, name, origin, upstream and licence. Confirm the package and release are published by that upstream.
-2. Name every advertised channel and its runtime, minimum manager, OS, CPU and Linux libc requirements. Mark untested or unsupported targets honestly.
-3. Check the bounded version probe and parser against real output. The probe mustn't invoke installation, setup or indexing.
-4. Define non-overlapping major.minor ranges, exact tested versions and the minimum Open Forge version.
-5. Resolve every direct-download asset to a pinned SHA-256 or verified attestation. Check expected repository, workflow and source commit. Block mismatches.
-6. For private Node, verify signed SHASUMS256 using upstream release keys and pin the official portable archive hash. Use that runtime's npm and test native addons on the matching target.
-7. Disclose package-manager integrity and install-script behavior. Describe it as manager-verified, weaker than a reviewed dependency closure.
-8. Record the setup argument vector and every declared project or account effect. Keep tool hooks, permissions, watchers and other behavior. Disclose telemetry off.
-9. Define each config change, precondition, read-back and removal action. Check no-op, migration, drift, prior absence and unrelated-byte retention.
-10. Verify absolute-path launchers, runtime pinning, direct command resolution and updates. Verify Windows MCP `cmd /c <tool>` for `.cmd` launchers in native tests.
-11. Test PATH choices, chosen shell files including a custom file, restart instructions, lost-state marks and confirmed final removal. Never change system PATH.
-12. Add the direct-command Skill and conditional managed-block line. Confirm setup completion, update, failure and removal on each reviewed native target.
+1. Record ID, name, origin, upstream and licence.
+2. Check the published channel's runtime, manager, OS, CPU and libc requirements.
+3. Test bounded version detection and environment overlays. CodeGraph uses `CODEGRAPH_NO_DOWNLOAD=1` for probes.
+4. Declare the major.minor profile, minimum reviewed patch, tested versions and minimum Open Forge build.
+5. Pin each direct asset's SHA-256 or verified attestation. CodeGraph uses published SHA256SUMS. Reject digest mismatches.
+6. For private Node, verify signed SHASUMS256, skip archive link entries before the link-rejecting extractor and use Node's own npm CLI script.
+7. Detect and test npm-family clients, project-lockfile preference, Yarn Modern exclusion and manager-global-bin readiness.
+8. Record native setup and uninstall commands, dry-run support and project or account effects. Keep native MCP names, hooks, permissions, blocks and Skills.
+9. Check JSON union and absent-only set, marked blocks, absent-only files and native account settings against their additive removal rules.
+10. Verify exact lock versions, channels and added items, keys, markers and hashes. Keep native previous values in machine state.
+11. Test absolute launchers, private runtime compatibility, PATH choices and unattended instructions. Never edit real user PATH or shell profiles in journeys.
+12. Run real direct-command and MCP journeys, update and native-first removal. Keep full suites in CI.
 
-Open Forge ships recipes and guidance, not upstream tool bytes.
-Existing source and schema versions stay unchanged when adding a profile.
-Any new config kind, channel adapter or dependency requires its own design review.
+Open Forge adds no per-tool Skill or managed-block line.
+It doesn't rewrite upstream integrations.
+The normal process runner uses argument vectors, not shell strings.
+A native uninstall that requires PATH or shared-binary effects needs live confirmation.
+
+### Review interval
+
+Review the catalogue every three months and after an upstream compatibility or integrity report.
+Check current release, recipe commands, native effects, hashes, requirements and tests.
+Keep older supported profiles and exact pins that existing locks use.
+Update the review date and source links with every entry change.
+Use the release that first ships an entry as its minimum Open Forge version.
+A profile starts at the current reviewed tool patch and doesn't silently raise that minimum on a later periodic review.
 
 ### CodeGraph
 
-The entry specification is:
+The V1 entry has these values:
 
-| Field              | Value                                                                     |
-| ------------------ | ------------------------------------------------------------------------- |
-| ID and name        | `codegraph`, CodeGraph                                                    |
-| Origin and licence | `third-party`, MIT                                                        |
-| Upstream           | `https://github.com/colbymchenry/codegraph`                               |
-| Profile            | `1.6.x`, examined version `1.6.2`                                         |
-| Channels           | npm `@colbymchenry/codegraph` and GitHub release                          |
-| Detection          | `codegraph --version`, exact stable SemVer parser                         |
-| Setup              | `["install", "--yes", "--location", "local", "--target", "claude,codex"]` |
-| Added config       | Allow-listed `["telemetry", "off"]`, JSON Pointer `/exclude` union        |
-| Archive exclusion  | `<mainRoot>/memory/archived/**`                                           |
-| Guidance           | Proposed Skill `codegraph-usage`, direct command `codegraph`              |
+| Field                   | Value                                                                                     |
+| ----------------------- | ----------------------------------------------------------------------------------------- |
+| ID and name             | `codegraph`, CodeGraph                                                                    |
+| Origin and licence      | `third-party`, MIT                                                                        |
+| Upstream                | `https://github.com/colbymchenry/codegraph`                                               |
+| Profile and first patch | `1.6.x`, `1.6.2`                                                                          |
+| Channels                | npm `@colbymchenry/codegraph` and GitHub release                                          |
+| Setup                   | `["install", "--yes", "--location", "local", "--target", "claude,codex"]`                 |
+| Uninstall               | `["uninstall", "--yes", "--location", "local", "--target", "claude,codex", "--keep-cli"]` |
+| Added config            | `telemetry off`, `codegraph.json` `/exclude` union with `<mainRoot>/memory/archived/**`   |
+| Probe                   | `--version`, with `CODEGRAPH_NO_DOWNLOAD=1`                                               |
 
-The release bundles Node. The npm wrapper uses a host Node to locate that bundle.
-The [npm wrapper](https://github.com/colbymchenry/codegraph/blob/v1.6.2/scripts/npm-shim.js) can download a missing platform package on first launch.
-Disclose that upstream fallback. Don't disable it.
-The [source package](https://github.com/colbymchenry/codegraph/blob/v1.6.2/package.json) declares Node `>=20.0.0 <25.0.0`.
-That isn't the published wrapper's tested minimum.
-Lane E must verify the npm-channel requirement and minimum manager before entry review.
+The release bundles Node.
+Its published npm wrapper uses the host Node to locate that bundle.
+The entry's initial supported wrapper runtime is Node 20 or newer, checked separately from the selected client's own runtime requirements.
+This is an Open Forge support floor, not a claim that upstream publishes an engines minimum.
+Keep its normal missing-platform download fallback outside probes.
 
-Release assets use these names:
+Release assets are:
 
 | Target        | Asset                           |
 | ------------- | ------------------------------- |
@@ -73,96 +82,66 @@ Release assets use these names:
 | Linux x64     | `codegraph-linux-x64.tar.gz`    |
 | Linux ARM64   | `codegraph-linux-arm64.tar.gz`  |
 
-The URL is `https://github.com/colbymchenry/codegraph/releases/download/v<version>/<asset>`.
-Per-asset hashes are copy candidates from `origin/feature/tool-code-graphs:src/tools/drafts/codegraph-1.6.2.json`.
-They need fresh review. The 1.6.2 attested workflow commit differs from the tag commit in Council 1.
-Keep that archive blocked until the finding is resolved. Don't reuse its old entry review flag.
+Use `https://github.com/colbymchenry/codegraph/releases/download/v<version>/<asset>`.
+Pin hashes from that release's published `SHA256SUMS`.
+The older draft's URLs and hashes are copy candidates, not a replacement for checking the published file.
+Council 1's attested workflow commit and tag commit mismatch stays a note.
+It doesn't block this SHA-256 channel.
 
-The local installer writes these project files:
+Native local setup writes Claude MCP, settings, hook, permissions and instruction block, plus Codex config and root AGENTS.md.
+It can migrate an older local `.claude.json` entry.
+Back up those declared files, keep the installer output unchanged and record actual effects in E's journey.
+Don't add an Open Forge Skill or line.
 
-| Target        | File                    | Effect                                     |
-| ------------- | ----------------------- | ------------------------------------------ |
-| Claude        | `.mcp.json`             | CodeGraph MCP entry                        |
-| Claude        | `.claude/settings.json` | Prompt hook and permissions                |
-| Claude        | `.claude/CLAUDE.md`     | Native instruction block                   |
-| Codex         | `.codex/config.toml`    | Native MCP section                         |
-| Codex         | `AGENTS.md`             | Native instruction block                   |
-| Claude legacy | `.claude.json`          | Migrate an existing legacy local MCP entry |
+Telemetry off is account-wide and deletes the upstream identity and unsent queues.
+Read the stored setting through the native status command with telemetry overrides removed for that probe.
+Keep the caller's normal environment and report any override separately.
+Machine state records only the previous setting, not telemetry identity or queues.
 
-The upstream [Claude target](https://github.com/colbymchenry/codegraph/blob/v1.6.2/src/installer/targets/claude.ts) and [Codex target](https://github.com/colbymchenry/codegraph/blob/v1.6.2/src/installer/targets/codex.ts) declare those local paths.
-Back up the actual declared destinations before invoking it.
-Keep all native blocks, hook commands and permissions.
-The [installer source](https://github.com/colbymchenry/codegraph/blob/v1.6.2/src/installer/index.ts) is the source for the final written-file inventory.
-Telemetry off affects the account.
-The [telemetry commands](https://github.com/colbymchenry/codegraph/blob/v1.6.2/TELEMETRY.md#turning-it-off) provide `telemetry status`, `telemetry off` and `telemetry on`.
-The off command removes the local identity and unsent queues. Turning it on creates a new identity.
-Disclose those effects. Guarded removal restores the setting, not the deleted telemetry history.
-The read-back parser records the setting without copying the machine ID into project records.
-
-The proposed Skill resource is `src/tools/skills/codegraph-usage/SKILL.md`.
-Its proposed conditional managed-block line is "Use `codegraph` for code navigation and check returned relationships in source."
-The line appears only while the tool is active.
-
-CodeGraph [creates an internal ignore file](https://github.com/colbymchenry/codegraph/blob/v1.6.2/src/directory.ts#L831-L900) when it creates its index directory.
-It ignores transient contents and keeps its own ignore file.
-Its internal ignore therefore doesn't ignore the whole directory.
-Check whether `.codegraph/` is already ignored at setup time.
-Add an Open Forge marked root `.gitignore` block only if that directory isn't already ignored.
-Don't create an index just to establish ignore coverage.
+CodeGraph creates an internal ignore file when its index directory is created.
+Check effective `.codegraph/` coverage.
+Add an Open Forge marked root `.gitignore` block only when the tool's own output and existing rules don't already cover it.
+Don't create an index just to get ignore coverage.
 
 ### Codebase Memory
 
-The entry specification is:
+The V1 entry has these values:
 
-| Field              | Value                                                                           |
-| ------------------ | ------------------------------------------------------------------------------- |
-| ID and name        | `codebase-memory`, Codebase Memory                                              |
-| Origin and licence | `third-party`, MIT                                                              |
-| Upstream           | `https://github.com/DeusData/codebase-memory-mcp`                               |
-| Profile            | `0.12.x`, examined version `0.12.1`                                             |
-| Channel            | GitHub release                                                                  |
-| Detection          | `codebase-memory-mcp --version`, exact stable SemVer parser                     |
-| Placement          | Native binary in `~/.open-forge/bin/`                                           |
-| Setup              | Absent. Skip account-wide setup                                                 |
-| Project config     | JSON Pointer MCP entry, Codex TOML marked section and `.cbmignore` marked block |
-| Guidance           | Proposed Skill `codebase-memory-usage`, direct command `codebase-memory-mcp`    |
+| Field                   | Value                                                          |
+| ----------------------- | -------------------------------------------------------------- |
+| ID and name             | `codebase-memory`, Codebase Memory                             |
+| Origin and licence      | `third-party`, MIT                                             |
+| Upstream                | `https://github.com/DeusData/codebase-memory-mcp`              |
+| Profile and first patch | `0.12.x`, `0.12.1`                                             |
+| Channel                 | GitHub release, native binary in `~/.open-forge/bin/`          |
+| Setup                   | `["install", "--yes", "--skip-binary", "--dir", "<bin>"]`      |
+| Native preview          | Add `--dry-run` to that setup vector                           |
+| Uninstall               | `["uninstall", "--yes", "--dir", "<bin>"]`                     |
+| Added config            | A marked `.cbmignore` block for `/<mainRoot>/memory/archived/` |
 
-Its release URL is `https://github.com/DeusData/codebase-memory-mcp/releases/download/v<version>/<asset>`.
-Windows assets use `codebase-memory-mcp-windows-{amd64|arm64}.zip`.
-macOS assets use `codebase-memory-mcp-darwin-{amd64|arm64}.tar.gz`.
-Linux assets use `codebase-memory-mcp-linux-{amd64|arm64}-portable.tar.gz`.
-Per-asset hash candidates are in `origin/feature/tool-codebase-memory:src/tools/drafts/codebase-memory-0.12.1.json`.
-Verify their hashes, OS minimums, CPU and libc support before entry review.
+The documented `--skip-binary` mode configures agents while keeping the already placed binary and PATH unchanged.
+`--dir` identifies the real Open Forge bin for native registrations.
+Leave native client discovery at its default and disclose account scope.
+The [upstream CLI](https://github.com/DeusData/codebase-memory-mcp/blob/v0.12.1/src/cli/cli.c) supplies these flags and its account-wide uninstall.
+Open Forge writes no MCP entry, Codex TOML section, hook, instruction block or usage Skill.
+Keep the native watcher defaults.
 
-The proposed JSON Pointer is `/mcpServers/codebase-memory` in `.mcp.json`.
-Its value has direct command `codebase-memory-mcp`, empty args and project CWD.
-The Codex section is `[mcp_servers.codebase-memory]` inside unique Open Forge markers.
-The `.cbmignore` block excludes `/<mainRoot>/memory/archived/`.
-Host formats and an environment root binding need native verification. Exact key names are review proposals.
-Portable config mustn't embed a user's home path.
+Native uninstall includes binary removal and, on Windows, persistent user PATH cleanup.
+Without live confirmation, print its command and leave removal pending.
+Never pass `--delete-indexes`.
+The native command keeps indexes by default.
 
-The proposed Skill resource is `src/tools/skills/codebase-memory-usage/SKILL.md`.
-Its proposed conditional managed-block line is "Use `codebase-memory-mcp` for code navigation and check returned relationships in source."
-The line appears only while the tool is active.
-
-Its [configuration reference](https://github.com/DeusData/codebase-memory-mcp/blob/v0.12.1/docs/CONFIGURATION.md) describes account-wide native settings.
-Defaults are `auto_index=false`, `auto_watch=true` and `watcher_enabled=true`.
-Disclose those defaults. Keep them.
-Removal never invokes account-wide setup or deletes every project's indexes.
+Use `https://github.com/DeusData/codebase-memory-mcp/releases/download/v<version>/<asset>`.
+Windows names use `codebase-memory-mcp-windows-{amd64|arm64}.zip`.
+macOS names use `codebase-memory-mcp-darwin-{amd64|arm64}.tar.gz`.
+Linux names use `codebase-memory-mcp-linux-{amd64|arm64}-portable.tar.gz`.
+Verify exact hashes and runtime target requirements before compiling the entry.
 
 ## Verification
 
-Use small synthetic entries and owned temporary homes for generic tests.
-Check each reviewed tool natively on Windows, macOS and Linux, each on x64 and ARM64 where its requirements allow it.
-A cross-build isn't native execution evidence.
-Use focused semantic assertions and reviewed output snapshots.
-CI supplies the full managed and Native AOT gates.
-The implementation lanes add profile, codec and lifecycle tests. Step 0 only compiles shared shapes.
-
-## Not decided yet
-
-- Which exact minimum Open Forge release should each first profile declare?
-- What npm runtime and manager minimum does the published CodeGraph wrapper support?
-- What minimum OS, CPU and libc versions are reviewed for each release asset?
-- How is the CodeGraph 1.6.2 attestation and tag mismatch resolved?
-- How should the telemetry parser distinguish the stored value from a value forced by the caller's environment?
+Generic tests use synthetic entries, local artifacts and owned temporary homes.
+E runs real Windows install, status, direct command, MCP, update and remove journeys for both tools.
+It records exactly what native setup wrote and what Open Forge added or removed.
+Verify that temporary native commands can't edit real shell profiles or real persistent user PATH.
+CI supplies other native targets and full suites.
+Profile review never redistributes tool bytes.

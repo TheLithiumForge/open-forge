@@ -6,12 +6,13 @@ open-forge:
 
 # Tool install
 
-Tool install is an operation that installs tools and adds their project configuration.
-With CodeGraph 1.6.x declared, a teammate runs bare Install and receives a working direct `codegraph` command plus project configuration.
+Tool install is an operation that installs tools and runs their native setup.
+For example, a teammate runs bare Install and receives the exact CodeGraph version in the lock. Named Install selects latest support.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
-The [Interface](interface.md) defines inputs and results. The [Behavior](behavior.md) defines execution.
+The [Interface](interface.md) defines inputs and reports.
+The [Behavior](behavior.md) defines execution.
 
 ## Axioms
 
@@ -20,4 +21,4 @@ The [Interface](interface.md) defines inputs and results. The [Behavior](behavio
 ## Entries
 
 - [Define Tool install checks and effects](behavior.md) - #Memory #Document #CLI #Tool #CurrentTruth
-- [Install tools and add their project configuration](interface.md) - #Memory #Document #CLI #Tool #CurrentTruth
+- [Install tools and add configuration](interface.md) - #Memory #Document #CLI #Tool #CurrentTruth

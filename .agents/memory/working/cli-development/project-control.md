@@ -56,4 +56,4 @@ Completed Task IDs remain permanent. [Archived CLI Tasks](../../archived/cli-dev
 
 ## Current next action
 
-Choose the next Task with the maintainer after beta18 publication and public smoke. No implementation is selected by this release record. Paused, frozen, deferred and maintainer-review work retains its state in the [Task index](tasks/_tasks.md).
+Complete Task 90 through the maintainer's three tool-setup phases. Report and stop after each phase. Paused, frozen, deferred and maintainer-review work keeps its state in the [Task index](tasks/_tasks.md).

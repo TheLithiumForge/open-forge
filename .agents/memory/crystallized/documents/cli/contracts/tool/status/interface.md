@@ -6,10 +6,10 @@ open-forge:
 
 # Tool status interface
 
-Tool status is a command that checks tool versions, configuration and launch readiness.
-A teammate with a declared but missing CodeGraph gets bare Install as the next step, with no files written.
+Tool status is a command that checks versions and additive configuration.
+A missing declared CodeGraph produces bare Install as the next step without creating Tool state.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
 ## Syntax
 
@@ -19,13 +19,13 @@ Proposed:
 open-forge tool status [<id>] [global flags]
 ```
 
-With an ID, check that known tool. Without an ID, check every declared tool. An empty declaration set is a successful no-op.
+With an ID, check that known tool. Otherwise check every declared tool in ordinal order. An empty declaration set is a no-op.
 The help purpose is "Check tool versions, configuration and launch readiness."
 
 ## Report
 
-Show declaration, supported range, lock baseline, detected exact version, channel, bin, PATH readiness, runtime and tool paths, config drift and Skill and managed-line state. Include separate missing, unsupported, changed, current and unavailable facts.
-The [common Interface](../interface.md) defines report structure, repetition, result meanings and consent.
+Report declaration, exact lock version, detected version, channel, bin and manager-global-bin readiness, runtime and tool paths, additive config drift and native-setting state. Use distinct missing, unsupported, changed, current and unavailable facts.
+The [common Interface](../interface.md) defines consent, repetition and result coordinates.
 The sibling [Behavior](behavior.md) defines execution.
 
 ## Example
@@ -36,4 +36,4 @@ Proposed:
 open-forge tool status
 ```
 
-A teammate with a declared but missing CodeGraph gets bare Install as the next step, with no files written.
+A missing declared CodeGraph produces bare Install as the next step without creating Tool state.

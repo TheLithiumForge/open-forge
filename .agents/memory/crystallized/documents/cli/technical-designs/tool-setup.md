@@ -1,182 +1,202 @@
 ---
 open-forge:
-  description: Define published tool installation and additive project configuration
+  description: Define round-2 native tool setup and additive lock records
   tags: [Memory, Document, CLI, Tool, CurrentTruth]
 ---
 
 # Tool setup
 
-Tool setup is a CLI capability that installs tools through published channels and adds project configuration.
-For example, a teammate installs a declared CodeGraph range and uses `codegraph` directly after setup.
+Tool setup is a CLI capability that installs published tools and adds configuration.
+For example, bare Install restores the exact CodeGraph version in the lock, then runs its native setup.
 
-Status: V1 design decided. Shared types are compile-only. The maintainer reviews this step before implementation lanes start.
+Status: Round-2 design decided on 14 November 2026. This phase updates contracts and compile-only types before implementation.
 
 ## Catalogue
 
-Framework Tools has one typed C# dictionary indexed by tool ID.
-A `ToolCatalogueEntry` contains identity, channels, detection and version profiles.
-Identity has ID, name, `first-party` or `third-party` origin, upstream and licence.
-Each channel declares its package or release source and runtime, minimum manager, OS, CPU and Linux libc requirements.
-V1 adapters cover npm and GitHub release.
-The same channel contract can later accept PyPI through pipx or uv, RubyGems, `dotnet tool`, Homebrew, winget and scoop.
-Those adapters aren't V1 implementations.
+Framework Tools has one typed C# dictionary indexed by ID.
+Entries declare ID, name, origin, upstream, licence, published channels and channel requirements.
+Requirements cover runtime range, manager minimum, OS, CPU and Linux libc.
+Profiles use non-overlapping major.minor ranges, tested versions, a minimum reviewed tool patch and a minimum Open Forge version.
+A profile gives setup and uninstall argument vectors with declared effects and an optional native dry run.
+Detection has a command, bounded version probe, parser and environment overlay.
+V1 has no Open Forge tool Skill or managed-block line.
+Native MCP, instruction blocks and Skills stay under upstream control.
+Open Forge guidance can return if evals show a need.
 
-A profile is one non-overlapping major.minor range, its tested exact versions and minimum Open Forge version.
-For example, `1.6.x` means `>=1.6.0 <1.7.0`, excluding prereleases.
-Each profile gives an optional setup argument vector, declared effects, config changes, a Skill resource and one conditional managed-block line.
-A bounded version probe and a typed parser ID detect the installed version.
-No manifest decoder or external catalogue source is added.
+## Versions
+
+The [Tool Interface](../contracts/tool/interface.md) defines `id@version`.
+Named Install and Update with a bare ID select latest support.
+Bare Install uses exact lock versions and uses latest support only for a declaration without a lock.
+Initial profiles are CodeGraph `1.6.x` from `1.6.2` and Codebase Memory `0.12.x` from `0.12.1`.
+Their compatibility ranges keep the major.minor meaning and their minimum reviewed patches limit selectable releases.
+Keep older supported profiles and exact pins as the catalogue grows.
+The lock records the actual exact version, not a tested-baseline substitute.
+Only known newer catalogue support justifies "update Open Forge first".
 
 ## Channels
 
-Use the [common channel order](../contracts/tool/behavior.md#channel-choice).
-An override selects an advertised channel and still runs its requirement checks.
-Resolve and show the exact version before approval.
-Package-manager installs use the manager's integrity checks and record the exact version.
-That is weaker than a reviewed dependency closure.
-GitHub release downloads require a pinned per-asset SHA-256 or a verified attestation binding the asset to the expected repository, build and source.
-Mismatch blocks installation.
-Only official upstream recipes ship. Open Forge doesn't redistribute tool bytes.
+Use an existing supported install, then a usable published package-manager channel, then private Node for an npm tool without suitable Node, then a verified GitHub archive.
+An advertised `--channel` can override the choice.
+Don't create a second install.
+Before replacement, disclose account scope.
 
-## Launchers
+Detect npm, pnpm, Yarn Classic and bun by bounded CLI calls.
+Yarn Modern is detected by major version and isn't a global-install candidate.
+Prefer a single usable manager named by a project lockfile.
+Ask when multiple clients or lockfile preferences apply.
+With `--yes`, choose npm if usable, then the first usable client in npm, pnpm, Yarn Classic, bun order.
+Check runtime compatibility and the selected client's global-bin PATH.
+An entry can require one client.
+Manager minimums are keyed by npm client so npm, pnpm, Yarn Classic and bun use their own minimum versions.
+Package-manager verification is weaker than a reviewed dependency closure.
 
-The per-user home is `~/.open-forge/`, or `%USERPROFILE%\.open-forge\` on Windows.
-Its folders are:
+GitHub assets need pinned SHA-256 or verified attestation.
+CodeGraph uses per-asset SHA-256 from its published `SHA256SUMS`.
+Its 1.6.2 attestation/tag mismatch is a recorded note and doesn't block the SHA-256 route.
+A digest mismatch still blocks.
+Open Forge distributes recipes, not upstream tool bytes.
 
-| Folder                     | Content                                 |
-| -------------------------- | --------------------------------------- |
-| `bin/`                     | Generated launchers and native binaries |
-| `runtimes/node/<version>/` | Official private Node runtimes          |
-| `tools/<id>/<version>/`    | Tool files installed by Open Forge      |
-| `state/`                   | Machine facts and PATH history          |
+## Home and launchers
 
-Generate small `.cmd` files and executable `sh` scripts with absolute paths baked in at install time.
-A launcher starts the tool entry with its pinned runtime or forwards to the tool's release launcher.
-A real `.exe` can be placed directly in bin.
-Never put `node` in bin.
+Use `~/.open-forge/`, or `%USERPROFILE%\.open-forge\` on Windows:
+
+| Folder                     | Content                                                  |
+| -------------------------- | -------------------------------------------------------- |
+| `bin/`                     | Generated launchers and native binaries                  |
+| `runtimes/node/<version>/` | Private Node                                             |
+| `tools/<id>/<version>/`    | Open Forge-placed tool files                             |
+| `state/`                   | Machine facts, native previous settings and PATH history |
+
+Launchers are small `.cmd` files and executable `sh` scripts with absolute paths baked in.
+They start the tool entry on its pinned runtime or forward to the upstream release launcher.
+A native `.exe` can be placed directly.
+Never put Node itself in bin.
 Update rewrites launchers.
 Open Forge takes no part when the tool runs.
 
-For native Windows MCP hosts that can't start `.cmd`, use `cmd /c <tool>`.
-This host launch form is marked "verify in native tests".
-It doesn't turn setup or native config argument vectors into shell strings.
+Some native Windows MCP hosts need `cmd /c <tool>` for `.cmd` launchers.
+Keep this as a native-test requirement.
+Don't rewrite upstream MCP entries to impose this form.
+Report an upstream host incompatibility if its own installer doesn't supply a working entry.
 
 ## Private Node
 
-When an npm tool lacks a suitable Node, download an official portable archive from `nodejs.org/dist`.
-Pin its SHA-256 from signed SHASUMS256 and keep signature evidence with the recipe.
-Use that Node's own npm to install into `tools/<id>/<version>/`.
-Native-addon prebuilds then match the runtime used by the launcher.
-Tools needing the same Node version share it.
-Tools can also require different Node versions.
-Remove a runtime only when no launcher uses it, with the shared-file confirmation.
-The user's Node and PATH entries remain unchanged.
-There is no Node proxy.
+Use official portable archives from `nodejs.org/dist`.
+Pin the archive SHA-256 from signed SHASUMS256.
+Share the runtime by version and keep several versions when tools need them.
+The extraction input omits reviewed link entries before calling the existing link-rejecting extractor.
+The extractor itself still rejects links, escapes and special members.
+Invoke npm through the real Node executable and npm CLI script.
+On Unix the script is `<runtime>/lib/node_modules/npm/bin/npm-cli.js`.
+Use the archive's `node_modules/npm/bin/npm-cli.js` on Windows.
+Install the tool with that Node's own npm into `tools/<id>/<version>/`.
+Native addon prebuilds then match the pinned runtime.
+The user's Node stays untouched and there is no Node proxy.
 
 Illustrative future Rune flow:
 
 ```text
-published Rune npm package + no suitable Node
+published npm Rune + no suitable Node
   -> verified private Node
   -> that Node's npm installs Rune
-  -> absolute-path Rune launcher
+  -> absolute-path launcher
   -> direct rune command
 ```
 
-Rune isn't published and has no V1 catalogue entry.
+Rune isn't published and isn't a V1 entry.
 
 ## PATH
 
-Status and Inspect always show bin and current PATH membership.
-If bin is missing, offer these choices:
-
-- "Add it for me" - on Windows, use `Environment.SetEnvironmentVariable(..., EnvironmentVariableTarget.User)`. Never use `setx` or system PATH.
-- "Add it for me" - on macOS or Linux, append a self-identifying marked block to shell startup files you choose.
-- "I'll do it myself" - print the exact line.
-
-Offer detected `.zshrc`, `.bashrc`, `.profile` and fish config files, plus a custom file such as a shared profile.
-Render POSIX and fish syntax separately.
-Remember every added entry and block per machine in state.
-The marks identify their purpose even if that state is lost.
-When the last tool is removed, offer PATH removal and ask for confirmation.
+Status and Inspect always show bin and PATH membership.
+Also show the selected manager's global-bin readiness.
+If bin is missing, offer "Add it for me" or "I'll do it myself".
+On Windows, use `Environment.SetEnvironmentVariable(..., EnvironmentVariableTarget.User)`.
+Never use `setx` or system PATH.
+On macOS and Linux, offer detected `.zshrc`, `.bashrc`, `.profile`, fish config and a custom file.
+Write a self-identifying marked block only in files the person chooses.
+Print the exact POSIX or fish line for manual setup.
+Keep history per machine, and use the marks to find entries if history is lost.
+Offer confirmed PATH removal after the last tool.
 Say that terminals and agent apps need a restart.
-Current-process PATH membership doesn't show a restarted agent can launch the tool.
+`--yes` doesn't supply live confirmation for PATH edits or shared deletion.
+Without a TTY, print instructions and leave those actions unselected.
 
-## Configuration
+## Native setup
 
-Use the four kinds and drift rules in [Tool record behavior](../contracts/shared/tool-records/behavior.md).
-The design keeps recorded prior values separate from applied values.
-CodeGraph's exclude uses JSON Pointer `/exclude` with array union.
-Text changes use unique markers, including Codex TOML sections.
-Native settings use allow-listed commands with read-back and restore vectors.
-Telemetry off is the one accepted default change.
-It is always disclosed, including its account-wide scope for CodeGraph.
-Keep tool hooks, Claude permissions, watchers and other native behavior.
+Run the upstream installer unchanged through its documented argument vector.
+CodeGraph uses `install --yes --location local --target claude,codex`.
+Keep its hook, permissions, MCP names and instruction blocks.
+Codebase Memory uses its account-wide installer with native client discovery.
+Use its documented configuration-only binary mode after the verified binary is placed.
+Disclose its global MCP entries, Skills, hooks, instructions and watcher defaults.
+Open Forge writes no MCP entry or Codex TOML section for either tool.
 
-Git covers tracked unchanged bytes. A sibling `.bak` covers other existing bytes.
+Remove runs the native uninstall before Open Forge cleanup.
+A native command's PATH and shared-binary effects are part of its declared plan.
+If they require live confirmation, ask separately when a TTY is available.
+Without live confirmation, print the native command and leave removal pending.
+The [lane choices](tool-setup-lanes.md#recorded-choices) record the Codebase Memory case.
+Don't request all-project index deletion.
+
+## Additions and records
+
+The [Tool record contracts](../contracts/shared/tool-records/_tool-records.md) define additive JSON union, absent-only set, marked block, absent-only file and native command changes.
+Settings declare supported ranges.
+The committed lock records exact version, channel and added items, keys, markers and file hashes.
+An optional profile digest helps detect recipe changes.
+Native previous account settings live in per-user state, keyed per workspace.
+There are no repository config preimages and no workspace Tool edit state.
+Tool commands don't run concurrently by design.
+They add no lease or recovery dependency under `.open-forge-state/`.
+
+Git covers tracked unchanged bytes.
+Other existing bytes get sibling `.bak` files.
 Git can't recover uncommitted bytes.
-Failures keep actual effects and guarded recovery facts.
+Use expected-state checks and normal atomic file replacement.
+Keep incomplete effects and guarded manual recovery instructions.
 
-## Records
+## Operation flow
 
-[Tool record interface](../contracts/shared/tool-records/interface.md) defines the four locations and their schemas.
-Settings declare the supported range.
-The committed lock records the exact tested version and applied profile digest.
-Workspace-local ignored state keeps prior and applied values.
-Machine state keeps channels, paths, launchers and PATH history.
-The exact tested baseline isn't a promise of isolated per-project executable versions.
-There is one active version per tool per machine.
+Resolve every selected tool, preflight all of them and show the plan.
+If one is blocked, perform no effects.
+Confirmation or `--yes` accepts downloads and the shown native setup.
+Dry-run uses upstream dry run where available and otherwise describes the work.
+It contacts the network only when latest must be resolved and says so.
+Once effects start, stop at the first failure and report completed and unstarted work.
+Reapply keeps additive receipts and reports drift.
 
-## Flows
-
-Install detects, selects a channel, resolves an exact version and shows the plan.
-After consent, it installs missing bytes, verifies the direct command, runs setup, adds config and guidance, then saves verified records.
-Bare Install selects every declared tool.
-Repeating Install reconfigures with drift checks.
-
-Update checks drift, resolves the newest supported range, discloses account-wide replacement, updates bytes and launchers, then migrates config and records.
-Only known support in a newer catalogue justifies "update Open Forge first".
-Status detects a user's own update and offers reapply inside support or warns outside it.
-
-Remove restores this project's unchanged Open Forge additions.
-It prints the native package-manager uninstall command.
-It asks before deleting Open Forge-placed tool files or runtimes because other projects can use them.
-It separately offers confirmed PATH removal after the last tool.
-
-## Composition
-
-Framework `Framework/Tools/Models/` holds only catalogue facts, records and service request and result shapes in step 0.
-Operations keeps command meaning, planning, consent, effects and result status.
-Root hosts bounded processes, network transfer and platform PATH effects.
-Rendering and OutputText keep presentation separate.
-Source-generated codecs arrive in lane C.
-There are no command registrations, adapters, process runners or mutations in this step.
-
-Existing workspace locking, permission and expected-state rules apply to project changes.
-The supported failure limits cover malformed input, interrupted operations, dependency failure and cooperating writers.
-They don't defend against a malicious process already controlling the same account.
-Machine-wide writer serialization and archive-link handling need the review answers in the [lane plan](tool-setup-lanes.md#not-decided-yet).
+Root hosts process, network and platform PATH capabilities.
+Framework supplies catalogue, channel, config and record services.
+Operations supplies command requests, selection, consent, plans and results.
+Rendering and OutputText supply presentation.
+The frozen interfaces are in `Framework/Tools/Models/Services/ToolServiceContracts.cs`.
+No command or service behavior is implemented in this phase.
 
 ## Decisions
 
-Every row links to the issue comment for its decided direction.
-The 14 November task brief supplies the more exact details named in the last column:
+The maintainer's 14 November 2026 `of-tool-setup-decisions-2.md` is the detailed source.
+The [round-2 issue comment](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6868316792) records the summary.
+These decisions override the earlier [redesign](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6867293832) where they differ:
 
-| Date       | Decision                                         | Issue comment                                                                                      | Task-brief detail                                 |
-| ---------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| 2026-11-13 | Published channels and additive setup            | [Redesign](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6867293832)        | Keep hooks and permissions                        |
-| 2026-11-14 | Typed catalogue and major.minor profiles         | [Catalogue](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6867293832)       | Tested versions and minimum CLI                   |
-| 2026-11-14 | Existing install, manager, private Node, release | [Channel order](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6867293832)   | Override through `--channel`                      |
-| 2026-11-14 | User home and absolute launchers                 | [Launchers](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6867293832)       | No Node in bin, Windows MCP test                  |
-| 2026-11-14 | Official verified private Node                   | [Private runtime](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6850220404) | Shared by version, own npm                        |
-| 2026-11-14 | Chosen user PATH setup                           | [PATH](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6867293832)            | User .NET API, chosen shell files and custom file |
-| 2026-11-14 | Four change kinds and local preimages            | [Config changes](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6867293832)  | Drift and guarded removal                         |
-| 2026-11-14 | Git and sibling backups                          | [Backup basis](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6849450008)    | Dirty bytes need backup                           |
-| 2026-11-14 | One active machine version                       | [Versions](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6867293832)        | Earlier install range, newest update              |
-| 2026-11-14 | Six commands and team Install                    | [Commands](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6867293832)        | Remove Run, Choose, Configure and roles           |
-| 2026-11-14 | Four record locations                            | [Records](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6867293832)         | Fresh schemas from v5 and v1                      |
-| 2026-11-14 | Manager integrity or verified download           | [Supply](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6867293832)          | Honest dependency-closure limit                   |
-| 2026-11-14 | CodeGraph and Codebase Memory in V1              | [Entries](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6867293832)         | Rune example only                                 |
-| 2026-11-14 | Direct commands and per-tool guidance            | [Agents](https://github.com/TheLithiumForge/open-forge/issues/23#issuecomment-6867293832)          | No help pointer                                   |
+| ID    | Date       | Decided rule                                                                                                                                                                    |
+| ----- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R2-01 | 2026-11-14 | Repository facts and additive receipts go in the committed lock. Machine facts and native previous values go in user state. No Tool workspace state or extra cross-process lock |
+| R2-02 | 2026-11-14 | Bare Install uses the exact lock version. Fresh installation uses latest support. Keep older supported config profiles                                                          |
+| R2-03 | 2026-11-14 | Keep exact version, channel and applied changes in the lock. A profile digest is optional                                                                                       |
+| R2-04 | 2026-11-14 | Use only `--yes` for unattended consent, including downloads. It never accepts PATH edits or shared deletion                                                                    |
+| R2-05 | 2026-11-14 | Install and Update use `id@version`, with a bare name selecting latest support                                                                                                  |
+| R2-06 | 2026-11-14 | Dry-run describes work, uses native dry run where available and discloses any latest-resolution network access                                                                  |
+| R2-07 | 2026-11-14 | Native uninstall runs before Open Forge cleanup. Shared deletion and final PATH removal require confirmation                                                                    |
+| R2-08 | 2026-11-14 | Skip Node archive links and invoke npm through Node and its CLI script. Keep extractor link rejection                                                                           |
+| R2-09 | 2026-11-14 | Accept both native installers as they are, including Codebase Memory account setup. Add only Open Forge configuration                                                           |
+| R2-10 | 2026-11-14 | Add no Open Forge tool Skills or managed-block lines in V1. Reconsider through evals                                                                                            |
+| R2-11 | 2026-11-14 | Use the existing command result conventions, with local shape chosen by the mastermind                                                                                          |
+| R2-12 | 2026-11-14 | Start at current releases, review every few months and pin CodeGraph SHA256SUMS. The attestation mismatch is a note                                                             |
+| R2-13 | 2026-11-14 | CodeGraph version probes set `CODEGRAPH_NO_DOWNLOAD=1`                                                                                                                          |
+| R2-14 | 2026-11-14 | Bare writers preflight all tools, perform no effects if blocked and stop at the first failure after effects start                                                               |
+| R2-15 | 2026-11-14 | Detect npm, pnpm, Yarn Classic and bun, prefer project lockfiles, ask about multiple clients and check global-bin PATH                                                          |
+| R2-16 | 2026-11-14 | Keep the round-1 home, absolute launchers, private Node and chosen marked PATH setup                                                                                            |
 
-The old #26 and #30 design is superseded. Its branches provide copy candidates only.
+The lane plan records the remaining reversible choices.
+Old #26 and #30 branches are copy sources, not the current design.

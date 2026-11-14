@@ -8,5 +8,6 @@ internal sealed record ToolDetectionSpec
     public required IReadOnlyList<string> Arguments { get; init; }
     public required TimeSpan Timeout { get; init; }
     public required int MaximumOutputBytes { get; init; }
+    public required IReadOnlyDictionary<string, string?> Environment { get; init; }
     public required ToolVersionParser Parser { get; init; }
 }

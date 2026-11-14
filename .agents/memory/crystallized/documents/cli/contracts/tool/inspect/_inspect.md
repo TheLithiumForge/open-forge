@@ -6,12 +6,13 @@ open-forge:
 
 # Tool inspect
 
-Tool inspect is an operation that shows one tool's full setup picture.
-Inspect CodeGraph shows its local installer, retained hook and permissions, and account-wide telemetry-off action.
+Tool inspect is an operation that shows one tool's complete setup picture.
+For example, inspect Codebase Memory discloses its account-wide installer, native Skills and hooks, and watcher defaults.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
-The [Interface](interface.md) defines inputs and results. The [Behavior](behavior.md) defines execution.
+The [Interface](interface.md) defines inputs and reports.
+The [Behavior](behavior.md) defines execution.
 
 ## Axioms
 

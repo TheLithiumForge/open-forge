@@ -9,7 +9,7 @@ open-forge:
 Tool setup is Task 90, which implements published tool installation and additive configuration through supervised lanes.
 For example, bare Install restores the exact lock versions while tools run through their direct commands.
 
-Status: Task 90 “Tool setup” (phase 1/3): milestone 0/7.
+Status: Task 90 “Tool setup” (phase 1/3): milestone 1/7.
 
 ## Outcome
 
@@ -53,10 +53,26 @@ Tools add no workspace state, lease or recovery dependency under `.open-forge-st
 
 ## Checkpoint
 
-Done: Loaded round 2, the lane rules and applicable Open Forge context.
-Now: Task 90 “Tool setup” (phase 1/3): milestone 0/7. Updating the spec and shared shapes.
-Next: Verify and commit Phase 1, then stop with its report.
+Done: Folded R2-01 through R2-16 into contracts, schemas, lock, compile-only models, planned docs and strict lane assignments. Local checks pass.
+Now: Task 90 “Tool setup” (phase 1/3): milestone 1/7. Phase 1 is complete for the maintainer's report.
+Next: Stop with the Phase 1 report. On continuation, write final packets and start the Phase 2 Worker Watch swarm.
 Blocker: None. Reversible choices are recorded for review.
+
+## Phase 1 checks
+
+The final local checks on 14 November 2026 passed:
+
+- Release solution build with zero warnings and errors. The NU1903 override is invocation-only.
+- `ToolSetupDocumentationTests`, 12 passed, zero failed and zero skipped. This includes Markdown links and fresh schema derivation.
+- `npm run check:dotnet:whitespace` and `npm run check:dotnet:style`.
+- Prettier on changed Markdown and JSON, plus the Docusaurus production build.
+- Route Index, followed by a dry run showing all 14 selected catalogues current.
+- LF and Git whitespace checks, all 26 copy-source paths and matching CLI Skill reference copies.
+
+No command implementation, real tool installation or payload-snapshot regeneration ran in Phase 1.
+The [recorded choices](../../../crystallized/documents/cli/technical-designs/tool-setup-lanes.md#recorded-choices) keep C1 through C7 as maintainer questions.
+Codebase Memory native uninstall needs separate live confirmation for its protected effects.
+Without it, the planned operation stays pending instead of removing Open Forge additions first.
 
 ## Runs
 

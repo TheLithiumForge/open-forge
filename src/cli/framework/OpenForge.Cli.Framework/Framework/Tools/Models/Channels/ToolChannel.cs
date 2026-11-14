@@ -12,6 +12,8 @@ internal abstract record ToolChannel
 internal sealed record ToolNpmChannel : ToolChannel
 {
     public required string Package { get; init; }
+    public ToolNpmClient? RequiredClient { get; init; }
+    public required IReadOnlyDictionary<ToolNpmClient, string> MinimumClientVersions { get; init; }
 }
 
 internal sealed record ToolGitHubReleaseChannel : ToolChannel

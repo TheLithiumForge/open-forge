@@ -6,27 +6,27 @@ open-forge:
 
 # Tool list behavior
 
-Tool list behavior is the flow that lists catalogue tools and project declarations.
-List returns CodeGraph and Codebase Memory in ID order. Rune has no V1 row.
+Tool list behavior is the flow that lists catalogue tools and declarations.
+CodeGraph and Codebase Memory appear in ID order. Rune has no V1 row.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
 ## Flow
 
-Read the compiled catalogue and readable settings. Do not run version probes or fetch registry data. Keep independently readable rows if workspace facts are unavailable.
-Use the [common Behavior](../behavior.md) for detection, channel selection, safe edits and verification.
-Keep this command's public meaning in its [Interface](interface.md).
+Read the compiled catalogue and readable settings. Don't invoke native probes or network queries. Keep independently readable rows if workspace facts are unavailable.
+Use the [common Behavior](../behavior.md) for detection, channels, native setup and additive effects.
+Keep syntax and reports in the [Interface](interface.md).
 
 ## Results
 
-Read-only checks create no state. Writers publish only verified facts.
-An independently completed effect stays in the result if a later step fails.
-Use the shared semantic statuses without hiding unavailable facts or unfinished work.
+Use the common status precedence and shared schema-3 exits.
+Keep actual effects, conflicts and unstarted work separate.
+Dry-run changes no Tool configuration or records.
 
 ## Conformance
 
 Required cases cover:
 
-- An empty declaration set, no workspace, unreadable settings, origin labels and stable ordering.
-- Stable ID order, no duplicate effects and unchanged unrelated bytes.
-- Shared text and JSON facts, global flags and schema-3 exits.
+- Catalogue rows, no workspace, unknown fields, unreadable settings and stable ordering.
+- Stable ordering and unchanged unrelated data.
+- Shared text and JSON facts and global flags.

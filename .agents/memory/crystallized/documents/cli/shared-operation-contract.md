@@ -190,13 +190,13 @@ but it must not turn a leaf into another operation.
 
 ## Tool setup
 
-Tool setup installs through a channel the tool publishes, then adds configuration.
-It keeps the tool's own behavior. Telemetry off is the one accepted default change and is always disclosed.
-The planned [Tool contracts](contracts/tool/_tool.md) define direct commands, channel choice, consent and guarded removal.
-The four [Tool record sets](contracts/shared/tool-records/interface.md) separate committed ranges and tested baselines from workspace edit history and machine facts.
-Tool writers use the existing workspace permissions, exclusions and lock for project effects.
-Git covers tracked unchanged files. Other existing bytes need sibling backups because Git can't recover uncommitted bytes.
-This doesn't add recovery v2 or change other commands' recovery contracts.
+Tool setup installs through published channels, runs native setup and adds configuration.
+The round-2 [Tool contracts](contracts/tool/_tool.md) define id@version input and --yes plan consent.
+[Tool records](contracts/shared/tool-records/interface.md) keep repository additions in the committed lock and machine facts in user state.
+Tools add no workspace edit state and don't use the existing workspace lock or recovery mechanism.
+They don't run concurrently by design.
+Existing destination permissions, expected-state checks and sibling backups still apply.
+This exception leaves other commands' locking and recovery contracts unchanged.
 
 ## Command Input Roles
 

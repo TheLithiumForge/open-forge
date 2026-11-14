@@ -1,31 +1,31 @@
 ---
 open-forge:
-  description: Move tools to the newest supported range
+  description: Update tools to a supported version
   tags: [Memory, Document, CLI, Tool, CurrentTruth]
 ---
 
 # Tool update interface
 
-Tool update is a command that moves tools to the newest supported range.
-Update moves a tool to its newest supported range and rewrites its launcher to the new absolute runtime and entry paths.
+Tool update is a command that updates tools through their published channel.
+Update replaces the active version and rewrites absolute launchers while recording the new exact version.
 
-Status: V1 design decided. Implementation waits for maintainer review of step 0.
+Status: Round-2 design decided on 14 November 2026. Command implementation is pending.
 
 ## Syntax
 
 Proposed:
 
 ```text
-open-forge tool update [<id>] [--version <range>] [--channel <channel>] [--allow-download] [--allow-path <path>...] [--automatic] [--dry-run] [global flags]
+open-forge tool update [<id[@version]>] [--channel <channel>] [--yes] [--allow-path <path>...] [--dry-run] [global flags]
 ```
 
-Without an ID, update every declared tool. With an ID, require a declared tool. The default chooses the newest supported stable range. The proposed shared version and channel overrides require a named ID.
-The help purpose is "Move tools to the newest supported range."
+Use the same named version-spec grammar as Install. A bare name selects latest support. An explicit spec selects that supported version or minor range. Without a spec, update every declared tool. A named Update requires a declared or locked tool. A channel override requires a named spec.
+The help purpose is "Update tools to a supported version."
 
 ## Report
 
-Show old and new ranges and exact versions, profile changes, account-wide replacement effects, launcher rewrites, requirements, verification and project config migration.
-The [common Interface](../interface.md) defines report structure, repetition, result meanings and consent.
+Report old and new exact versions and profiles, channel and client, account-wide replacement, requirements, rewritten launchers, native setup, additive migration and exact lock changes.
+The [common Interface](../interface.md) defines consent, repetition and result coordinates.
 The sibling [Behavior](behavior.md) defines execution.
 
 ## Example
@@ -36,4 +36,4 @@ Proposed:
 open-forge tool update
 ```
 
-Update moves a tool to its newest supported range and rewrites its launcher to the new absolute runtime and entry paths.
+Update replaces the active version and rewrites absolute launchers while recording the new exact version.

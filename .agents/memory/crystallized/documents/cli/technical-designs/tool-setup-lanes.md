@@ -1,148 +1,198 @@
 ---
 open-forge:
-  description: Assign tool setup files and exact copy sources after maintainer review
+  description: Freeze round-2 interfaces and strict Worker Watch file assignments
   tags: [Memory, Document, CLI, Tool, CurrentTruth]
 ---
 
 # Tool setup lanes
 
-Tool setup lanes are the file assignments that turn the reviewed spec into five implementation slices.
-For example, lane D consumes the channel and config-change shapes without choosing their record formats.
+Tool setup lanes are the file assignments for implementing native tool setup and additive configuration.
+For example, lane D builds against the frozen A, B and C interfaces while their implementations run in separate worktrees.
 
-Status: Step 0 ready for maintainer review after its recorded checks. No implementation lane starts before approval.
+Status: Phase 1 updates the round-2 spec. Phase 2 starts workers only after the phase report.
 
-## Shared types
+## Source and phases
 
-Step 0 adds compile-only models under `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/`.
-The folders are `Catalogue`, `Channels`, `Configuration`, `Launchers`, `Records` and `Services`.
-The namespace prefix follows the existing Framework convention, `OpenForge.Cli.Core.Framework.Tools.Models`.
-These records aren't command requests, wire serializers or implementations.
-They carry facts across the accepted lane boundaries.
-The integrator handles any reviewed shared-model changes.
+The detailed source is the maintainer's `of-tool-setup-decisions-2.md`, dated 14 November 2026.
+The [design decision record](tool-setup.md#decisions) records R2-01 through R2-16.
+They override step 0.
+The [Task 90 record](../../../../working/cli-development/tasks/task90-tool-setup.md) keeps phase progress and runs.
+
+The three phases are:
+
+1. Fold in decisions, verify and commit. Report and stop.
+2. Write final packets, create worker worktrees and start the swarm. Report and stop.
+3. Integrate lanes, run E's journeys and final docs, regenerate payload snapshots once and complete one fresh adherence review. Request CI through the overseer and stop.
+
+## Frozen interfaces
+
+Shared models live under `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/`.
+`Services/ToolServiceContracts.cs` fixes the version, channel, config, record, process, download and PATH interfaces.
+The namespace prefix is `OpenForge.Cli.Core.Framework.Tools.Models`.
+These shapes contain no command implementation.
+The models include `id@version` selection, `--yes` consent, npm-client facts and additive lock records.
+They include no Open Forge tool guidance shape or workspace edit state.
+
+Workers don't silently change these files or schemas.
+A required change goes in a separate `contract(tool): ...` commit, with the reason, affected consumers and no implementation based on an unintegrated contract.
+The mastermind checks and integrates that contract before dependent work.
+Workers use agreed fakes at their typed interfaces until implementations merge.
+Each worker reads the complete C# catalogue, design and style Directives independently.
 
 ## File assignments
 
-Each assignment includes tests at the matching path below the existing Unit, Integration or EndToEnd project.
-Each command leaf gets its own OutputText file.
+The following paths are relative to their project unless a full repository prefix is shown.
+Each assignment includes its matching Unit, Integration or EndToEnd paths.
+Leaf help and output text initially belong to the same lane as that leaf.
 
-| Lane       | Files and responsibility                                                                                                                                                                                                                                         | Depends on                                |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| A          | `Framework/Tools/Shared/{Supply,PackageManagers,Runtimes,Launchers,Path}/**` and root `Composition/Shared/Tools/**`. Published channels, private Node, generated launchers and platform PATH effects                                                             | Reviewed models                           |
-| B          | `Framework/Tools/Shared/{ConfigChanges,Backups,Filesystem}/**`. Four changes, read-back, drift and Git-aware backups                                                                                                                                             | Reviewed models                           |
-| C          | `Framework/Tools/Shared/{Records,Observation,Serialization}/**`, existing Settings and Ownership codecs, `Commands/Tool/{List,Inspect,Status}/**`, corresponding Rendering and OutputText, workspace Status and Doctor appenders, schemas v6 and v2 codec parity | A detection shapes, B config check shapes |
-| D          | `Commands/Tool/{Install,Update,Remove,Shared/Writing}/**`, corresponding Rendering and OutputText, Repair tool-backup integration                                                                                                                                | A, B and C contracts                      |
-| E          | `Framework/Tools/Catalogue/**`, `src/tools/skills/**` usage Skills, both CLI Skill copies, `docs/tools.md`, site tool pages and final help wording                                                                                                               | Catalogue shapes and entry review review  |
-| Integrator | `CliToolComposer`, root composition wiring, central changed models, shared contracts and payload-dependent snapshots                                                                                                                                             | All five lane results                     |
+| Lane       | Exclusive writable files                                                                                                                                                                                                                                                                                | Entry point                                                                    |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| A          | Framework `Framework/Tools/Shared/{Supply,PackageManagers,Runtimes,Launchers,Path,Versions}/**`; root `Composition/Shared/Tools/**`                                                                                                                                                                     | Channel service and root process, network and PATH hosts                       |
+| B          | Framework `Framework/Tools/Shared/{ConfigChanges,Backups,Filesystem,NativeSettings}/**`                                                                                                                                                                                                                 | Config service, additive receipt formation, profile digest and sibling backups |
+| C          | Framework `Framework/Tools/Shared/{Records,Observation,Serialization}/**`, `Framework/Settings/**` and `Framework/Ownership/**`; Operations `Commands/Tool/{List,Inspect,Status}/**`, `Commands/Tool/Shared/Observation/**`, `Commands/Tool/Models/Read/**`; workspace Status and Doctor tool appenders | Record service, codecs and read operations                                     |
+| D          | Operations `Commands/Tool/{Install,Update,Remove}/**`, `Commands/Tool/Shared/Writing/**`, `Commands/Tool/Models/Writing/**`                                                                                                                                                                             | Writer operations, plan consent, native setup and failure ordering             |
+| E          | Framework `Framework/Tools/Catalogue/**`; tool catalogue tests and real Windows journey evidence; then final `docs/cli.md`, site CLI pages, both CLI Skill copies and Tool help wording                                                                                                                 | Real entries, direct-command and MCP journeys and user documentation           |
+| Integrator | All frozen models and schemas, shared contracts, root `CliToolComposer` and command composition, shared rendering wiring, actual workspace controls and payload-dependent snapshots                                                                                                                     | Cross-lane wiring and acceptance                                               |
 
-`Framework` paths in this table are relative to `src/cli/framework/OpenForge.Cli.Framework/`.
-`Commands` paths are relative to `src/cli/operations/OpenForge.Cli.Operations/`.
-No two lanes edit the same central codec or shared model.
-Lane C handles Settings and Ownership files as one assignment.
-A, B, C and E can proceed after review. D can use agreed fakes before wiring.
-The integrator wires the final graph, checks cross-lane behavior and reviews the complete diff.
-The current user request starts none of these lanes.
+Framework paths start at `src/cli/framework/OpenForge.Cli.Framework/`.
+Operations paths start at `src/cli/operations/OpenForge.Cli.Operations/`.
+A alone edits root shared Tool host capabilities.
+C alone edits Settings and Ownership codecs. B returns typed addition records and never writes their JSON files.
+D uses C's record service and B's config service.
+D applies one planned config change at a time and publishes its verified receipt through C before starting the next change.
+The integrator alone edits central command registration and shared models.
+No lane implements a substitute for a frozen interface.
+
+For C and D, matching Rendering and OutputText leaf files belong to that leaf's lane.
+C also handles workspace Status and Doctor's Tool presentation.
+E's final wording transfer happens only after C and D stop editing those files.
+During E's final pass, route wording corrections through E and behavior corrections through the original lane.
+Don't start two writers on one file.
+
+## Start order
+
+In Phase 2, create A through D from the Phase 1 tip and run them in parallel.
+E can research its exact upstream recipes separately, but final entry integration, docs and journeys follow A through D.
+Use at most six concurrent lanes.
+Every writer has a dedicated branch and worktree.
+The user requests `gpt-6.1-sol` at `xhigh`, through Worker Watch in PowerShell.
+Set TEMP and TMP to the user's chosen Worker Watch temp root before agent creation.
+Do not use the broken Bash shim.
+Check daemon state, exact agent IDs and run IDs before submission.
+Use a unique stable request ID per packet.
+
+Each packet gives its exact base commit, file assignment, protected files, source references, focused checks and stop conditions.
+It says the worker isn't alone and must keep others' changes.
+It requires a local conventional commit and a report.
+No worker pushes, merges a PR or changes GitHub.
+The mastermind performs the user-authorized local no-fast-forward merges.
+This overrides the older lane file's blanket no-merge rule for integration only.
 
 ## Copy sources
 
 Copy individual files with `git show <ref>:<path>` into the assigned destination, then adapt them.
-Don't merge or cherry-pick the old design.
+Copy the exact files or focused methods. Don't cherry-pick old commits.
 Each source below is an exact existing Git path.
 
-| Lane | Ref                                   | Exact source path                                                                                                        | Adaptation                                                        |
-| ---- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
-| A    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Supply/ToolArtifactIntegrity.cs`                       | New asset shape                                                   |
-| A    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Supply/ToolArtifactSource.cs`                          | Official source and redirect checks                               |
-| A    | `origin/feature/tool-command`         | `src/cli/root/OpenForge.Cli/Composition/Shared/Tools/ToolHttpTransfer.cs`                                                | Bounded transfer and progress                                     |
-| A    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Supply/ToolArchiveExtractor.cs`                        | New archive input                                                 |
-| A    | `origin/feature/tool-command`         | `src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Framework/Tools/Shared/Supply/ToolArtifactIntegrityTests.cs`            | Focused integrity cases                                           |
-| A    | `origin/feature/tool-command`         | `src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Framework/Tools/Shared/Supply/ToolArchiveExtractorTests.cs`    | Owned archive fixtures                                            |
-| B    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Backups/ToolBackupPaths.cs`                            | Local backup targets                                              |
-| B    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Backups/ToolBackupReader.cs`                           | New catalogue targets                                             |
-| B    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Backups/ToolBackupRestorer.cs`                         | Guarded explicit repair                                           |
-| B    | `c2e7d119d`                           | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Backups/ToolBackupSession.cs`                          | Back up dirty tracked bytes                                       |
-| B    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Backups/ToolBackupSession.Restoration.cs`              | Keep concurrent edits                                             |
-| B    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Backups/ToolGitRecoveryReader.cs`                      | Git covers saved bytes only                                       |
-| B    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Filesystem/ToolFileReplacement.cs`                     | Existing replacement mechanics                                    |
-| B    | `origin/feature/tool-registration`    | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Registration/ToolJsonEntries.cs`                       | Byte-preserving JSON Pointer editor                               |
-| B    | `origin/feature/tool-registration`    | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Registration/ToolRegistrationBytes.cs`                 | Encoding and byte spans                                           |
-| B    | `origin/feature/tool-registration`    | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Registration/ToolTextEntries.cs`                       | Copy unique-marker region mechanics only. Drop TOML key rewriting |
-| B    | `origin/feature/tool-registration`    | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Registration/ToolRoleGuidanceRenderer.cs`              | Per-tool line and marked-block rendering. Drop roles              |
-| B    | `origin/feature/tool-command`         | `src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Framework/Tools/Shared/Backups/ToolBackupReaderTests.cs`       | New target inventory                                              |
-| B    | `origin/feature/tool-command`         | `src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Framework/Tools/Shared/Backups/ToolBackupSessionTests.cs`      | Dirty tracked and untracked bytes                                 |
-| C    | `origin/feature/tool-run`             | `src/cli/operations/OpenForge.Cli.Operations/Commands/Status/Shared/Aggregation/StatusToolFindingAppender.cs`            | Missing declared tools                                            |
-| C    | `origin/feature/tool-run`             | `src/cli/operations/OpenForge.Cli.Operations/Commands/Doctor/Shared/Domains/DoctorToolFindingAppender.cs`                | Missing declared tools                                            |
-| C    | `origin/feature/tool-run`             | `src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Status/Shared/Aggregation/StatusToolFindingAppenderTests.cs`   | New records and direct commands                                   |
-| C    | `origin/feature/tool-run`             | `src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Doctor/Shared/Domains/DoctorToolFindingAppenderTests.cs`       | New records and direct commands                                   |
-| E    | `origin/feature/tool-code-graphs`     | `src/tools/drafts/codegraph-1.6.2.json`                                                                                  | Facts only. Recheck entry review                                  |
-| E    | `origin/feature/tool-codebase-memory` | `src/tools/drafts/codebase-memory-0.12.1.json`                                                                           | Facts only. Skip account setup                                    |
-| B    | `c2e7d119d`                           | `src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Framework/Tools/Shared/Backups/ToolBackupContinuationTests.cs` | Keep the original backup across sequential edits                  |
+| Lane | Ref                                   | Exact source path                                                                                                        | Adaptation                                                         |
+| ---- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| A    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Supply/ToolArtifactIntegrity.cs`                       | New asset shape                                                    |
+| A    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Supply/ToolArtifactSource.cs`                          | Official source and redirect checks                                |
+| A    | `origin/feature/tool-command`         | `src/cli/root/OpenForge.Cli/Composition/Shared/Tools/ToolHttpTransfer.cs`                                                | Bounded transfer and progress                                      |
+| A    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Supply/ToolArchiveExtractor.cs`                        | New archive input                                                  |
+| A    | `origin/feature/tool-command`         | `src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Framework/Tools/Shared/Supply/ToolArtifactIntegrityTests.cs`            | Focused integrity cases                                            |
+| A    | `origin/feature/tool-command`         | `src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Framework/Tools/Shared/Supply/ToolArchiveExtractorTests.cs`    | Owned archive fixtures                                             |
+| B    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Backups/ToolBackupPaths.cs`                            | Local backup targets                                               |
+| B    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Backups/ToolBackupReader.cs`                           | New catalogue targets                                              |
+| B    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Backups/ToolBackupRestorer.cs`                         | Guarded explicit repair                                            |
+| B    | `c2e7d119d`                           | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Backups/ToolBackupSession.cs`                          | Back up dirty tracked bytes                                        |
+| B    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Backups/ToolBackupSession.Restoration.cs`              | Keep concurrent edits                                              |
+| B    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Backups/ToolGitRecoveryReader.cs`                      | Git covers saved bytes only                                        |
+| B    | `origin/feature/tool-command`         | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Filesystem/ToolFileReplacement.cs`                     | Existing replacement mechanics                                     |
+| B    | `origin/feature/tool-registration`    | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Registration/ToolJsonEntries.cs`                       | Byte-preserving JSON Pointer editor                                |
+| B    | `origin/feature/tool-registration`    | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Registration/ToolRegistrationBytes.cs`                 | Encoding and byte spans                                            |
+| B    | `origin/feature/tool-registration`    | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Registration/ToolTextEntries.cs`                       | Copy unique-marker region mechanics only. Drop TOML key rewriting  |
+| B    | `origin/feature/tool-registration`    | `src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Shared/Registration/ToolRoleGuidanceRenderer.cs`              | Copy marker-span renderer only. Drop every role or guidance branch |
+| B    | `origin/feature/tool-command`         | `src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Framework/Tools/Shared/Backups/ToolBackupReaderTests.cs`       | New target inventory                                               |
+| B    | `origin/feature/tool-command`         | `src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Framework/Tools/Shared/Backups/ToolBackupSessionTests.cs`      | Dirty tracked and untracked bytes                                  |
+| C    | `origin/feature/tool-run`             | `src/cli/operations/OpenForge.Cli.Operations/Commands/Status/Shared/Aggregation/StatusToolFindingAppender.cs`            | Missing declared tools                                             |
+| C    | `origin/feature/tool-run`             | `src/cli/operations/OpenForge.Cli.Operations/Commands/Doctor/Shared/Domains/DoctorToolFindingAppender.cs`                | Missing declared tools                                             |
+| C    | `origin/feature/tool-run`             | `src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Status/Shared/Aggregation/StatusToolFindingAppenderTests.cs`   | New records and direct commands                                    |
+| C    | `origin/feature/tool-run`             | `src/cli/tests/unit/OpenForge.Cli.Core.UnitTests/Commands/Doctor/Shared/Domains/DoctorToolFindingAppenderTests.cs`       | New records and direct commands                                    |
+| E    | `origin/feature/tool-code-graphs`     | `src/tools/drafts/codegraph-1.6.2.json`                                                                                  | Facts only. Recheck entry review                                   |
+| E    | `origin/feature/tool-codebase-memory` | `src/tools/drafts/codebase-memory-0.12.1.json`                                                                           | Facts only. Keep native account setup                              |
+| B    | `c2e7d119d`                           | `src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Framework/Tools/Shared/Backups/ToolBackupContinuationTests.cs` | Keep the original backup across sequential edits                   |
 
 The writers-backup ref `origin/backup/tool-command-writers-20261113` retains commit `c2e7d119d`.
 Check its same-path backup fixes before copying.
-Never copy old manifests, registry, leases, role models, command rewrites, Run or old payload snapshots.
+Never copy old manifests, registry, leases, role models, guidance delivery, command rewrites, Run or payload snapshots.
+Adapt backup helpers to run without WorkspaceLockLease and without the workspace recovery mechanism.
 Native package-manager verification replaces the old reviewed-closure promise.
 The [entry review checklist](../../maintenance/tools.md) controls entry evidence.
 
-## Checks
+## Phase gates
 
-For each lane, build and run only tests it touches or creates.
-Run `npm run check:dotnet:whitespace` and `npm run check:dotnet:style` before every commit.
-Run formatting, Markdown and link checks, then the site build for docs changes.
-Index changed routes after checking their navigation plan.
-The overseer handles pushes and hosted CI. CI is the full gate.
-A local NU1903 override is allowed only on the invocation.
-No full managed or native suite runs locally.
+Run a build and only tests touched or created by the lane.
+Run both `npm run check:dotnet:whitespace` and `npm run check:dotnet:style` before every commit.
+A local NU1903 override stays on the invocation.
+Use reviewed Imprint snapshots for literal output.
+Keep LF line endings and separate test tiers.
+Run docs formatting, local links and the site build, then index changed routes.
+Never run Doctor in this repository workspace.
+The overseer handles pushes and hosted full suites.
 
-## Step 0 evidence
+E runs both tools in temporary Git repositories under D: with owned temporary homes.
+Check install, status, direct CLI use, MCP, update and remove.
+Record every native installer write and each Open Forge addition or removal.
+Use redirected test homes and test profile files for PATH testing.
+Never change real persistent user PATH or real shell profiles.
+Before native execution, check whether upstream account APIs honor the test redirection.
+If not, stop that journey and report the exact missing seam.
 
-This step changes documents, schemas and compile-only data types.
-Git keeps the previous files. No tool is installed or configured by these types.
-The code uses the existing .NET and BCL types and adds no dependency or exceptional mechanism.
-The local checks cover compilation and the new documentation tests. CI keeps the full managed and Native AOT gates.
+After integration, regenerate payload-driven snapshots and fixtures once.
+Review received contents before acceptance.
+Then start one fresh Sol xhigh adherence reviewer in a detached worktree.
+It follows `of-review-adherence.md`, compares every requirement with the local diff and round-2 source and writes a requirement matrix plus stable findings.
+Use local Git and supplied CI evidence. It doesn't mutate GitHub.
+Route each gap to its lane and resume the same review thread until there are none.
+A completed worker run doesn't replace acceptance.
 
-Checks completed on 14 November 2026:
+## Decision mapping
 
-| Check                                | Result                                        |
-| ------------------------------------ | --------------------------------------------- |
-| Release solution build               | Passed, zero warnings and errors              |
-| ToolSetupDocumentationTests          | 11 passed, zero failures or skips             |
-| Changed Markdown and JSON formatting | Passed                                        |
-| .NET whitespace check                | Passed                                        |
-| .NET style check                     | Passed                                        |
-| Markdown and local links             | Passed through the focused documentation test |
-| Docusaurus production build          | Passed                                        |
-| Exact Git copy-source paths          | 26 resolved                                   |
-| CLI Skill reference copies           | Identical                                     |
+Every decision below is dated 14 November 2026:
 
-The focused managed test invocation is:
+| Decision | Lane consequence                                                                                                          |
+| -------- | ------------------------------------------------------------------------------------------------------------------------- |
+| R2-01    | B records additions, C persists them in the committed lock, A/C keep machine facts. No workspace Tool state or extra lock |
+| R2-02    | D restores exact lock versions in bare Install                                                                            |
+| R2-03    | C writes exact version, channel, changes and optional digest                                                              |
+| R2-04    | D uses `--yes`; A never changes PATH or shared files unattended                                                           |
+| R2-05    | C/D parse the frozen `id@version` shape                                                                                   |
+| R2-06    | A/D disclose latest lookups and use native dry run where declared                                                         |
+| R2-07    | D runs native uninstall first and obtains live protected-effect consent                                                   |
+| R2-08    | A skips Node links before extraction and invokes npm CLI through Node                                                     |
+| R2-09    | E declares both native installers unchanged and their account effects                                                     |
+| R2-10    | E delivers no Open Forge usage Skill or managed-block line                                                                |
+| R2-11    | C/D use the frozen schema-3 result convention                                                                             |
+| R2-12    | E starts at current profiles and reviews every three months. SHA256SUMS is sufficient for CodeGraph                       |
+| R2-13    | A/E put `CODEGRAPH_NO_DOWNLOAD=1` on version probes                                                                       |
+| R2-14    | D preflights the whole batch and stops at the first effect failure                                                        |
+| R2-15    | A detects all four npm-family clients and manager-global-bin readiness                                                    |
+| R2-16    | A keeps round-1 home, launcher, private Node and chosen PATH rules                                                        |
 
-```powershell
-dotnet run --project src/cli/tests/integration/OpenForge.Cli.IntegrationTests/OpenForge.Cli.IntegrationTests.csproj --configuration Release --no-restore -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true -- --filter-class OpenForge.Cli.IntegrationTests.Framework.Documents.RepositoryDocumentation.ToolSetupDocumentationTests --minimum-expected-tests 11 --fail-warns on --fail-skips on --no-ansi --progress off
-```
+## Recorded choices
 
-The solution build uses `dotnet build OpenForge.Cli.slnx --configuration Release --no-restore -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true`.
-Both overrides apply only to the invocation.
-Before each commit, run `npm run check:dotnet:whitespace` and `npm run check:dotnet:style`.
-No snapshots were generated or accepted and no flakes were seen.
-The read-only writing review found R1, undefined batch result precedence, and R2, tool headings covering general CLI text.
-R1 is now Q13. R2 and the Install opening grammar were corrected.
-Payload-dependent snapshots stay with the integrator and hosted CI.
+The mastermind chose these reversible details on 14 November 2026:
 
-## Not decided yet
+| ID  | Choice                                                                                                                                     | Review question                                                              |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| C1  | V1 version selectors are major.minor, major.minor.x or exact stable SemVer. Bare name means latest                                         | Does V1 also need full npm range expressions or tags?                        |
+| C2  | Codebase Memory's native uninstall needs live consent for its binary/PATH effects. Without it, print the command and leave removal pending | Is pending unattended removal the desired reconciliation of R2-04 and R2-07? |
+| C3  | Lock keys are version, channel, changes and optional profileDigest. Digest uses a fixed UTF-8 JSON projection                              | Is a digest useful enough to keep in the first codec?                        |
+| C4  | Machine files are tools, runtimes/node, path and workspaces keyed by physical-path SHA-256                                                 | Are these filenames acceptable?                                              |
+| C5  | `--channel` stays on named Install and Update. Result data uses tools plus writer preview, plan and outcomes                               | Are these local interface choices acceptable?                                |
+| C6  | Initial minimum patches are 1.6.2 and 0.12.1, with a three-month review. CodeGraph wrapper support starts at Node 20                       | Does current latest mean this patch floor as well as the minor profile?      |
+| C7  | Native previous values are per workspace in user state. Restore only a matching applied value and disclose account scope                   | Should shared native-setting restoration need a later cross-project policy?  |
 
-These are proposals to review before dependent implementation:
-
-- Q1 - Should missing team installations use the committed exact tested baseline, while compatible existing patches are reused? When a manager resolves an untested patch within support, should the lock keep a catalogue-tested baseline and record the actual patch only in machine state?
-- Q2 - Are `version` and `profileDigest` the lock field names, and should the digest cover setup, config templates and guidance through a fixed ordered UTF-8 encoding?
-- Q3 - Are `.open-forge-state/tools/<id>.json` and the three machine-state filenames in Tool records the chosen locations?
-- Q4 - Should `--allow-download` remain separate from `--automatic`, and should non-interactive PATH setup and shared-file deletion require a future dedicated flag while defaulting to manual PATH instructions and retained files?
-- Q5 - Should Update accept `--version` and `--channel`, and should the local value-taking `--version` shadow the global version bypass on Tool Install and Update?
-- Q6 - Should dry-run remain network-free and report unresolved exact versions, then resolve and disclose them again before apply consent?
-- Q7 - Should Remove restore recorded unchanged project setup additions directly, or should a reviewed local upstream uninstall also run?
-- Q8 - What serialization protects cooperating machine-wide tool writers, and how should approved Node archives' internal npm links be extracted through the existing link-rejecting extractor?
-- Q9 - Are the proposed MCP key `codebase-memory`, host fields and project-root binding, Skill IDs and direct conditional-line wording the desired names?
-- Q10 - Should all six leaves use `data.tools`, with writers adding `preview`, `plan` and `outcomes`, before their full wire payloads are fixed by the implementation contracts?
-- Q11 - What minimum CLI, npm, OS and libc versions and telemetry read-back commands allow the first profiles, and how should CodeGraph's attestation mismatch be closed?
-- Q12 - How should read commands check CodeGraph's wrapper readiness before a version probe, so its first-launch download fallback stays available without making Status or dry-run download?
-- Q13 - Should bare writers preflight every selected tool and perform no effects if one is blocked, then stop on the first failed tool after effects start? Is cancellation, invalid input, blocked, failed, incomplete, warnings and completion the chosen aggregate precedence?
-- Q14 - Which npm-family clients belong in V1, and what should break a tie when several project lockfiles name usable managers?
+The former Q1 through Q14 are resolved by R2-01 through R2-16 and C1 through C7.
+No prior pending choice is silently carried forward.
