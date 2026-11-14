@@ -27,6 +27,7 @@ internal static class DoctorWording
         {
             var value when value.StartsWith("Workspace", StringComparison.Ordinal)
                 || value.StartsWith("Library", StringComparison.Ordinal) => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspace(),
+            var value when value.StartsWith("Tool", StringComparison.Ordinal) => global::OpenForge.Cli.OutputText.Doctor.DoctorToolText.Title(),
             var value when value.StartsWith("Recovery", StringComparison.Ordinal) => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleRecoveryData(),
             var value when value.StartsWith("Route", StringComparison.Ordinal) => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleRoutesAndEntries(),
             var value when value.StartsWith("Reference", StringComparison.Ordinal) => global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingLinks(),

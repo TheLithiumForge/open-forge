@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Tools.Catalogue.Shared.CodeGraph;
 using System.Text.Json;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.IntegrationTests.Serialization.Shared.Assertions;
@@ -40,6 +41,12 @@ public sealed class Schema3CommandIntegrationTests
     [InlineData("library attach", 3, "incomplete")]
     [InlineData("library detach", 3, "incomplete")]
     [InlineData("library sync", 3, "incomplete")]
+    [InlineData("tool list", 3, "incomplete")]
+    [InlineData("tool inspect", 3, "incomplete")]
+    [InlineData("tool status", 3, "incomplete")]
+    [InlineData("tool install", 5, "blocked")]
+    [InlineData("tool update", 5, "blocked")]
+    [InlineData("tool remove", 5, "blocked")]
     public async Task EveryCommandSupportsSchema3AtEveryDetail(string command, int expectedExit, string expectedStatus)
     {
         using var workspace = TemporaryWorkspace.Create("schema3-json-command");
@@ -87,6 +94,8 @@ public sealed class Schema3CommandIntegrationTests
     {
         string[] operands = command switch
         {
+            "tool inspect" or "tool remove" => [CodeGraphDefinitions.Id],
+            "tool list" or "tool status" or "tool install" or "tool update" => [],
             "references" or "route list" or "route inspect" or "route remove" => ["root"],
             "remove" => [],
             "route create" => ["docs/example.md", "--description", "Example", "--tag", "Docs"],

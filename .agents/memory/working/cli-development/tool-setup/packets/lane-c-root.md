@@ -84,7 +84,7 @@ The coordinator sends commit continuation after review.
 
 ## Progress
 
-Done: The coordinator prepared the central integration assignment.
-Now: Waiting for the exact checked combined base.
-Next: Connect the stable services and run focused Integration checks.
-Blocker: Core service integration and the writer binding correction precede dispatch.
+Done: Implemented the complete deferred Root graph, group registration, supplied-host isolation, actual prompt adapters and once-only workspace findings on checked core `885b17db3e56ceb6839ba23609e85a4380c75018`. Added the fixed synthetic minimum and F-P1 project-only eligibility before graph and record construction. Moved all eleven filesystem eligibility cases to Integration. The coordinator accepted the complete 36-file v3 candidate and both unchanged synthetic snapshots. Earlier focused results stay in `evidence/command-composition.md`.
+Now: Task 90 "Tool setup" (phase 3/3): milestone 3/7. The maintainer authorized the local implementation commit. CI runs every test. This continuation runs only the managed Release build and both mandatory .NET formatter commands before the commit.
+Next: Return the local commit SHA, exact file manifest and build/formatter exits. The coordinator handles integration and the final payload, help and published-process gates.
+Blocker: The existing workspace-journey fixture omits shipped CLI Skill `references/tools.md` from its payload cleanup inventory. Its two cases fail cleanup and stay for the coordinator's final payload pass. Final help wording, its literal-assertion migration and shipped captures stay with E/coordinator. No missing protected production contract blocks this implementation.

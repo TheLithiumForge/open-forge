@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Tools.Catalogue;
+using OpenForge.Cli.Composition.Shared.Tools;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Extensions;
@@ -80,11 +82,13 @@ internal static class CliCompositionRoot
                 new ExtensionLifecycleTargetReader(physicalPathResolver)),
             new LibraryOperationalContributor());
         var route = CliRouteComposer.Compose(interaction, inputs.LockStoreRoot);
+        var tool = CliToolComposer.Compose(interaction, ToolCatalogueFactory.Create(ToolHostFactory.CreateNodeRuntimes()), inputs.Tools);
         var standalone = CliStandaloneComposer.Compose(
             interaction,
             inputs.LockStoreRoot,
             operationalContributors,
-            physicalPathResolver);
+            physicalPathResolver,
+            tool.CreateWorkspaceReader);
         var extension = CliExtensionComposer.Compose(
             interaction,
             inputs.LockStoreRoot);
@@ -94,13 +98,13 @@ internal static class CliCompositionRoot
             CreateRootHelp(
             [
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingSetUpAndManage(),
-                    [standalone.InstallBinding.Command, standalone.UpdateBinding.Command, rootRemove.Command, extension.Branch.Command, library.Branch.Command]),
+                    [standalone.InstallBinding.Command, standalone.UpdateBinding.Command, rootRemove.Command, extension.Branch.Command, library.Branch.Command, tool.Branch.Command]),
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingReadAndDiscover(),
                     [standalone.HelpBinding.Command, standalone.StatusBinding.Command, standalone.ContextBinding.Command, standalone.FindBinding.Command, standalone.ReferencesBinding.Command, route.Branch.Command]),
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingCheckAndMaintain(),
                     [standalone.DoctorBinding.Command, standalone.IndexBinding.Command, standalone.RepairBinding.Command, standalone.CleanupBinding.Command]),
             ]),
-            [route.Branch, extension.Branch, library.Branch],
+            [route.Branch, extension.Branch, library.Branch, tool.Branch],
             [
                 route.ListBinding,
                 route.InspectBinding,
@@ -134,6 +138,12 @@ internal static class CliCompositionRoot
                 library.SyncBinding,
                 library.DetachBinding,
                 rootRemove,
+                tool.ListBinding,
+                tool.InspectBinding,
+                tool.StatusBinding,
+                tool.InstallBinding,
+                tool.UpdateBinding,
+                tool.RemoveBinding,
             ],
             rootLeaves: [.. standalone.RootLeaves, new CliRootLeaf(rootRemove.Command)]);
         return new CliCoreApplication(
