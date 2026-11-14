@@ -9,7 +9,7 @@ open-forge:
 Tool setup is Task 90, which implements published tool installation and additive configuration through supervised lanes.
 For example, bare Install restores the exact lock versions while tools run through their direct commands.
 
-Status: Task 90 “Tool setup” (phase 2/3): milestone 1/7.
+Status: Task 90 “Tool setup” (phase 3/3): milestone 3/7.
 
 ## Outcome
 
@@ -56,10 +56,10 @@ Tools add no workspace state, lease or recovery dependency under `.open-forge-st
 
 ## Checkpoint
 
-Done: Phase 1 is accepted. Recorded the maintainer's C1 through C7 decisions, including project-only unattended removal and kept account-wide settings.
-Now: Task 90 “Tool setup” (phase 2/3): milestone 1/7. Freezing worker packets and the implementation base.
-Next: Verify and commit the updated base, create isolated worktrees and start the Sol xhigh swarm.
-Blocker: None. C1 through C7 are decided.
+Done: Recorded C1 through C7 and committed the frozen packets in 2e517348e. Created five isolated worktrees and verified all five initial workers alive after dispatch.
+Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. D has returned its independent selection and consent code. F prepares the shared planning proposal from B, D and E's evidence.
+Next: Close the shared planning contracts, resume dependent implementation and integrate completed branches before E's entries, journeys and docs.
+Blocker: Native templates, first-install stored-state observation, concrete channel plans and config removal plans need the shared contract increment. Independent work continues. The shipping Open Forge version is asked of the maintainer.
 
 ## Phase 1 checks
 
@@ -81,7 +81,50 @@ Project Remove keeps account-wide settings and prints their manual change comman
 ## Runs
 
 The managed Worker Watch session is `s_b74431d77d3a`.
-No worker agent or run has started yet.
+All initial workers use `gpt-6.1-sol` with `xhigh` effort.
+Each starts clean at `2e517348ef19e34afa6297c7efa7d0db5451b45c` on `feature/tool-setup-<lane>` in its own `tool-setup-<lane>` worktree.
+The mastermind is Worker Watch agent `a_8cf5f6b0ccf3`, run `r_6e9c8c3daf44`, with the same model and effort.
+
+The first runs started on 14 November 2026:
+
+| Lane | Agent            | Run              | Assignment                                       |
+| ---- | ---------------- | ---------------- | ------------------------------------------------ |
+| A    | `a_0ba060b7c8e2` | `r_211b3404ed3e` | Channels, private Node, launchers and Root hosts |
+| B    | `a_3ede9fb31b5c` | `r_5d2fd5f2874c` | Additive config and backups                      |
+| C    | `a_e8437ba232a1` | `r_f24ce4555513` | Records, reads and workspace findings            |
+| D    | `a_c9edc5b737c5` | `r_d1cc8b785375` | Install, Update and Remove                       |
+| E    | `a_b49c60a6b38b` | `r_7759f5ae2da2` | Upstream recipes and safe journey plan           |
+
+Use the same agent for related follow-ups after its run ends.
+Worker Watch has no live steering.
+The packets require a checked candidate before the coordinator's commit continuation.
+Implementation, entries, journeys and final adherence review aren't complete at this phase boundary.
+
+F is agent `a_179fed07b6f8`, run `r_d46da867335f`, with the same model and effort.
+It starts from the frozen base in `tool-setup-integrator` on `feature/tool-setup-integrator`.
+Its only initial supplied file is its own `lane-f.md` packet.
+It writes a shared-contract report and proposed patch before any Root implementation.
+The coordinator reviews and commits actual shared model changes.
+
+## Phase 3 returns
+
+D's first run returned 47 passing Unit cases for selection and consent, a green Release build and both .NET checks.
+Its nine changed files are uncommitted pending the shared channel and removal-plan contracts.
+Install, Update and Remove leaves aren't implemented yet.
+Review RD1 corrects the packet's extra channel pin.
+Bare Install pins the exact lock version and follows the normal existing-supported-install-first channel choice.
+Only a named `--channel` is an override.
+D's next continuation must remove the implicit lock-channel override and update its focused selection evidence.
+
+E's first run returned twelve checked asset pins, native file inventories and six contract requests.
+Its build, twelve documentation cases and both .NET checks passed.
+Run `r_fec5e0e39de0` resumes E for tagged-source telemetry reads before installation, bundled runtime entry facts and native plan output details.
+No catalogue or real installation ran yet.
+
+The real Windows Remove journey uses `--yes` project-only cleanup.
+The native account-uninstall confirmation path uses the production operation with an injected host, since the native Windows command edits the registry.
+Baseline real Update with no newer supported release is combined with synthetic version-transition evidence.
+No older unsupported release is added for that test.
 
 ## Phase 2 base
 
