@@ -276,7 +276,7 @@
     "entriesSectionsCurrent": null,
     "entriesSectionsStale": null,
     "entriesSectionsMissing": null,
-    "frameworkFilesCurrent": 19,
+    "frameworkFilesCurrent": 20,
     "frameworkFilesChanged": 0,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -461,6 +461,10 @@
       },
       {
         "path": ".agents/skills/open-forge-cli/references/routes.md",
+        "state": "current"
+      },
+      {
+        "path": ".agents/skills/open-forge-cli/references/tools.md",
         "state": "current"
       },
       {

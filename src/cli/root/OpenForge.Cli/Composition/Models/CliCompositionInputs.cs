@@ -15,5 +15,6 @@ internal sealed record CliCompositionInputs
 
     public WorkspaceLockStoreRoot? LockStoreRoot { get; init; }
     public CliTerminal? Terminal { get; init; }
+    public CliToolHostInputs? Tools { get; init; }
     public bool StandardErrorColor { get; init; }
 }

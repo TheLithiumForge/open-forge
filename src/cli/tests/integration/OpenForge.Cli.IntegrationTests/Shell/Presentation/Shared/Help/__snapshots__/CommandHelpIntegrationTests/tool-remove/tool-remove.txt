@@ -1,0 +1,44 @@
+  Remove project additions and offer native uninstall.
+
+Usage:
+  open-forge tool remove <id> [--yes] [--allow-path <path>...] [--dry-run]
+
+Examples:
+  open-forge tool remove codegraph --dry-run
+  open-forge tool remove codegraph --yes
+  open-forge tool remove codebase-memory --yes
+
+Behavior:
+  Removes recorded Open Forge project additions and offers the declared native
+  uninstall.
+  Codebase Memory uninstall removes the account binary and all agent entries. It
+  needs a live confirmation naming those effects.
+  With --yes, no terminal or a declined account confirmation, only project
+  additions are removed and the native command is printed.
+  Project removal keeps account settings, including telemetry off, and prints
+  manual change commands.
+  Shared file deletion and PATH edits need separate live choices. Changes aren't
+  rolled back automatically.
+
+Arguments:
+  <id>  The declared or locked tool ID.
+
+Options:
+  --yes                Accept the shown plan and downloads. Skip PATH edits,
+                       shared deletion and account-wide uninstall.
+  --dry-run            Show the checked plan without applying changes.
+  --allow-path <path>  Permit writing to this workspace-relative path, recording
+                       it in .agents/open-forge.json.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  open-forge tool inspect <id>
+  open-forge tool status

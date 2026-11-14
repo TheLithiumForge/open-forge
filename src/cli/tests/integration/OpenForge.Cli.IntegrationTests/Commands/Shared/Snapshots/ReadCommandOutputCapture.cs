@@ -1,3 +1,4 @@
+using OpenForge.Cli.IntegrationTests.Hosting.Shared.ToolIsolation;
 using OpenForge.Cli.Core.Commands.Status;
 using OpenForge.Cli.Core.Commands.Doctor;
 using System.Runtime.CompilerServices;
@@ -188,6 +189,7 @@ internal sealed class ReadCommandOutputCapture(
         using var prompts = new StringWriter();
         using var lockStore = WorkspaceLockTestStore.Create(lockStoreName);
         _ = lockStore.Track(new CliWorkspace(workspacePath, workspacePath, CliWorkspaceSelectionMethod.CurrentDirectory));
+        using var toolIsolation = new CliToolIsolation();
         var application = CliCompositionRoot.Create(
             new CliProcessIdentity("open-forge", CliBuildVersion.InformationalVersion),
             new CliCompositionInputs
@@ -197,6 +199,7 @@ internal sealed class ReadCommandOutputCapture(
                 StandardInputRedirected = interactiveAnswer is null,
                 PromptOutputRedirected = interactiveAnswer is null,
                 LockStoreRoot = lockStore.StoreRoot,
+                Tools = toolIsolation.Inputs,
             });
         string[] format = json ? ["--format", "json"] : [];
         var completion = await application.RunAsync(

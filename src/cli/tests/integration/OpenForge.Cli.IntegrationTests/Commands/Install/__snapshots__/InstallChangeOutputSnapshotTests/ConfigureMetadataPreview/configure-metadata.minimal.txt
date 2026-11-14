@@ -31,7 +31,9 @@ Frontmatter: root -> scoped
     metadata would move under open-forge:
   .agents/skills/open-forge-cli/references/routes.md
     metadata would move under open-forge:
+  .agents/skills/open-forge-cli/references/tools.md
+    metadata would move under open-forge:
   .agents/templates/_templates.md
     metadata would move under open-forge:
-  Would update 16 existing files.
+  Would update 17 existing files.
 No files were changed.

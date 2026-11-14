@@ -1,0 +1,27 @@
+Planned tool update for 1 tool.
+Workspace: <workspace>
+  synthetic.ignore  rewritten
+Latest-version resolution used the network.
+synthetic-tool@1.2.4 (synthetic-channel)
+Previous version: 1.2.3
+Native home: <native-home>
+This replaces an account-wide installation used by other projects.
+Account: Synthetic account setup. <native-home>/agents.json
+Requirement: synthetic-runtime >=1
+Minimum tool version: 1.2.3
+Minimum Open Forge version: 1.0.0
+Download: https://example.invalid/synthetic.zip -> <home>/synthetic.zip SHA-256 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+Path: <home>/bin/synthetic-tool
+Backup target: <native-home>/agents.json
+synthetic-ignore: marked-block synthetic.ignore  Add Synthetic project exclusion.
+native: '<tool>' install --synthetic
+Working directory: <workspace>
+Environment: remove SYNTHETIC_OVERLAY
+Profile: synthetic-profile
+Profile digest: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+synthetic-tool: native not-started
+Open Forge bin: <home>/bin
+PATH: missing
+synthetic manual PATH instruction
+Restart terminals and agent apps after changing PATH. Restarted apps haven't been verified.
+1 tool.

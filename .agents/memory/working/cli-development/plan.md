@@ -10,7 +10,7 @@ open-forge:
 
 The [project-control ledger](project-control.md#active-task-ledger) owns the queue and permanent Task identities. Each Task defines its remaining outcome and evidence.
 
-1. Choose the next Task with the maintainer from the [open Task index](tasks/_tasks.md) after the beta18 release. No Task is selected by this records update.
+1. Complete [Task 90 Tool setup](tasks/task90-tool-setup.md) through the maintainer's three phases. Stop with a report after each phase.
 2. Keep Tasks 34 and 39 paused, and Task 48 frozen at A/B1. Its Extension scoping work remains required before 1.0. The [wave capsule](one-zero-polish-wave.md) retains resume boundaries.
 3. Retain Task 62's pending maintainer review, deferred documentation reviews and the broader [Local Planning review](../local-planning.md). Other unfinished work stays in the [Task index](tasks/_tasks.md) and [candidate queue](tasks/potential/_potential.md).
 

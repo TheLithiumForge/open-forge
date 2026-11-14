@@ -1,3 +1,4 @@
+using OpenForge.Cli.IntegrationTests.Hosting.Shared.ToolIsolation;
 using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using System.Security.Cryptography;
 using System.Text;
@@ -137,10 +138,12 @@ public sealed class WorkspaceShapeJourneyIntegrationTests
         using var standardInput = new StringReader(string.Empty);
         using var standardOutput = new StringWriter();
         using var standardError = new StringWriter();
+        using var toolIsolation = new CliToolIsolation();
         var application = CliCompositionRoot.Create(
             new CliProcessIdentity("open-forge", CliBuildVersion.InformationalVersion),
             new CliCompositionInputs
             {
+                Tools = toolIsolation.Inputs,
                 StandardInput = standardInput,
                 PromptOutput = TextWriter.Null,
                 StandardInputRedirected = true,

@@ -15,6 +15,9 @@ Commands follow the [context folder chosen at installation](../getting-started/i
 
 ## Start with these commands
 
+Tool setup installs published tools, runs their native setup and records project additions.
+To install a tool, use its direct command and share exact versions with your team, follow the [Tool setup walkthrough](tools.md).
+
 | When you want to                               | Run                                                   |
 | ---------------------------------------------- | ----------------------------------------------------- |
 | Read startup context                           | [`open-forge context`](/guides/cli#context)           |

@@ -1,0 +1,112 @@
+---
+open-forge:
+  description: Define published channels, native setup and additive effects
+  tags: [Memory, Document, CLI, Tool, CurrentTruth]
+---
+
+# Tool behavior
+
+Tool behavior is the common flow that detects a tool, plans setup and checks its additions.
+For example, CodeGraph runs its own local installer before Open Forge adds its archive exclusion.
+
+Status: Round-2 design decided on 14 November 2026.
+
+## Detection
+
+Use a bounded version probe and typed version parser.
+Declare timeout, output cap and environment changes in the catalogue.
+CodeGraph probes set `CODEGRAPH_NO_DOWNLOAD=1`.
+Status and dry-run therefore don't invoke its missing-bundle download fallback.
+Normal tool execution keeps the upstream fallback.
+Probes don't invoke setup or indexing. Open Forge's read code writes no tool records.
+Native cache behavior stays with the tool.
+
+Status detects self-updates against the lock and machine facts.
+Inside support, offer reapply through named Install.
+Outside support, warn and keep the existing install.
+Detection leaves native update checks, hooks, permissions, watchers and daemons unchanged.
+
+## Channel choice
+
+Unless an advertised `--channel` overrides it, use this order:
+
+1. Reuse an existing supported install that meets the requested version.
+2. Use a compatible manager from the tool's published ecosystem.
+3. For an npm tool without a suitable Node, use a private Node and its own npm.
+4. Use a verified GitHub release archive.
+
+Detect npm, pnpm, Yarn Classic and bun through one bounded CLI version call each.
+Check Yarn's major version and exclude Yarn Modern from global installation.
+Read the project's lockfiles as preference hints.
+Check each manager's runtime, version and global-bin PATH readiness.
+A catalogue entry can require one client.
+Ask about multiple usable choices. The common Interface defines the `--yes` fallback.
+Review RD1: bare Install pins the lock's exact version and then uses this normal channel order.
+The recorded lock channel is an installation fact, not an implicit channel override.
+Only named `--channel` overrides channel choice.
+Keep the manager responsible for an existing installation and never create a second install.
+A failed transfer doesn't silently switch channels.
+
+## Versions
+
+Profiles are non-overlapping major.minor ranges with exact tested versions and a minimum Open Forge version.
+V1 starts with CodeGraph `1.6.x` at `1.6.2` and Codebase Memory `0.12.x` at `0.12.1`.
+The minimum reviewed patch also limits the versions offered within its profile.
+Keep older supported profiles and pins after later updates.
+
+Named Install and Update without a selector choose latest support.
+Bare Install uses the exact lock version when present.
+A lock version outside support blocks before effects.
+Resolve and disclose an exact version before installation.
+Only known support in a newer catalogue justifies "update Open Forge first".
+
+## Preview
+
+Dry-run describes the channel, exact version where known, command vectors, files and additions.
+An unchosen account uninstall stays description-only and runs no native preview.
+Use the upstream dry run when its profile declares one and the installed tool is available.
+Otherwise give a description.
+Network access is allowed only when latest must be resolved, and the report discloses it.
+No installation, config write, PATH change, shared deletion or Tool record write occurs.
+
+## Setup
+
+Run the documented upstream setup and uninstall argument vectors through the declared executable.
+Keep arguments separate and use no shell strings.
+Run both tools' own installers.
+CodeGraph uses local Claude and Codex setup with its hook and permissions.
+Codebase Memory uses its account-wide setup and default client discovery.
+Disclose account scope and watcher defaults.
+Open Forge writes no replacement MCP entries or Codex TOML sections.
+It adds no tool Skill or managed-block line.
+
+Use the [native output plan](../../technical-designs/tool-setup.md#native-outputs) for possible destinations and available native inventory.
+Back up its concrete targets before invoking native setup.
+Before the binary is available, a declared native plan leaves unavailable client-specific outputs conditional.
+After verified placement, refresh that plan and require safe independent bindings for detected clients before native writes.
+Run a chosen native uninstall before removing Open Forge additions.
+Codebase Memory's account-wide uninstall needs the live confirmation defined by the common Interface.
+With `--yes` or without a terminal, skip that uninstall and remove only Open Forge's project additions.
+Keep account-wide native settings and print their manual change commands.
+Guard any native PATH or shared-binary effects under the common consent rule.
+Never request deletion of every project's indexes.
+
+## Additions
+
+Use only the additive rules in [Tool record behavior](../shared/tool-records/behavior.md).
+Declared config changes can turn off tool behavior through allow-listed native commands or settings.
+Disclose every change. Telemetry off is the first V1 case and the decided default.
+The committed lock stores what Open Forge added.
+Machine state stores native account-setting previous values, paths and PATH history.
+There is no Tool folder, lease, journal or recovery dependency under `.open-forge-state/`.
+Tool commands don't run concurrently by design and need no extra cross-process lock.
+Keep existing destination permissions and expected-state checks.
+Other commands' workspace-lock and recovery contracts stay unchanged.
+
+## Verification
+
+Verify the installed version, native command outcome and Open Forge additions before recording completion.
+Publish verified additions so a later failure leaves a correct record of completed work.
+Report partial native effects and retained sibling backups.
+Don't invent prior values or delete an unrecorded addition after an interrupted write.
+The [design](../../technical-designs/tool-setup.md) defines placement and interfaces.

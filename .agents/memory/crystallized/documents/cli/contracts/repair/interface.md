@@ -7,6 +7,12 @@ open-forge:
 
 # Repair Interface Contract
 
+## Tool recovery
+
+Tool failures report sibling backups and guarded manual restoration instructions.
+Repair gains no Tool action, lease or recovery record.
+The round-2 [Tool contracts](../tool/_tool.md) define native reapply and removal.
+
 Authored relinks also admit [comment links](../shared/source-references/interface.md#comment-links) in code and Markdown. An exact source location can name either file kind. Repair changes only the target word and writes an encoded repository-root path. Existing dry-run, selection, protection and recovery rules apply. Git and weak suggestions stay distinct evidence in the result and choice labels. Unique-slug choices are labelled weak. Weak candidates and legacy IDs require a chosen target.
 
 ## Workspace Layout
@@ -418,14 +424,14 @@ open-forge repair --automatic --dry-run --format json
 
 General Repair admits only these effects:
 
-| Catalogue member                | Proposal and selection rule                                                                                                                                                                                                                                                                                             |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Same-target canonical path      | The authored local destination resolves to the same target, but its path spelling is not canonical. It is `safe-exact` and may be selected by `--automatic`.                                                                                                                                                            |
-| Same-target canonical case      | The authored local destination differs only in case from the exact target spelling, and physical identity is unambiguous. It is `safe-exact` only when that identity is proven.                                                                                                                                         |
-| Same-target canonical encoding  | The authored destination uses a non-canonical encoding for the same target. It is `safe-exact` only when the expected and intended bytes are exact.                                                                                                                                                                     |
-| Unique canonical fragment       | The target is the same and one canonical fragment correction is proven. It is `safe-exact` and may be selected by `--automatic`.                                                                                                                                                                                        |
+| Catalogue member                | Proposal and selection rule                                                                                                                                                                                                                                                                                                                                             |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Same-target canonical path      | The authored local destination resolves to the same target, but its path spelling is not canonical. It is `safe-exact` and may be selected by `--automatic`.                                                                                                                                                                                                            |
+| Same-target canonical case      | The authored local destination differs only in case from the exact target spelling, and physical identity is unambiguous. It is `safe-exact` only when that identity is proven.                                                                                                                                                                                         |
+| Same-target canonical encoding  | The authored destination uses a non-canonical encoding for the same target. It is `safe-exact` only when the expected and intended bytes are exact.                                                                                                                                                                                                                     |
+| Unique canonical fragment       | The target is the same and one canonical fragment correction is proven. It is `safe-exact` and may be selected by `--automatic`.                                                                                                                                                                                                                                        |
 | Missing-target relink           | The authored target or fragment is missing, or a legacy comment ID needs a path. Doctor supplies bounded Git rename, heading-diff, old section-content, weak unique-slug, filename, title, literal-content or structural route-neighborhood candidates. Weak evidence is `guided-choice`. A uniquely proven rename or move is `safe-exact` under Forgiving Maintenance. |
-| Typed Library residual recovery | A semantically verified current-v1 residual is attributed to the selected workspace's Library record and the existing automatic/guided selection shape authorizes one exact safe-exact ordinary-record, ordinary-file, or relative-file-link recovery effect. It uses no new syntax and never becomes generic rollback. |
+| Typed Library residual recovery | A semantically verified current-v1 residual is attributed to the selected workspace's Library record and the existing automatic/guided selection shape authorizes one exact safe-exact ordinary-record, ordinary-file, or relative-file-link recovery effect. It uses no new syntax and never becomes generic rollback.                                                 |
 
 The candidate evidence is finite
 and visible. Zero, one, and several candidates remain distinct. A recommendation

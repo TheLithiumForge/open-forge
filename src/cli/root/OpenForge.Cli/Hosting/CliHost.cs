@@ -54,6 +54,15 @@ internal static class CliHost
             cancellationToken: cancellationToken);
     }
 
+    internal static ValueTask<int> RunAsync(
+        string[] arguments,
+        string currentDirectory,
+        CliOutputWriters writers,
+        CliCompositionInputs inputs,
+        CancellationToken cancellationToken = default)
+        => RunApplicationAsync(arguments, new CliProcessEnvironment(currentDirectory), writers,
+            CliCompositionRoot.Create(CreateProcessIdentity(), inputs), cancellationToken);
+
     private static async ValueTask<int> RunApplicationAsync(
         string[] arguments,
         CliProcessEnvironment environment,

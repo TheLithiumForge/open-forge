@@ -89,6 +89,17 @@ against an actor outside it. A stronger later threat model requires a new
 Architecture decision covering platform, portability, Native AOT, maintenance,
 and evidence costs.
 
+## Tool setup
+
+The [Tool setup design](technical-designs/tool-setup.md) defines the round-2 catalogue and frozen Framework service interfaces.
+Operations keeps command requests, plans, --yes consent and results.
+Root hosts process, transfer and platform PATH capabilities.
+Tools run directly through their own commands after setup.
+Tool writers don't use workspace leases or recovery state, because Open Forge commands don't run concurrently by design.
+The committed lock holds additive change records. Native previous account values and paths stay in user state.
+Implementation proceeds in supervised lanes.
+Root checks native client paths before effects. The design's [native config reader](technical-designs/tool-setup.md#native-config-reader) records the bounded read-only format adapter and its replacement condition.
+
 ## Layer Model
 
 The CLI has four layers. Each answers exactly one question, and the question is

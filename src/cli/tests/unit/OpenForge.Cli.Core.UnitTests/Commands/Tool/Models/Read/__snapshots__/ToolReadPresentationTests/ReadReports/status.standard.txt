@@ -1,0 +1,11 @@
+Tool readiness.
+synthetic  Synthetic tool  3.2.x  missing
+Version: locked missing, detected unavailable
+Machine records: unavailable, native settings unavailable
+Bin: unavailable (unavailable)
+Manager global bin: unavailable (unavailable)
+Tool path: unavailable
+Runtime path: unavailable
+Stored setting synthetic-native: off -> off, no-change
+  Effective native value from SYNTHETIC_NATIVE_OVERRIDE: on
+Retired addition synthetic-retired: remove

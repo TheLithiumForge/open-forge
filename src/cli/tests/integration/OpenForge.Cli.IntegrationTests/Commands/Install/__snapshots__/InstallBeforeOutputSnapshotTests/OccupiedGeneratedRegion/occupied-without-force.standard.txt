@@ -24,6 +24,7 @@ Frontmatter: scoped
   .agents/skills/open-forge-cli/references/discovery.md  created
   .agents/skills/open-forge-cli/references/packages.md   created
   .agents/skills/open-forge-cli/references/routes.md     created
+  .agents/skills/open-forge-cli/references/tools.md      created
   .agents/templates/_templates.md                        created
   AGENTS.md
     created with an Open Forge section
@@ -34,7 +35,7 @@ Frontmatter: scoped
     created as the ownership receipt
   .agents/memory/_memory.overwrite.md
     Migrated: content preserved
-  Created 18 files and 12 directories under .agents, and replaced 1 existing
+  Created 19 files and 12 directories under .agents, and replaced 1 existing
   file.
   Created AGENTS.md and CLAUDE.md with an Open Forge section.
   Migrated 1 source.

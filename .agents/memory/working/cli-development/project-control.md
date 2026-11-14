@@ -16,6 +16,7 @@ This ledger owns permanent identity, queue state and ownership. The Task owns it
 
 | ID  | Task                                                                                 | State                                                      | Current boundary                                                                                                                                                            | Owner              |
 | --- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| 90  | [Tool setup](tasks/task90-tool-setup.md)                                             | Active, selected 2026-11-14                                | Round-2 spec, then supervised implementation and integration in three phases                                                                                                | Root               |
 | 88  | [Test literal cleanup](tasks/task88-test-literal-cleanup.md)                         | Open, from the maintainer 2026-10-24                       | Audit counted the older violations; priority with the maintainer                                                                                                            | Root               |
 | 89  | [Install outside-route question](tasks/task89-install-outside-route-question.md)     | Open, implemented for review in PR #11                     | Contracts, implementation and focused managed evidence done; maintainer review and hosted CI remain                                                                         | Root               |
 | 85  | [Configurable main root](tasks/task85-configurable-main-root.md)                     | Open, Delivery 2 unstarted and unselected                  | Delivery 1 accepted in `77a24b2c0`, archived. Established-installation migration remains open                                                                               | Root               |
@@ -55,4 +56,4 @@ Completed Task IDs remain permanent. [Archived CLI Tasks](../../archived/cli-dev
 
 ## Current next action
 
-Choose the next Task with the maintainer after beta18 publication and public smoke. No implementation is selected by this release record. Paused, frozen, deferred and maintainer-review work retains its state in the [Task index](tasks/_tasks.md).
+Complete Task 90 through the maintainer's three tool-setup phases. Report and stop after each phase. Paused, frozen, deferred and maintainer-review work keeps its state in the [Task index](tasks/_tasks.md).
