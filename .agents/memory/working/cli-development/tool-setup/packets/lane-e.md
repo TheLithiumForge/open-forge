@@ -90,10 +90,10 @@ The report can be used to compile complete entries and run both Windows journeys
 
 ## Progress
 
-Done: The coordinator accepted the focused B review, revalidated E-B1 and E-B2 and routed both to B in `r_96829394863e`. The fresh managed build passed with zero warnings and errors. Both required .NET checks passed. The source checkpoint and earlier catalogue commit stay recorded below.
-Now: The two-document review slice is checked for the authorized local commit on base `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9`. Only this packet and `evidence/config-catalogue-review.md` change. No product, catalogue, test source, common Entries or Task 90 changes.
-Next: Return the review-document commit's full SHA and two-file list. Full user docs and real Windows journeys wait for checked Root composition. Successful exact journey versions must populate `TestedVersions` later.
-Blocker: None for this review-document commit. B handles E-B1 and E-B2. `MinimumOpenForgeVersion` stays provisionally `0.9.0-beta.19`. Product and package versions are unchanged.
+Done: The B review documents were committed locally as `240c78f3449147fb9993f3fecc8c45a879583241`. The coordinator accepted F-H1, F-H2 and the bounded C# port plan after two ordinary JSON5 readers failed required native behavior. Root has authored the dated contract choice. Both required .NET checks pass for this design evidence commit. The exact prior build receipt is kept.
+Now: The two-document design evidence increment is checked for its authorized local commit on base `240c78f3449147fb9993f3fecc8c45a879583241`. Only the new report and this packet's Progress and Evidence change. Formatting, local links, LF, packet-section and exact two-file checks pass. Root keeps the implementation choice as a maintainer question under the user delegation.
+Next: Return the local commit's full SHA, two-file list and checked native licence cache path and SHA-256. F handles the private reader and tests through Root's contract increment. Full user docs and real Windows journeys wait for Root wiring. Successful exact journey versions must populate `TestedVersions` later.
+Blocker: None for this local design evidence increment. Product source, dependencies, root `LICENSE` and F files are unchanged. `MinimumOpenForgeVersion` stays provisionally `0.9.0-beta.19`. Product and package versions are unchanged.
 
 ## Evidence
 
@@ -266,6 +266,74 @@ Raw byte checks cover LF, final newlines and trailing whitespace in both files.
 The final local receipt records source hashes, the exact two-file commit list and the commit identity after creation.
 No tests were selected or run because no test source changed. No native tool, payload snapshot, push or merge ran.
 The report's original frozen B checkpoint is historical review evidence. B handles the routed fixes separately.
+
+### Native reader plan
+
+The accepted review-document commit is `240c78f3449147fb9993f3fecc8c45a879583241` on parent `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9`.
+The next bounded investigation compared F's OpenClaw workspace resolver with the exact CBM v0.12.1 selected-path reader.
+Root accepted the JSON5 syntax gap as F-H1 and zero-length fallback as F-H2.
+The native reader doesn't follow include files. A root include prevents fallback only when the configured workspace is missing.
+
+The ordinary-package investigation checked the unchanged central dependencies first, then `Json5` 1.0.4 and `Json5Core` 1.0.12.
+The first loses complete syntax validation and raw values. Its two data paths also handle duplicates differently.
+The second overwrites duplicate names before path lookup.
+These conclusions come from tagged source, not executed package tests.
+
+The [native config reader plan](../evidence/native-config-reader.md) maps the necessary native functions, the internal caller contract, lexical families, focused fixtures, the MIT notice and exact future footprint.
+The proposed dated choice is a private same-format port with numeric validation and skip.
+It adds no package, writer, normalizer, generic public parser, native bridge or interpreter.
+Root records the exception and maintainer question before F implements it.
+F handles six source and test files. Root keeps the native MIT notice in the existing root licence copied by current distribution paths.
+This pass changes neither architecture nor those seven future files.
+
+The cached native sources and licence match the v0.12.1 Git tree `a7158ac2f48ca646b4527341b76f930f2aeff87e`.
+The report records their exact SHA-256 values and tagged source lines.
+The first research return ran no build, .NET checks, tests, native command, account file read, PATH or registry action.
+Prettier passes for both changed Markdown files.
+Production References reports three complete local links from the report and three from the packet.
+The report's twelve external source links stay marked unchecked by References. Their native source lines were read from the tagged, blob-matched cache.
+LF, final newlines, trailing whitespace and `git diff --check` pass.
+The packet comparison against HEAD passes for edits restricted to Progress and Evidence.
+The exact two-file change check passes with the new report untracked and the packet modified.
+The focused format and link commands are:
+
+```powershell
+node node_modules/prettier/bin/prettier.cjs --check .agents/memory/working/cli-development/tool-setup/evidence/native-config-reader.md .agents/memory/working/cli-development/tool-setup/packets/lane-e.md
+open-forge references .agents/memory/working/cli-development/tool-setup/evidence/native-config-reader.md --direction out --format json
+open-forge references .agents/memory/working/cli-development/tool-setup/packets/lane-e.md --direction out --format json
+git diff --check
+```
+
+The first research return left both documents uncommitted.
+The coordinator then accepted the plan, reported Root's authored dated contract choice and authorized a separate local design evidence commit of these two files.
+The integrator's later Index pass handles the one new routed report.
+
+### Reader commit checks
+
+The commit continuation keeps `artifacts/task90-lane-e-review-docs/final-receipt.json` unchanged.
+Its exact managed Release build records SDK `10.0.101`, zero warnings and errors and duration `00:04:39.43`.
+The retained command is `dotnet build OpenForge.Cli.slnx --configuration Release -p:NuGetAudit=false -p:OpenForgeSkipDevelopmentPublish=true --disable-build-servers -m:1`.
+The retained build log SHA-256 is `2e4c1792b39e2b7d2376de25a9cb0df5fdee6da02a2d95a70fa909c8940ba482`.
+Its hash was rechecked against that receipt.
+Git confirms only Markdown changed since the checked build's source base `fd2b1e4e12cf25d70d205db1e4158dc22b6bc8a9`.
+The coordinator authorizes keeping this build without rerunning it.
+
+Fresh pre-commit results are:
+
+| Check                                | Result                                                     | Artifact                                                                                        |
+| ------------------------------------ | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `npm run check:dotnet:whitespace`    | Passed, exit 0                                             | `artifacts/task90-lane-e-native-reader-design/whitespace.log`                                   |
+| `npm run check:dotnet:style`         | Passed, exit 0                                             | `artifacts/task90-lane-e-native-reader-design/style.log`                                        |
+| Focused Prettier command above       | Passed for both files                                      | `artifacts/task90-lane-e-native-reader-design/markdown.log`                                     |
+| Production References commands above | Six complete local links, twelve external links unchecked  | `artifacts/task90-lane-e-native-reader-design/report-references.json`, `packet-references.json` |
+| LF, whitespace and Markdown AST      | Passed, packet changes restricted to Progress and Evidence | `artifacts/task90-lane-e-native-reader-design/document-checks.json`                             |
+| Exact file limit                     | Passed, only the two assigned documents                    | Final local receipt                                                                             |
+
+The native `LICENSE` cache was rechecked at commit continuation.
+Its SHA-256 is `1f58f9911dc5e3bcb96de28bb28e7b6bb7eb323952d29569c5d7214a152146bb`.
+Its Git blob `0b95352746a97a8cf2d1f3ba568bc7bb5e514d1f` matches the tagged native tree.
+The final local receipt records the exact cache path, final source hashes, commit identity and two-file list.
+No new build, tests, native tool, account action, product edit, dependency change, root licence edit, F source edit, push or merge ran.
 
 ## Divergences
 
