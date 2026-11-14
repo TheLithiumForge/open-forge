@@ -41,7 +41,7 @@ Workers use agreed fakes at their typed interfaces until implementations merge.
 Channel requests carry their workspace and install entry, so registry config and package identity stay with the plan.
 Config requests carry the resolved recipe context and planned invocation for native writes.
 The [shared planning design](tool-setup.md#shared-planning) defines the shared inputs.
-A implements channels and hosts. B implements config, templates, setup planning and backups. C implements native inventory parsing, codecs and observations. D sequences writers and completes backups. F later wires Root.
+A implements channels and hosts. B implements config, templates, setup planning and backups. C implements native inventory parsing, codecs and observations. D sequences writers and completes backups. After checked core integration, C handles central Root wiring while F completes the private home and native config provider.
 After this contract lands, D corrects its selector so bare Install pins only the lock version under RD1.
 B implements the frozen backup interface and profile digest method for D.
 C returns file SHA-256 expectations, with null for absence, for its own expected-state writes.
@@ -60,8 +60,8 @@ Leaf help and output text initially belong to the same lane as that leaf.
 | C          | Framework `Framework/Tools/Shared/{Records,Observation,Serialization}/**`, `Framework/Settings/**` and `Framework/Ownership/**`; Operations `Commands/Tool/{List,Inspect,Status}/**`, `Commands/Tool/Shared/Observation/**`, `Commands/Tool/Models/Read/**`; workspace Status and Doctor tool appenders | Record service, codecs and read operations                                     |
 | D          | Operations `Commands/Tool/{Install,Update,Remove}/**`, `Commands/Tool/Shared/Writing/**`, `Commands/Tool/Models/Writing/**`                                                                                                                                                                             | Writer operations, plan consent, native setup and failure ordering             |
 | E          | Framework `Framework/Tools/Catalogue/**`; tool catalogue tests and real Windows journey evidence; then final `docs/cli.md`, site CLI pages, both CLI Skill copies and Tool help wording                                                                                                                 | Real entries, direct-command and MCP journeys and user documentation           |
-| F          | Root `Composition/Shared/ToolHomes/**` and matching Integration tests, plus F's packet and reports. Central Root wiring transfers after the core branches integrate                                                                                                                                     | Native home and client-path resolution, then Root integration                  |
-| Integrator | All frozen models and schemas, shared contracts, root `CliToolComposer` and command composition, shared rendering wiring, actual workspace controls and payload-dependent snapshots                                                                                                                     | Cross-lane wiring and acceptance                                               |
+| F          | Root `Composition/Shared/ToolHomes/**` and matching Integration tests, plus F's packet and reports                                                                                                                                                                                                      | Native home, client paths and the private native config reader                 |
+| Integrator | The mastermind keeps frozen models, schemas, shared contracts, actual workspace controls, payload-dependent snapshots and acceptance. After checked core integration, C receives central command registration, `CliToolComposer`, shared rendering wiring and matching Integration tests                | Cross-lane wiring and acceptance                                               |
 
 Framework paths start at `src/cli/framework/OpenForge.Cli.Framework/`.
 Operations paths start at `src/cli/operations/OpenForge.Cli.Operations/`.
@@ -75,7 +75,12 @@ D uses C's record service and B's config service.
 D applies one planned removal or config change at a time and publishes the complete remaining receipt set through C before starting the next change.
 A, B and C return pending backup completions to D.
 D completes them only after final verification and publication, or keeps them after failure.
-The integrator alone edits central command registration and shared models.
+The assigned central integrator alone edits command registration.
+The mastermind alone edits shared models.
+After C's records commit, C can receive the central integration task on the checked combined base.
+F keeps `ToolHomes/**` while C uses its stable provider API.
+The [native config reader](tool-setup.md#native-config-reader) changes only that private provider.
+This split lets the two disjoint tasks proceed together without two writers on one file.
 No lane implements a substitute for a frozen interface.
 
 For C and D, matching Rendering and OutputText leaf files belong to that leaf's lane.

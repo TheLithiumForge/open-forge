@@ -57,7 +57,7 @@ Tools add no workspace state, lease or recovery dependency under `.open-forge-st
 ## Checkpoint
 
 Done: Recorded C1 through C7 and committed the frozen packets in 2e517348e. Created five isolated worktrees and verified all five initial workers alive after dispatch.
-Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. The catalogue and final planning interfaces are integrated. C is committed and D has commit authorization. A finishes channel checks and B fixes Gitignore coverage. F checks its home provider against the latest interfaces. Core command integration is pending.
+Now: Task 90 “Tool setup” (phase 3/3): milestone 3/7. The catalogue and records are integrated. The provider base and bounded reader contract are staged and checked. A and B finalize their commits. D adds early catalogue validation before its lazy factory. Core command registration is pending.
 Next: Review the complete implementation candidates, commit and integrate their branches, then complete E's journeys and docs.
 Blocker: No implementation blocker after this contract increment. The first shipping Open Forge version is asked of the maintainer.
 
@@ -328,3 +328,35 @@ Its include precedence already matches the provider.
 E investigates an ordinary compatible parser in `r_70a2ecb5dfbd` before a separate dependency choice.
 The mastermind can make the smallest reversible choice under the user's direction and records it as a maintainer question.
 No custom parser, include resolver or dependency is added by the current provider slice.
+
+## Provider integration
+
+F's checked intermediate provider is committed as `3afe9b3ed29cba34aca4fbe1452ae36e073d358e` in `r_fc1ae7358727`.
+Its latest ABI pass has 26 affected tests, a clean build and both .NET checks. The earlier 49-case receipt still applies.
+The staged combined merge passes a clean build, all 49 provider cases and twelve documentation cases.
+Both .NET checks pass again on the combined source before its merge commit.
+The original proposal patch keeps its checked SHA-256 and required unified-diff context spaces. Git whitespace checking covers the other files.
+
+The two package readers checked by E don't match native validation or duplicate handling.
+Under the user's delegated choice, I1 uses a private read-only C# port of CBM's tagged grammar and selected-path lookup.
+The technical design records its exact scope, tests, replacement condition and maintainer question.
+E's source and licence plan is from `r_0a42fc165fa0`; its report commit continuation is `r_4a4930c295f5`.
+F implements after the dated contract and its base provider merge.
+Root keeps the native licence notice before shipping derived code.
+
+The new [central integration packet](../tool-setup/packets/lane-c-root.md) transfers command registration to C on the checked core base.
+F keeps the private provider and parser files, while A keeps process, network and PATH hosts.
+This lets central wiring and the native-reader correction proceed in separate files.
+
+## Final core returns
+
+A's `r_021ff77a91c8` return has 191 passing focused tests, a clean build and both .NET checks.
+Corepack read overlays, bounded metadata and PATH backup handles were checked.
+Commit continuation is `r_e916c0ac6394`.
+B's `r_96829394863e` closes E-B1 and E-B2 with 69 affected tests and clean gates.
+Its owned Git preview checks candidate coverage and conflicts without changing an unterminated negation.
+Commit continuation `r_73f2e23f0951` also replaces repeated ignore filenames in those tests with the mechanism's constant.
+
+D-R5 passes 38 binding cases, including 24 factory-lifecycle cases.
+D-R6 adds pure catalogue validation so unknown named IDs and channels are rejected before the factory resolves homes.
+The combined correction and commit continuation is `r_576e6838e9e3`.

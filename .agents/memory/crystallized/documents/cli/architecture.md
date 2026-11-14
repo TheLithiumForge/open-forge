@@ -97,7 +97,8 @@ Root hosts process, transfer and platform PATH capabilities.
 Tools run directly through their own commands after setup.
 Tool writers don't use workspace leases or recovery state, because Open Forge commands don't run concurrently by design.
 The committed lock holds additive change records. Native previous account values and paths stay in user state.
-This phase changes contracts and compile-only shapes. Command implementations follow in supervised lanes.
+Implementation proceeds in supervised lanes.
+Root checks native client paths before effects. The design's [native config reader](technical-designs/tool-setup.md#native-config-reader) records the bounded read-only format adapter and its replacement condition.
 
 ## Layer Model
 

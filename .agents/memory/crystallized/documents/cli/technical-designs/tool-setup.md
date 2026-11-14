@@ -324,6 +324,29 @@ The real Windows journey uses `--yes` project-only removal.
 Upstream confirmed uninstall writes persistent user PATH, so it stays outside that real journey.
 These inputs add no command flag or production test mode.
 
+### Native config reader
+
+CBM reads OpenClaw workspace paths from JSON-like configuration that includes JSON5 syntax.
+Root needs the same read behavior to check native output paths before effects.
+The BCL JSON reader rejects supported input.
+The two checked package readers lose duplicate members or accept input that CBM rejects.
+
+We use a bounded C# port of CBM `v0.12.1`'s read-only validation and path lookup.
+The source is [CBM's JSON-like reader](https://github.com/DeusData/codebase-memory-mcp/blob/v0.12.1/src/cli/config_json_like.c).
+Keep its licence and source notice with the port.
+Validate the complete UTF-8 object, then read `agents.defaults.workspace` and root `$include` with the native ambiguity rules.
+Validate and skip unrelated values without converting their numbers.
+Treat a zero-length file as missing.
+Keep native workspace, include, environment and profile precedence.
+The reader adds no writer, include expansion, runtime, package or public parser API.
+It stays private to Root's native client-path resolution.
+
+This is the smallest complete format adapter after the ordinary readers failed.
+Focused tests cover native syntax families, invalid complete documents, ambiguous path members, empty input and fallback precedence.
+CI checks Native AOT through the normal Root build.
+Recheck the port with each CBM profile review.
+Replace it with an ordinary reader when one supports the required behavior.
+
 ## Decisions
 
 The maintainer's 14 November 2026 `of-tool-setup-decisions-2.md` is the detailed source.
@@ -363,3 +386,16 @@ These answers override the earlier R2-07 interpretation and per-project native-s
 | C7  | 2026-11-14 | Project Remove keeps account-wide native settings, reports them and prints native change commands. No per-project restoration or cross-project registry                                                         |
 
 Old #26 and #30 branches are copy sources, not the current design.
+
+## Implementation choices
+
+The mastermind makes these reversible choices under the maintainer's instruction to continue and record questions:
+
+| ID  | Date       | Choice                                                                                                                                                                                                   |
+| --- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| I1  | 2026-11-14 | Port only CBM's read-only JSON-like validation and path lookup for Root's OpenClaw paths after the BCL and two package readers fail native compatibility. Keep the adapter bounded and add no dependency |
+
+## Not decided yet
+
+- Should we keep the bounded native-reader port as the V1 format adapter?
+- Should the catalogue's minimum Open Forge version be `0.9.0-beta.19`?
