@@ -40,8 +40,10 @@ Details:
   and private Node bytes stay while any workspace references them.
   Inspect shows resolved paths or why they are unavailable. Status diagnoses
   without repairing.
-  Tools never self-update. Telemetry defaults off with a visible per-tool opt-in
-  and appears in Inspect.
+  Tools never self-update. The tools.<id>.telemetry boolean defaults to false.
+  Inspect shows the saved choice or unavailable.
+  Status reports drift for an active tool when that choice differs from its
+  configured receipt. Pending writers apply the choice.
   Planned writes: The five write commands are pending. Install downloads
   verified official artifacts and runs the pinned tool's installer.
   Repeating Install verifies and repairs bytes and reruns that installer.

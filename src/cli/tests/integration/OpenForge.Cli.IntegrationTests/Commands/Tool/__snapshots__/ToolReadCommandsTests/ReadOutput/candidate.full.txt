@@ -159,6 +159,7 @@ fixture-tool 1.0.0  <native-target>
     "accuracy": "pending"
   }
 }
+Telemetry setting: off
   The exact definition is not reviewed by this CLI release.
   artifact-hash
   installed-files

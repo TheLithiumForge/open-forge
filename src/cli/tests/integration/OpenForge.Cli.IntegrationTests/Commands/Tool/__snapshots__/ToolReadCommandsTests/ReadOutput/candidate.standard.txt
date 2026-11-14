@@ -3,6 +3,7 @@ Workspace: <workspace>
   Error  fixture-tool  Tool observation
          The exact definition is not reviewed by this CLI release.
 fixture-tool 1.0.0  <native-target>
+Telemetry setting: off
   The exact definition is not reviewed by this CLI release.
   artifact-hash
   installed-files

@@ -42,7 +42,7 @@ Node tools use a private pinned portable archive from `https://nodejs.org/dist/v
 
 Missing pins, incomplete locks, unsafe archives, size or digest mismatches, failed required signature or attestation checks and missing consent block installation. The [admission checklist](../.agents/memory/crystallized/documents/maintenance/tools.md) explains how new recipes and pins are reviewed.
 
-Tools never self-update. Update checks stay disabled. Telemetry defaults off, Inspect shows its effective setting and the visible per-tool setting lets you turn it on or off.
+Tools never self-update. Update checks stay disabled. Telemetry defaults off. Set `tools.<id>.telemetry` in `.agents/open-forge.json` to `true` to opt in or `false` to opt out. Omission means `false`. Inspect shows the saved choice, or unavailable when settings cannot be read. Status reports drift for an active tool when the choice differs from its configured receipt. Settings edits alone change no running tool. The pending writers apply the choice through the reviewed tool profile.
 
 JSON and YAML definitions follow the [manifest schema](../schemas/tools/v1/manifest.schema.json). A [catalogue](../schemas/tools/v1/catalogue.schema.json) lists exact manifest hashes and one default pin per tool. Local sources select reviewed definitions and never load adapter code.
 

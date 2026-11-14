@@ -75,7 +75,7 @@ Running Install again on the same pin re-verifies its bytes, restores missing or
 
 ## Process settings
 
-Tools never self-update. Every supplied launch disables update checks according to its reviewed profile. Telemetry defaults off and Inspect shows the effective setting. The visible per-tool settings entry lets you opt in and turn it off again. The installer and later launch instructions use that choice. A recipe can't silently force telemetry on or silently replace an opt-in with off. Watching and index policy keep their separate controls.
+Tools never self-update. Every supplied launch disables update checks according to its reviewed profile. Telemetry defaults off and Inspect shows the saved choice. If settings cannot be read, the choice is unavailable. The visible `tools.<id>.telemetry` boolean lets you opt in and turn it off again. Omission means `false`. The receipt records the applied choice, so active-tool Status can report drift after a settings edit. The installer and later launch instructions use that choice. A recipe can't silently force telemetry on or silently replace an opt-in with off. Watching and index policy keep their separate controls.
 
 ## Host members
 

@@ -197,6 +197,7 @@
     },
     "target": "<native-target>",
     "installed": null,
+    "telemetry": false,
     "requirements": [
       "The exact definition is not reviewed by this CLI release.",
       "artifact-hash",

@@ -23,6 +23,7 @@ internal sealed record ToolInspectResult : ICliCommandResult
     public JsonElement? Definition { get; init; }
     public string Target { get; init; } = "unknown";
     public ToolInstalledFact? Installed { get; init; }
+    public bool? Telemetry { get; init; }
     public string[] Requirements { get; init; } = [];
     public string[] Limitations { get; init; } = [];
     public ToolInstruction Instructions { get; init; } = new(null, null, null, null, "The selected definition is unavailable.");

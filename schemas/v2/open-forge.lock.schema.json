@@ -300,6 +300,11 @@
             "type": "string"
           },
           "uniqueItems": true
+        },
+        "telemetry": {
+          "type": "boolean",
+          "default": false,
+          "description": "Telemetry choice applied by the recorded configuration. Omission means off."
         }
       }
     },

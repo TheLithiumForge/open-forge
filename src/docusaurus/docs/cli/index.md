@@ -15,7 +15,7 @@ Commands follow the [context folder chosen at installation](../getting-started/i
 
 ## Start with these commands
 
-The [external tool commands](tools.md) read definitions and recorded installs through `tool list`, `tool inspect` and `tool status`. Writers and concrete adapters are pending. The decided supply model downloads verified official artifacts and uses tool-owned installers for agent configuration. Node tools use a private pinned runtime and frozen npm lock. Tools never self-update and telemetry defaults off with a visible opt-in. Same-pin Install repairs bytes and reruns the installer. Tool Exec is proposed only.
+The [external tool commands](tools.md) read definitions and recorded installs through `tool list`, `tool inspect` and `tool status`. Writers and concrete adapters are pending. The decided supply model downloads verified official artifacts and uses tool-owned installers for agent configuration. Node tools use a private pinned runtime and frozen npm lock. Tools never self-update and the visible `tools.<id>.telemetry` setting defaults to `false`. Same-pin Install repairs bytes and reruns the installer. Tool Exec is proposed only.
 
 | When you want to                               | Run                                                   |
 | ---------------------------------------------- | ----------------------------------------------------- |

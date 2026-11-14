@@ -14,6 +14,22 @@ namespace OpenForge.Cli.Core.UnitTests.Framework.Tools;
 [Trait("Feature", "tool-records"), Trait("Evidence", "Unit")]
 public sealed class ToolReceiptTests
 {
+    [Theory(DisplayName = "Tool receipts keep the applied telemetry choice and default older receipts to off")]
+    [InlineData(null, false), InlineData(false, false), InlineData(true, true)]
+    public void KeepsAppliedTelemetry(bool? recorded, bool expected)
+    {
+        var document = WorkspaceOwnershipDocument.Empty with
+        { Tools = ImmutableDictionary<string, ToolReceipt>.Empty.Add(ToolFixtureSource.Id, Receipt() with { Telemetry = recorded ?? false }) };
+        var root = JsonNode.Parse(WorkspaceOwnershipCodec.Write(document))?.AsObject() ?? throw new InvalidDataException();
+        if (recorded is null)
+        {
+            var tool = Assert.IsType<JsonObject>(root[JsonNamingPolicy.CamelCase.ConvertName(nameof(WorkspaceOwnershipDocument.Tools))]?[ToolFixtureSource.Id]);
+            tool.Remove(JsonNamingPolicy.CamelCase.ConvertName(nameof(ToolReceipt.Telemetry)));
+        }
+        var read = Assert.IsType<WorkspaceOwnershipDocument>(WorkspaceOwnershipCodec.Read(Encoding.UTF8.GetBytes(root.ToJsonString())).Document);
+        Assert.Equal(expected, read.Tools[ToolFixtureSource.Id].Telemetry);
+    }
+
     [Fact(DisplayName = "Workspace tool receipts hold store references and reject physical binding coordinates")]
     public void KeepsPhysicalBindingsOutsideWorkspaceLock()
     {

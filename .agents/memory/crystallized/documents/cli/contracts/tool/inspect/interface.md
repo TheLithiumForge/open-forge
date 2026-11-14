@@ -7,7 +7,7 @@ open-forge:
 # tool inspect interface
 `tool inspect` is a read command that explains one exact tool definition without launching it.
 
-It shows artifacts, destinations, runtime, processes, consent, compatibility, trust limits and readable installed facts. Show official sources, pinned hashes, signature and attestation requirements and the effective telemetry choice. Show resolved install, private runtime, cache, state and workspace paths, or a cause when unavailable. Candidate definitions can be examined without being enabled. There is no separate open-path command.
+It shows artifacts, destinations, runtime, processes, consent, compatibility, trust limits and readable installed facts. Show official sources, pinned hashes, signature and attestation requirements and the saved telemetry choice. Show resolved install, private runtime, cache, state and workspace paths, or a cause when unavailable. Candidate definitions can be examined without being enabled. There is no separate open-path command.
 
 Status: V1 core contract decided.
 
@@ -25,7 +25,7 @@ Use the selected source's default pin unless `--tool-version` gives an exact lis
 
 ## Result
 
-Required `data` fields are `id`, `definition`, `target`, `installed`, `requirements`, `limitations` and `instructions`. `installed` is null only when no install is recorded. Instructions are resolved external command, argument and environment records when the required facts are available. Unavailable values have a cause and aren't invented paths.
+Required `data` fields are `id`, `definition`, `target`, `installed`, `telemetry`, `requirements`, `limitations` and `instructions`. `installed` is null only when no install is recorded. `telemetry` is the saved boolean choice, defaulting to `false`, or null when settings cannot be read. Instructions are resolved external command, argument and environment records when the required facts are available. Unavailable values have a cause and aren't invented paths.
 
 Malformed IDs, unknown IDs and absent exact versions are `invalid-input`. Unreadable required source bytes give `incomplete`. A well-formed unreviewed tuple or unavailable adapter revision is `blocked`, exit 5, while readable definition facts stay in the result. A release-supported candidate can complete inspection while reporting its pending activation tests. Shared exits, streams and schema 3 stay unchanged.
 

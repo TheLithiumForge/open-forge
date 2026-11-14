@@ -177,11 +177,7 @@ public sealed class ToolReadCommandsTests
     public async Task ReadOutput()
     {
         using var workspace = TemporaryWorkspace.Create("tool-read-output");
-        var manifest = ToolFixtureSource.Manifest();
-        var targets = Assert.IsType<JsonObject>(manifest["targets"]);
-        var available = targets.First(pair => pair.Value?["state"]?.GetValue<string>() == "available").Value;
-        Assert.NotNull(available);
-        foreach (var target in targets.Select(pair => pair.Key).ToArray()) targets[target] = available.DeepClone();
+        var manifest = ToolFixtureSource.ManifestForAllTargets();
         workspace.WriteText(ToolFixtureSource.ManifestName, manifest.ToJsonString());
         var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
         var before = workspace.SnapshotHashes();

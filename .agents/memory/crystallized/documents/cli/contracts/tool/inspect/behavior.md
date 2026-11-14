@@ -19,7 +19,7 @@ The operation follows these steps:
 2. Read the exact source and validate its bytes, schema and identities.
 3. Resolve the default or requested exact definition without merging or fallback.
 4. Report the current native target and the definition's compatibility and activation requirements.
-5. Read independently available installed settings and lock details.
+5. Read independently available installed settings and lock details. Report the saved telemetry choice, defaulting to off when omitted. If settings are unreadable, report the choice as unavailable.
 6. Form one result with artifacts, destinations, process policy, limits and external instructions.
 
 ## Limits

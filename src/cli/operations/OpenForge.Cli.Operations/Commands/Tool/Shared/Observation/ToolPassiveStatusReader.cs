@@ -60,8 +60,9 @@ internal static class ToolPassiveStatusReader
         {
             var setting = settings.Tools[row.Id];
             if (setting.CodeRoot is { } codeRoot && codeRoot != receipt.CodeRoot
-                || setting.Hosts is { } hosts && !hosts.Order(StringComparer.Ordinal).SequenceEqual(receipt.Hosts.Order(StringComparer.Ordinal)))
-                configuration = new(ToolEvidenceState.Drifted, "The settings root or hosts differ from the receipt.");
+                || setting.Hosts is { } hosts && !hosts.Order(StringComparer.Ordinal).SequenceEqual(receipt.Hosts.Order(StringComparer.Ordinal))
+                || setting.Telemetry != receipt.Telemetry)
+                configuration = new(ToolEvidenceState.Drifted, "The settings root, hosts or telemetry choice differ from the receipt.");
         }
 
         var guidance = new ToolObservation(ToolEvidenceState.Inactive);

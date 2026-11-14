@@ -26,7 +26,7 @@ Write commands preview the same plan with `--dry-run`. `--automatic` gives final
 
 Open Forge distributes reviewed recipes and never ships, mirrors or rehosts tool bytes. Native assets come from the project's own GitHub release with pinned SHA-256 and build-attestation evidence where published. Node tools use official portable archives, pinned from signed checksums, and a private versioned runtime. The bundled npm runs `npm ci` from a complete pinned registry lock. Your own Node and PATH stay unchanged. musl/Alpine has no official Node build.
 
-A source, size, hash, required signature or attestation mismatch blocks installation. Tools never self-update. Telemetry defaults off with a visible per-tool opt-in and appears in Inspect.
+A source, size, hash, required signature or attestation mismatch blocks installation. Tools never self-update. The `tools.<id>.telemetry` setting defaults to `false`. Set it to `true` to opt in. Inspect shows the saved choice, or unavailable if settings cannot be read. Status reports drift for an active tool when that choice differs from its configured receipt. The pending writers apply settings through the reviewed tool profile.
 
 ## Workspace records
 

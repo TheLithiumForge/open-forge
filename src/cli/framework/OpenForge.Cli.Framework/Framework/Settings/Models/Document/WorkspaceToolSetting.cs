@@ -9,4 +9,5 @@ internal sealed record WorkspaceToolSetting
     public required string[] Roles { get; init; }
     public string[]? Hosts { get; init; }
     public string? CodeRoot { get; init; }
+    public bool Telemetry { get; init; }
 }

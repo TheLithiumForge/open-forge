@@ -36,7 +36,7 @@ Install and Update need separate `--allow-download` consent for exact transfer d
 
 Open Forge distributes recipes and never ships, mirrors or rehosts tool bytes. Native tools download exact official GitHub release assets with pinned version, URL, size, SHA-256, source commit and build-attestation evidence where published. Node tools use a private official portable runtime pinned from signed `SHASUMS256.txt`. The bundled npm runs `npm ci` from the definition's complete pinned registry lock with integrity hashes and package scripts disabled. Every command and registration names absolute private Node and package paths. Never substitute the user's Node. musl/Alpine has no official Node build.
 
-Missing pins or closure, unsafe archives, size or hash mismatches, failed required signature or attestation checks and missing consent block installation. Upstream license conditions still apply. Tools never self-update. Telemetry defaults off with a visible per-tool opt-in and is shown in Inspect.
+Missing pins or closure, unsafe archives, size or hash mismatches, failed required signature or attestation checks and missing consent block installation. Upstream license conditions still apply. Tools never self-update. The `tools.<id>.telemetry` boolean defaults to `false`. Set it to `true` to opt in or `false` to opt out. Inspect shows the saved choice, or unavailable if settings cannot be read. Status reports drift for an active tool when that choice differs from its configured receipt. Settings edits alone change no running tool. The pending writers apply the choice through the reviewed tool profile.
 
 ## Records
 

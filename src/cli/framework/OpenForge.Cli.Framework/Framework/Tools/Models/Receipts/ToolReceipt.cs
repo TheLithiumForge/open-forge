@@ -19,4 +19,5 @@ internal sealed record ToolReceipt
     public required ToolDirectoryReceipt[] RuntimeDirectories { get; init; }
     public required Dictionary<string, string> NativeProjects { get; init; }
     public string[] IgnorePaths { get; init; } = [];
+    public bool Telemetry { get; init; }
 }

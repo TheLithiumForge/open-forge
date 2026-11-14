@@ -1,0 +1,19 @@
+Read the selected tool definition and its requirements.
+Workspace: <workspace>
+  Error  fixture-tool  Tool observation
+         The exact definition is not reviewed by this CLI release.
+  Warning  <workspace>/.agents/open-forge.json  Tool observation
+         Expected depth to be zero at the end of the JSON payload. There is an open JSON object or array that should be closed. LineNumber: 0 | BytePositionInLine: 1.
+fixture-tool 1.0.0  <native-target>
+Telemetry setting: unavailable
+  The exact definition is not reviewed by this CLI release.
+  artifact-hash
+  installed-files
+  host-members
+  process-policy
+  usage-skill
+  Test-only definition
+External instructions unavailable: A verified installation and local store
+bindings are needed to resolve external commands.
+1 errors, 1 warnings.
+Next: open-forge tool inspect --help

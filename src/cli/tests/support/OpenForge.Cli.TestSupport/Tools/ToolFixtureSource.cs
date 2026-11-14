@@ -13,6 +13,16 @@ public static class ToolFixtureSource
     public static byte[] ArtifactBytes() => Read(ArtifactName);
     public static JsonObject Manifest() => JsonNode.Parse(ManifestBytes())?.AsObject() ?? throw new InvalidDataException("The fixture manifest is missing.");
 
+    public static JsonObject ManifestForAllTargets()
+    {
+        var manifest = Manifest();
+        var targets = manifest["targets"]?.AsObject() ?? throw new InvalidDataException("The fixture targets are missing.");
+        var available = targets.First(pair => pair.Value?["state"]?.GetValue<string>() == "available").Value
+            ?? throw new InvalidDataException("The fixture has no available target.");
+        foreach (var target in targets.Select(pair => pair.Key).ToArray()) targets[target] = available.DeepClone();
+        return manifest;
+    }
+
     private static byte[] Read(string name)
     {
         using var source = typeof(ToolFixtureSource).Assembly.GetManifestResourceStream($"OpenForge.Tests.ToolFixture/{name}")

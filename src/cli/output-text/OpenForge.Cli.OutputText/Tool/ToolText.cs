@@ -27,7 +27,8 @@ public static class ToolText
         Settings record one pin per tool and active roles. The lock keeps recipe snapshots, hashes, files, references and command results.
         Physical store bindings and process consent stay account-local. Versioned tool and private Node bytes stay while any workspace references them.
         Inspect shows resolved paths or why they are unavailable. Status diagnoses without repairing.
-        Tools never self-update. Telemetry defaults off with a visible per-tool opt-in and appears in Inspect.
+        Tools never self-update. The tools.<id>.telemetry boolean defaults to false. Inspect shows the saved choice or unavailable.
+        Status reports drift for an active tool when that choice differs from its configured receipt. Pending writers apply the choice.
         """;
     public static string WriterHeading() => "Planned writes";
     public static string WriterDetails() => """
@@ -68,4 +69,10 @@ public static class ToolText
     public static string Limits() => "Limits";
     public static string DefinitionUnavailable() => "The selected definition is unavailable.";
     public static string InstructionsUnavailable(string cause) => "External instructions unavailable: " + cause;
+    public static string TelemetryChoice(bool? enabled) => enabled switch
+    {
+        true => "Telemetry setting: on",
+        false => "Telemetry setting: off",
+        null => "Telemetry setting: unavailable",
+    };
 }

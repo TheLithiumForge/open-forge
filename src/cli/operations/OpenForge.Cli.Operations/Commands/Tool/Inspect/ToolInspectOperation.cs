@@ -72,6 +72,8 @@ internal sealed class ToolInspectOperation(ToolCatalogueReader reader)
             Definition = manifest is null ? null : JsonSerializer.SerializeToElement(manifest, ToolJsonContext.Default.ToolManifest),
             Target = ToolNativeTarget.Current,
             Installed = Installed(workspace, request.Id),
+            Telemetry = workspace.Coverage[0].State == ToolEvidenceState.Unavailable
+                ? null : workspace.Settings.Document.Tools.GetValueOrDefault(request.Id)?.Telemetry ?? false,
             Requirements = [.. requirements],
             Limitations = manifest is null ? [] : [manifest.Runtime.Notes, manifest.Index.Freshness, manifest.Qualification.Accuracy],
             Instructions = new(null, null, null, null, "A verified installation and local store bindings are needed to resolve external commands."),
