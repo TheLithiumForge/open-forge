@@ -81,7 +81,7 @@ internal static class StrippingDefinitions
     internal static string FindingCode(StripCommandKind kind, StripFindingCode code)
         => $"{CommandIdentity(kind)}.{FindingSuffix(code)}";
 
-    private static string FindingSuffix(StripFindingCode code)
+    internal static string FindingSuffix(StripFindingCode code)
         => code switch
         {
             StripFindingCode.InvalidInput => "invalid-input",

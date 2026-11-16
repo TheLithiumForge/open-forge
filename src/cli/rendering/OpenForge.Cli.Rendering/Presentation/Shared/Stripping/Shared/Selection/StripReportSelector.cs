@@ -115,12 +115,24 @@ internal static class StripReportSelector
             LockFailure = finding.LockFailure,
             Title = finding.LockFailure is not null
                 ? global::OpenForge.Cli.OutputText.Shared.SharedText.TitleWorkspaceLockIsUnavailable()
-                : finding.Message,
+                : StripText.FindingTitle(StrippingDefinitions.FindingSuffix(finding.Code)),
             Message = finding.LockFailure is { } lockFailure ? CliFindingWording.WorkspaceLockUnavailable(lockFailure) : finding.Message,
-            Subject = finding.Path is { } path ? new CliSubject(CliSubjectKind.File, Path: path) : new CliSubject(CliSubjectKind.Workspace, Path: result.WorkspacePath),
+            Subject = Subject(result, finding),
             Resolution = Resolution(finding, actions),
             Actions = actions,
         };
+    }
+
+    private static CliSubject Subject(StripResult result, StripFinding finding)
+    {
+        if (finding.Path is { } path)
+        {
+            return new CliSubject(CliSubjectKind.File, Path: path);
+        }
+
+        return result.WorkspacePath is { } workspace
+            ? new CliSubject(CliSubjectKind.Workspace, Path: workspace)
+            : new CliSubject(CliSubjectKind.Identifier, Id: result.Command);
     }
 
     private static CliResolution Resolution(StripFinding finding, IReadOnlyList<CliNextAction> actions)

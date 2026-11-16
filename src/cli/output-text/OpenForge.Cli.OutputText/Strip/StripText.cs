@@ -7,32 +7,43 @@ internal static class StripText
         open-forge strip links --dry-run
         open-forge strip metadata,entries --automatic
         open-forge strip --flatten docs --dry-run --format json
-        open-forge strip metadata entries links --flatten docs --automatic
         """;
     internal static string HelpBehavior() => """
         Strip edits the Markdown files below the main root, the native Skills folder
-        and each registered outside route. The Framework stays installed.
-        Every other byte stays exactly as it was.
+        and each registered outside route. Files Open Forge manages stay unchanged,
+        so the Framework keeps working. Every other byte stays exactly as it was.
         Preview with --dry-run. Applying asks first unless you add --automatic.
         """;
-    internal static string HelpParts() => """
-        metadata  Remove Open Forge frontmatter keys. Other keys and the body stay.
-        entries   Remove the generated Entries section. Text you wrote there stays.
-        links     Turn links to documents into their text. External links, images,
-                  links to other files, code and comment links stay.
-        """;
-    internal static string HelpFlatten() => """
-        --flatten moves each document below the folder's subfolders into the folder.
-        Entrypoints and SKILL.md files stay. Kept links are rewritten so they still work.
-        A name that two files would share stops the run before any write.
-        """;
+    internal static string HelpParts() => "metadata removes Open Forge frontmatter keys and keeps other keys and the body. entries removes the generated Entries section and keeps text you wrote there. links turns links to documents into their text, and keeps external links, images, links to other files, code, comment links and Entries lists.";
+    internal static string HelpFlatten() => "--flatten moves each document below the folder's subfolders into the folder itself. Entrypoints and SKILL.md files stay, and kept links are rewritten so they still work. A name two files would share stops the run before any write.";
     internal static IReadOnlyList<(string Label, string? Description)> HelpRelated()
-        => [("open-forge uninstall --help", "Remove Open Forge and optionally strip what remains"), ("open-forge index --help", "Refresh generated navigation")];
+        => [("open-forge uninstall --help", "Remove Open Forge and strip what stays"), ("open-forge index --help", "Refresh generated navigation")];
 
     internal static string Preview(int changes) => changes == 1 ? "Would change 1 file." : $"Would change {changes} files.";
     internal static string Done(int changes) => changes == 1 ? "Changed 1 file." : $"Changed {changes} files.";
     internal static string NothingToDo() => "Nothing to strip.";
     internal static string Failure(string cause) => cause;
+    internal static string FindingTitle(string code) => code switch
+    {
+        "invalid-input" => "Input is invalid",
+        "workspace-unavailable" => "Workspace cannot be read",
+        "document-unsupported" => "Document cannot be edited safely",
+        "flatten-collision" => "Flattened names collide",
+        "linked-file-skipped" => "Link left unchanged",
+        "target-changed" => "File changed after the preview",
+        "confirmation-required" => "Confirmation is required",
+        "permission-declined" => "Plan was not confirmed",
+        "recovery-unavailable" => "Recovery data is unavailable",
+        "write-failed" => "A planned change failed",
+        "recovery-artifact-retained" => "Recovery bundle was kept",
+        "interrupted" => "Run was cancelled",
+        "ownership-unavailable" => "Ownership lock cannot be read",
+        "library-attached" => "A Library is attached",
+        "target-unavailable" => "Managed file cannot be compared",
+        "edited-kept" => "Edited file stays",
+        "runtime-retained" => "Runtime folder stays",
+        _ => "Strip finding",
+    };
     internal static string KeptHeading() => "Kept:";
     internal static string CollisionsHeading() => "Collisions:";
     internal static string LinkedHeading() => "Skipped links:";

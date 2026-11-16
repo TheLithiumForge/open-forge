@@ -5,10 +5,8 @@ internal static class UninstallText
     internal static string HelpSyntax() => "open-forge uninstall [--strip <parts>]... [--flatten <folder>] [--remove-edited <path>]... [--dry-run] [--automatic]";
     internal static string HelpExamples() => """
         open-forge uninstall --dry-run
-        open-forge uninstall --automatic
         open-forge uninstall --strip metadata,entries,links --automatic
-        open-forge uninstall --strip metadata,entries,links --flatten docs --automatic
-        open-forge uninstall --remove-edited .agents/loader.md --dry-run --format json
+        open-forge uninstall --strip metadata,links --flatten docs --automatic
         """;
     internal static string HelpBehavior() => """
         Uninstall deletes the Framework and Extension files that still match what
@@ -17,11 +15,7 @@ internal static class UninstallText
         Files you wrote stay. Managed files you edited stay unless you name them.
         Preview with --dry-run. Applying asks first unless you add --automatic.
         """;
-    internal static string HelpKept() => """
-        Edited managed files and sections are listed as kept. Name one with
-        --remove-edited to remove it anyway. Your own text in AGENTS.md and
-        CLAUDE.md stays, and Git-ignore rules stay. Detach Libraries first.
-        """;
+    internal static string HelpKept() => "Edited managed files and sections are listed as kept. Name one with --remove-edited to remove it anyway. Your own text in AGENTS.md and CLAUDE.md stays, and Git-ignore rules stay. Detach Libraries first.";
     internal static IReadOnlyList<(string Label, string? Description)> HelpRelated()
         => [("open-forge strip --help", "Strip documents without uninstalling"), ("open-forge status --help", "See which managed files you edited")];
 
