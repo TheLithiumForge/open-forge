@@ -105,8 +105,9 @@ internal sealed partial class ToolCompositionFixture : IDisposable
     internal string[] Backups() => Directory.GetFiles(_owned.Path, "*" + ToolBackupPaths.Suffix, SearchOption.AllDirectories);
     internal static JsonElement Field(JsonElement value, string member) => value.GetProperty(JsonNamingPolicy.CamelCase.ConvertName(member));
     internal static CliProcessIdentity Identity => new(CliSyntaxDefinitions.ExecutableName, CliBuildVersion.InformationalVersion);
-    internal ToolRecordService RecordService(ToolCatalogue? catalogue = null)
-        => new(catalogue ?? Catalogue, ToolHostFactory.CreateVersions(), new ToolBackupService(this));
+    // Backups are operation-scoped, so a caller that completes them passes the service that prepared them.
+    internal ToolRecordService RecordService(ToolCatalogue? catalogue = null, ToolBackupService? backups = null)
+        => new(catalogue ?? Catalogue, ToolHostFactory.CreateVersions(), backups ?? new ToolBackupService(this));
 
     internal CliToolComposition Compose(CliCompositionInputs inputs)
         => CliToolComposer.Compose(CliCompositionRoot.CreateInteraction(inputs), Catalogue, inputs.Tools);

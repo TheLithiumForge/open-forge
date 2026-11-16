@@ -125,7 +125,8 @@ public sealed class ToolWriteAdherenceIntegrationTests
     {
         using var fixture = new ToolCompositionFixture { Missing = true, AllowSyntheticDownload = true };
         Assert.Equal(0, (await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--format", "json"])).ExitCode);
-        var records = fixture.RecordService();
+        var backups = new ToolBackupService(fixture);
+        var records = fixture.RecordService(backups: backups);
         var locations = new Core.Framework.Tools.Models.Services.ToolRecordsRequest(fixture.Workspace, fixture.Home);
         var before = await records.ReadAsync(locations, Token);
         var selected = Runtime("22.1.0");
@@ -161,7 +162,6 @@ public sealed class ToolWriteAdherenceIntegrationTests
             Path = path,
         }, Token);
         Assert.Null(written.Failure);
-        var backups = new ToolBackupService(fixture);
         foreach (var backup in written.PendingBackups) Assert.Null((await backups.CompleteAsync(backup, Token)).Failure);
         fixture.Events.Clear();
         var run = await fixture.RunAsync(["tool", "remove", ToolCompositionFixture.FirstId], "y\n1\n2\n2\n2\n");
