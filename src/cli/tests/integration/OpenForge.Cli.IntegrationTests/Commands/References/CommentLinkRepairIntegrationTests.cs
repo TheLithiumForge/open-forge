@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
@@ -28,6 +29,7 @@ public sealed class CommentLinkRepairIntegrationTests
 {
     private const string CodePath = "src/Order.cs";
     private const string OldFragment = "rule";
+    private const int HistoryReadAttempts = 3;
     private static string GuidePath => $"{WorkspaceLayout.DefaultMainRoot}/docs/guide.md";
     private static string NewGuidePath => $"{WorkspaceLayout.DefaultMainRoot}/docs/new-guide.md";
 
@@ -195,11 +197,25 @@ public sealed class CommentLinkRepairIntegrationTests
 
     private static async ValueTask<LocalReferenceDoctorView> Read(RenameEvidenceGitWorkspace repository)
     {
+        // The product bounds its Git history read and reports a timeout as absent Git evidence. A loaded
+        // hosted runner can exceed that bound, and such a run proves nothing about the evidence, so read again.
         var paths = new PhysicalPathResolver();
-        var contributor = new LocalReferenceOperationalContributor(new RouteSourceInspector(new SourceReadSessionReader(paths), paths),
-            new SourceLinkDestinationResolver(paths, StrictUtf8FileReader.ReadAsync, new MarkdownDocumentParser().Parse),
-            new LocalReferenceCandidateReader(), new GitSourceLinkHistoryReader(repository.Configure).ReadAsync);
-        return await contributor.ReadDoctorAsync(repository.Workspace, TestContext.Current.CancellationToken);
+        var history = new GitSourceLinkHistoryReader(repository.Configure);
+        for (var attempt = 1; ; attempt++)
+        {
+            var timedOut = false;
+            var contributor = new LocalReferenceOperationalContributor(new RouteSourceInspector(new SourceReadSessionReader(paths), paths),
+                new SourceLinkDestinationResolver(paths, StrictUtf8FileReader.ReadAsync, new MarkdownDocumentParser().Parse),
+                new LocalReferenceCandidateReader(), async (request, token) =>
+                {
+                    var read = await history.ReadAsync(request, token);
+                    timedOut = read.TimedOut;
+                    return read;
+                });
+            var view = await contributor.ReadDoctorAsync(repository.Workspace, TestContext.Current.CancellationToken);
+            if (!timedOut) return view;
+            Assert.True(attempt < HistoryReadAttempts, "Every Git history read exceeded the product deadline.");
+        }
     }
 
     private static string Document(string body) => OpenForgeDocumentSeed.Metadata(description: "Guide", tags: ["Docs"], body: body);
