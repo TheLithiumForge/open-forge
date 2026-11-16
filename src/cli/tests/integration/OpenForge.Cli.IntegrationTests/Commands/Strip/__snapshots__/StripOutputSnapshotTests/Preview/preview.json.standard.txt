@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 3,
+  "command": "strip",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would change 3 files.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/docs/README.md",
+      "kind": "file",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": "strip",
+      "owner": null
+    },
+    {
+      "path": ".agents/docs/rules.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": "flatten",
+      "owner": null
+    },
+    {
+      "path": ".agents/docs/game/rules.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": "flatten",
+      "owner": null
+    },
+    {
+      "path": ".agents/docs/game",
+      "kind": "directory",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": "empty-folder",
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesDeleted": 0,
+    "filesRewritten": 1,
+    "filesMoved": 1,
+    "foldersDeleted": 1,
+    "filesKept": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "strip": [
+      "metadata",
+      "links"
+    ],
+    "flatten": ".agents/docs",
+    "plan": [
+      {
+        "action": "rewrite",
+        "path": ".agents/docs/README.md",
+        "reason": "strip",
+        "parts": [
+          "metadata",
+          "links"
+        ],
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "move",
+        "path": ".agents/docs/game/rules.md",
+        "to": ".agents/docs/rules.md",
+        "reason": "flatten",
+        "parts": [
+          "metadata",
+          "links"
+        ],
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "delete-directory",
+        "path": ".agents/docs/game",
+        "reason": "empty-folder",
+        "parts": [],
+        "outcome": "planned"
+      }
+    ],
+    "kept": [],
+    "collisions": [],
+    "verified": false
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge strip metadata links --flatten .agents/docs --workspace <workspace> --automatic",
+    "reason": "Apply this plan."
+  }
+}

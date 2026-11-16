@@ -1,0 +1,11 @@
+Would change 3 files.
+Workspace: <workspace>
+  rewrite          .agents/docs/README.md  (metadata, links)
+      before 1c415c08b68fa57123daf17720ae5fa0af2f52a63fedbfff4b8cfd1af2fec198  after c6f045a371eb0c43d64965ff7c7cdeb9793926ec07113775afd1ae6ed7830e45
+  move             .agents/docs/game/rules.md -> .agents/docs/rules.md  (metadata, links)
+      before cdafc9dc11867b8cd4acca9c167acd3688d70450aaa56645ed8742cdf78d5cd1  after d1d6b2445ff35da75677ec776cbe4060f49472f74bcba0cbe921700a7bd98298
+  delete-directory .agents/docs/game  (empty-folder)
+No files were changed.
+1 files rewritten, 1 files moved, 1 folders deleted.
+  Apply this plan.
+Next: open-forge strip metadata links --flatten .agents/docs --workspace <workspace> --automatic

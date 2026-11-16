@@ -1,0 +1,9 @@
+Each part must be metadata, entries or links.
+  Error  strip  Input is invalid [strip.invalid-input]
+         Each part must be metadata, entries or links.
+         use open-forge strip --help
+         open-forge strip --help
+         Correct the named input and retry.
+1 errors.
+  Correct the named input and retry.
+Next: open-forge strip --help

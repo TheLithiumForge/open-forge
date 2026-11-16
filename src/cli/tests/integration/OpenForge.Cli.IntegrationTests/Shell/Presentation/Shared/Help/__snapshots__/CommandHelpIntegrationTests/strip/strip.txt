@@ -1,0 +1,52 @@
+  Strip Open Forge metadata, generated Entries or links from routed documents,
+  or flatten them into one folder.
+
+Usage:
+  open-forge strip [<part>...] [--flatten <folder>] [--dry-run] [--automatic]
+
+Examples:
+  open-forge strip links --dry-run
+  open-forge strip metadata,entries --automatic
+  open-forge strip --flatten docs --dry-run --format json
+
+Behavior:
+  Strip edits the Markdown files below the main root, the native Skills folder
+  and each registered outside route. Files Open Forge manages stay unchanged,
+  so the Framework keeps working. Every other byte stays exactly as it was.
+  Preview with --dry-run. Applying asks first unless you add --automatic.
+
+Arguments:
+  <part>  Select metadata, entries or links. Separate several with spaces or
+          commas.
+
+Options:
+  --flatten <folder>  Move documents below this folder's subfolders into the
+                      folder itself.
+  --dry-run           List every delete, rewrite and move with hashes, without
+                      writing.
+  --automatic         Apply the plan without a confirmation prompt.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Parts: metadata removes Open Forge frontmatter keys and keeps other keys and
+  the body. entries removes the generated Entries section and keeps text you
+  wrote there. links turns links to documents into their text, and keeps
+  external links, images, links to other files, code, comment links and Entries
+  lists.
+  Flatten: --flatten moves each document below the folder's subfolders into the
+  folder itself. Entrypoints and SKILL.md files stay, and kept links are
+  rewritten so they still work. A name two files would share stops the run
+  before any write.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  open-forge uninstall --help
+      Remove Open Forge and strip what stays
+  open-forge index --help  Refresh generated navigation

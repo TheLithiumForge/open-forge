@@ -1,0 +1,7 @@
+Flattening would place 2 files at '.agents/docs/rules.md'. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/docs/rules.md  Flattened names collide
+         Flattening would place 2 files at '.agents/docs/rules.md'. Nothing was changed.
+Collisions:
+  .agents/docs/rules.md <- .agents/docs/game/rules.md, .agents/docs/other/rules.md
+1 errors.

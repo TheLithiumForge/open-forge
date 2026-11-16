@@ -1,0 +1,3 @@
+Each part must be metadata, entries or links.
+1 errors.
+Next: open-forge strip --help

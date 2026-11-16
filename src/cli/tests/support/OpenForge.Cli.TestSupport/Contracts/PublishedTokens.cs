@@ -131,6 +131,14 @@ public static class PublishedTokens
         public const string WorkspaceUnsafeCode = "install.workspace-unsafe";
     }
 
+    public static class Uninstall
+    {
+        public const string Command = "uninstall";
+        public const string Strip = "--strip";
+        public const string Automatic = "--automatic";
+        public const string MetadataPart = "metadata";
+    }
+
     public static class Index
     {
         public const string Command = "index";
