@@ -174,12 +174,16 @@ internal sealed partial class ToolCompositionFixture : IDisposable
         return json.RootElement.GetProperty(MembersPointer[1..]).EnumerateArray().Any(item => item.GetString() == id);
     }
 
-    internal string Normalize(string value) => value
+    // Windows shells quote owned paths because of their backslashes. Snapshots keep one platform-neutral form.
+    internal string Normalize(string value) => QuotedOwnedPath().Replace(value
         .Replace(JsonEncodedText.Encode(_owned.Path).ToString(), "<owned>", StringComparison.Ordinal)
         .Replace(_owned.Path, "<owned>", StringComparison.Ordinal)
         .Replace(RecordPaths.WorkspaceKey, "<workspace-key>", StringComparison.Ordinal)
         .Replace("\r\n", "\n", StringComparison.Ordinal)
-        .Replace("\\\\", "/", StringComparison.Ordinal).Replace('\\', '/');
+        .Replace("\\\\", "/", StringComparison.Ordinal).Replace('\\', '/'), "$1");
+
+    [System.Text.RegularExpressions.GeneratedRegex("'(<owned>[^'\\s]*)'")]
+    private static partial System.Text.RegularExpressions.Regex QuotedOwnedPath();
 
     public void Dispose()
     {

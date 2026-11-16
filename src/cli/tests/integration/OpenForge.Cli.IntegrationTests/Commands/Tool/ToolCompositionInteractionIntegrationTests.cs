@@ -28,7 +28,9 @@ public sealed class ToolCompositionInteractionIntegrationTests
         Assert.False(fixture.HasMember());
         Assert.Empty(fixture.Backups());
         var transcript = JsonSerializer.Serialize(fixture.Normalize(run.Prompts).Split('\n'), ToolCompositionSnapshotJsonContext.Default.StringArray);
-        CommandOutputSnapshot.MatchSnapshot(transcript, approve ? "approved.json" : "declined.json");
+        // A prompt transcript, not a command report, so it stays outside the report corpus as content.
+        CommandOutputSnapshot.MatchSnapshot(transcript, approve ? "account-approved.content" : "account-declined.content",
+            testName: nameof(ToolCompositionInteractionIntegrationTests));
     }
 
     [Theory(DisplayName = "Unattended Remove skips account uninstall and cleans only Open Forge additions"), InlineData(false), InlineData(true), Trait("Feature", "tool-composition"), Trait("Evidence", "Integration")]

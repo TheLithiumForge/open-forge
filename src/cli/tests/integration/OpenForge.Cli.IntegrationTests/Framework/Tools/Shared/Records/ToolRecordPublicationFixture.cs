@@ -18,7 +18,12 @@ internal sealed class ToolRecordPublicationFixture : IDisposable
 
     internal async Task<ToolRecordsResult> SeedAsync(bool additional = false)
     {
-        var before = await Records.Service.ReadAsync(Records.Locations, Token);
+        var observed = await Records.Service.ReadAsync(Records.Locations, Token);
+        // The reader observes absences only for catalogue IDs and runtimes. The seed's extra files are absent before it runs.
+        var absent = new Dictionary<string, string?>(observed.ExpectedFileSha256, StringComparer.Ordinal);
+        foreach (var path in new[] { Records.Paths.Runtime(ToolRecordFixture.InitialVersion), Records.Paths.Runtime(ToolRecordFixture.ChangedVersion), Records.Paths.Tool(OtherToolId) })
+            absent.TryAdd(path, null);
+        var before = observed with { ExpectedFileSha256 = absent };
         var request = Records.Write(before) with
         {
             Runtimes = [Runtime()],

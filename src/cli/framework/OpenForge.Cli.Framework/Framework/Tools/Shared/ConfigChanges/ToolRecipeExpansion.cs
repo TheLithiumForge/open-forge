@@ -85,7 +85,8 @@ internal static class ToolRecipeExpansion
             ApplyArguments = change.ApplyArguments.Select(value => Expand(value, context)).ToArray(),
             ReadArguments = change.ReadArguments?.Select(value => Expand(value, context)).ToArray(),
             ReadEnvironment = change.ReadEnvironment?.ToDictionary(pair => pair.Key, pair => pair.Value is null ? null : Expand(pair.Value, context), StringComparer.Ordinal),
-            StoredValue = change.StoredValue is { } stored ? stored with { PathTemplate = Expand(stored.PathTemplate, context) } : null,
+            // The stored reader opens this absolute path, so the plan shows it in the platform form.
+            StoredValue = change.StoredValue is { } stored ? stored with { PathTemplate = Path.GetFullPath(Expand(stored.PathTemplate, context)) } : null,
             ManualRestoreArgumentsTemplate = change.ManualRestoreArgumentsTemplate.Select(value => Expand(value, context, previous)).ToArray(),
         };
 

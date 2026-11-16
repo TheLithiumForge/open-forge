@@ -148,10 +148,13 @@ public sealed class ToolWriteAdherenceIntegrationTests
                 Applied = new() { Present = true, Kind = ToolRecordedValueKind.Bytes, Bytes = [1] },
             }],
         };
+        // The reader observes absences only for catalogue runtimes. These seeded runtime records are absent before the write.
+        var absent = new Dictionary<string, string?>(before.ExpectedFileSha256, StringComparer.Ordinal);
+        foreach (var runtime in new[] { selected, kept }) absent.TryAdd(fixture.RecordPaths.Runtime(runtime.Version), null);
         var written = await records.WriteAsync(new()
         {
             Locations = locations,
-            Expected = before,
+            Expected = before with { ExpectedFileSha256 = absent },
             Portable = before.Portable!,
             Machine = [machine],
             Runtimes = [selected, kept],

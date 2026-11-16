@@ -9,6 +9,9 @@ namespace OpenForge.Cli.IntegrationTests.Framework.Settings.Shared.Serialization
 [Trait("Feature", "workspace-settings"), Trait("Evidence", "Integration"), Trait("Boundary", "OS")]
 public sealed class WorkspaceSettingsSchemaIntegrationTests
 {
+    // Settings v5 introduced outside routes. Later versions keep them.
+    private const int OutsideRoutesSchemaVersion = 5;
+
     [Fact(DisplayName = "Outside routes have an optional v5 schema and do not alter earlier published shapes"), Trait("Boundary", "Input")]
     public void OutsideRoutesUseNewSchema()
     {
@@ -21,7 +24,7 @@ public sealed class WorkspaceSettingsSchemaIntegrationTests
         Assert.True(current.RootElement.GetProperty("additionalProperties").GetBoolean());
         Assert.False(current.RootElement.TryGetProperty("required", out var required)
             && required.EnumerateArray().Any(value => value.GetString() == WorkspaceSettingsDefinitions.OutsideRoutesProperty));
-        for (var version = 1; version < WorkspaceSettingsDefinitions.SchemaVersion; version++)
+        for (var version = 1; version < OutsideRoutesSchemaVersion; version++)
         {
             using var previous = ReadPublishedSchema(version);
             Assert.False(previous.RootElement.GetProperty("properties").TryGetProperty(WorkspaceSettingsDefinitions.OutsideRoutesProperty, out _));

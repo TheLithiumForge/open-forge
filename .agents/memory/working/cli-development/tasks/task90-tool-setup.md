@@ -749,3 +749,12 @@ The published EndToEnd journey checks Status for a missing and then an out-of-ra
 Published writer journeys aren't possible yet for two reasons.
 The real catalogue's `0.9.0-beta.19` floor blocks every writer in the current `0.9.0-beta.18` build.
 Windows resolves the published Tool home through the known profile folder, and no product home override exists.
+
+### CI at 44543cf1d
+
+The first full Integration run on this PR failed on every platform for four reasons.
+The new payload file `references/tools.md` changed Install counts and Status, Update and Route captures. Those captures were reviewed and accepted, and the count tests now derive from the payload inventory.
+Lock v2 and settings v6 broke two version literals.
+The account-choice transcript sat outside the report-snapshot conventions, so it moved to a `.content` capture under its owning class. Owned paths now normalize one shell-quoting form.
+Record-deletion fixtures seeded records the reader never observed as absent. They now add those absences.
+`OPENFORGE_TOOL_HOME` (D2) lets the published Status journey run on every system.
