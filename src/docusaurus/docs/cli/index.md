@@ -99,7 +99,7 @@ References lists these links, Context checks them during requested link expansio
 
 ## Take Open Forge back out
 
-`uninstall` removes the files Open Forge installed and still recognizes, its sections in `AGENTS.md` and `CLAUDE.md`, the route scaffolds it wrote and its state. Your files stay, and so do managed files you edited. Add `--strip metadata,entries,links` to end with plain Markdown, or `--flatten docs` to put the documents in one folder. Run `strip` on its own to drop one part while Open Forge stays. See [uninstall](/guides/cli#uninstall) and [strip](/guides/cli#strip).
+`uninstall` removes the files Open Forge installed and still recognizes, its sections in `AGENTS.md` and `CLAUDE.md`, the route scaffolds it wrote and its state, ending with `.open-forge-state/`. Your files stay, and so do managed files you edited. Running it again once Open Forge is gone changes nothing. Add `--strip metadata,entries,links` to end with plain Markdown, or `--flatten docs` to put the documents in one folder. Flatten is for categories, subcategories and custom routes, and it refuses a folder that holds files Open Forge manages. Run `strip` on its own to drop one part while Open Forge stays. See [uninstall](/guides/cli#uninstall) and [strip](/guides/cli#strip).
 
 ## Everyday habits
 

@@ -127,7 +127,7 @@ Removal retains eligible removed bytes in recovery data. Use [Cleanup](routes.md
 
 ## `uninstall`
 
-Remove Open Forge from the workspace. Uninstall deletes the Framework and Extension files that still match what Open Forge installed, its sections in `AGENTS.md` and `CLAUDE.md`, route scaffolds, settings, the lock and folders left empty. User files stay. Edited managed files stay and are listed as kept. Detach Libraries first. Run it only when the user asked to remove Open Forge.
+Remove Open Forge from the workspace. Uninstall deletes the Framework and Extension files that still match what Open Forge installed, its sections in `AGENTS.md` and `CLAUDE.md`, route scaffolds, settings, the lock and folders left empty. Its last step removes `.open-forge-state/`, which stays only when it holds recovery data or a link or cannot be read. User files stay. Edited managed files stay and are listed as kept. Once the lock is gone, a second run changes nothing. Detach Libraries first. Run it only when the user asked to remove Open Forge.
 
 | Flag                     | Meaning                                                                                        |
 | ------------------------ | ---------------------------------------------------------------------------------------------- |
@@ -139,7 +139,7 @@ Remove Open Forge from the workspace. Uninstall deletes the Framework and Extens
 
 ## `strip [<part>...]`
 
-Remove Open Forge metadata, generated `Entries` or links between documents while the Framework stays installed. Managed files stay unchanged. `links` keeps external links, images, links to other files, code, comment links and generated `Entries` lists. `--flatten <folder>` works as in `uninstall`, keeps entrypoints and `SKILL.md` files in place and stops on a name collision before any write. Accepts `--dry-run` and `--automatic`.
+Remove Open Forge metadata, generated `Entries` or links between documents while the Framework stays installed. Managed files stay unchanged. `links` keeps external links, images, links to other files, code, comment links and generated `Entries` lists. `--flatten <folder>` works as in `uninstall`: it is for categories, subcategories and custom routes, refuses a folder holding managed files other than entrypoints, keeps entrypoints and `SKILL.md` files in place and stops on a name collision before any write. Under `uninstall`, only files still managed after the removals count. Accepts `--dry-run` and `--automatic`.
 
 ## Extensions
 
