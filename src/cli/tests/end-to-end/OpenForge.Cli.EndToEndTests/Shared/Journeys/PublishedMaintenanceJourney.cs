@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using OpenForge.Cli.EndToEndTests.Shared.Journeys.Models;
 using OpenForge.Cli.EndToEndTests.Shared.PublishedProcess;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.EndToEndTests.Shared.Journeys;
 
@@ -149,8 +150,7 @@ internal sealed class PublishedMaintenanceJourney : IDisposable
     {
         var start = new ProcessStartInfo("git") { WorkingDirectory = Path, UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true };
         foreach (var item in _environment) start.Environment[item.Key] = item.Value;
-        // Newer Git runs automatic maintenance detached after a commit, and its lock would race the read-only snapshots.
-        string[] gitArguments = ["-c", "maintenance.auto=false", "-c", "gc.auto=0", .. arguments];
+        string[] gitArguments = [.. GitFixtureMaintenance.CommandOptions, .. arguments];
         foreach (var argument in gitArguments) start.ArgumentList.Add(argument);
         using var process = Process.Start(start) ?? throw new InvalidOperationException("Git did not start.");
         var output = process.StandardOutput.ReadToEndAsync(TestContext.Current.CancellationToken);
