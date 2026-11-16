@@ -1,3 +1,3 @@
-Open Forge removed synthetic-tool from this project. Its own uninstaller removes it system-wide: its binary, its entries in every agent app on this account and, on Windows, its directory from your user PATH. That directory is Open Forge's bin, so other tools there leave PATH too. Run it now?
+Open Forge removed synthetic-tool from this project. Its own uninstaller removes it system-wide: its binary in its Open Forge tool folder and its entries in every agent app on this account. On Windows it also removes that tool folder from your user PATH if it is there. Open Forge's bin stays on PATH. Run it now?
 Keep these account or shared effects unchanged
 Apply this separately confirmed change

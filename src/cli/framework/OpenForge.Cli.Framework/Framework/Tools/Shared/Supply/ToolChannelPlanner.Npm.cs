@@ -152,7 +152,7 @@ internal sealed partial class ToolChannelPlanner
             if (Directory.Exists(toolRoot)) return Blocked("The private package prefix already exists. Check it before retrying.", network);
             entry = ToolSupplyPaths.Under(PackageRoot(toolRoot, channel.Package, request.Target), relativeEntry);
             commandPath = ToolSupplyPaths.Under(bin, request.Entry.Detection.Command + (request.Target.OperatingSystem == ToolOperatingSystem.Windows ? ".cmd" : ""));
-            nativeDirectory = bin;
+            nativeDirectory = toolRoot;
             var runtimeInvocation = new ToolCommandTarget { ExecutablePath = runtime, PrefixArguments = [] };
             commands.Add(ToolPackageManagerDetector.Request(runtimeInvocation, ["--version"], request.WorkspacePath));
             var npmInvocation = new ToolCommandTarget { ExecutablePath = runtime, PrefixArguments = [npm] };
@@ -165,7 +165,7 @@ internal sealed partial class ToolChannelPlanner
             launchers.AddRange(WithGitBashLauncher(new()
             {
                 ToolId = request.Entry.Identity.Id,
-                Kind = LauncherKind(request.Target, native: false),
+                Kind = request.Target.OperatingSystem == ToolOperatingSystem.Windows ? ToolLauncherKind.WindowsCmd : ToolLauncherKind.PosixSh,
                 TargetKind = ToolLauncherTargetKind.RuntimeEntry,
                 LauncherPath = commandPath,
                 RuntimePath = runtime,

@@ -124,6 +124,35 @@ internal sealed class ToolWriteOptionalApplication(
             return;
         }
 
+        foreach (var (id, superseded) in state.SupersededToolPaths)
+        {
+            if (!state.Records.Machine.TryGetValue(id, out var current)) continue;
+            if (!await ConfirmAsync(ToolWriteConsentKind.SharedFileDeletion, id, [superseded]).ConfigureAwait(false))
+            {
+                state.ManualDeletions.Add(superseded);
+                continue;
+            }
+            var removed = await channels.RemoveAsync(new()
+            {
+                Locations = new(request.Workspace.LexicalRoot, plan.Input.Facts.HomePath),
+                Records = state.Records,
+                Expected = current,
+                ApprovedToolPaths = [superseded],
+                ApprovedRuntimes = [],
+                SupersededToolPaths = [superseded],
+            }, cancellationToken).ConfigureAwait(false);
+            state.Outcomes.Add(new(id, ToolWriteStages.SharedFiles,
+                removed.Failure is null ? ToolWriteStages.Completed : ToolWriteStages.Failed, removed.RemovedPaths, removed.KeptPaths));
+            state.ManualDeletions.AddRange(removed.KeptPaths);
+            if (ToolWriteCancellation.Stop(state, cancellationToken)) return;
+            if (removed.Failure is not null)
+            {
+                state.Findings.Add(new(ToolWriteFindingCode.VerificationFailed, CliSemanticStatus.Failed, id, Cause: removed.Failure));
+                state.Stopped = true;
+                return;
+            }
+        }
+
         if (!UsesBin(plan)) return;
         var facts = await pathHost.ObserveAsync(plan.Input.Facts.HomePath, cancellationToken).ConfigureAwait(false);
         if (ToolWriteCancellation.Stop(state, cancellationToken)) return;

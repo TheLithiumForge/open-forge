@@ -20,6 +20,8 @@ internal static class ToolWriteInteractionPresentation
         }, [new(false, ToolWriteText.Keep()), new(true, ToolWriteText.Apply())])
         {
             Context = [.. question.Paths, .. question.Effects.Select(effect => effect.Description)],
+            // The system-wide uninstaller runs only on an explicit choice, so Enter keeps it unrun.
+            EnterChoice = question.Kind == ToolWriteConsentKind.AccountUninstall ? 0 : null,
         };
 
     internal static CliSelectQuestion<int> ManagerQuestion(ToolWriteManagerQuestion question)

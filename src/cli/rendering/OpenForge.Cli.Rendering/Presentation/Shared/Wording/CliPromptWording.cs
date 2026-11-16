@@ -31,6 +31,7 @@ internal static class CliPromptWording
         => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleApplyTheseChangesIncludingRemovingYN(count);
     internal static string SelectKeys() => ("  " + global::OpenForge.Cli.OutputText.Shared.SharedText.LabelUpDownMoveEnterChooseEscCancel());
     internal static string SelectLine(int count) => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.SelectLine(count);
+    internal static string SelectLineDefault(int count, int choice) => global::OpenForge.Cli.OutputText.Shared.CliPromptWording.SelectLineDefault(count, choice);
     internal static string MultiKeys() => ("  " + global::OpenForge.Cli.OutputText.Shared.SharedText.LabelSpaceToggleAAllNNoneUpDownMoveEnterContinueEscCancel());
     internal static string MultiLine() => global::OpenForge.Cli.OutputText.Shared.SharedText.HeadingChooseNumbersSeparatedBySpacesAllOrPressEnterToCancel();
     internal static string EmptySelection() => global::OpenForge.Cli.OutputText.Shared.SharedText.MessageChooseAtLeastOnePackageOrPressEscToCancel();

@@ -20,7 +20,7 @@ Show the plan.
 CodeGraph's project-scoped native uninstall runs before Open Forge cleanup.
 Codebase Memory removal is local: the declaration, lock entry, recorded project additions and, under the shared-file rules, Open Forge's own launchers and tool files.
 After that local removal, and only without `--yes` and with a live terminal, say that Codebase Memory's own uninstaller removes it system-wide.
-Name its binary, its entries in every agent app on the account and, on Windows, its directory on the user PATH, which is Open Forge's bin.
+Name its binary in its versioned tool folder, its entries in every agent app on the account and, on Windows, that folder's user PATH entry if there is one. Open Forge's bin is never its folder, so bin stays on PATH.
 Ask whether to run it. The default answer, and an unanswered question, keeps it unrun.
 If confirmed, prepare its concrete account paths, expected-state checks and backups, then run it before the shared-file choices.
 With `--yes`, without a terminal or after declining, never run it and print its exact command.

@@ -23,14 +23,14 @@
   "",
   "Apply the shown tool setup plan, including downloads and native effects?",
   "Open Forge removed alpha-tool from this project. Its own uninstaller removes it",
-  "system-wide: its binary, its entries in every agent app on this account and, on",
-  "Windows, its directory from your user PATH. That directory is Open Forge\u0027s bin,",
-  "so other tools there leave PATH too. Run it now?",
+  "system-wide: its binary in its Open Forge tool folder and its entries in every",
+  "agent app on this account. On Windows it also removes that tool folder from",
+  "your user PATH if it is there. Open Forge\u0027s bin stays on PATH. Run it now?",
   "Synthetic account binary and agent configuration",
   "",
   "  1. Keep these account or shared effects unchanged",
   "  2. Apply this separately confirmed change",
   "",
-  "Choose a number (1-2), or press Enter to cancel:",
+  "Choose a number (1-2), or press Enter for 1:",
   ""
 ]

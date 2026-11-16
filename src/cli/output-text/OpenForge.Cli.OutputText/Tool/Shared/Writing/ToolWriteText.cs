@@ -14,7 +14,7 @@ internal static class ToolWriteText
     internal static string Warnings(string command) => $"{command} completed with warnings.";
     internal static string PlanQuestion() => "Apply the shown tool setup plan, including downloads and native effects?";
     internal static string AccountQuestion(string? id)
-        => $"Open Forge removed {id} from this project. Its own uninstaller removes it system-wide: its binary, its entries in every agent app on this account and, on Windows, its directory from your user PATH. That directory is Open Forge's bin, so other tools there leave PATH too. Run it now?";
+        => $"Open Forge removed {id} from this project. Its own uninstaller removes it system-wide: its binary in its Open Forge tool folder and its entries in every agent app on this account. On Windows it also removes that tool folder from your user PATH if it is there. Open Forge's bin stays on PATH. Run it now?";
     internal static string DeleteQuestion(string? id) => $"Delete the shown shared files for {id}? Other projects can use them.";
     internal static string Keep() => "Keep these account or shared effects unchanged";
     internal static string Apply() => "Apply this separately confirmed change";

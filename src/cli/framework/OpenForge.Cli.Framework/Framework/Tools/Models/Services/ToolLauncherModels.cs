@@ -26,6 +26,8 @@ internal sealed record ToolManagedFilesRemoveRequest
     public required ToolMachineState Expected { get; init; }
     public required IReadOnlyList<string> ApprovedToolPaths { get; init; }
     public required IReadOnlyList<ToolNodeRuntimeRecord> ApprovedRuntimes { get; init; }
+    // Earlier version folders of the expected tool that Update replaced. Only these may be removed beside its current files.
+    public IReadOnlyList<string> SupersededToolPaths { get; init; } = [];
 }
 
 internal sealed record ToolManagedFilesRemoveResult(IReadOnlyList<string> RemovedPaths, IReadOnlyList<string> KeptPaths, string? Failure);

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Tools.Shared.Supply;
 using System.Collections;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Composition.Shared.ToolHomes;
@@ -57,7 +58,7 @@ internal sealed class ToolCompositionGraph
     private ToolRecipeContext RecipeContext(ToolObservationRequest request, ToolVersionProfile profile, ToolDetectionResult detection)
     {
         var home = Homes.Resolve(profile);
-        var installDirectory = Path.GetDirectoryName(detection.CommandPath)
+        var installDirectory = ToolSupplyPaths.InstallDirectory(detection.RecordedState, detection.CommandPath)
             ?? throw new IOException("The detected tool has no verified installation directory.");
         return new()
         {

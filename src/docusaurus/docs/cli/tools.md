@@ -40,6 +40,7 @@ Open Forge turns account telemetry off, excludes archived memory and checks Giti
 `--yes` accepts downloads and the shown setup plan.
 PATH changes and shared deletion need separate live choices.
 Remove never edits PATH. After the last tool in bin, it prints the PATH entry or marked shell block to remove.
+Each tool's own files live in `tools/<id>/<version>/`, and bin holds only launchers. Update offers the replaced version folder for deletion.
 If bin isn't on PATH, follow the printed instructions, restart your terminal and agent apps, then run Status again.
 The Open Forge tool home is `~/.open-forge`, and bin is inside it.
 Set `OPENFORGE_TOOL_HOME` to an absolute folder to use it instead of `~/.open-forge` on every system, like `CARGO_HOME`.
@@ -121,7 +122,7 @@ Account telemetry stays off and the result prints its manual change command.
 
 Codebase Memory removal stays local to the project. `open-forge tool remove codebase-memory --yes` removes Open Forge's project additions and prints the native uninstall command.
 The Windows `0.12.1` journey completes this project-only removal with the account setup and index kept.
-Its own uninstaller removes it system-wide, including its binary, all agent entries and, on Windows, its directory from your user PATH.
+Its own uninstaller removes it system-wide: its binary in its versioned tool folder and all agent entries. On Windows it also removes that folder from your user PATH if it is there. Open Forge's bin stays on PATH.
 An interactive Remove asks about it only after the local removal, and the default answer is no.
 Read [removal and backups](/guides/cli#tool-removal) before changing account setup shared by other projects.
 

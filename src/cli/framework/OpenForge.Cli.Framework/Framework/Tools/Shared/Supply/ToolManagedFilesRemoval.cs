@@ -22,6 +22,10 @@ internal sealed class ToolManagedFilesRemoval(IToolRecordService records)
             var home = request.Locations.HomePath;
             var allowed = state.Launchers.Select(launcher => launcher.LauncherPath).ToHashSet(ToolSupplyPaths.Comparer);
             if (state.ToolPath is not null) allowed.Add(state.ToolPath);
+            var versions = ToolSupplyPaths.Under(home, ToolRecordDefinitions.ToolsDirectoryName, state.ToolId);
+            foreach (var superseded in request.SupersededToolPaths)
+                if (PhysicalContainment.Contains(versions, superseded) && !ToolSupplyPaths.Comparer.Equals(versions, superseded)
+                    && !ToolSupplyPaths.Comparer.Equals(state.ToolPath, superseded)) allowed.Add(superseded);
             foreach (var path in request.ApprovedToolPaths.Distinct(ToolSupplyPaths.Comparer).OrderBy(path => Directory.Exists(path)))
             {
                 token.ThrowIfCancellationRequested();
@@ -71,7 +75,7 @@ internal sealed class ToolManagedFilesRemoval(IToolRecordService records)
             || tool.Invocation.PrefixArguments.Any(argument => References(runtime, argument)) || tool.Launchers.Any(launcher => Uses(launcher, runtime));
     private static bool Uses(ToolLauncherSpec launcher, string runtime)
         => launcher.RuntimePath is { } path && References(runtime, path)
-            || launcher.TargetKind != ToolLauncherTargetKind.NativeBinary && References(runtime, launcher.EntryPath);
+            || launcher.Kind != ToolLauncherKind.NativeExecutable && References(runtime, launcher.EntryPath);
     private static bool References(string root, string path) => System.IO.Path.IsPathFullyQualified(path) && PhysicalContainment.Contains(root, path);
 
     private static void DeleteTree(string path, CancellationToken token)

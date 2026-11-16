@@ -2611,6 +2611,7 @@ For Codebase Memory, it never runs the system-wide uninstaller and prints its co
 A command without `--yes` needs a terminal to accept its main plan.
 The normal global options, including `--workspace`, `--format json` and `--detail`, apply.
 Without `--yes` or a terminal, the plan lists the files to delete so you can do it yourself.
+Each tool's own files live in `~/.open-forge/tools/<id>/<version>/`, and `bin/` holds only Open Forge's launchers. Update places the new version beside the old one. A live confirmation deletes the replaced version folder. Otherwise the result lists it so you can delete it yourself.
 Remove never edits PATH. After the last tool with a launcher in Open Forge's bin, it prints the PATH entry or marked shell block to remove, also with `--yes` or without a terminal.
 
 ### Tool native effects
@@ -2702,7 +2703,7 @@ Its CLI and project index stay available.
 Open Forge removes its recorded archive union and conditional ignore block while keeping unrelated content.
 
 Codebase Memory removal is local: the declaration, lock entry, project additions and, if you choose, Open Forge's own launcher and tool files.
-Its own uninstaller removes it system-wide: the binary, all agent entries and, on Windows, its directory from your user PATH. That directory is Open Forge's bin.
+Its own uninstaller removes it system-wide: the binary in its versioned tool folder and all agent entries. On Windows it also removes that folder from your user PATH if it is there. Open Forge never adds it, and Open Forge's bin stays on PATH.
 After the local removal, an interactive Remove asks whether to run it. The default answer is no.
 With `--yes`, no terminal or a declined question, Remove never runs it and prints the native command:
 

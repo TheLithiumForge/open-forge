@@ -53,6 +53,6 @@ Entries sections
 Recovery data:
   <recovery-bundle>
     final recovery bundle, verified
-20 routed files, 7 startup files, 3977 startup tokens, 1 may-load-again files, 243 may-load-again tokens, 30461 all routed tokens, 13.055432445298008896767945372 startup share, 7 root categories, 12 current Entries sections, 21 current Framework files, 1 recovery bundles, 1 warnings.
+20 routed files, 7 startup files, 3977 startup tokens, 1 may-load-again files, 243 may-load-again tokens, 30469 all routed tokens, 13.052004529267932454830398608 startup share, 7 root categories, 12 current Entries sections, 21 current Framework files, 1 recovery bundles, 1 warnings.
   Review and remove the recovery data.
 Next: open-forge cleanup

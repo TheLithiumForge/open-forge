@@ -29,7 +29,7 @@ Before adding or updating a profile, complete these checks:
 5. Pin each direct asset's SHA-256 or verified attestation. CodeGraph uses published SHA256SUMS. Reject digest mismatches.
 6. For private Node, verify signed SHASUMS256, skip archive link entries before the link-rejecting extractor and use Node's own npm CLI script.
 7. Detect and test npm-family clients, project-lockfile preference, Yarn Modern exclusion and manager-global-bin readiness.
-8. Record native setup and uninstall commands, dry-run support and project or account effects. Review possible output declarations against native inventory, profile and legacy paths. Keep native MCP names, hooks, permissions, blocks and Skills.
+8. Record native setup and uninstall commands, dry-run support and project or account effects. A command that needs an install location gets `${nativeInstallDirectory}`, the tool's own `tools/<id>/<version>/` folder. Never pass `${bin}`, `${openForgeHome}` or another shared folder. The catalogue guard test fails on a recipe that does. Review possible output declarations against native inventory, profile and legacy paths. Keep native MCP names, hooks, permissions, blocks and Skills.
 9. Check JSON union and absent-only set, marked blocks, absent-only files and native account settings against their additive removal rules.
 10. Verify exact lock versions, channels and added items, keys, markers and hashes. Keep native previous values in machine state.
 11. Test absolute launchers, including the Windows `.cmd` and Git Bash `sh` pair, private runtime compatibility, PATH choices and unattended instructions. Windows PATH edits go through the registry adapter, only append bin and keep every other entry. Remove never edits PATH and prints the bin entry or marked block to remove after the last tool in bin. Never edit real user PATH or shell profiles in journeys.
@@ -39,6 +39,8 @@ Open Forge adds no per-tool Skill or managed-block line.
 It doesn't rewrite upstream integrations.
 Native installer writes such as `.mcp.json`, `.claude/settings.json`, `AGENTS.md` and `.codex/config.toml` are covered by plan consent only.
 The normal process runner uses argument vectors, not shell strings.
+Each tool's own files live under `tools/<id>/<version>/`. `bin/` holds only Open Forge's launchers.
+Update offers the replaced version folder under the shared-file rules.
 A native uninstall that requires PATH or shared-binary effects is never part of the plan.
 Codebase Memory Remove is local. Afterwards only a live interactive run asks, default no, whether to run its system-wide uninstaller. `--yes` or no terminal prints the command instead.
 Project Remove keeps account-wide native settings and prints manual change commands.
@@ -116,20 +118,21 @@ The V1 entry has these values:
 | Origin and licence      | `third-party`, MIT                                             |
 | Upstream                | `https://github.com/DeusData/codebase-memory-mcp`              |
 | Profile and first patch | `0.12.x`, `0.12.1`                                             |
-| Channel                 | GitHub release, native binary in `~/.open-forge/bin/`          |
-| Setup                   | `["install", "--yes", "--skip-binary", "--dir", "<bin>"]`      |
+| Channel                 | GitHub release, binary in `tools/codebase-memory/<version>/`   |
+| Setup                   | `["install", "--yes", "--skip-binary", "--dir", "<folder>"]`   |
 | Native preview          | Add `--dry-run` to that setup vector                           |
-| Uninstall               | `["uninstall", "--yes", "--dir", "<bin>"]`                     |
+| Uninstall               | `["uninstall", "--yes", "--dir", "<folder>"]`                  |
 | Added config            | A marked `.cbmignore` block for `/<mainRoot>/memory/archived/` |
 
-The documented `--skip-binary` mode configures agents while keeping the already placed binary and PATH unchanged.
-`--dir` identifies the real Open Forge bin for native registrations.
+`<folder>` is the binary's versioned folder, `tools/codebase-memory/<version>/`. Its bin launcher points there.
+The documented `--skip-binary` mode configures agents while keeping the already placed binary and PATH unchanged. Native registrations point at `<folder>`.
+Without `--skip-binary`, the installer would add `--dir` to PATH: the Windows user `Path` value or a line in the detected shell file.
 Leave native client discovery at its default and disclose account scope.
 The [upstream CLI](https://github.com/DeusData/codebase-memory-mcp/blob/v0.12.1/src/cli/cli.c) supplies these flags and its account-wide uninstall.
 Open Forge writes no MCP entry, Codex TOML section, hook, instruction block or usage Skill.
 Keep the native watcher defaults.
 
-Native uninstall includes binary removal and, on Windows, removal of its directory, Open Forge's bin, from the user PATH.
+Native uninstall removes `<folder>/codebase-memory-mcp` and all agent entries. On Windows it also removes `<folder>` from the user PATH if it is there. It never touches shell files, and it has no flag that skips PATH removal.
 Remove first removes only local things. Then only a live interactive confirmation naming the binary, all agent entries and the PATH entry runs it.
 With `--yes`, no terminal or a declined confirmation, print its command.
 Never pass `--delete-indexes`.

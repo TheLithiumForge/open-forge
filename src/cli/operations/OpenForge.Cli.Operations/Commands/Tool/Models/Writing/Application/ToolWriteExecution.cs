@@ -14,6 +14,7 @@ internal sealed class ToolWriteExecution(ToolRecordsResult records)
     internal List<(string ToolId, ToolWriteCommandView Command)> ManualCommands { get; } = [];
     internal List<string> PathInstructions { get; } = [];
     internal List<string> ManualDeletions { get; } = [];
+    internal List<(string ToolId, string Path)> SupersededToolPaths { get; } = [];
     internal ToolWriteGrantView? Grants { get; set; }
     internal bool Stopped { get; set; }
 }

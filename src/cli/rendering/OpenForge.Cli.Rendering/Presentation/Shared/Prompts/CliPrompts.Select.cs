@@ -18,7 +18,9 @@ internal sealed partial class CliPrompts
         where T : notnull
     {
         ValidateChoices(question.Choices);
-        var cursor = 0;
+        if (question.EnterChoice is { } enter && (enter < 0 || enter >= question.Choices.Count))
+            throw new ArgumentOutOfRangeException(nameof(question), enter, "The Enter choice must be one of the choices.");
+        var cursor = question.EnterChoice ?? 0;
         while (_terminal.ReadSelectionViewport() is { } viewport)
         {
             var focused = question.Choices[cursor];
@@ -65,10 +67,13 @@ internal sealed partial class CliPrompts
                 if (row.Description is { } description && description != row.Summary) AppendLineProse(frame, description, "     ");
             }
             frame.Append('\n');
-            AppendLineProse(frame, CliPromptWording.SelectLine(question.Choices.Count));
+            AppendLineProse(frame, question.EnterChoice is { } enter
+                ? CliPromptWording.SelectLineDefault(question.Choices.Count, enter + 1)
+                : CliPromptWording.SelectLine(question.Choices.Count));
             await WriteFrameAsync(frame.ToString(), cancellationToken).ConfigureAwait(false);
             var answer = await _terminal.ReadLineAsync(cancellationToken).ConfigureAwait(false);
-            if (string.IsNullOrWhiteSpace(answer)) return CliPromptReply<T>.Cancelled();
+            if (string.IsNullOrWhiteSpace(answer))
+                return question.EnterChoice is { } chosen ? CliPromptReply<T>.Answered(question.Choices[chosen].Value) : CliPromptReply<T>.Cancelled();
             if (int.TryParse(answer.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out var number)
                 && number > 0 && number <= question.Choices.Count)
                 return CliPromptReply<T>.Answered(question.Choices[number - 1].Value);

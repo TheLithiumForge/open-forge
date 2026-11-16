@@ -80,7 +80,7 @@ internal sealed partial class ToolChannelPlanner(IToolProcessHost processes, ITo
                 HomePath = request.HomePath,
                 WorkspacePath = request.WorkspacePath,
                 BinPath = bin,
-                NativeInstallDirectory = System.IO.Path.GetDirectoryName(existing.CommandPath) ?? bin,
+                NativeInstallDirectory = ToolSupplyPaths.InstallDirectory(existing.RecordedState, existing.CommandPath) ?? bin,
                 CommandPath = existing.CommandPath,
                 Invocation = existing.Invocation,
                 RuntimePath = existing.RuntimePath,
@@ -108,22 +108,22 @@ internal sealed partial class ToolChannelPlanner(IToolProcessHost processes, ITo
             runtime = ToolSupplyPaths.Under(root, bundled.RuntimeRelativePath);
             invocation = new() { ExecutablePath = runtime, PrefixArguments = [.. bundled.Arguments, ToolSupplyPaths.Under(root, bundled.EntryRelativePath)] };
         }
-        var extension = "";
-        if (request.Target.OperatingSystem == ToolOperatingSystem.Windows) extension = asset.BundledRuntime is null ? ".exe" : ".cmd";
+        // Native binaries stay in their versioned folder and bin gets launchers that point at them, so a native installer's
+        // --dir is that folder and never bin.
+        var extension = request.Target.OperatingSystem == ToolOperatingSystem.Windows ? ".cmd" : "";
         var launcherPath = ToolSupplyPaths.Under(bin, request.Entry.Detection.Command + extension);
         var launcher = new ToolLauncherSpec
         {
             ToolId = request.Entry.Identity.Id,
             LauncherPath = launcherPath,
             EntryPath = entry,
-            Kind = LauncherKind(request.Target, asset.BundledRuntime is null),
+            Kind = request.Target.OperatingSystem == ToolOperatingSystem.Windows ? ToolLauncherKind.WindowsCmd : ToolLauncherKind.PosixSh,
             TargetKind = asset.BundledRuntime is null ? ToolLauncherTargetKind.NativeBinary : ToolLauncherTargetKind.ReleaseLauncher,
             Arguments = [],
         };
         var launchers = WithGitBashLauncher(launcher);
         foreach (var path in launchers.Select(value => value.LauncherPath))
             if (ToolSupplyPaths.PreflightFile(path) is { } problem) return Blocked(problem);
-        if (asset.BundledRuntime is null) invocation = new() { ExecutablePath = launcherPath, PrefixArguments = [] };
         return new(new()
         {
             ToolId = request.Entry.Identity.Id,
@@ -138,7 +138,7 @@ internal sealed partial class ToolChannelPlanner(IToolProcessHost processes, ITo
                 HomePath = request.HomePath,
                 WorkspacePath = request.WorkspacePath,
                 BinPath = bin,
-                NativeInstallDirectory = bin,
+                NativeInstallDirectory = System.IO.Path.GetDirectoryName(entry) ?? root,
                 CommandPath = launcherPath,
                 Invocation = invocation,
                 RuntimePath = runtime,
@@ -155,12 +155,6 @@ internal sealed partial class ToolChannelPlanner(IToolProcessHost processes, ITo
     private static IReadOnlyList<ToolLauncherSpec> WithGitBashLauncher(ToolLauncherSpec launcher)
         => launcher.Kind != ToolLauncherKind.WindowsCmd ? [launcher]
             : [launcher, launcher with { Kind = ToolLauncherKind.PosixSh, LauncherPath = System.IO.Path.ChangeExtension(launcher.LauncherPath, null) }];
-
-    private static ToolLauncherKind LauncherKind(ToolTarget target, bool native)
-    {
-        if (native) return ToolLauncherKind.NativeExecutable;
-        return target.OperatingSystem == ToolOperatingSystem.Windows ? ToolLauncherKind.WindowsCmd : ToolLauncherKind.PosixSh;
-    }
 
     private static ToolProcessRequest Probe(ToolChannelRequest request, ToolCommandTarget invocation)
         => ToolPackageManagerDetector.Request(invocation, request.Entry.Detection.Arguments, request.WorkspacePath) with

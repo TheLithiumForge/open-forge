@@ -1,4 +1,5 @@
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
+using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 
 namespace OpenForge.Cli.Core.Framework.Tools.Shared.Supply;
@@ -9,6 +10,13 @@ internal static class ToolSupplyPaths
     internal static string Tool(string home, string id, string version) => Under(home, ToolRecordDefinitions.ToolsDirectoryName, id, version);
     internal static string Runtime(string home, string version) => Under(home, ToolRecordDefinitions.RuntimesDirectoryName, ToolRecordDefinitions.NodeDirectoryName, version);
     internal static string Bin(string home) => Under(home, ToolRecordDefinitions.BinDirectoryName);
+
+    // A placed tool's own versioned folder under tools/<id>/, never bin. A native installer's --dir then can't target bin,
+    // so an upstream uninstaller that removes its --dir from PATH never takes Open Forge's bin off PATH.
+    internal static string? InstallDirectory(ToolMachineState? recorded, string? commandPath)
+        => recorded?.Launchers.FirstOrDefault(launcher => launcher.TargetKind == ToolLauncherTargetKind.NativeBinary) is { } native
+            ? Path.GetDirectoryName(native.EntryPath)
+            : recorded is { PlacedByOpenForge: true, ToolPath: { } tool } ? tool : Path.GetDirectoryName(commandPath);
 
     internal static string Under(string home, params string[] segments)
     {

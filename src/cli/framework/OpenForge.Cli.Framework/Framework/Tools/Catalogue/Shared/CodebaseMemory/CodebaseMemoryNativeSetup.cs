@@ -59,14 +59,14 @@ internal static class CodebaseMemoryNativeSetup
                 Scope = ToolEffectScope.Account,
                 Kind = ToolDeclaredEffectKind.SharedFileDeletion,
                 PathTemplate = ToolRecipeDefinitions.NativeInstallDirectoryToken,
-                Description = "Native uninstall removes the account-wide binary and all agent entries. Requires live confirmation naming those effects.",
+                Description = "Native uninstall removes its binary from its versioned Open Forge tool folder and all agent entries. Requires live confirmation naming those effects.",
             });
             effects.Add(new()
             {
                 Id = "native-windows-user-path",
                 Scope = ToolEffectScope.Account,
                 Kind = ToolDeclaredEffectKind.PathChange,
-                Description = "On Windows, native uninstall removes its directory from persistent user PATH. --yes, no terminal or a declined account confirmation skips native uninstall.",
+                Description = "On Windows, native uninstall removes its tool folder from persistent user PATH if it is there. Setup passes --skip-binary, so it never adds that folder, and Open Forge's bin stays.",
             });
         }
         else
@@ -77,7 +77,7 @@ internal static class CodebaseMemoryNativeSetup
                 Scope = ToolEffectScope.Account,
                 Kind = ToolDeclaredEffectKind.Configuration,
                 PathTemplate = ToolRecipeDefinitions.NativeInstallDirectoryToken + "/" + CodebaseMemoryDefinitions.Command,
-                Description = "On macOS, native setup can ad-hoc sign the existing binary. --skip-binary keeps placement and PATH unchanged on Windows.",
+                Description = "On macOS, native setup can ad-hoc sign the existing binary. --skip-binary keeps placement and PATH unchanged.",
             });
         }
         return effects.ToImmutable();

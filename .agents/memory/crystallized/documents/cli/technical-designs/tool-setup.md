@@ -64,17 +64,20 @@ Use `~/.open-forge/`, or `%USERPROFILE%\.open-forge\` on Windows:
 
 | Folder                     | Content                                                  |
 | -------------------------- | -------------------------------------------------------- |
-| `bin/`                     | Generated launchers and native binaries                  |
+| `bin/`                     | Open Forge's launchers only                              |
 | `runtimes/node/<version>/` | Private Node                                             |
-| `tools/<id>/<version>/`    | Open Forge-placed tool files                             |
+| `tools/<id>/<version>/`    | Each tool's own files, including native binaries         |
 | `state/`                   | Machine facts, native previous settings and PATH history |
 
 Launchers are small `.cmd` files and executable `sh` scripts with absolute paths baked in.
 Windows gets both: the `.cmd` launcher and an extensionless executable `sh` script beside it for Git Bash, which Claude Code on Windows uses. Records and Remove cover both.
-They start the tool entry on its pinned runtime or forward to the upstream release launcher.
-A native `.exe` can be placed directly.
-Never put Node itself in bin.
-Update rewrites launchers.
+They start the tool entry on its pinned runtime, forward to the upstream release launcher or start the native binary in its versioned folder.
+A native binary stays in `tools/<id>/<version>/`, and its bin launcher points at it.
+Never put Node itself or any tool's own files in bin.
+No tool's own installer or uninstaller is given bin, the Open Forge home or any other shared folder as its install or PATH location.
+`${nativeInstallDirectory}` resolves to the tool's own versioned folder, and a recipe never passes `${bin}` or `${openForgeHome}` to a native command.
+Update places the new version beside the old one and rewrites launchers.
+The replaced version folder then goes through the shared-file choice. Only a live confirmation deletes it. Otherwise the result lists it to delete by hand.
 Open Forge takes no part when the tool runs.
 
 Some native Windows MCP hosts need `cmd /c <tool>` for `.cmd` launchers.
@@ -135,16 +138,16 @@ Run the upstream installer unchanged through its documented argument vector.
 CodeGraph uses `install --yes --location local --target claude,codex`.
 Keep its hook, permissions, MCP names and instruction blocks.
 Codebase Memory uses its account-wide installer with native client discovery.
-Use its documented configuration-only binary mode after the verified binary is placed.
+Use its documented configuration-only binary mode, `--skip-binary`, after the verified binary is placed. `--dir` is the binary's versioned folder.
+With `--skip-binary`, its installer changes no PATH, so Update doesn't move a PATH entry between versions.
 Disclose its global MCP entries, Skills, hooks, instructions and watcher defaults.
 Open Forge writes no MCP entry or Codex TOML section for either tool.
 
-Remove runs a chosen native uninstall before Open Forge cleanup.
-A native command's PATH and shared-binary effects are part of its declared plan.
-Codebase Memory uninstall removes its account-wide binary and all agent entries.
-Offer it only without `--yes` and with a live terminal, naming those effects in the confirmation.
-With `--yes`, no terminal or a declined confirmation, skip it and print the command.
-Then remove Open Forge's project additions.
+Remove runs a project-scoped native uninstall, such as CodeGraph's, before Open Forge cleanup.
+A native uninstall with PATH or shared-binary effects is never part of the plan.
+Codebase Memory's uninstaller removes its binary from its versioned folder and all agent entries. On Windows it also removes that folder from the user PATH if it is there.
+Remove its local additions first. Then, only without `--yes` and with a live terminal, ask whether to run it, naming those effects. Enter keeps it unrun.
+With `--yes`, no terminal or a declined question, skip it and print the command.
 Keep account-wide native settings on every project Remove and print their manual change commands.
 Other projects can rely on telemetry off, so there is no automatic restoration or cross-project setting registry.
 The [lane decisions](tool-setup-lanes.md#recorded-choices) assign these rules.
@@ -430,17 +433,18 @@ The overseer applied these maintainer-side defaults on 16 November 2026:
 
 The maintainer decided these spec gaps on 16 November 2026:
 
-| ID  | Date       | Decided rule                                                                                                                                                                                                                              |
-| --- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| G1  | 2026-11-16 | Tool Status, Status and Doctor check declared or locked tools. A lock entry without its declaration is drift                                                                                                                              |
-| G2  | 2026-11-16 | Windows gets the `.cmd` launcher and an extensionless `sh` script for Git Bash. Remove deletes both                                                                                                                                       |
-| G3  | 2026-11-16 | Native installer writes are covered by plan consent only. Destination permission applies to Open Forge's own additions                                                                                                                    |
-| G4  | 2026-11-16 | Remove of an ID that is neither declared nor locked is refused with the shared invalid-input sentence. There is no completed no-op                                                                                                        |
-| G5  | 2026-11-16 | A completed Remove deletes the settings declaration and the lock entry                                                                                                                                                                    |
-| G6  | 2026-11-16 | Missing consent uses the shared confirmation family, `invalid-input` and exit 4. A declined plan is `cancelled`, exit 130                                                                                                                 |
-| G7  | 2026-11-16 | No damage to the user PATH. Windows edits `HKCU\Environment` `Path` through an adapter that keeps its kind and every other entry, then broadcasts. It replaces the `SetEnvironmentVariable` mandate                                       |
-| G8  | 2026-11-16 | Replaces the R2-16 PATH removal offer. Remove never edits PATH. After the last tool with a launcher in bin, it prints the bin entry or marked block to remove, also with `--yes` and without a terminal                                   |
-| G9  | 2026-11-16 | Refines C2, R2-04 and R2-07. Codebase Memory Remove is local by default. Afterwards only a live interactive run asks, default no, whether to run its system-wide uninstaller. `--yes` or no terminal never runs it and prints the command |
+| ID  | Date       | Decided rule                                                                                                                                                                                                                                                                                                                                                               |
+| --- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| G1  | 2026-11-16 | Tool Status, Status and Doctor check declared or locked tools. A lock entry without its declaration is drift                                                                                                                                                                                                                                                               |
+| G2  | 2026-11-16 | Windows gets the `.cmd` launcher and an extensionless `sh` script for Git Bash. Remove deletes both                                                                                                                                                                                                                                                                        |
+| G3  | 2026-11-16 | Native installer writes are covered by plan consent only. Destination permission applies to Open Forge's own additions                                                                                                                                                                                                                                                     |
+| G4  | 2026-11-16 | Remove of an ID that is neither declared nor locked is refused with the shared invalid-input sentence. There is no completed no-op                                                                                                                                                                                                                                         |
+| G5  | 2026-11-16 | A completed Remove deletes the settings declaration and the lock entry                                                                                                                                                                                                                                                                                                     |
+| G6  | 2026-11-16 | Missing consent uses the shared confirmation family, `invalid-input` and exit 4. A declined plan is `cancelled`, exit 130                                                                                                                                                                                                                                                  |
+| G7  | 2026-11-16 | No damage to the user PATH. Windows edits `HKCU\Environment` `Path` through an adapter that keeps its kind and every other entry, then broadcasts. It replaces the `SetEnvironmentVariable` mandate                                                                                                                                                                        |
+| G8  | 2026-11-16 | Replaces the R2-16 PATH removal offer. Remove never edits PATH. After the last tool with a launcher in bin, it prints the bin entry or marked block to remove, also with `--yes` and without a terminal                                                                                                                                                                    |
+| G9  | 2026-11-16 | Refines C2, R2-04 and R2-07. Codebase Memory Remove is local by default. Afterwards only a live interactive run asks, default no, whether to run its system-wide uninstaller. `--yes` or no terminal never runs it and prints the command                                                                                                                                  |
+| G10 | 2026-11-17 | Refines G9. Each tool's own files live under `tools/<id>/<version>/`, and bin holds only Open Forge's launchers. No native installer or uninstaller gets bin or another shared folder, so Codebase Memory's uninstaller never takes bin off PATH. Update offers the replaced version folder under the shared-file rules. The line-mode footer names the choice Enter takes |
 
 The Windows broadcast uses one `LibraryImport` of `SendMessageTimeoutW` in Framework, beside the existing lock interop. It follows G7 and needs no other native code.
 

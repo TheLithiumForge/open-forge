@@ -39,6 +39,8 @@ Detect npm, pnpm, Yarn Classic and bun through one bounded CLI version call each
 Check Yarn's major version and exclude Yarn Modern from global installation.
 Read the project's lockfiles as preference hints.
 Check each manager's runtime, version and global-bin PATH readiness.
+Each Open Forge-placed tool keeps its own files in `tools/<id>/<version>/`. bin holds only Open Forge's launchers, and no native installer or uninstaller is given bin or another shared folder.
+Update offers the replaced version folder under the shared-file rules.
 A catalogue entry can require one client.
 Ask about multiple usable choices. The common Interface defines the `--yes` fallback.
 Review RD1: bare Install pins the lock's exact version and then uses this normal channel order.

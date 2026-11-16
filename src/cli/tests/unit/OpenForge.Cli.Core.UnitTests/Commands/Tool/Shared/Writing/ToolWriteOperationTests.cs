@@ -449,6 +449,25 @@ public sealed class ToolWriteOperationTests
         Assert.Equal(expected, result.Data.Plan.PathInstructions);
     }
 
+    [Theory(DisplayName = "Tool Update offers the replaced version folder under the shared-file rules")]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task UpdateOffersSupersededFolder(bool approve)
+    {
+        var fixture = new ToolWriteOperationFixture { Terminal = true, AcceptOptional = approve, PlacedByOpenForge = true, VersionedToolPaths = true };
+        fixture.DetectedVersions[ToolWriteOperationFixture.Id] = ToolWriteOperationFixture.OldVersion;
+        fixture.SeedMachine(ToolWriteOperationFixture.OldVersion);
+        var superseded = fixture.ToolPath(ToolWriteOperationFixture.OldVersion);
+        var result = await fixture.Create().ExecuteAsync(fixture.Request(ToolWriteKind.Update, yes: false), CancellationToken.None);
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(fixture.ToolPath(ToolWriteOperationFixture.LatestVersion), fixture.Records.Machine[ToolWriteOperationFixture.Id].ToolPath);
+        var question = Assert.Single(fixture.OptionalQuestions, question => question.Kind == ToolWriteConsentKind.SharedFileDeletion);
+        Assert.Equal([superseded], question.Paths);
+        Assert.Equal(approve, fixture.Calls.Any(call => call.Call == ToolWriteCall.SharedRemove));
+        Assert.Equal(approve ? [] : [superseded], result.Data.Plan.ManualDeletions ?? []);
+    }
+
     private static ToolWriteOperationFixture RemovalFixture()
     {
         var fixture = new ToolWriteOperationFixture();

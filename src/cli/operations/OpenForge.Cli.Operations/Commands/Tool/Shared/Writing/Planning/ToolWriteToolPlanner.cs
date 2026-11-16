@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Framework.Tools.Shared.Supply;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Planning;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Result;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Selection;
@@ -95,8 +96,7 @@ internal sealed class ToolWriteToolPlanner(
         var detected = await DetectAsync(entry, input, cancellationToken).ConfigureAwait(false);
         if (locked is null && !declared) return new() { Entry = entry, Detection = detected, NoOp = true };
         var profile = Profile(entry, locked?.Version ?? detected.Version);
-        var context = Context(profile, input,
-            detected.CommandPath is { } path ? Path.GetDirectoryName(path) ?? input.Facts.Path.BinPath : input.Facts.Path.BinPath);
+        var context = Context(profile, input, ToolSupplyPaths.InstallDirectory(detected.RecordedState, detected.CommandPath) ?? input.Facts.Path.BinPath);
         if (context is null) return new() { Entry = entry, Detection = detected };
         ToolSetupPlan? native = null;
         ToolSetupRequest? deferred = null;

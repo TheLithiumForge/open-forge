@@ -43,6 +43,9 @@ internal sealed class ToolWriteOperationFixture
     internal Action? OnPlanConfirmed { get; set; }
     internal bool PlacedByOpenForge { get; set; }
     internal bool CommandInBin { get; set; }
+    // Gives each placed version its own tool folder, as the GitHub and private npm channels do.
+    internal bool VersionedToolPaths { get; set; }
+    internal string ToolPath(string version) => Path.Combine(Root, Id, version);
     internal ToolRecordsResult Records { get; set; }
     internal Dictionary<string, string?> DetectedVersions { get; } = new(StringComparer.Ordinal);
     internal List<ToolChannelRequest> ChannelRequests { get; } = [];
@@ -197,6 +200,26 @@ internal sealed class ToolWriteOperationFixture
             });
     }
 
+    internal void SeedMachine(string version) => Records = Records with
+    {
+        Machine = new Dictionary<string, ToolMachineState>(Records.Machine)
+        {
+            [Id] = new()
+            {
+                SchemaVersion = ToolRecordDefinitions.LocalSchemaVersion,
+                ToolId = Id,
+                Version = version,
+                ChannelId = ChannelId,
+                CommandPath = Target(Root).ExecutablePath,
+                Invocation = Target(Root),
+                ToolPath = ToolPath(version),
+                PlacedByOpenForge = PlacedByOpenForge,
+                Launchers = [],
+                Integrity = [],
+            },
+        },
+    };
+
     internal void SeedChanges(params ToolAppliedChange[] changes)
     {
         var portable = Records.Portable ?? throw new InvalidOperationException();
@@ -347,6 +370,7 @@ internal sealed class ToolWriteOperationFixture
                 ChannelId = ChannelId,
                 CommandPath = request.Plan.Execution.CommandPath,
                 Invocation = request.Plan.Execution.Invocation,
+                ToolPath = fixture.VersionedToolPaths ? fixture.ToolPath(request.Plan.Version) : null,
                 PlacedByOpenForge = fixture.PlacedByOpenForge,
                 Launchers = [],
                 Integrity = [],

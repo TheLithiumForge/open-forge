@@ -57,6 +57,24 @@ public sealed class ToolManagedFilesRemovalTests
         Assert.True(Directory.Exists(request.ApprovedRuntimes[0].RuntimePath));
     }
 
+    [Theory(DisplayName = "An Update's replaced version folder is removable only under the tool's own tools folder")]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task RemovesOnlyOwnSupersededVersion(bool own)
+    {
+        using var fixture = new ToolChannelFixture();
+        var request = Create(fixture);
+        var superseded = ToolSupplyPaths.Tool(fixture.Home, own ? request.Expected.ToolId : "other", ToolChannelFixture.RuntimeVersion);
+        Directory.CreateDirectory(superseded);
+        File.WriteAllText(System.IO.Path.Combine(superseded, "entry"), "synthetic entry");
+        var result = await fixture.Service.RemoveAsync(request with { ApprovedToolPaths = [superseded], ApprovedRuntimes = [], SupersededToolPaths = [superseded] },
+            TestContext.Current.CancellationToken);
+
+        Assert.Null(result.Failure);
+        Assert.Equal(!own, Directory.Exists(superseded));
+        Assert.True(File.Exists(request.Expected.CommandPath));
+    }
+
     private static ToolManagedFilesRemoveRequest Create(ToolChannelFixture fixture)
     {
         var runtimePath = ToolSupplyPaths.Runtime(fixture.Home, ToolChannelFixture.RuntimeVersion);

@@ -75,7 +75,7 @@ Open Forge's own project files, such as `codegraph.json`, need destination permi
 A blocked plan names each missing path and the command to rerun with `--allow-path`.
 
 Codebase Memory Remove is local by default.
-Afterwards an interactive run asks, default no, whether to run its own uninstaller, which removes the binary, all agent entries and its Windows user PATH entry system-wide.
+Afterwards an interactive run asks, default no, whether to run its own uninstaller, which removes the binary in its versioned tool folder and all agent entries system-wide. Open Forge's bin stays on PATH.
 With `--yes`, no terminal or a decline, it prints that command instead.
 Every project Remove keeps account-wide settings, reports them and prints manual change commands.
 Kept account settings alone don't make removal incomplete.

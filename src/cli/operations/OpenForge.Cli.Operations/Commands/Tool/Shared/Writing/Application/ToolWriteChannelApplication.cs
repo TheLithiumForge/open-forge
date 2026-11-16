@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Planning;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Result;
 using OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
+using OpenForge.Cli.Core.Framework.Tools.Shared.Supply;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Tool.Shared.Writing.Application;
@@ -31,6 +32,9 @@ internal sealed class ToolWriteChannelApplication(
             || !versions.Satisfies(version, new() { Kind = ToolVersionSelectionKind.Exact, ExactVersion = channel.Version }))
             return Fail(ToolWriteFindingCode.VerificationFailed, detection.Failure);
         var previous = state.Records.Portable?.Lock.GetValueOrDefault(id);
+        // Update leaves the earlier version folder behind. It goes through the shared-file choice afterwards.
+        var superseded = state.Records.Machine.GetValueOrDefault(id) is { PlacedByOpenForge: true, ToolPath: { } old }
+            && machine.ToolPath is { } current && !ToolSupplyPaths.Comparer.Equals(old, current) ? old : null;
         if (!await publisher.PublishAsync(state, new()
         {
             Plan = plan,
@@ -45,6 +49,7 @@ internal sealed class ToolWriteChannelApplication(
                 Changes = previous?.Changes ?? [],
             },
         }, cancellationToken).ConfigureAwait(false)) return null;
+        if (superseded is not null) state.SupersededToolPaths.Add((id, superseded));
         return detection;
 
         ToolDetectionResult? Fail(ToolWriteFindingCode code, string? cause)

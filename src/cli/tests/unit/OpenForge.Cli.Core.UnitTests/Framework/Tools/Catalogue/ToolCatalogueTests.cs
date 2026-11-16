@@ -2,6 +2,7 @@ using OpenForge.Cli.Core.Framework.Tools.Catalogue;
 using OpenForge.Cli.Core.Framework.Tools.Catalogue.Shared.CodeGraph;
 using OpenForge.Cli.Core.Framework.Tools.Catalogue.Shared.CodebaseMemory;
 using OpenForge.Cli.Core.Framework.Tools.Models.Channels;
+using OpenForge.Cli.Core.Framework.Tools.Models.Recipes;
 
 namespace OpenForge.Cli.Core.UnitTests.Framework.Tools.Catalogue;
 
@@ -25,6 +26,20 @@ public sealed class ToolCatalogueTests
         supplied.Clear();
         Assert.Same(runtime, Assert.Single(catalogue.NodeRuntimes));
         Assert.Equal(2, catalogue.Entries.Count);
+    }
+
+    [Fact(DisplayName = "No catalogue recipe passes Open Forge's bin or home to a native command"), Trait("Feature", "tool-catalogue"), Trait("Evidence", "Unit")]
+    public void NativeCommandsNeverTargetSharedFolders()
+    {
+        var catalogue = ToolCatalogueFactory.Create([]);
+        var values = catalogue.Entries.Values.SelectMany(entry => entry.Profiles).SelectMany(profile => new[] { profile.Setup, profile.Uninstall })
+            .SelectMany(setup => setup.Arguments.Concat(setup.DryRunArguments ?? []).Concat(setup.NativePlan?.Arguments ?? [])
+                .Concat(setup.Environment.Values.OfType<string>()))
+            .ToArray();
+
+        Assert.NotEmpty(values);
+        Assert.DoesNotContain(values, value => value.Contains(ToolRecipeDefinitions.BinToken, StringComparison.Ordinal)
+            || value.Contains(ToolRecipeDefinitions.HomeToken, StringComparison.Ordinal));
     }
 
     [Fact(DisplayName = "The catalogue rejects a missing runtime inventory at composition"), Trait("Feature", "tool-catalogue"), Trait("Evidence", "Unit")]
