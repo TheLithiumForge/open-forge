@@ -130,34 +130,31 @@ public sealed class ToolWriteSafetyTests
         if (!failPublication) Assert.NotNull(fixture.Records.Path);
     }
 
-    [Theory(DisplayName = "PATH removal backups stay pending through record publication and failures")]
-    [InlineData(false, false)]
-    [InlineData(true, false)]
-    [InlineData(false, true)]
-    public async Task PathRemovalBackupsFollowPublication(bool failPath, bool failPublication)
+    // Remove edits no PATH since G8. Its config removal backups still wait for record publication.
+    [Theory(DisplayName = "Remove backups stay pending through record publication and failures")]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task RemovalBackupsFollowPublication(bool failPublication)
     {
-        var fixture = new ToolWriteOperationFixture { Terminal = true, AddPathChoice = true, AcceptOptional = true, PlacedByOpenForge = true };
-        fixture.Facts = fixture.Facts with { Path = fixture.Facts.Path with { Readiness = ToolPathReadiness.Missing } };
-        var writer = fixture.Create();
-        await writer.ExecuteAsync(fixture.Request(yes: false), CancellationToken.None);
-        fixture.CompletedBackups.Clear();
-        fixture.PathBackups.Clear();
-        fixture.Calls.Clear();
-        fixture.FailPath = failPath;
-        fixture.FailPathPublication = failPublication;
-        var result = await writer.ExecuteAsync(fixture.Request(ToolWriteKind.Remove, yes: false), CancellationToken.None);
+        var fixture = new ToolWriteOperationFixture { FailWrite = failPublication };
+        fixture.DetectedVersions[ToolWriteOperationFixture.Id] = ToolWriteOperationFixture.OldVersion;
+        fixture.SeedChanges(new ToolManagedFileAddition { Id = ToolWriteOperationFixture.FirstChange, Path = ToolWriteOperationFixture.FirstChange, Sha256 = ToolWriteOperationFixture.Digest });
+        var result = await fixture.Create().ExecuteAsync(fixture.Request(ToolWriteKind.Remove), CancellationToken.None);
 
-        var pending = Assert.Single(fixture.PathBackups);
-        if (failPath || failPublication)
+        var pending = fixture.IssuedBackups[0];
+        Assert.Contains(fixture.Calls, call => call.Call == ToolWriteCall.ConfigRemove);
+        if (failPublication)
         {
+            Assert.Equal(CliSemanticStatus.Failed, result.Status);
             Assert.Contains(result.Data.Plan.Backups, backup => backup.Target == pending.Backup.TargetPath);
             Assert.Empty(fixture.CompletedBackups);
-            Assert.NotEqual(CliSemanticStatus.Complete, result.Status);
         }
         else
         {
             Assert.Equal(CliSemanticStatus.Complete, result.Status);
-            Assert.Contains(fixture.CompletedBackups, backup => backup.Backup == pending.Backup);
+            var completion = Assert.Single(fixture.CompletedBackups);
+            Assert.Same(pending.Backup, completion.Backup);
+            Assert.Equal(fixture.IssuedBackups[^1].ExpectedAppliedSha256, completion.ExpectedAppliedSha256);
             Assert.True(fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.BackupComplete) > fixture.Calls.FindLastIndex(call => call.Call == ToolWriteCall.Write));
         }
     }
