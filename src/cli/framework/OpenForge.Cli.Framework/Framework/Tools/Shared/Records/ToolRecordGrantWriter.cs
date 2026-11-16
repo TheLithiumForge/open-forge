@@ -27,7 +27,7 @@ internal sealed class ToolRecordGrantWriter(IToolBackupService backups)
             foreach (var value in request.AllowInstallPaths)
                 if (!PortableWorkspacePath.TryNormalize(value, out _))
                     throw new ArgumentException("An explicit grant requires a portable workspace-relative path.");
-            if (request.AllowInstallPaths.Count == 0) return Result(written, pending);
+            if (request.AllowInstallPaths.Count == 0) return Result(written, pending, token);
 
             // Grant publication depends only on the workspace settings, never on a Tool home or lock.
             var root = ToolRecordPaths.ResolveRoot(request.Locations.WorkspacePath);
@@ -44,7 +44,7 @@ internal sealed class ToolRecordGrantWriter(IToolBackupService backups)
             var intended = before ?? [];
             foreach (var path in request.AllowInstallPaths.Distinct(StringComparer.Ordinal))
                 intended = WorkspaceSettingsCodec.AddAllowInstallPath(intended, path) ?? intended;
-            if (before is not null && before.AsSpan().SequenceEqual(intended)) return Result(written, pending);
+            if (before is not null && before.AsSpan().SequenceEqual(intended)) return Result(written, pending, token);
             var decoded = WorkspaceSettingsCodec.Read(intended);
             if (decoded.Document is null) throw new ArgumentException(decoded.Cause);
 
@@ -58,13 +58,17 @@ internal sealed class ToolRecordGrantWriter(IToolBackupService backups)
                 throw new IOException("The settings grant couldn't be verified after publication.");
             pending[^1] = pending[^1] with { Verified = true };
             verified = true;
-            return Result(written, pending);
+            return Result(written, pending, token);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException or JsonException or OperationCanceledException)
         {
             var unfinished = pending.Select(item => item.Backup.BackupPath).OfType<string>().ToList();
             if (target is not null && !verified) unfinished.Insert(0, target);
-            return new(written.ToArray(), unfinished.ToArray(), exception.Message) { PendingBackups = pending.ToArray() };
+            return new(written.ToArray(), unfinished.ToArray(), exception.Message)
+            {
+                PendingBackups = pending.ToArray(),
+                Cancelled = exception is OperationCanceledException || token.IsCancellationRequested,
+            };
         }
     }
 
@@ -76,6 +80,9 @@ internal sealed class ToolRecordGrantWriter(IToolBackupService backups)
         return observation;
     }
 
-    private static ToolRecordWriteResult Result(List<string> written, List<ToolBackupCompletionRequest> pending)
-        => new(written.ToArray(), [], null) { PendingBackups = pending.ToArray() };
+    private static ToolRecordWriteResult Result(List<string> written, List<ToolBackupCompletionRequest> pending, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        return new(written.ToArray(), [], null) { PendingBackups = pending.ToArray() };
+    }
 }

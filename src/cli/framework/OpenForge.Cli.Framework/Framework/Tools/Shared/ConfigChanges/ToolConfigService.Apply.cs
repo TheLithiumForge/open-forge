@@ -5,7 +5,6 @@ using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Filesystem;
 using OpenForge.Cli.Core.Framework.Tools.Shared.NativeSettings;
-using OpenForge.Cli.Core.Framework.Workspace.Models;
 
 namespace OpenForge.Cli.Core.Framework.Tools.Shared.ConfigChanges;
 
@@ -21,14 +20,17 @@ internal sealed partial class ToolConfigService
         var removed = new List<string>();
         var pending = new Dictionary<string, ToolBackupCompletionRequest>(ToolNativePaths.Comparer);
         string? failure = null;
+        var cancelled = false;
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
             ToolRecipeExpansion.Validate(plan.Request.Context);
             ValidateRemovalSelection(plan.Removals, plan.Request.AppliedChanges);
             var conflict = plan.Removals.FirstOrDefault(change => change.Disposition == ToolChangeDisposition.Conflict)?.Conflict
                 ?? plan.Changes.FirstOrDefault(change => change.Disposition == ToolChangeDisposition.Conflict)?.Conflict;
             if (plan.Removals.Any(change => change.Disposition == ToolChangeDisposition.Conflict) || plan.Changes.Any(change => change.Disposition == ToolChangeDisposition.Conflict))
                 throw new InvalidDataException(conflict ?? "The configuration plan conflicts.");
+            await ToolConfigPermissions.RequireAsync(plan.Request.Context, ToolConfigPermissions.Destinations(plan), cancellationToken).ConfigureAwait(false);
             foreach (var removal in plan.Removals)
             {
                 await ApplyRemovalAsync(plan.Request.Context, removal, pending, cancellationToken).ConfigureAwait(false);
@@ -42,6 +44,7 @@ internal sealed partial class ToolConfigService
                 if (!plan.Request.Changes.Any(change => change == observation.Change) || completed.Contains(observation.Change.Id, StringComparer.Ordinal))
                     throw new InvalidDataException("The planned change is duplicated or absent from its request.");
                 ToolAppliedChange? addition;
+                ToolConfigChange? resolvedFile = null;
                 if (observation.Change is ToolNativeConfigChange native)
                 {
                     if (!SameNative(observation.Desired, ToolNativeSettings.Value(native.DesiredValue))) throw new InvalidDataException("The native setting plan no longer matches its recipe.");
@@ -72,6 +75,7 @@ internal sealed partial class ToolConfigService
                 else
                 {
                     var resolved = ToolRecipeExpansion.Change(observation.Change, plan.Request.Context);
+                    resolvedFile = resolved;
                     var target = ToolFileReader.Target(scope, ToolConfigEditor.PathOf(resolved));
                     var current = await ToolFileReader.ReadAsync(scope, target, cancellationToken).ConfigureAwait(false);
                     var before = current.HasBytes ? current.Bytes.ToArray() : null;
@@ -80,7 +84,7 @@ internal sealed partial class ToolConfigService
                     var conditionalSkip = resolved is ToolMarkedBlockChange { WhenNotIgnored: not null } && edit.Disposition == ToolChangeDisposition.NoChange;
                     if (!conditionalSkip && (!Same(Bytes(edit.Bytes), observation.Desired) || edit.Disposition != observation.Disposition))
                         throw new IOException("The configuration plan no longer matches its recipe.");
-                    if (!Same(Bytes(before), Bytes(edit.Bytes))) await WriteAsync(scope, current, edit.Bytes, pending, cancellationToken).ConfigureAwait(false);
+                    if (!Same(Bytes(before), Bytes(edit.Bytes))) await WriteAsync(plan.Request.Context, current, edit.Bytes, pending, cancellationToken).ConfigureAwait(false);
                     addition = edit.Addition;
                 }
                 var index = remaining.FindIndex(receipt => receipt.Id == observation.Change.Id);
@@ -89,13 +93,14 @@ internal sealed partial class ToolConfigService
                     if (index >= 0) remaining[index] = addition;
                     else remaining.Add(addition);
                 }
-                if (observation.Change is ToolMarkedBlockChange { WhenNotIgnored: { } coverage }
+                if (resolvedFile is ToolMarkedBlockChange { WhenNotIgnored: { } coverage }
                     && !await new ToolEffectiveIgnore(_processes).IsIgnoredAsync(plan.Request.Context, coverage.WorkspaceRelativePath, cancellationToken).ConfigureAwait(false))
                     throw new InvalidDataException("The conditional marked block did not verify effective ignore coverage.");
                 completed.Add(observation.Change.Id);
             }
         }
-        catch (Exception exception) when (ExpectedFailure(exception) || exception is OperationCanceledException) { failure = exception.Message; }
+        catch (OperationCanceledException exception) { cancelled = true; failure = exception.Message; }
+        catch (Exception exception) when (ExpectedFailure(exception)) { failure = exception.Message; }
         return new()
         {
             RemainingAdditions = remaining,
@@ -106,15 +111,20 @@ internal sealed partial class ToolConfigService
             Unfinished = plan.Removals.Where(change => !removed.Contains(change.Addition.Id, StringComparer.Ordinal)).Select(change => change.Addition.Id)
                 .Concat(plan.Changes.Where(change => !completed.Contains(change.Change.Id, StringComparer.Ordinal)).Select(change => change.Change.Id)).ToArray(),
             Failure = failure,
+            Cancelled = cancelled || cancellationToken.IsCancellationRequested,
         };
     }
 
-    private async Task WriteAsync(CliWorkspace scope, FileStateSnapshot current, byte[]? bytes, IDictionary<string, ToolBackupCompletionRequest> pending, CancellationToken token)
+    private async Task WriteAsync(ToolRecipeContext context, FileStateSnapshot current, byte[]? bytes, IDictionary<string, ToolBackupCompletionRequest> pending, CancellationToken token)
     {
+        var scope = ToolFileReader.Scope(context.WorkspacePath);
+        var destination = Path.GetRelativePath(scope.LexicalRoot, current.LogicalPath).Replace(Path.DirectorySeparatorChar, '/');
+        await ToolConfigPermissions.RequireAsync(context, [destination], token).ConfigureAwait(false);
         var backup = await _backups.PrepareAsync(new(current.LogicalPath), token).ConfigureAwait(false);
         if (backup.BackupPath is not null) pending[current.LogicalPath] = new(backup, ExpectedAppliedSha256: null, Verified: false);
         if (backup.Failure is not null) throw new IOException(backup.Failure);
         pending[current.LogicalPath] = new(backup, Hash(bytes), Verified: false);
+        await ToolConfigPermissions.RequireAsync(context, [destination], token).ConfigureAwait(false);
         await ToolFileReplacement.WriteAsync(scope, current.Expectation, bytes, token).ConfigureAwait(false);
         var applied = await ToolFileReader.ReadAsync(scope, current.LogicalPath, token).ConfigureAwait(false);
         if (applied.ContentHash != Hash(bytes)) throw new IOException("The file effect did not verify. Keep its backup for manual checking.");

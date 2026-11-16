@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Application;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.OutputText.Tool.Shared.Writing;
 
 namespace OpenForge.Cli.Core.Presentation.Tool.Shared.Writing;
@@ -23,10 +24,15 @@ internal static class ToolWriteReportSelector
                 Title = ToolWriteText.Finding(Suffix(finding.Code)),
                 Message = finding.Cause ?? ToolWriteText.Finding(Suffix(finding.Code)),
                 Subject = new(CliSubjectKind.Identifier, Path: finding.Path, Id: finding.ToolId ?? result.Command),
+                Actions = finding.Code == ToolWriteFindingCode.PermissionRequired && result.PermissionCommand is { } command
+                    ? [new(command, ToolWriteText.PermissionNext())] : [],
+                Resolution = finding.Code == ToolWriteFindingCode.PermissionRequired && result.PermissionCommand is not null
+                    ? CliResolution.TargetedOperation : null,
             })],
             Data = result.Data,
             Effects = Effects(result),
-            Next = result.Next,
+            Next = result.Next ?? (result.PermissionCommand is { } permissionCommand
+                ? new CliNextAction(permissionCommand, ToolWriteText.PermissionNext()) : null),
             Counts = [new("tools", ToolWriteText.ToolCountLabel(result.Data.Tools.Count), result.Data.Tools.Count), new("completedSteps", "Completed steps",
                 result.Data.Outcomes.Count(outcome => outcome.State == ToolWriteStages.Completed))],
             Diagnostics = selection.Detail == CliDetail.Debug

@@ -339,6 +339,72 @@ public sealed class ToolNpmChannelTests
         Assert.All(states, state => Assert.Equal(state.RuntimePath, state.PackageManager?.Invocation.ExecutablePath));
     }
 
+    [Theory(DisplayName = "Stopping the private package command keeps the already verified Node receipt and completed prefix")]
+    [InlineData("cancelled"), InlineData("exception"), InlineData("timeout")]
+    public async Task KeepsRuntimeWhenPackageStops(string cause)
+    {
+        using var fixture = new ToolChannelFixture();
+        var node = Node(fixture, ToolChannelFixture.RuntimeVersion);
+        var planned = await fixture.Service.PlanAsync(fixture.Request(fixture.Entry(fixture.Npm())) with { AvailableNodeRuntimes = [node] }, Token);
+        Assert.NotNull(planned.Resolution);
+        var plan = planned.Resolution;
+        Assert.Same(node, plan.PrivateNode);
+        var install = Assert.Single(plan.Execution.Commands, command => command.Arguments.Contains("install"));
+        var installIndex = plan.Execution.Commands.ToList().IndexOf(install);
+        fixture.Processes.Requests.Clear();
+        fixture.Processes.Run = command =>
+        {
+            if (!ReferenceEquals(command, install)) return ExecutePrivate(plan, command);
+            return cause switch
+            {
+                "cancelled" => ToolChannelFixture.Success() with { ExitCode = null, Cancelled = true },
+                "timeout" => ToolChannelFixture.Success() with { ExitCode = null, TimedOut = true },
+                "exception" => throw new OperationCanceledException(),
+                _ => throw new ArgumentOutOfRangeException(nameof(cause)),
+            };
+        };
+        var result = await fixture.Service.InstallAsync(new(plan), Token);
+        Assert.Equal(cause != "timeout", result.Cancelled);
+        Assert.NotNull(result.Failure);
+        Assert.Null(result.State);
+        var receipt = Assert.Single(result.Runtimes);
+        Assert.True(ToolPrivateNodeInstaller.Matches(node, receipt, fixture.Home));
+        Assert.True(File.Exists(ToolSupplyPaths.Under(receipt.RuntimePath, node.Archive.EntryRelativePath)));
+        Assert.Equal(plan.Execution.Downloads.Count + plan.Execution.Extractions.Count + installIndex, result.CompletedEffects.Count);
+        Assert.Equal(installIndex + 1, fixture.Processes.Requests.Count);
+        Assert.Empty(result.PendingBackups);
+        Assert.Equal(0, fixture.Backups.Prepared);
+    }
+
+    [Fact(DisplayName = "Cancellation after a successful final probe keeps the verified state runtime and launcher backups")]
+    public async Task KeepsVerifiedPrivateStateOnCancellation()
+    {
+        using var fixture = new ToolChannelFixture();
+        var node = Node(fixture, ToolChannelFixture.RuntimeVersion);
+        var planned = await fixture.Service.PlanAsync(fixture.Request(fixture.Entry(fixture.Npm())) with { AvailableNodeRuntimes = [node] }, Token);
+        Assert.NotNull(planned.Resolution);
+        var plan = planned.Resolution;
+        Assert.Same(node, plan.PrivateNode);
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(Token);
+        fixture.Processes.Run = command =>
+        {
+            var observed = ExecutePrivate(plan, command);
+            if (ReferenceEquals(command, plan.Execution.Commands[^1])) cancellation.Cancel();
+            return observed;
+        };
+        var result = await fixture.Service.InstallAsync(new(plan), cancellation.Token);
+        Assert.True(result.Cancelled);
+        Assert.Null(result.Failure);
+        Assert.NotNull(result.State);
+        Assert.Equal(plan.Version, result.State.Version);
+        Assert.True(ToolPrivateNodeInstaller.Matches(node, Assert.Single(result.Runtimes), fixture.Home));
+        Assert.All(result.PendingBackups, backup => Assert.True(backup.Verified));
+        Assert.Equal(plan.Execution.Launchers.Count, result.PendingBackups.Count);
+        Assert.Equal(plan.Execution.Downloads.Count + plan.Execution.Extractions.Count + plan.Execution.Commands.Count + plan.Execution.Launchers.Count,
+            result.CompletedEffects.Count);
+        Assert.Equal(0, fixture.Backups.Completed);
+    }
+
     private static ToolChannelRequest PrivateRequest(ToolChannelFixture fixture, ToolCatalogueEntry entry, ToolPrivateNodeSpec node)
         => fixture.Request(entry) with
         {

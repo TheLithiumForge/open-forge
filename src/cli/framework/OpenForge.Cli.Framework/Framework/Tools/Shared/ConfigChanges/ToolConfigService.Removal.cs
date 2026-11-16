@@ -19,7 +19,8 @@ internal sealed partial class ToolConfigService
         var observations = new List<ToolConfigRemovalObservation>();
         foreach (var addition in request.Lock.Changes)
             observations.Add(await ObserveRemovalAsync(request.Context, addition, simulated, cancellationToken).ConfigureAwait(false));
-        return new(request, observations);
+        var plan = new ToolConfigRemovePlan(request, observations);
+        return plan with { Permissions = await ToolConfigPermissions.EvaluateAsync(request.Context, ToolConfigPermissions.Destinations(plan), cancellationToken).ConfigureAwait(false) };
     }
 
     public async Task<ToolConfigRemoveResult> RemoveAsync(ToolConfigRemovePlan plan, CancellationToken cancellationToken)
@@ -29,12 +30,15 @@ internal sealed partial class ToolConfigService
         var remaining = plan.Request.Lock.Changes.ToList();
         var pending = new Dictionary<string, ToolBackupCompletionRequest>(ToolNativePaths.Comparer);
         string? failure = null;
+        var cancelled = false;
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
             ToolRecipeExpansion.Validate(plan.Request.Context);
             ValidateRemovalSelection(plan.Changes, plan.Request.Lock.Changes);
             if (plan.Changes.Any(change => change.Disposition == ToolChangeDisposition.Conflict))
                 throw new InvalidDataException(plan.Changes.First(change => change.Disposition == ToolChangeDisposition.Conflict).Conflict ?? "The removal plan conflicts.");
+            await ToolConfigPermissions.RequireAsync(plan.Request.Context, ToolConfigPermissions.Destinations(plan), cancellationToken).ConfigureAwait(false);
             foreach (var observation in plan.Changes)
             {
                 await ApplyRemovalAsync(plan.Request.Context, observation, pending, cancellationToken).ConfigureAwait(false);
@@ -42,7 +46,8 @@ internal sealed partial class ToolConfigService
                 removed.Add(observation.Addition.Id);
             }
         }
-        catch (Exception exception) when (ExpectedFailure(exception) || exception is OperationCanceledException) { failure = exception.Message; }
+        catch (OperationCanceledException exception) { cancelled = true; failure = exception.Message; }
+        catch (Exception exception) when (ExpectedFailure(exception)) { failure = exception.Message; }
         return new()
         {
             RemovedChanges = removed,
@@ -51,6 +56,7 @@ internal sealed partial class ToolConfigService
             Unfinished = plan.Changes.Where(change => !removed.Contains(change.Addition.Id, StringComparer.Ordinal)).Select(change => change.Addition.Id).ToArray(),
             KeptNativeSettings = plan.Request.NativeSettings.Where(setting => setting.ToolId == plan.Request.ToolId).ToArray(),
             Failure = failure,
+            Cancelled = cancelled || cancellationToken.IsCancellationRequested,
         };
     }
 
@@ -121,6 +127,6 @@ internal sealed partial class ToolConfigService
         if (!Same(Bytes(before), observation.Current)) throw new IOException("The configuration file changed after removal planning.");
         var after = ToolConfigEditor.Remove(observation.Addition, before);
         if (!Same(Bytes(after), observation.Desired)) throw new IOException("The removal plan no longer matches its receipt.");
-        if (!Same(Bytes(before), Bytes(after))) await WriteAsync(scope, current, after, pending, token).ConfigureAwait(false);
+        if (!Same(Bytes(before), Bytes(after))) await WriteAsync(context, current, after, pending, token).ConfigureAwait(false);
     }
 }

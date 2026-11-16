@@ -41,6 +41,8 @@ Open Forge turns account telemetry off, excludes archived memory and checks Giti
 PATH changes and shared deletion need separate live choices.
 If bin isn't on PATH, follow the printed instructions, restart your terminal and agent apps, then run Status again.
 A dry run can use the network to resolve latest and reports that use.
+Open Forge's own project files, such as `codegraph.json`, need destination permission as in other commands.
+A blocked plan names each missing path and the command to rerun with `--allow-path`.
 
 ## Use the tool
 

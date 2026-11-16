@@ -103,6 +103,8 @@ Install, Update and Remove share these options:
 A dry run shows exact versions where known, commands, downloads, files, backups and additions.
 It uses the declared native preview when the tool is already available.
 Latest-version lookup can use the network, and the result says when it does.
+Open Forge's own project files, such as `codegraph.json`, need destination permission as in other commands.
+A blocked plan names each missing path and the command to rerun with `--allow-path`.
 
 PATH edits and shared file deletion need separate live choices.
 `--yes` leaves those actions unchosen.

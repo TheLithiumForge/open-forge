@@ -157,6 +157,7 @@ internal sealed class ToolWriteToolPlanner(
             MainRoot = input.Facts.MainRoot,
             ClientRoots = input.Facts.ClientRoots,
             NativeEnvironment = input.Facts.NativeEnvironment,
+            AdditionalAllowInstallPaths = input.Request.AllowPaths,
         };
     }
 

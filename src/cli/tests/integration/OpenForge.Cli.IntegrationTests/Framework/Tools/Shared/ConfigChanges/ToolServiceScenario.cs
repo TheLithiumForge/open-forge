@@ -20,6 +20,7 @@ internal sealed class ToolServiceScenario : IDisposable, IToolProcessHost, ITool
     internal ToolConfigService Service { get; }
     internal List<ToolProcessRequest> Calls { get; } = [];
     internal Func<ToolProcessRequest, ToolProcessResult>? Run { get; set; }
+    internal Action<string>? Resolving { get; set; }
     internal bool? Ignored { get; set; }
     internal ToolNativePlanObservation Inventory { get; set; } = new() { DetectedClients = [], Paths = [], Problems = [] };
     internal string NativeFile => Path.Combine(Context.NativeHomePath, ToolNativeSettings.CodeGraphDirectoryName, ToolNativeSettings.TelemetryFileName);
@@ -43,6 +44,25 @@ internal sealed class ToolServiceScenario : IDisposable, IToolProcessHost, ITool
 
     internal ToolConfigRequest Request(params ToolConfigChange[] changes) => new()
     { ToolId = ToolId, Context = Context, ProfileDigest = "synthetic-profile", Invocation = Invocation, Changes = changes, AppliedChanges = [], NativeSettings = [] };
+
+    internal ToolConfigRemoveRequest Removal(IReadOnlyList<ToolAppliedChange> changes) => new()
+    { ToolId = ToolId, Context = Context, Lock = new() { Version = "1.2.3", Channel = "synthetic", Changes = changes }, NativeSettings = [] };
+
+    internal static ToolJsonValueChange Set(string id, string path, string value)
+    {
+        using var document = JsonDocument.Parse(value);
+        return new()
+        {
+            Id = id,
+            Scope = ToolEffectScope.Workspace,
+            InitialState = ToolInitialConfigState.AbsentMember,
+            Description = "synthetic JSON value",
+            PathTemplate = path,
+            Pointer = "/value",
+            Operation = ToolJsonValueOperation.SetIfAbsent,
+            Value = document.RootElement.Clone()
+        };
+    }
 
     internal static ToolNativeConfigChange Native(bool stored = true) => new()
     {
@@ -92,7 +112,10 @@ internal sealed class ToolServiceScenario : IDisposable, IToolProcessHost, ITool
     }
 
     public Task<ToolResolvedCommand?> ResolveAsync(string command, string workingDirectory, CancellationToken cancellationToken)
-        => Task.FromResult(Ignored is null ? null : new ToolResolvedCommand(Invocation.ExecutablePath, Invocation));
+    {
+        Resolving?.Invoke(workingDirectory);
+        return Task.FromResult(Ignored is null ? null : new ToolResolvedCommand(Invocation.ExecutablePath, Invocation));
+    }
     public Task<ToolProcessResult> RunAsync(ToolProcessRequest request, CancellationToken cancellationToken)
     {
         Calls.Add(request);

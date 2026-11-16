@@ -100,6 +100,30 @@ public sealed class ToolLauncherWriterTests
         Assert.Equal(changed, await File.ReadAllBytesAsync(target, TestContext.Current.CancellationToken));
     }
 
+    [Fact(DisplayName = "Launcher cancellation propagates before any publication or pending backup")]
+    public async Task PropagatesCancellation()
+    {
+        using var temporary = TemporaryWorkspace.Create("tool-launcher");
+        var source = temporary.CreateFile("native-source", new byte[] { 1, 2, 3 });
+        var target = temporary.CreateFile("native-target");
+        File.Delete(target);
+        var launcher = new ToolLauncherSpec
+        {
+            ToolId = "sample",
+            Kind = ToolLauncherKind.NativeExecutable,
+            TargetKind = ToolLauncherTargetKind.NativeBinary,
+            EntryPath = source,
+            LauncherPath = target,
+            Arguments = [],
+        };
+        var pending = new List<ToolBackupCompletionRequest>();
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        await cancellation.CancelAsync();
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => new ToolLauncherWriter(new Backups()).WriteAsync(new([launcher]), pending, cancellation.Token));
+        Assert.Empty(pending);
+        Assert.False(File.Exists(target));
+    }
+
     private sealed class Backups : IToolBackupService
     {
         public Task<ToolBackupResult> PrepareAsync(ToolBackupRequest request, CancellationToken cancellationToken)

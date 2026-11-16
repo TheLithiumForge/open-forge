@@ -156,6 +156,39 @@ Report that gap for manual checking.
 Don't add a Tool journal, lease or recovery folder.
 Commands don't run concurrently by design.
 
+### Record deletion
+
+Machine and runtime rows are upserts.
+Omitting a row keeps its current file, including unknown fields.
+Only `RemovedToolIds` and `RemovedRuntimeVersions` select record-file deletion.
+The writer selects them only after the approved tool files or runtime files are actually deleted.
+Deleting a project declaration alone doesn't select machine-state deletion.
+
+Before any publication effect, check every selected path against its SHA-256 expectation and matching observed typed record identity.
+Require an existing readable ordinary file under the resolved Open Forge state directory.
+Use the existing ID and exact stable-version grammar.
+Reject missing observations, expected absence, changed bytes, mismatched identities, duplicate deletions and paths selected for both writing and deletion.
+An observed record outside the current catalogue can still be selected.
+Unobserved records stay untouched.
+
+Prepare the normal Git-aware or sibling backup, then revalidate expected state immediately before each file deletion.
+Delete only that selected file and verify its absence.
+Keep workspace-keyed native-setting state, PATH state, unselected records and directories.
+There is no recursive cleanup or cross-project registry.
+Completed deletion paths are included in `WrittenPaths`.
+A verified deletion's pending backup expects absence through a null applied hash.
+Record publication returns those handles without completing them.
+The writer completes them only after successful publication and final verification.
+A later failure keeps the completed prefix, unfinished paths and all pending backups.
+Fresh reads use the remaining files and don't reload a deleted row.
+
+### Cancellation
+
+Record and settings-only grant publication return `Cancelled` when the caller token is cancelled or publication throws `OperationCanceledException`.
+Keep actual completed paths, unfinished work and pending backup handles in that result.
+A service failure returned after caller cancellation still carries cancellation.
+Cancellation doesn't roll back a completed write or deletion and doesn't discard a backup.
+
 Readers keep unknown keys and report unrecognized schema versions while using understood keys.
 Validate fields before using them and keep unrelated settings and ownership data.
 The [Interface](interface.md) defines shapes and locations.
@@ -172,4 +205,6 @@ Required tests cover:
 - Kept account-wide settings and project-only removal when account uninstall is skipped.
 - Dirty tracked files, untracked files and sequential sibling backups.
 - Partial completion and unchanged unrelated bytes.
+- Explicit record deletion, omitted-row upserts, stale or unobserved selections and fresh reads after final removal.
+- Cancellation before publication and after completed effects, with kept backup handles.
 - No Tool writes or locks under `.open-forge-state/`.

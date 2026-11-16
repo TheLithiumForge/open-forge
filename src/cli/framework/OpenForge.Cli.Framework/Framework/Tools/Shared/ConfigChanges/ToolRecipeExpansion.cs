@@ -79,6 +79,16 @@ internal static class ToolRecipeExpansion
         return result.RootElement.Clone();
     }
 
+    internal static ToolNativeConfigChange Native(ToolNativeConfigChange change, ToolRecipeContext context, string? previous)
+        => change with
+        {
+            ApplyArguments = change.ApplyArguments.Select(value => Expand(value, context)).ToArray(),
+            ReadArguments = change.ReadArguments?.Select(value => Expand(value, context)).ToArray(),
+            ReadEnvironment = change.ReadEnvironment?.ToDictionary(pair => pair.Key, pair => pair.Value is null ? null : Expand(pair.Value, context), StringComparer.Ordinal),
+            StoredValue = change.StoredValue is { } stored ? stored with { PathTemplate = Expand(stored.PathTemplate, context) } : null,
+            ManualRestoreArgumentsTemplate = change.ManualRestoreArgumentsTemplate.Select(value => Expand(value, context, previous)).ToArray(),
+        };
+
     private static string? Client(string token, ToolRecipeContext context)
     {
         if (token.StartsWith(ToolRecipeDefinitions.ClientTokenPrefix, StringComparison.Ordinal))

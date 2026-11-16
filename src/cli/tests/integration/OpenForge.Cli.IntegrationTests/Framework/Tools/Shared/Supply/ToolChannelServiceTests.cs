@@ -3,6 +3,7 @@ using OpenForge.Cli.Core.Framework.Tools.Models.Channels;
 using OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
 using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
+using OpenForge.Cli.Core.Framework.Tools.Shared.PackageManagers;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Tools.Shared.Supply;
 
@@ -122,6 +123,7 @@ public sealed class ToolChannelServiceTests
         Assert.False(planned.UsedNetwork);
         var result = await fixture.Service.InstallAsync(new(planned.Resolution), Token);
         Assert.Null(result.Failure);
+        Assert.False(result.Cancelled);
         Assert.NotNull(result.State);
         Assert.False(result.State.PlacedByOpenForge);
         Assert.Equal(0, fixture.Downloads.Calls);
@@ -175,6 +177,7 @@ public sealed class ToolChannelServiceTests
         Assert.NotNull(planned.Resolution);
         var result = await fixture.Service.InstallAsync(new(planned.Resolution), Token);
         Assert.Null(result.Failure);
+        Assert.False(result.Cancelled);
         Assert.NotNull(result.State);
         Assert.Equal(ToolChannelFixture.Version, result.State.Version);
         Assert.True(File.Exists(result.State.CommandPath));
@@ -248,6 +251,237 @@ public sealed class ToolChannelServiceTests
         Assert.NotNull(result.Failure);
         Assert.Null(result.State);
         Assert.Equal(0, fixture.Downloads.Calls);
+    }
+
+    [Fact(DisplayName = "An already cancelled channel request performs no effects")]
+    public async Task CancelsBeforeEffects()
+    {
+        using var fixture = new ToolChannelFixture();
+        var plan = await ReleasePlan(fixture);
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(Token);
+        await cancellation.CancelAsync();
+        var result = await fixture.Service.InstallAsync(new(plan), cancellation.Token);
+        Assert.True(result.Cancelled);
+        Assert.Null(result.State);
+        Assert.Empty(result.CompletedEffects);
+        Assert.Empty(result.Runtimes);
+        Assert.Empty(result.PendingBackups);
+        Assert.Empty(fixture.Processes.Requests);
+        Assert.Equal(0, fixture.Downloads.Calls);
+        Assert.Empty(Directory.EnumerateFileSystemEntries(fixture.Home));
+    }
+
+    [Theory(DisplayName = "Download cancellation stays typed whether the host throws or returns a failure after caller cancellation")]
+    [InlineData(false), InlineData(true)]
+    public async Task ReportsDownloadCancellation(bool returnedFailure)
+    {
+        using var fixture = new ToolChannelFixture();
+        var plan = await ReleasePlan(fixture);
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(Token);
+        fixture.Downloads.Downloading = _ =>
+        {
+            if (!returnedFailure) throw new OperationCanceledException();
+            cancellation.Cancel();
+            fixture.Downloads.Fail = true;
+        };
+        var result = await fixture.Service.InstallAsync(new(plan), cancellation.Token);
+        Assert.True(result.Cancelled);
+        Assert.NotNull(result.Failure);
+        Assert.Null(result.State);
+        Assert.Empty(result.CompletedEffects);
+        Assert.Empty(result.PendingBackups);
+        Assert.Empty(result.Runtimes);
+        Assert.Equal(1, fixture.Downloads.Calls);
+        Assert.Empty(fixture.Processes.Requests);
+    }
+
+    [Fact(DisplayName = "A verified download stays reported when the caller cancels before extraction")]
+    public async Task KeepsVerifiedDownloadOnCancellation()
+    {
+        using var fixture = new ToolChannelFixture();
+        var plan = await ReleasePlan(fixture);
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(Token);
+        fixture.Downloads.Downloaded = _ => cancellation.Cancel();
+        var result = await fixture.Service.InstallAsync(new(plan), cancellation.Token);
+        Assert.True(result.Cancelled);
+        Assert.Null(result.State);
+        var download = Assert.Single(plan.Execution.Downloads);
+        Assert.Equal(download.DestinationPath, Assert.Single(result.CompletedEffects));
+        Assert.True(File.Exists(download.DestinationPath));
+        Assert.False(File.Exists(Assert.Single(plan.Execution.Launchers).LauncherPath));
+        Assert.Empty(result.PendingBackups);
+        Assert.Empty(fixture.Processes.Requests);
+    }
+
+    [Theory(DisplayName = "Package command cancellation is distinct from timeout and stops before launchers or verification")]
+    [InlineData("cancelled"), InlineData("exception"), InlineData("timeout")]
+    public async Task StopsAtPackageCommand(string cause)
+    {
+        using var fixture = new ToolChannelFixture();
+        fixture.Processes.Run = _ => ToolChannelFixture.Success(System.IO.Path.Combine(fixture.Native, ToolNpmPackageReader.ModulesDirectory));
+        var planned = await fixture.Service.PlanAsync(fixture.Request(fixture.Entry(fixture.Npm())) with { AvailableManagers = [fixture.Manager()] }, Token);
+        Assert.NotNull(planned.Resolution);
+        fixture.Processes.Requests.Clear();
+        fixture.Processes.Run = _ => StoppedProcess(cause);
+        var result = await fixture.Service.InstallAsync(new(planned.Resolution), Token);
+        Assert.Equal(cause != "timeout", result.Cancelled);
+        Assert.NotNull(result.Failure);
+        Assert.Null(result.State);
+        Assert.Empty(result.CompletedEffects);
+        Assert.Empty(result.PendingBackups);
+        Assert.Empty(result.Runtimes);
+        Assert.Same(planned.Resolution.Execution.Commands[0], Assert.Single(fixture.Processes.Requests));
+        Assert.Equal(0, fixture.Backups.Prepared);
+        Assert.Equal(0, fixture.Downloads.Calls);
+    }
+
+    [Theory(DisplayName = "Interrupted final verification keeps placement and backup evidence without claiming a verified tool state")]
+    [InlineData("cancelled"), InlineData("exception"), InlineData("timeout")]
+    public async Task KeepsPlacementWhenVerificationStops(string cause)
+    {
+        using var fixture = new ToolChannelFixture();
+        var plan = await ReleasePlan(fixture);
+        fixture.Processes.Run = _ => StoppedProcess(cause);
+        var result = await fixture.Service.InstallAsync(new(plan), Token);
+        Assert.Equal(cause != "timeout", result.Cancelled);
+        Assert.NotNull(result.Failure);
+        Assert.Null(result.State);
+        string[] completed =
+        [
+            Assert.Single(plan.Execution.Downloads).DestinationPath,
+            Assert.Single(plan.Execution.Extractions).DestinationPath,
+            Assert.Single(plan.Execution.Launchers).LauncherPath,
+        ];
+        Assert.Equal(completed, result.CompletedEffects);
+        var backup = Assert.Single(result.PendingBackups);
+        Assert.True(backup.Verified);
+        Assert.Same(Assert.Single(fixture.Backups.Results), backup.Backup);
+        Assert.NotNull(backup.ExpectedAppliedSha256);
+        Assert.True(File.Exists(backup.Backup.TargetPath));
+        Assert.Same(plan.Execution.Commands[^1], Assert.Single(fixture.Processes.Requests));
+        Assert.Empty(result.Runtimes);
+        Assert.Equal(0, fixture.Backups.Completed);
+    }
+
+    [Theory(DisplayName = "Launcher cancellation keeps the verified prefix and every prepared backup handle")]
+    [InlineData(false), InlineData(true)]
+    public async Task KeepsLauncherPrefixOnCancellation(bool cancelCaller)
+    {
+        using var fixture = new ToolChannelFixture();
+        var plan = await ReleasePlan(fixture);
+        var first = Assert.Single(plan.Execution.Launchers);
+        var second = first with { LauncherPath = System.IO.Path.Combine(plan.Execution.BinPath, "second-sample.exe") };
+        plan = plan with { Execution = plan.Execution with { Launchers = [first, second] } };
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(Token);
+        fixture.Backups.Preparing = _ =>
+        {
+            if (fixture.Backups.Prepared != 2) return;
+            if (!cancelCaller) throw new OperationCanceledException();
+            cancellation.Cancel();
+        };
+        var result = await fixture.Service.InstallAsync(new(plan), cancellation.Token);
+        Assert.True(result.Cancelled);
+        Assert.Null(result.State);
+        string[] completed =
+        [
+            Assert.Single(plan.Execution.Downloads).DestinationPath,
+            Assert.Single(plan.Execution.Extractions).DestinationPath,
+            first.LauncherPath,
+        ];
+        Assert.Equal(completed, result.CompletedEffects);
+        Assert.Equal(cancelCaller ? 2 : 1, result.PendingBackups.Count);
+        Assert.True(result.PendingBackups[0].Verified);
+        Assert.Same(fixture.Backups.Results[0], result.PendingBackups[0].Backup);
+        if (cancelCaller)
+        {
+            Assert.False(result.PendingBackups[1].Verified);
+            Assert.Same(fixture.Backups.Results[1], result.PendingBackups[1].Backup);
+        }
+        Assert.True(File.Exists(first.LauncherPath));
+        Assert.False(File.Exists(second.LauncherPath));
+        Assert.Empty(fixture.Processes.Requests);
+        Assert.Empty(result.Runtimes);
+        Assert.Equal(0, fixture.Backups.Completed);
+    }
+
+    [Theory(DisplayName = "Existing-install checks and reuse verification both carry returned process cancellation")]
+    [InlineData(1), InlineData(2)]
+    public async Task CancelsExistingVerification(int cancelledCall)
+    {
+        using var fixture = new ToolChannelFixture();
+        var plan = await ReusePlan(fixture);
+        fixture.Processes.Run = _ => fixture.Processes.Requests.Count == cancelledCall ? StoppedProcess("cancelled") : ToolChannelFixture.Success();
+        var result = await fixture.Service.InstallAsync(new(plan), Token);
+        Assert.True(result.Cancelled);
+        Assert.Null(result.State);
+        Assert.Empty(result.CompletedEffects);
+        Assert.Empty(result.PendingBackups);
+        Assert.Equal(cancelledCall, fixture.Processes.Requests.Count);
+        Assert.Equal(0, fixture.Downloads.Calls);
+        Assert.Equal(0, fixture.Backups.Prepared);
+    }
+
+    [Fact(DisplayName = "A verified reused state is kept when cancellation arrives with the successful final probe")]
+    public async Task KeepsVerifiedReuseWhenCallerCancels()
+    {
+        using var fixture = new ToolChannelFixture();
+        var plan = await ReusePlan(fixture);
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(Token);
+        fixture.Processes.Run = _ =>
+        {
+            if (fixture.Processes.Requests.Count == 2) cancellation.Cancel();
+            return ToolChannelFixture.Success();
+        };
+        var result = await fixture.Service.InstallAsync(new(plan), cancellation.Token);
+        Assert.True(result.Cancelled);
+        Assert.NotNull(result.State);
+        Assert.Equal(plan.Version, result.State.Version);
+        Assert.False(result.State.PlacedByOpenForge);
+        Assert.Single(result.CompletedEffects);
+        Assert.Empty(result.PendingBackups);
+        Assert.Empty(result.Runtimes);
+        Assert.Equal(2, fixture.Processes.Requests.Count);
+        Assert.Equal(0, fixture.Downloads.Calls);
+    }
+
+    private static ToolProcessResult StoppedProcess(string cause) => cause switch
+    {
+        "cancelled" => ToolChannelFixture.Success() with { ExitCode = null, Cancelled = true },
+        "timeout" => ToolChannelFixture.Success() with { ExitCode = null, TimedOut = true },
+        "exception" => throw new OperationCanceledException(),
+        _ => throw new ArgumentOutOfRangeException(nameof(cause)),
+    };
+
+    private static async Task<ToolChannelResolution> ReleasePlan(ToolChannelFixture fixture)
+    {
+        var planned = await fixture.Service.PlanAsync(fixture.Request(fixture.Entry(GitHub(fixture.Archive("sample.exe")))), Token);
+        Assert.NotNull(planned.Resolution);
+        return planned.Resolution;
+    }
+
+    private static async Task<ToolChannelResolution> ReusePlan(ToolChannelFixture fixture)
+    {
+        var command = System.IO.Path.Combine(fixture.Native, "sample.exe");
+        await File.WriteAllTextAsync(command, "synthetic", Token);
+        var state = fixture.State(command) with
+        { ChannelId = fixture.Npm().Id, PackageManager = fixture.Manager(), PlacedByOpenForge = false };
+        var planned = await fixture.Service.PlanAsync(fixture.Request(fixture.Entry(fixture.Npm())) with
+        {
+            Existing = new()
+            {
+                ToolId = state.ToolId,
+                Version = state.Version,
+                ChannelId = state.ChannelId,
+                CommandPath = state.CommandPath,
+                Invocation = state.Invocation,
+                RecordedState = state,
+                PackageManager = state.PackageManager,
+            },
+        }, Token);
+        Assert.NotNull(planned.Resolution);
+        Assert.True(planned.Resolution.ReuseExisting);
+        fixture.Processes.Requests.Clear();
+        return planned.Resolution;
     }
 
     private static ToolGitHubReleaseChannel GitHub(ToolReleaseAsset asset) => new()

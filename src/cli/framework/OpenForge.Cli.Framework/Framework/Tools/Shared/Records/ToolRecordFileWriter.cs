@@ -21,7 +21,16 @@ internal static class ToolRecordFileWriter
 
     internal static async Task ReplaceAsync(ToolRecordWrite write, ToolRecordsResult expected, CancellationToken token)
     {
+        token.ThrowIfCancellationRequested();
         ToolRecordPaths.Check(write.Root, write.Path);
+        if (write.Bytes is null)
+        {
+            if (await CheckExpectedAsync(write.Root, write.Path, expected, token).ConfigureAwait(false) is null)
+                throw new IOException($"A record deletion requires an observed existing file: {write.Path}.");
+            token.ThrowIfCancellationRequested();
+            File.Delete(write.Path);
+            return;
+        }
         var parent = Path.GetDirectoryName(write.Path) ?? throw new IOException("The record requires a parent directory.");
         Directory.CreateDirectory(parent);
         ToolRecordPaths.Check(write.Root, write.Path);

@@ -19,12 +19,14 @@ internal sealed class ToolWriteChannelApplication(
         state.Backups.AddRange(installed.PendingBackups);
         state.Outcomes.Add(new(id, ToolWriteStages.Channel, installed.Failure is null ? ToolWriteStages.Completed : ToolWriteStages.Failed,
             installed.CompletedEffects, installed.Failure is null ? [] : [ToolWriteStages.Channel]));
+        if (ToolWriteCancellation.Stop(state, cancellationToken, installed.Cancelled)) return null;
         if (installed.Failure is not null || installed.State is not { } machine)
             return Fail(ToolWriteFindingCode.ChannelBlocked, installed.Failure);
         var detection = await channels.DetectAsync(new(tool.Entry, plan.Input.Request.Workspace.LexicalRoot)
         {
             RecordedState = machine,
         }, cancellationToken).ConfigureAwait(false);
+        if (ToolWriteCancellation.Stop(state, cancellationToken)) return null;
         if (detection.Failure is not null || detection.Invocation is null || detection.Version is not { } version
             || !versions.Satisfies(version, new() { Kind = ToolVersionSelectionKind.Exact, ExactVersion = channel.Version }))
             return Fail(ToolWriteFindingCode.VerificationFailed, detection.Failure);

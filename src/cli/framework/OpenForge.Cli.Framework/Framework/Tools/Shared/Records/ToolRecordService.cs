@@ -23,7 +23,6 @@ internal sealed class ToolRecordService(ToolCatalogue catalogue, IToolVersionSer
     public Task<ToolRecordWriteResult> WriteAsync(ToolRecordWriteRequest request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
-        cancellationToken.ThrowIfCancellationRequested();
         return new ToolRecordWriter(new ToolPortableCodec(versions), backups).WriteAsync(request, cancellationToken);
     }
 }

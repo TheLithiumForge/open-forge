@@ -21,6 +21,7 @@ internal sealed class ToolWriteRecordPublisher(IToolRecordService records)
         var complete = written.Failure is null && written.Unfinished.Count == 0;
         state.Grants = new(request.AllowInstallPaths, complete ? ToolWriteStages.Completed : ToolWriteStages.Failed,
             written.WrittenPaths, written.Unfinished);
+        if (ToolWriteCancellation.Stop(state, cancellationToken, written.Cancelled)) return false;
         if (!complete)
         {
             state.Findings.Add(new(ToolWriteFindingCode.RecordFailed, CliSemanticStatus.Failed, Cause: written.Failure));
@@ -28,12 +29,11 @@ internal sealed class ToolWriteRecordPublisher(IToolRecordService records)
             return false;
         }
         state.Records = await records.ReadAsync(request.Locations, cancellationToken).ConfigureAwait(false);
-        return true;
+        return !ToolWriteCancellation.Stop(state, cancellationToken);
     }
 
     internal async ValueTask<bool> PublishAuxiliaryAsync(
-        ToolWriteExecution state, ToolWritePlan plan, ToolPathState? path,
-        IReadOnlyList<string> removed, CancellationToken cancellationToken)
+        ToolWriteExecution state, ToolWritePlan plan, ToolWriteAuxiliaryPublication publication, CancellationToken cancellationToken)
     {
         var locations = new ToolRecordsRequest(plan.Input.Request.Workspace.LexicalRoot, plan.Input.Facts.HomePath);
         var result = await records.WriteAsync(new()
@@ -45,12 +45,18 @@ internal sealed class ToolWriteRecordPublisher(IToolRecordService records)
                 Settings = new Dictionary<string, ToolSetting>(),
                 Lock = new Dictionary<string, ToolLockRecord>(),
             },
-            Machine = [.. state.Records.Machine.Values.Where(machine => !removed.Contains(machine.CommandPath, StringComparer.Ordinal))],
-            Runtimes = [.. state.Records.Runtimes.Values.Where(runtime => !removed.Contains(runtime.RuntimePath, StringComparer.Ordinal))],
+            Machine = [.. state.Records.Machine.Values.Where(machine => !publication.RemovedToolIds.Contains(machine.ToolId, StringComparer.Ordinal))],
+            Runtimes = [.. state.Records.Runtimes.Values.Where(runtime => !publication.RemovedRuntimeVersions.Contains(runtime.Version, StringComparer.Ordinal))],
+            RemovedToolIds = publication.RemovedToolIds,
+            RemovedRuntimeVersions = publication.RemovedRuntimeVersions,
             WorkspaceMachine = state.Records.WorkspaceMachine,
-            Path = path ?? state.Records.Path,
+            Path = publication.Path ?? state.Records.Path,
         }, cancellationToken).ConfigureAwait(false);
         state.Backups.AddRange(result.PendingBackups);
+        state.Outcomes.Add(new(plan.Tools.LastOrDefault()?.Entry.Identity.Id ?? string.Empty, ToolWriteStages.Records,
+            result.Failure is null && result.Unfinished.Count == 0 ? ToolWriteStages.Completed : ToolWriteStages.Failed,
+            result.WrittenPaths, result.Unfinished));
+        if (ToolWriteCancellation.Stop(state, cancellationToken, result.Cancelled)) return false;
         if (result.Failure is not null || result.Unfinished.Count != 0)
         {
             state.Findings.Add(new(ToolWriteFindingCode.RecordFailed, CliSemanticStatus.Failed, Cause: result.Failure));
@@ -58,6 +64,7 @@ internal sealed class ToolWriteRecordPublisher(IToolRecordService records)
             return false;
         }
         state.Records = await records.ReadAsync(locations, cancellationToken).ConfigureAwait(false);
+        if (ToolWriteCancellation.Stop(state, cancellationToken)) return false;
         if (!Readable(state.Records))
         {
             state.Findings.Add(new(ToolWriteFindingCode.RecordFailed, CliSemanticStatus.Failed));
@@ -116,6 +123,7 @@ internal sealed class ToolWriteRecordPublisher(IToolRecordService records)
         state.Backups.AddRange(written.PendingBackups);
         state.Outcomes.Add(new(id, ToolWriteStages.Records, written.Failure is null && written.Unfinished.Count == 0
             ? ToolWriteStages.Completed : ToolWriteStages.Failed, written.WrittenPaths, written.Unfinished));
+        if (ToolWriteCancellation.Stop(state, cancellationToken, written.Cancelled)) return false;
         if (written.Failure is not null || written.Unfinished.Count != 0)
         {
             state.Findings.Add(new(ToolWriteFindingCode.RecordFailed, CliSemanticStatus.Failed, id, Cause: written.Failure));
@@ -123,6 +131,7 @@ internal sealed class ToolWriteRecordPublisher(IToolRecordService records)
             return false;
         }
         var fresh = await records.ReadAsync(locations, cancellationToken).ConfigureAwait(false);
+        if (ToolWriteCancellation.Stop(state, cancellationToken)) return false;
         if (!Readable(fresh))
         {
             state.Findings.Add(new(ToolWriteFindingCode.RecordFailed, CliSemanticStatus.Failed, id));

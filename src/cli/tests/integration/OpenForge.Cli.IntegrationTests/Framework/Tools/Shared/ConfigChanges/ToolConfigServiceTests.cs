@@ -23,6 +23,7 @@ public sealed class ToolConfigServiceTests
     public async Task FreshApply()
     {
         using var temporary = new ToolConfigFixture("tool-config");
+        temporary.Grant(Target);
         temporary.WriteText(Target, "{\"keep\": [ 1, 2 ],\"items\": [\"existing\"]}\n");
         var host = new NoGitHost();
         var service = Service(host);
@@ -54,6 +55,7 @@ public sealed class ToolConfigServiceTests
     public async Task PlannedStateChanged()
     {
         using var temporary = new ToolConfigFixture("tool-config-drift");
+        temporary.Grant(Target);
         temporary.WriteText(Target, "{}");
         var service = Service();
         var plan = await service.PlanAsync(Request(temporary, [Json("json", Target, "/items", "[1]")]), Token);
@@ -70,6 +72,7 @@ public sealed class ToolConfigServiceTests
     public async Task PartialCompletion()
     {
         using var temporary = new ToolConfigFixture("tool-config-partial");
+        temporary.Grant(Target, Other);
         temporary.WriteText(Target, "{}");
         temporary.WriteText(Other, "{}");
         var service = Service();
@@ -88,6 +91,7 @@ public sealed class ToolConfigServiceTests
     public async Task ConflictingPreflight()
     {
         using var temporary = new ToolConfigFixture("tool-config-conflict");
+        temporary.Grant(Target);
         temporary.WriteText(Target, "{\"present\":null}");
         var service = Service();
         var plan = await service.PlanAsync(Request(temporary, [Json("first", Target, "/items", "[1]"), Json("second", Target, "/present", "true", set: true)]), Token);
@@ -104,6 +108,7 @@ public sealed class ToolConfigServiceTests
     public async Task ManagedFileLifecycle()
     {
         using var temporary = new ToolConfigFixture("tool-config-file");
+        temporary.Grant(Target);
         var template = Encoding.UTF8.GetBytes("first\n");
         var service = Service(readTemplate: _ => template);
         var change = new ToolManagedFileChange
@@ -137,6 +142,7 @@ public sealed class ToolConfigServiceTests
     public async Task ChangedManagedFile()
     {
         using var temporary = new ToolConfigFixture("tool-config-file-drift");
+        temporary.Grant(Target);
         var bytes = Encoding.UTF8.GetBytes("managed");
         var service = Service(readTemplate: _ => bytes);
         var change = new ToolManagedFileChange
@@ -162,6 +168,7 @@ public sealed class ToolConfigServiceTests
     public async Task BlockRemoval()
     {
         using var temporary = new ToolConfigFixture("tool-config-block");
+        temporary.Grant(Target);
         temporary.WriteText(Target, "unrelated\r\n");
         var service = Service();
         var block = new ToolMarkedBlockChange
@@ -216,6 +223,7 @@ public sealed class ToolConfigServiceTests
     public async Task RejectsLinkedLeaf()
     {
         using var temporary = new ToolConfigFixture("tool-config-link");
+        temporary.Grant(Target);
         temporary.WriteText(Other, "{}");
         temporary.CreateFileSymbolicLink(Target, temporary.Combine(Other));
         var service = Service();
@@ -229,11 +237,13 @@ public sealed class ToolConfigServiceTests
     public async Task Cancellation()
     {
         using var temporary = new ToolConfigFixture("tool-config-cancel");
+        temporary.Grant(Target);
         var service = Service();
         var plan = await service.PlanAsync(Request(temporary, [Json("json", Target, "/items", "[1]")]), Token);
         using var cancelled = new CancellationTokenSource();
         cancelled.Cancel();
         var result = await service.ApplyAsync(plan, cancelled.Token);
+        Assert.True(result.Cancelled);
         Assert.NotNull(result.Failure);
         Assert.Empty(result.RemainingAdditions);
         Assert.Single(result.Unfinished);

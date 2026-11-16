@@ -732,3 +732,11 @@ The coordinator restores the two corrupted UTF-8 examples for A5 and keeps share
 Each lane has exclusive production files and its matching tests. B's config fixtures and D's real-graph fixtures get explicit grants where success requires them.
 The fresh reviewer will recheck A1-A5 against the integrated correction without running tests.
 Any hosted CI failures supplied before the push checkpoint join this correction batch.
+
+The paused lane candidates were integrated on 2026-11-16 on `feature/tool-setup`.
+Config planning evaluates Open Forge file destinations through the workspace permission policy, blocks with missing paths and rechecks admission before each write.
+Final shared deletion publishes guarded record deletions, so the next read sees no machine row and the last-tool PATH offer appears.
+Channel, config, record and grant services report cancellation beside completed progress, and the writer gives Interrupted priority with exit 130.
+Plans project resolved union items, set values, marked-block markers and content, managed-file hashes, the desired native value and every native config command that apply runs.
+The native config command comes from the same builder that apply uses.
+The stale lane E stash predates `350768fbb` and contributed nothing new.

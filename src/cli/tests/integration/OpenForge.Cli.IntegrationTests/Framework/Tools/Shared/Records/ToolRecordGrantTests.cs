@@ -207,6 +207,7 @@ public sealed class ToolRecordGrantTests
         var service = new ToolRecordService(fixture.Catalogue, new ToolRecordFixture.Versions(), backups);
         var result = await service.AddAllowInstallPathsAsync(request, cancellation.Token);
         Assert.NotNull(result.Failure);
+        Assert.Equal(cancelled, result.Cancelled);
         Assert.Empty(result.WrittenPaths);
         var pending = Assert.Single(result.PendingBackups);
         Assert.False(pending.Verified);
@@ -226,6 +227,7 @@ public sealed class ToolRecordGrantTests
         cancellation.Cancel();
         var result = await fixture.Service.AddAllowInstallPathsAsync(request, cancellation.Token);
         Assert.NotNull(result.Failure);
+        Assert.True(result.Cancelled);
         Assert.Empty(result.WrittenPaths);
         Assert.Empty(result.PendingBackups);
         Assert.Equal(0, fixture.Backups.Calls);

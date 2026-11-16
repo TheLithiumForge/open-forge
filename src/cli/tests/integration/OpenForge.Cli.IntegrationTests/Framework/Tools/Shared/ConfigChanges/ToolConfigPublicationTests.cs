@@ -20,6 +20,7 @@ public sealed class ToolConfigPublicationTests
     public async Task RetiredRecipe()
     {
         using var scenario = new ToolServiceScenario();
+        scenario.Files.Grant("config.json");
         scenario.Files.WriteText("config.json", "{\"old\":true,\"keep\":42}");
         var old = new ToolJsonValueAddition { Id = "old", Path = "config.json", Pointer = "/old", Value = Element("true") };
         var request = scenario.Request(Json("new", "/new", "true")) with { AppliedChanges = [old] };
@@ -44,6 +45,7 @@ public sealed class ToolConfigPublicationTests
     public async Task CompleteReplacementSets()
     {
         using var scenario = new ToolServiceScenario();
+        scenario.Files.Grant("config.json");
         scenario.Files.WriteText("config.json", "{\"first\":true,\"second\":false}");
         var first = new ToolJsonValueAddition { Id = "first", Path = "config.json", Pointer = "/first", Value = Element("true") };
         var second = new ToolJsonValueAddition { Id = "second", Path = "config.json", Pointer = "/second", Value = Element("false") };
@@ -70,6 +72,7 @@ public sealed class ToolConfigPublicationTests
     public async Task RemovalDrift()
     {
         using var scenario = new ToolServiceScenario();
+        scenario.Files.Grant("config.json");
         scenario.Files.WriteText("config.json", "{\"value\":true}");
         var receipt = new ToolJsonValueAddition { Id = "value", Path = "config.json", Pointer = "/value", Value = Element("true") };
         var plan = await scenario.Service.PlanRemoveAsync(new()
@@ -91,6 +94,7 @@ public sealed class ToolConfigPublicationTests
     public async Task ManagedTemplate()
     {
         using var scenario = new ToolServiceScenario();
+        scenario.Files.Grant(scenario.Context.MainRoot + ".txt");
         var change = new ToolManagedFileChange
         {
             Id = "template",
@@ -109,6 +113,7 @@ public sealed class ToolConfigPublicationTests
     public async Task EffectiveCoverage()
     {
         using var scenario = new ToolServiceScenario();
+        scenario.Files.Grant(ToolEffectiveIgnore.IgnoreFileName);
         var host = new ToolGitTestHost(scenario.Files.Combine("git-home"));
         var initialized = await host.RunAsync(new()
         {
@@ -151,6 +156,7 @@ public sealed class ToolConfigPublicationTests
     public async Task ClearedReceiptReplay()
     {
         using var scenario = new ToolServiceScenario();
+        scenario.Files.Grant("config.json");
         scenario.Files.WriteText("config.json", "{\"old\":true}");
         var receipt = new ToolJsonValueAddition { Id = "old", Path = "config.json", Pointer = "/old", Value = Element("true") };
         var plan = await scenario.Service.PlanAsync(scenario.Request() with { AppliedChanges = [receipt] }, Token);
@@ -171,6 +177,7 @@ public sealed class ToolConfigPublicationTests
     public async Task TargetMigrationDrift(string kind)
     {
         using var scenario = new ToolServiceScenario();
+        scenario.Files.Grant("config.json", "moved.json");
         ToolConfigChange change = kind switch
         {
             "set" => Json("move", "/value", "true"),
@@ -222,6 +229,7 @@ public sealed class ToolConfigPublicationTests
     public async Task RetainedFailedPreparation()
     {
         using var scenario = new ToolServiceScenario();
+        scenario.Files.Grant("config.json");
         scenario.Files.WriteText("config.json", "{}");
         var target = scenario.Files.Combine("config.json");
         var backup = await scenario.Backups.PrepareAsync(new(target), Token);

@@ -79,6 +79,7 @@ public sealed class ToolEffectiveIgnoreTests
     public async Task CommentedPartialCoverage()
     {
         using var scenario = new ToolServiceScenario();
+        scenario.Files.Grant(ToolEffectiveIgnore.IgnoreFileName);
         var host = new ToolGitTestHost(scenario.Files.Combine("git-home"));
         Assert.Equal(0, (await GitAsync(host, scenario, ["init", "--quiet", "--template="])).ExitCode);
         Directory.CreateDirectory(scenario.Files.Combine("generated"));
@@ -99,6 +100,7 @@ public sealed class ToolEffectiveIgnoreTests
     public async Task NarrowCoverage(int mode)
     {
         using var scenario = new ToolServiceScenario();
+        scenario.Files.Grant(ToolEffectiveIgnore.IgnoreFileName);
         var host = new ToolGitTestHost(scenario.Files.Combine("git-home"));
         Assert.Equal(0, (await GitAsync(host, scenario, ["init", "--quiet", "--template="])).ExitCode);
         Directory.CreateDirectory(scenario.Files.Combine("generated"));
@@ -130,6 +132,7 @@ public sealed class ToolEffectiveIgnoreTests
     public async Task LaterNegation(bool terminated)
     {
         using var scenario = new ToolServiceScenario();
+        scenario.Files.Grant(ToolEffectiveIgnore.IgnoreFileName);
         var host = new ToolGitTestHost(scenario.Files.Combine("git-home"));
         Assert.Equal(0, (await GitAsync(host, scenario, ["init", "--quiet", "--template="])).ExitCode);
         var original = Encoding.UTF8.GetBytes("# synthetic original\r\n!generated/" + (terminated ? "\r\n" : ""));
@@ -162,6 +165,7 @@ public sealed class ToolEffectiveIgnoreTests
     public async Task UnterminatedUnrelatedLine()
     {
         using var scenario = new ToolServiceScenario();
+        scenario.Files.Grant(ToolEffectiveIgnore.IgnoreFileName);
         var host = new ToolGitTestHost(scenario.Files.Combine("git-home"));
         Assert.Equal(0, (await GitAsync(host, scenario, ["init", "--quiet", "--template="])).ExitCode);
         var original = Encoding.UTF8.GetBytes("# synthetic final line");
@@ -180,6 +184,7 @@ public sealed class ToolEffectiveIgnoreTests
     public async Task IneffectiveReapply(bool terminated)
     {
         using var scenario = new ToolServiceScenario();
+        scenario.Files.Grant(ToolEffectiveIgnore.IgnoreFileName);
         var host = new ToolGitTestHost(scenario.Files.Combine("git-home"));
         Assert.Equal(0, (await GitAsync(host, scenario, ["init", "--quiet", "--template="])).ExitCode);
         var change = Block();

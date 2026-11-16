@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Application;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Planning;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Result;
+using OpenForge.Cli.Core.Commands.Tool.Shared.Writing.Planning;
 using OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
@@ -20,6 +21,14 @@ internal sealed class ToolWriteConfigApplication(IToolConfigService config, Tool
         var native = NativeSettings(state, id);
         var request = original.Request with { AppliedChanges = current.Changes, NativeSettings = native };
         var replanned = await config.PlanAsync(request, cancellationToken).ConfigureAwait(false);
+        if (ToolWriteCancellation.Stop(state, cancellationToken)) return false;
+        var permissionFindings = ToolWritePermissions.Findings(id, replanned.Permissions);
+        if (permissionFindings.Count != 0)
+        {
+            state.Findings.AddRange(permissionFindings);
+            state.Stopped = true;
+            return false;
+        }
         replanned = replanned with
         {
             Changes = [.. replanned.Changes.Select(change => change.Change is ToolNativeConfigChange
@@ -38,11 +47,13 @@ internal sealed class ToolWriteConfigApplication(IToolConfigService config, Tool
                 Context = request.Context,
                 Lock = current,
                 NativeSettings = NativeSettings(state, id),
-            }, [removal]), cancellationToken).ConfigureAwait(false);
+            }, [removal])
+            { Permissions = replanned.Permissions }, cancellationToken).ConfigureAwait(false);
             state.Backups.AddRange(removed.PendingBackups);
             current = current with { Changes = removed.RemainingAdditions };
             state.Outcomes.Add(new(id, ToolWriteStages.Config, removed.Failure is null ? ToolWriteStages.Completed : ToolWriteStages.Failed,
                 removed.RemovedChanges, removed.Unfinished));
+            if (ToolWriteCancellation.Stop(state, cancellationToken, removed.Cancelled)) return false;
             if (!await PublishAsync(current, removed.KeptNativeSettings).ConfigureAwait(false)) return false;
             if (removed.Failure is not null || removed.Unfinished.Count != 0) return Fail(ToolWriteFindingCode.ConfigFailed, removed.Failure);
         }
@@ -53,12 +64,14 @@ internal sealed class ToolWriteConfigApplication(IToolConfigService config, Tool
             {
                 AppliedChanges = current.Changes,
                 NativeSettings = NativeSettings(state, id),
-            }, [observation], []);
+            }, [observation], [])
+            { Permissions = replanned.Permissions };
             var applied = await config.ApplyAsync(staged, cancellationToken).ConfigureAwait(false);
             state.Backups.AddRange(applied.PendingBackups);
             current = current with { Changes = applied.RemainingAdditions };
             state.Outcomes.Add(new(id, ToolWriteStages.Config, applied.Failure is null ? ToolWriteStages.Completed : ToolWriteStages.Failed,
                 [.. applied.CompletedChanges, .. applied.RemovedChanges], applied.Unfinished));
+            if (ToolWriteCancellation.Stop(state, cancellationToken, applied.Cancelled)) return false;
             if (!await PublishAsync(current, applied.NativeSettings).ConfigureAwait(false)) return false;
             if (applied.Failure is not null || applied.Unfinished.Count != 0) return Fail(ToolWriteFindingCode.ConfigFailed, applied.Failure);
         }
@@ -93,12 +106,14 @@ internal sealed class ToolWriteConfigApplication(IToolConfigService config, Tool
             {
                 Lock = current,
                 NativeSettings = NativeSettings(state, id),
-            }, [observation]), cancellationToken).ConfigureAwait(false);
+            }, [observation])
+            { Permissions = original.Permissions }, cancellationToken).ConfigureAwait(false);
             state.Backups.AddRange(result.PendingBackups);
             current = current with { Changes = result.RemainingAdditions };
             var complete = !current.Changes.Any(change => change is not ToolNativeCommandAddition);
             state.Outcomes.Add(new(id, ToolWriteStages.Config, result.Failure is null ? ToolWriteStages.Completed : ToolWriteStages.Failed,
                 result.RemovedChanges, result.Unfinished));
+            if (ToolWriteCancellation.Stop(state, cancellationToken, result.Cancelled)) return false;
             if (!await publisher.PublishAsync(state, new()
             {
                 Plan = plan,

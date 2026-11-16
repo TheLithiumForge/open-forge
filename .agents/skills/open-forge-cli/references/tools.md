@@ -69,6 +69,8 @@ Tool writers use `--yes` and `--dry-run`.
 `--yes` accepts the shown plan and downloads.
 PATH edits and shared deletion need separate live choices.
 Dry-run reports network use when it resolves latest.
+Open Forge's own project files, such as `codegraph.json`, need destination permission as in other commands.
+A blocked plan names each missing path and the command to rerun with `--allow-path`.
 
 Codebase Memory native uninstall removes the account binary and all agent entries.
 It requires live interactive confirmation naming those effects.

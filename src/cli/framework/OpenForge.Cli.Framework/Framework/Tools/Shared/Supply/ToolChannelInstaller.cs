@@ -17,10 +17,12 @@ internal sealed class ToolChannelInstaller(IToolProcessHost processes, IToolDown
         var pending = new List<ToolBackupCompletionRequest>();
         var runtimes = new List<ToolNodeRuntimeRecord>();
         var integrity = new List<ToolIntegrityEvidence>();
+        var cancelled = false;
         ToolMachineState? state = null;
         string? npmVersion = null;
         try
         {
+            token.ThrowIfCancellationRequested();
             var execution = plan.Execution;
             if (execution.Commands.Count == 0) return Result("The channel plan has no final version verification.");
             if (plan.PrivateNode is { } sharedNode && execution.Extractions.Count == 0)
@@ -37,17 +39,21 @@ internal sealed class ToolChannelInstaller(IToolProcessHost processes, IToolDown
                 ToolSupplyPaths.CheckOrdinary(npmPath);
                 if (!File.Exists(nodePath) || !File.Exists(npmPath)) return Result("The shared runtime files changed after planning.");
             }
+            token.ThrowIfCancellationRequested();
             if (plan.Existing is { Version: { } oldVersion, Invocation: { } oldInvocation })
             {
                 var final = execution.Commands[^1];
                 var probeArguments = final.Arguments.Skip(execution.Invocation.PrefixArguments.Count).ToArray();
                 var observed = await processes.RunAsync(final with { ExecutablePath = oldInvocation.ExecutablePath, Arguments = [.. oldInvocation.PrefixArguments, .. probeArguments] }, token).ConfigureAwait(false);
+                cancelled |= observed.Cancelled;
                 if (!ToolPackageManagerDetector.Succeeded(observed) || ToolVersionService.ReadProbe(observed.StandardOutput) != oldVersion)
                     return Result("The existing installation changed after channel planning.");
+                token.ThrowIfCancellationRequested();
             }
             if (plan.ReuseExisting)
             {
                 var probe = await processes.RunAsync(execution.Commands[^1], token).ConfigureAwait(false);
+                cancelled |= probe.Cancelled;
                 if (!VerifiedVersion(probe, plan.Version)) return Result("The reused installation didn't verify its planned version.");
                 var prior = plan.Existing?.RecordedState;
                 state = new()
@@ -70,6 +76,7 @@ internal sealed class ToolChannelInstaller(IToolProcessHost processes, IToolDown
             }
             foreach (var download in execution.Downloads)
             {
+                token.ThrowIfCancellationRequested();
                 ToolSupplyPaths.CheckOrdinary(download.DestinationPath);
                 var parent = System.IO.Path.GetDirectoryName(download.DestinationPath) ?? throw new IOException("The download has no parent.");
                 Directory.CreateDirectory(parent);
@@ -77,9 +84,11 @@ internal sealed class ToolChannelInstaller(IToolProcessHost processes, IToolDown
                 if (result.VerifiedPath != download.DestinationPath || result.Integrity is null) return Result(result.Failure ?? "The planned download didn't verify.");
                 integrity.Add(result.Integrity);
                 completed.Add(download.DestinationPath);
+                token.ThrowIfCancellationRequested();
             }
             foreach (var extraction in execution.Extractions)
             {
+                token.ThrowIfCancellationRequested();
                 ToolSupplyPaths.CheckOrdinary(extraction.DestinationPath);
                 if (Directory.Exists(extraction.DestinationPath)) return Result("An extraction destination appeared after planning.");
                 Directory.CreateDirectory(extraction.DestinationPath);
@@ -89,11 +98,14 @@ internal sealed class ToolChannelInstaller(IToolProcessHost processes, IToolDown
                 var result = await ToolArchiveExtractor.ExtractAsync(prepared, token).ConfigureAwait(false);
                 if (result.Failure is not null) return Result(result.Failure);
                 completed.Add(extraction.DestinationPath);
+                token.ThrowIfCancellationRequested();
             }
             for (var index = 0; index < execution.Commands.Count - 1; index++)
             {
+                token.ThrowIfCancellationRequested();
                 var command = execution.Commands[index];
                 var process = await processes.RunAsync(command, token).ConfigureAwait(false);
+                cancelled |= process.Cancelled;
                 if (!ToolPackageManagerDetector.Succeeded(process)) return Result("A planned native package command failed. The channel won't change and no second installation will run.");
                 if (plan.PrivateNode is { } node && index == 0)
                 {
@@ -106,11 +118,15 @@ internal sealed class ToolChannelInstaller(IToolProcessHost processes, IToolDown
                     if (npmVersion is null) return Result("Private Node's npm didn't return a stable version.");
                 }
                 completed.Add($"package-command-{index + 1}");
+                token.ThrowIfCancellationRequested();
             }
+            token.ThrowIfCancellationRequested();
             var written = await new ToolLauncherWriter(backups).WriteAsync(new(execution.Launchers), pending, token).ConfigureAwait(false);
             completed.AddRange(written.WrittenPaths);
             if (written.Failure is not null) return Result(written.Failure);
+            token.ThrowIfCancellationRequested();
             var verification = await processes.RunAsync(execution.Commands[^1], token).ConfigureAwait(false);
+            cancelled |= verification.Cancelled;
             if (!VerifiedVersion(verification, plan.Version)) return Result("The installed tool didn't verify the exact planned version. Keep the completed effects and backups.");
             var manager = plan.PackageManager;
             if (plan.PrivateNode is { } runtime)
@@ -152,10 +168,14 @@ internal sealed class ToolChannelInstaller(IToolProcessHost processes, IToolDown
         }
         catch (Exception exception) when (exception is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or OperationCanceledException)
         {
+            cancelled |= exception is OperationCanceledException;
+            completed.AddRange(pending.Where(backup => backup.Verified).Select(backup => backup.Backup.TargetPath)
+                .Where(path => !completed.Contains(path, ToolSupplyPaths.Comparer)));
             return Result("Channel installation stopped. Keep the completed effects, downloads and backups for checking.");
         }
 
-        ToolChannelInstallResult Result(string? failure) => new(state, completed, failure) { PendingBackups = pending, Runtimes = runtimes };
+        ToolChannelInstallResult Result(string? failure) => new(state, completed, failure)
+        { PendingBackups = pending, Runtimes = runtimes, Cancelled = cancelled || token.IsCancellationRequested };
     }
 
     private static bool VerifiedVersion(ToolProcessResult process, string version)

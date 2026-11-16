@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
 using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
+using OpenForge.Cli.Core.Framework.Settings.Models.Permissions;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -53,6 +54,10 @@ internal sealed class ToolWriteOperationFixture
     internal List<string> SavedGrants { get; } = [];
     internal List<ToolSetupRequest> SetupRequests { get; } = [];
     internal List<ToolConfigRequest> ConfigRequests { get; } = [];
+    internal Dictionary<string, WorkspacePermissionEvaluation> Permissions { get; } = new(StringComparer.Ordinal);
+    internal ToolWriteCall? CancelAt { get; set; }
+    internal string? CancelId { get; set; }
+    internal CancellationTokenSource? Cancellation { get; set; }
     internal List<ToolBackupCompletionRequest> PathBackups { get; } = [];
     internal bool FailGrants { get; set; }
     internal bool CancelPlanning { get; set; }
@@ -211,6 +216,25 @@ internal sealed class ToolWriteOperationFixture
         };
     }
 
+    internal void SetChanges(params ToolConfigChange[] changes)
+    {
+        var entry = Catalogue.Entries[Id];
+        Catalogue = Catalogue with
+        {
+            Entries = new Dictionary<string, ToolCatalogueEntry>(Catalogue.Entries)
+            {
+                [Id] = entry with { Profiles = [.. entry.Profiles.Select(profile => profile with { Changes = changes })] },
+            },
+        };
+    }
+
+    private bool Cancel(ToolWriteCall call, string? id = null)
+    {
+        if (CancelAt != call || CancelId is { } selected && selected != id) return false;
+        Cancellation?.Cancel();
+        return true;
+    }
+
     private void SetUninstallEffects()
     {
         IReadOnlyList<ToolDeclaredEffect> effects = [];
@@ -325,11 +349,17 @@ internal sealed class ToolWriteOperationFixture
                 Launchers = [],
                 Integrity = [],
             };
-            return Task.FromResult(new ToolChannelInstallResult(state, [request.Plan.ToolId], null) { PendingBackups = [fixture.PendingBackup()], Runtimes = [] });
+            return Task.FromResult(new ToolChannelInstallResult(state, [request.Plan.ToolId], null)
+            {
+                PendingBackups = [fixture.PendingBackup()],
+                Runtimes = [],
+                Cancelled = fixture.Cancel(ToolWriteCall.ChannelInstall, request.Plan.ToolId),
+            });
         }
         public Task<ToolManagedFilesRemoveResult> RemoveAsync(ToolManagedFilesRemoveRequest request, CancellationToken cancellationToken)
         {
             fixture.Calls.Add(new(ToolWriteCall.SharedRemove));
+            fixture.Cancel(ToolWriteCall.SharedRemove);
             return Task.FromResult(new ToolManagedFilesRemoveResult(request.ApprovedToolPaths, [], null));
         }
         private ToolPackageManagerFacts Manager(ToolNpmClient client)
@@ -342,6 +372,7 @@ internal sealed class ToolWriteOperationFixture
         {
             if (request.InstalledInvocation is not null) fixture.Calls.Add(new(ToolWriteCall.NativePreparation));
             fixture.SetupRequests.Add(request);
+            if (fixture.Cancel(ToolWriteCall.NativePreparation)) throw new OperationCanceledException(cancellationToken);
             return Task.FromResult(new ToolSetupPlan
             {
                 Request = request,
@@ -371,10 +402,13 @@ internal sealed class ToolWriteOperationFixture
             fixture.ConfigRequests.Add(request);
             IReadOnlyList<ToolConfigObservation> changes = [.. request.Changes.Select(change => new ToolConfigObservation
             {
-                Change = change, Current = Value(false), Desired = Value(true),
+                Change = change, ResolvedChange = change, Current = Value(false), Desired = Value(true),
                 Disposition = request.AppliedChanges.Any(receipt => receipt.Id == change.Id) ? ToolChangeDisposition.NoChange : ToolChangeDisposition.Add,
             })];
-            return Task.FromResult(new ToolConfigPlan(request, fixture.Observation is { } observation ? [observation] : changes, []));
+            return Task.FromResult(new ToolConfigPlan(request, fixture.Observation is { } observation ? [observation] : changes, [])
+            {
+                Permissions = fixture.Permissions.GetValueOrDefault(request.ToolId) ?? new([], [], WorkspacePermissionDecision.NotRequired),
+            });
         }
         public Task<ToolConfigApplyResult> ApplyAsync(ToolConfigPlan plan, CancellationToken cancellationToken)
         {
@@ -393,6 +427,7 @@ internal sealed class ToolWriteOperationFixture
                 NativeSettings = plan.Request.NativeSettings,
                 Unfinished = failed ? [id] : [],
                 Failure = failed ? "synthetic-config-failure" : null,
+                Cancelled = fixture.Cancel(ToolWriteCall.ConfigApply, id),
             });
         }
         public Task<ToolConfigRemovePlan> PlanRemoveAsync(ToolConfigRemoveRequest request, CancellationToken cancellationToken)
@@ -402,7 +437,8 @@ internal sealed class ToolWriteOperationFixture
             {
                 Addition = addition, Current = Value(true), Desired = Value(false),
                 Disposition = fixture.ConflictRemoval && addition.Id == FirstChange ? ToolChangeDisposition.Conflict : ToolChangeDisposition.Remove,
-            })]));
+            })])
+            { Permissions = fixture.Permissions.GetValueOrDefault(request.ToolId) ?? new([], [], WorkspacePermissionDecision.NotRequired) });
         }
         public Task<ToolConfigRemoveResult> RemoveAsync(ToolConfigRemovePlan plan, CancellationToken cancellationToken)
         {
@@ -416,6 +452,7 @@ internal sealed class ToolWriteOperationFixture
                 PendingBackups = [fixture.PendingBackup()],
                 Unfinished = conflict ? [observation.Addition.Id] : [],
                 KeptNativeSettings = plan.Request.NativeSettings,
+                Cancelled = fixture.Cancel(ToolWriteCall.ConfigRemove, observation.Addition.Id),
             });
         }
     }
@@ -437,12 +474,13 @@ internal sealed class ToolWriteOperationFixture
             }
             return Task.FromResult(new ToolRecordWriteResult(fixture.FailGrants ? [] : ["synthetic-settings.json"],
                 fixture.FailGrants ? ["synthetic-settings.json"] : [], fixture.FailGrants ? "synthetic-grant-failure" : null)
-            { PendingBackups = [fixture.PendingBackup()] });
+            { PendingBackups = [fixture.PendingBackup()], Cancelled = fixture.Cancel(ToolWriteCall.Grant) });
         }
 
         public Task<ToolRecordsResult> ReadAsync(ToolRecordsRequest request, CancellationToken cancellationToken)
         {
             fixture.Calls.Add(new(ToolWriteCall.Read));
+            if (fixture.Cancel(ToolWriteCall.Read)) throw new OperationCanceledException(cancellationToken);
             if (fixture.FailGrantRead && fixture.GrantRequests.Count != 0) throw new IOException("synthetic-read-failure");
             return Task.FromResult(fixture.Records);
         }
@@ -453,16 +491,23 @@ internal sealed class ToolWriteOperationFixture
             fixture.Writes.Add(request);
             if (fixture.FailWrite || fixture.FailWriteAt > 0 && fixture.Writes.Count >= fixture.FailWriteAt)
                 return Task.FromResult(new ToolRecordWriteResult([], ["synthetic-write"], "synthetic-record-failure") { PendingBackups = [fixture.PendingBackup()] });
+            var machine = fixture.Records.Machine.ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
+            foreach (var row in request.Machine) machine[row.ToolId] = row;
+            foreach (var id in request.RemovedToolIds) machine.Remove(id);
+            var runtimes = fixture.Records.Runtimes.ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
+            foreach (var row in request.Runtimes) runtimes[row.Version] = row;
+            foreach (var version in request.RemovedRuntimeVersions) runtimes.Remove(version);
             fixture.Records = fixture.Records with
             {
                 Portable = request.Portable,
-                Machine = request.Machine.ToDictionary(value => value.ToolId),
+                Machine = machine,
                 WorkspaceMachine = request.WorkspaceMachine,
                 WorkspaceMachineState = request.WorkspaceMachine is null ? ToolRecordReadState.Missing : ToolRecordReadState.Available,
-                Runtimes = request.Runtimes.ToDictionary(value => value.Version),
+                Runtimes = runtimes,
                 Path = request.Path,
             };
-            return Task.FromResult(new ToolRecordWriteResult(["synthetic-write"], [], null) { PendingBackups = [fixture.PendingBackup()] });
+            return Task.FromResult(new ToolRecordWriteResult(["synthetic-write"], [], null)
+            { PendingBackups = [fixture.PendingBackup()], Cancelled = fixture.Cancel(ToolWriteCall.Write) });
         }
     }
 
@@ -493,6 +538,7 @@ internal sealed class ToolWriteOperationFixture
         {
             fixture.Calls.Add(new(ToolWriteCall.BackupComplete));
             fixture.CompletedBackups.Add(request);
+            fixture.Cancel(ToolWriteCall.BackupComplete);
             return Task.FromResult(new ToolBackupCompletionResult(!fixture.FailBackupCompletion,
                 fixture.FailBackupCompletion ? request.Backup.BackupPath : null, fixture.FailBackupCompletion ? "synthetic-backup-failure" : null));
         }
@@ -505,6 +551,7 @@ internal sealed class ToolWriteOperationFixture
         {
             fixture.Calls.Add(new(ToolWriteCall.PathAdd));
             fixture.PathRequests.Add(request);
+            fixture.Cancel(ToolWriteCall.PathAdd);
             if (request.Choice == ToolPathChoice.Manual)
                 return Task.FromResult(new ToolPathSetupResult(null, ["synthetic manual path instruction"], false, null) { PendingBackups = [] });
             var backup = fixture.PendingBackup("synthetic-profile");
@@ -525,6 +572,7 @@ internal sealed class ToolWriteOperationFixture
         public Task<ToolPathRemoveResult> RemoveAsync(ToolPathRemoveRequest request, CancellationToken cancellationToken)
         {
             fixture.Calls.Add(new(ToolWriteCall.PathRemove));
+            fixture.Cancel(ToolWriteCall.PathRemove);
             var backup = fixture.PendingBackup("synthetic-profile");
             fixture.PathBackups.Add(backup);
             if (fixture.FailPathPublication) fixture.FailWrite = true;

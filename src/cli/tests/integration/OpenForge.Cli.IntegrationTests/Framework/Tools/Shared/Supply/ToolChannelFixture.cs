@@ -159,6 +159,8 @@ internal sealed class ToolChannelFixture : IDisposable
         internal byte[] Bytes { get; set; } = [];
         internal int Calls { get; private set; }
         internal bool Fail { get; set; }
+        internal Action<ToolDownloadRequest>? Downloading { get; set; }
+        internal Action<ToolDownloadRequest>? Downloaded { get; set; }
         internal List<ToolNpmMetadataRequest> MetadataRequests { get; } = [];
         internal Func<ToolNpmMetadataRequest, ToolNpmMetadataResult> Metadata { get; set; } = _ => throw new InvalidOperationException("Metadata wasn't expected.");
         public Task<ToolNpmMetadataResult> ReadNpmMetadataAsync(ToolNpmMetadataRequest request, CancellationToken cancellationToken)
@@ -166,8 +168,10 @@ internal sealed class ToolChannelFixture : IDisposable
         public async Task<ToolDownloadResult> DownloadAsync(ToolDownloadRequest request, CancellationToken cancellationToken)
         {
             Calls++;
+            Downloading?.Invoke(request);
             if (Fail) return new(null, null, "synthetic transfer failure");
             await File.WriteAllBytesAsync(request.DestinationPath, Bytes, cancellationToken);
+            Downloaded?.Invoke(request);
             return new(request.DestinationPath, new() { Kind = ToolVerificationKind.PinnedSha256, Source = request.Asset.Url.AbsoluteUri, Sha256 = request.Asset.Sha256 }, null);
         }
     }
@@ -176,8 +180,16 @@ internal sealed class ToolChannelFixture : IDisposable
     {
         internal int Prepared { get; private set; }
         internal int Completed { get; private set; }
+        internal Action<ToolBackupRequest>? Preparing { get; set; }
+        internal List<ToolBackupResult> Results { get; } = [];
         public Task<ToolBackupResult> PrepareAsync(ToolBackupRequest request, CancellationToken cancellationToken)
-        { Prepared++; return Task.FromResult(new ToolBackupResult { TargetPath = request.TargetPath, Kind = ToolBackupKind.PriorAbsence }); }
+        {
+            Prepared++;
+            Preparing?.Invoke(request);
+            var result = new ToolBackupResult { TargetPath = request.TargetPath, Kind = ToolBackupKind.PriorAbsence };
+            Results.Add(result);
+            return Task.FromResult(result);
+        }
         public Task<ToolBackupCompletionResult> CompleteAsync(ToolBackupCompletionRequest request, CancellationToken cancellationToken)
         { Completed++; return Task.FromResult(new ToolBackupCompletionResult(true, null, null)); }
     }

@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Planning;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Request;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Result;
 using OpenForge.Cli.Core.Commands.Tool.Shared.Writing.Consent;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
@@ -27,6 +28,7 @@ internal sealed class ToolWriteOptionalApplication(
         }, cancellationToken).ConfigureAwait(false);
         state.PathInstructions.AddRange(manual.ManualLines);
         state.Backups.AddRange(manual.PendingBackups);
+        ToolWriteCancellation.Stop(state, cancellationToken);
     }
 
     internal async ValueTask ApplyAsync(
@@ -56,13 +58,24 @@ internal sealed class ToolWriteOptionalApplication(
                 }, cancellationToken).ConfigureAwait(false);
                 state.Outcomes.Add(new(tool.Entry.Identity.Id, ToolWriteStages.SharedFiles,
                     removed.Failure is null ? ToolWriteStages.Completed : ToolWriteStages.Failed, removed.RemovedPaths, removed.KeptPaths));
+                if (ToolWriteCancellation.Stop(state, cancellationToken)) return;
+                var deletedTool = removed.RemovedPaths.Any(path => PhysicalIdentityTracker.PathComparer.Equals(path, machine.CommandPath)
+                    || machine.ToolPath is { } toolPath && PhysicalIdentityTracker.PathComparer.Equals(path, toolPath)
+                        && PhysicalContainment.Contains(toolPath, machine.CommandPath));
+                var publication = new ToolWriteAuxiliaryPublication
+                {
+                    RemovedToolIds = deletedTool ? [machine.ToolId] : [],
+                    RemovedRuntimeVersions = [.. approvedRuntimes.Where(runtime =>
+                        removed.RemovedPaths.Contains(runtime.RuntimePath, PhysicalIdentityTracker.PathComparer)).Select(runtime => runtime.Version)],
+                };
+                if ((publication.RemovedToolIds.Count != 0 || publication.RemovedRuntimeVersions.Count != 0)
+                    && !await publisher.PublishAuxiliaryAsync(state, plan, publication, cancellationToken).ConfigureAwait(false)) return;
                 if (removed.Failure is not null)
                 {
                     state.Findings.Add(new(ToolWriteFindingCode.VerificationFailed, CliSemanticStatus.Failed, tool.Entry.Identity.Id, Cause: removed.Failure));
                     state.Stopped = true;
                     return;
                 }
-                if (!await publisher.PublishAuxiliaryAsync(state, plan, null, removed.RemovedPaths, cancellationToken).ConfigureAwait(false)) return;
             }
             if (state.Records.Machine.Count == 0 && state.Records.Path is { } path
                 && await ConfirmAsync(ToolWriteConsentKind.PathChange, null).ConfigureAwait(false))
@@ -72,11 +85,12 @@ internal sealed class ToolWriteOptionalApplication(
                 state.Outcomes.Add(new(ToolId: plan.Tools[^1].Entry.Identity.Id, Stage: ToolWriteStages.Path,
                     State: removed.Failure is null ? ToolWriteStages.Completed : ToolWriteStages.Failed,
                     Completed: removed.RemovedTargets, Unfinished: removed.KeptTargets));
+                if (ToolWriteCancellation.Stop(state, cancellationToken)) return;
                 var remaining = path with
                 {
                     Changes = [.. path.Changes.Where(change => !removed.RemovedTargets.Contains(change.Target, StringComparer.Ordinal))],
                 };
-                if (!await publisher.PublishAuxiliaryAsync(state, plan, remaining, [], cancellationToken).ConfigureAwait(false)) return;
+                if (!await publisher.PublishAuxiliaryAsync(state, plan, new() { Path = remaining }, cancellationToken).ConfigureAwait(false)) return;
                 if (removed.Failure is not null || removed.KeptTargets.Count != 0)
                 {
                     state.Findings.Add(new(ToolWriteFindingCode.VerificationFailed, CliSemanticStatus.Incomplete, Cause: removed.Failure));
@@ -88,6 +102,7 @@ internal sealed class ToolWriteOptionalApplication(
         }
 
         var facts = await pathHost.ObserveAsync(plan.Input.Facts.HomePath, cancellationToken).ConfigureAwait(false);
+        if (ToolWriteCancellation.Stop(state, cancellationToken)) return;
         ToolWritePathAnswer answer = new(false, []);
         if (facts.Readiness != ToolPathReadiness.Ready && request.CanPrompt && interaction.CanPrompt && !request.Yes && request.Format == CliFormat.Text)
         {
@@ -107,8 +122,14 @@ internal sealed class ToolWriteOptionalApplication(
         }, cancellationToken).ConfigureAwait(false);
         state.PathInstructions.AddRange(result.ManualLines);
         state.Backups.AddRange(result.PendingBackups);
+        if (answer.AddForMe)
+            state.Outcomes.Add(new(plan.Tools[^1].Entry.Identity.Id, ToolWriteStages.Path,
+                result.Failure is null ? ToolWriteStages.Completed : ToolWriteStages.Failed,
+                [.. (result.State?.Changes ?? []).Select(change => change.Target)],
+                result.Failure is null ? [] : [facts.BinPath]));
+        if (ToolWriteCancellation.Stop(state, cancellationToken)) return;
         if (answer.AddForMe && result.State is { } applied
-            && !await publisher.PublishAuxiliaryAsync(state, plan, applied, [], cancellationToken).ConfigureAwait(false)) return;
+            && !await publisher.PublishAuxiliaryAsync(state, plan, new() { Path = applied }, cancellationToken).ConfigureAwait(false)) return;
         if (result.Failure is not null)
         {
             state.Findings.Add(new(ToolWriteFindingCode.VerificationFailed, CliSemanticStatus.Incomplete, Cause: result.Failure));

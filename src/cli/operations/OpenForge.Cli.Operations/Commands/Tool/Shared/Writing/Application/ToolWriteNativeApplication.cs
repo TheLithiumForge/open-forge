@@ -83,6 +83,7 @@ internal sealed class ToolWriteNativeApplication(IToolProcessHost process, ITool
                 state.Findings.Add(new(ToolWriteFindingCode.BackupFailed, CliSemanticStatus.Incomplete, Path: result.KeptPath ?? group.Key, Cause: result.Failure));
             else
                 state.Backups.RemoveAll(backup => PhysicalIdentityTracker.PathComparer.Equals(backup.Backup.TargetPath, group.Key));
+            if (ToolWriteCancellation.Stop(state, cancellationToken)) return;
         }
         if (state.Findings.All(finding => finding.Code != ToolWriteFindingCode.BackupFailed)) state.Backups.Clear();
     }

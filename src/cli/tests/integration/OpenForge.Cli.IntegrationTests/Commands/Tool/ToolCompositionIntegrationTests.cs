@@ -82,7 +82,7 @@ public sealed class ToolCompositionIntegrationTests
     [Fact(DisplayName = "The complete writer graph shares backups across explicit grants native config and record publication"), Trait("Feature", "tool-composition"), Trait("Evidence", "Integration")]
     public async Task CompleteWriterGraph()
     {
-        using var fixture = new ToolCompositionFixture();
+        using var fixture = new ToolCompositionFixture(grantDestinations: false);
         fixture.Declare();
         var settingsPath = Path.Combine(fixture.Workspace, WorkspaceSettingsDefinitions.RelativePath);
         var document = System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllBytes(settingsPath))?.AsObject();
@@ -163,7 +163,7 @@ public sealed class ToolCompositionIntegrationTests
     [Fact(DisplayName = "Authored grants survive later minimum-version blocking without Tool lock or home publication"), Trait("Feature", "tool-composition"), Trait("Evidence", "Integration")]
     public async Task GrantsSurviveBlockedTool()
     {
-        using var fixture = new ToolCompositionFixture();
+        using var fixture = new ToolCompositionFixture(grantDestinations: false);
         var entry = fixture.Catalogue.Entries[ToolCompositionFixture.FirstId];
         fixture.Catalogue = fixture.Catalogue with
         {

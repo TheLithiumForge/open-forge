@@ -43,6 +43,7 @@ internal sealed class ToolWritePlanner(ToolCatalogue catalogue, ToolWriteToolPla
             }
             planned.Add(await tools.PlanRemoveAsync(entry, input, cancellationToken).ConfigureAwait(false));
             AddNativeProblems(planned[^1]);
+            AddPermissions(planned[^1]);
             return Complete();
         }
 
@@ -80,6 +81,7 @@ internal sealed class ToolWritePlanner(ToolCatalogue catalogue, ToolWriteToolPla
             if (result.Tool is not { } tool) continue;
             planned.Add(tool);
             AddNativeProblems(tool);
+            AddPermissions(tool);
             foreach (var change in tool.Config?.Changes ?? [])
             {
                 if (change.Disposition == ToolChangeDisposition.Conflict)
@@ -92,6 +94,12 @@ internal sealed class ToolWritePlanner(ToolCatalogue catalogue, ToolWriteToolPla
             }
         }
         return Complete();
+
+        void AddPermissions(ToolWriteToolPlan tool)
+        {
+            var permissions = tool.Config?.Permissions ?? tool.Removal?.Permissions;
+            if (permissions is not null) findings.AddRange(ToolWritePermissions.Findings(tool.Entry.Identity.Id, permissions));
+        }
 
         void AddNativeProblems(ToolWriteToolPlan tool)
         {

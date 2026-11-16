@@ -33,6 +33,8 @@ internal static class ToolWriteText
     internal static string Network() => "Latest-version resolution used the network.";
     internal static string Grant(string path, string state) => $"Workspace path grant {path}: {state}. This settings edit is separate from tool consent.";
     internal static string GrantOnly(bool preview) => preview ? "Planned workspace path grants." : "Saved workspace path grants.";
+    internal static string MissingPermission(string path) => $"Missing destination permission: {path}. Review the plan with --allow-path {path}.";
+    internal static string PermissionNext() => "Review the same tool plan with the missing destination grants.";
     internal static string EffectiveNative(string variable, string value) => $"Effective native setting from {variable}: {value}.";
     internal static string Replacement() => "This replaces an account-wide installation used by other projects.";
     internal static string KeptSetting(string id, string home, string? value)

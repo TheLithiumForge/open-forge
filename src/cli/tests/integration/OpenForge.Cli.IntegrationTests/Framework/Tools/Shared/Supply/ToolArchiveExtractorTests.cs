@@ -33,6 +33,18 @@ public sealed class ToolArchiveExtractorTests
         Assert.Equal(Payload, await File.ReadAllBytesAsync(Assert.Single(result.ExtractedPaths), Token));
     }
 
+    [Theory(DisplayName = "Archive cancellation propagates without claiming extracted files")]
+    [InlineData("zip"), InlineData("tar"), InlineData("file")]
+    public async Task PropagatesCancellation(string format)
+    {
+        using var temporary = TemporaryWorkspace.Create("tool-archive");
+        var request = Create(temporary, format, ["wrapper/sample"]);
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(Token);
+        await cancellation.CancelAsync();
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => ToolArchiveExtractor.ExtractAsync(request, cancellation.Token).AsTask());
+        Assert.Empty(Directory.EnumerateFileSystemEntries(request.DestinationPath));
+    }
+
     [Theory(DisplayName = "Unsafe archive paths block before extracting any member")]
     [InlineData("traversal")]
     [InlineData("absolute")]

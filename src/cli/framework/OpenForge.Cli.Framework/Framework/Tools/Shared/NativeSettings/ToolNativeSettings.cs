@@ -3,6 +3,8 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
 using OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
+using OpenForge.Cli.Core.Framework.Tools.Models.Recipes;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
 using OpenForge.Cli.Core.Framework.Tools.Shared.ConfigChanges;
@@ -92,17 +94,20 @@ internal sealed class ToolNativeSettings(IToolProcessHost processes)
     {
         Validate(change);
         var invocation = request.Invocation ?? throw new InvalidDataException("The native setting write invocation is unavailable.");
-        var result = await processes.RunAsync(new()
-        {
-            ExecutablePath = invocation.ExecutablePath,
-            Arguments = invocation.PrefixArguments.Concat(change.ApplyArguments.Select(value => ToolRecipeExpansion.Expand(value, request.Context))).ToArray(),
-            WorkingDirectory = request.Context.WorkspacePath,
-            Environment = new Dictionary<string, string?>(),
-            Timeout = WriteTimeout,
-            MaximumOutputBytes = MaximumWriteOutputBytes,
-        }, token).ConfigureAwait(false);
+        var result = await processes.RunAsync(ApplyCommand(request.Context, invocation, change), token).ConfigureAwait(false);
         RequireSuccess(result, MaximumWriteOutputBytes);
     }
+
+    /// <summary>The exact allow-listed write that apply runs, so plans can disclose the same vector.</summary>
+    internal static ToolProcessRequest ApplyCommand(ToolRecipeContext context, ToolCommandTarget invocation, ToolNativeConfigChange change) => new()
+    {
+        ExecutablePath = invocation.ExecutablePath,
+        Arguments = invocation.PrefixArguments.Concat(change.ApplyArguments.Select(value => ToolRecipeExpansion.Expand(value, context))).ToArray(),
+        WorkingDirectory = context.WorkspacePath,
+        Environment = new Dictionary<string, string?>(),
+        Timeout = WriteTimeout,
+        MaximumOutputBytes = MaximumWriteOutputBytes,
+    };
 
     internal static void Validate(ToolNativeConfigChange change)
     {
@@ -113,6 +118,7 @@ internal sealed class ToolNativeSettings(IToolProcessHost processes)
     internal static ToolRecordedValue Value(string value, bool present = true) => new() { Present = present, Kind = ToolRecordedValueKind.Native, Native = value };
     internal static void RequireSuccess(ToolProcessResult result, int bound)
     {
+        if (result.Cancelled) throw new OperationCanceledException("The native command was cancelled.");
         if (result is not { ExitCode: 0, TimedOut: false, Cancelled: false, Failure: null }
             || Encoding.UTF8.GetByteCount(result.StandardOutput) > bound || Encoding.UTF8.GetByteCount(result.StandardError) > bound)
             throw new IOException("The native command failed or returned incomplete output.");

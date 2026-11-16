@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization.Metadata;
+using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
@@ -21,6 +22,7 @@ internal sealed class ToolRecordWriter(ToolPortableCodec codec, IToolBackupServi
         var writes = new List<ToolRecordWrite>();
         try
         {
+            token.ThrowIfCancellationRequested();
             var paths = new ToolRecordPaths(request.Locations.WorkspacePath, request.Locations.HomePath);
             if (request.Expected.PortableState is ToolRecordReadState.Invalid or ToolRecordReadState.Unavailable)
                 throw new IOException("Settings and lock facts must be readable before publication.");
@@ -53,31 +55,46 @@ internal sealed class ToolRecordWriter(ToolPortableCodec codec, IToolBackupServi
             }
             if (request.Path is { } path)
                 writes.Add(await MachineAsync(paths, paths.PathRecordPath, path, ToolMachineJsonContext.Default.ToolPathState, request.Expected, token).ConfigureAwait(false));
-            if (writes.Select(write => write.Path).Distinct(StringComparer.Ordinal).Count() != writes.Count)
-                throw new IOException("A record publication cannot write the same path twice.");
+            writes.AddRange(await new ToolRecordDeletionPlanner(codec, paths, request.Expected).PlanAsync(request, token).ConfigureAwait(false));
+            if (writes.Select(write => write.Path).Distinct(PhysicalIdentityTracker.PathComparer).Count() != writes.Count)
+                throw new IOException("A record publication cannot write or delete the same path twice.");
             foreach (var write in writes) await ToolRecordFileWriter.CheckExpectedAsync(write.Root, write.Path, request.Expected, token).ConfigureAwait(false);
             foreach (var write in writes)
             {
                 token.ThrowIfCancellationRequested();
                 var before = await ToolRecordFileWriter.CheckExpectedAsync(write.Root, write.Path, request.Expected, token).ConfigureAwait(false);
-                if (before is not null && before.AsSpan().SequenceEqual(write.Bytes)) { finished.Add(write.Path); continue; }
+                if (write.Bytes is not null && before is not null && before.AsSpan().SequenceEqual(write.Bytes)) { finished.Add(write.Path); continue; }
                 var backup = await backups.PrepareAsync(new(write.Path), token).ConfigureAwait(false);
-                pending.Add(new(backup, ToolRecordFileWriter.Hash(write.Bytes), Verified: false));
+                pending.Add(new(backup, write.Bytes is null ? null : ToolRecordFileWriter.Hash(write.Bytes), Verified: false));
                 if (backup.Failure is not null) throw new IOException(backup.Failure);
                 await ToolRecordFileWriter.ReplaceAsync(write, request.Expected, token).ConfigureAwait(false);
                 written.Add(write.Path);
-                var bytes = await File.ReadAllBytesAsync(write.Path, token).ConfigureAwait(false);
-                if (!bytes.AsSpan().SequenceEqual(write.Bytes)) throw new IOException($"The written record changed during verification: {write.Path}.");
+                ToolRecordPaths.Check(write.Root, write.Path);
+                if (write.Bytes is null)
+                {
+                    if (File.Exists(write.Path) || Directory.Exists(write.Path))
+                        throw new IOException($"The deleted record reappeared during verification: {write.Path}.");
+                }
+                else
+                {
+                    var bytes = await File.ReadAllBytesAsync(write.Path, token).ConfigureAwait(false);
+                    if (!bytes.AsSpan().SequenceEqual(write.Bytes)) throw new IOException($"The written record changed during verification: {write.Path}.");
+                }
                 pending[^1] = pending[^1] with { Verified = true };
                 finished.Add(write.Path);
             }
+            token.ThrowIfCancellationRequested();
             return new(written.ToArray(), [], null) { PendingBackups = pending.ToArray() };
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException or JsonException or OperationCanceledException)
         {
             var unfinished = writes.Where(write => !finished.Contains(write.Path)).Select(write => write.Path)
                 .Concat(pending.Select(item => item.Backup).Where(backup => backup.BackupPath is not null).Select(backup => backup.BackupPath ?? backup.TargetPath)).ToArray();
-            return new(written.ToArray(), unfinished, exception.Message) { PendingBackups = pending.ToArray() };
+            return new(written.ToArray(), unfinished, exception.Message)
+            {
+                PendingBackups = pending.ToArray(),
+                Cancelled = exception is OperationCanceledException || token.IsCancellationRequested,
+            };
         }
     }
 

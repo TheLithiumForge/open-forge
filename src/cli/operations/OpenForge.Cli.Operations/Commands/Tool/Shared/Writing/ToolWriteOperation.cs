@@ -26,6 +26,7 @@ internal sealed class ToolWriteOperation(
         {
             var observed = await records.ReadAsync(new(request.Workspace.LexicalRoot, facts.HomePath), cancellationToken).ConfigureAwait(false);
             state = new(observed);
+            cancellationToken.ThrowIfCancellationRequested();
             var managers = new Dictionary<string, ToolNpmClient>(StringComparer.Ordinal);
             plan = new()
             {
@@ -42,7 +43,7 @@ internal sealed class ToolWriteOperation(
                 {
                     if (!await records.AddGrantsAsync(state,
                         new(new(request.Workspace.LexicalRoot, facts.HomePath), observed, request.AllowPaths), cancellationToken).ConfigureAwait(false))
-                        return ToolWriteProjection.Result(plan, state);
+                        return Finish();
                     observed = state.Records;
                 }
             }
@@ -52,6 +53,7 @@ internal sealed class ToolWriteOperation(
                 plan = await planner.PlanAsync(new(request, observed, facts, managers), cancellationToken).ConfigureAwait(false);
                 usedNetwork |= plan.UsedNetwork;
                 plan = plan with { UsedNetwork = usedNetwork };
+                cancellationToken.ThrowIfCancellationRequested();
                 if (plan.ManagerQuestions.Count == 0) break;
                 if (plan.Findings.Count != 0) break;
                 if (request.Yes || !request.CanPrompt || !interaction.CanPrompt || request.Format == CliFormat.Json || request.Preview)
@@ -74,12 +76,13 @@ internal sealed class ToolWriteOperation(
                 if (state.Findings.Count != 0) break;
             }
             await application.DescribeAsync(plan, state, cancellationToken).ConfigureAwait(false);
+            if (ToolWriteCancellation.Stop(state, cancellationToken)) return Finish();
             if (plan.Findings.Count != 0 || state.Findings.Count != 0 || request.Preview)
-                return ToolWriteProjection.Result(plan, state);
+                return Finish();
             if (plan.Tools.All(tool => tool.NoOp))
             {
                 await application.CompleteAsync(state, cancellationToken).ConfigureAwait(false);
-                return ToolWriteProjection.Result(plan, state);
+                return Finish();
             }
             var preview = ToolWriteProjection.Result(plan, state);
             var planQuestion = new ToolWriteConsentQuestion
@@ -102,7 +105,7 @@ internal sealed class ToolWriteOperation(
             if (decision != ToolWriteConsentDecision.Accepted)
             {
                 state.Findings.Add(new(ToolWriteFindingCode.MissingConsent, CliSemanticStatus.Invalid, request.Spec?.Id));
-                return ToolWriteProjection.Result(plan, state);
+                return Finish();
             }
             var fresh = await records.ReadAsync(new(request.Workspace.LexicalRoot, facts.HomePath), cancellationToken).ConfigureAwait(false);
             if (fresh.ExpectedFileSha256.Count != observed.ExpectedFileSha256.Count
@@ -110,11 +113,12 @@ internal sealed class ToolWriteOperation(
                     !fresh.ExpectedFileSha256.TryGetValue(expected.Key, out var hash) || hash != expected.Value))
             {
                 state.Findings.Add(new(ToolWriteFindingCode.ExpectedStateChanged, CliSemanticStatus.Blocked));
-                return ToolWriteProjection.Result(plan, state);
+                return Finish();
             }
             state.Records = fresh;
+            cancellationToken.ThrowIfCancellationRequested();
             await application.ApplyAsync(plan, state, interaction, cancellationToken).ConfigureAwait(false);
-            return ToolWriteProjection.Result(plan, state);
+            return Finish();
         }
         catch (OperationCanceledException)
         {
@@ -127,10 +131,23 @@ internal sealed class ToolWriteOperation(
 
         ToolWriteResult Failure(ToolWriteFindingCode code, CliSemanticStatus status, string? cause)
         {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                code = ToolWriteFindingCode.Interrupted;
+                status = CliSemanticStatus.Interrupted;
+                cause = null;
+            }
             var finding = new ToolWriteFinding(code, status, request.Spec?.Id, Cause: cause);
             if (plan is null || state is null) return ToolWriteResults.Invalid(request.Kind, finding, request.Workspace, request.Preview);
             state.Findings.Add(finding);
             state.Stopped = true;
+            return Finish();
+        }
+
+        ToolWriteResult Finish()
+        {
+            if (plan is null || state is null) throw new InvalidOperationException("Writer completion needs its plan and progress.");
+            ToolWriteCancellation.Stop(state, cancellationToken);
             return ToolWriteProjection.Result(plan, state);
         }
     }

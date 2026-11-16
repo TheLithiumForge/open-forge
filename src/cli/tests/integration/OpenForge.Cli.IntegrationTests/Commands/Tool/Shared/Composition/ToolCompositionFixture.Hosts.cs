@@ -84,7 +84,7 @@ internal sealed partial class ToolCompositionFixture : IToolProcessHost, IToolDo
     public Task<ToolPathRemoveResult> RemoveAsync(ToolPathRemoveRequest request, CancellationToken cancellationToken)
     {
         CheckHosts(); PathEffects++; Events.Add(ToolHostEvent.PathRemove);
-        return Task.FromResult(new ToolPathRemoveResult([], [], true, null) { PendingBackups = [] });
+        return Task.FromResult(new ToolPathRemoveResult([.. request.Expected.Changes.Select(change => change.Target)], [], true, null) { PendingBackups = [] });
     }
     private void CheckHosts()
     {

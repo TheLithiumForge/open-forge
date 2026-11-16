@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Application;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Planning;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Request;
@@ -8,8 +10,13 @@ using OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
+using OpenForge.Cli.Core.Framework.Tools.Shared.NativeSettings;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
+using OpenForge.Cli.Core.Commands.Shared;
+using OpenForge.Cli.Core.Commands.Tool.Shared.Writing.Binding;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
+using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands.Models;
 
 namespace OpenForge.Cli.Core.Commands.Tool.Shared.Writing.Application;
 
@@ -40,6 +47,7 @@ internal static class ToolWriteProjection
             WorkspacePath = plan.Input.Request.Workspace.LexicalRoot,
             WorkspaceExplicit = plan.Input.Request.Workspace.SelectedBy == CliWorkspaceSelectionMethod.ExplicitWorkspace,
             Findings = findings,
+            PermissionCommand = PermissionCommand(plan, findings),
             Data = new()
             {
                 Preview = plan.Input.Request.Preview,
@@ -73,6 +81,31 @@ internal static class ToolWriteProjection
         return CliSemanticStatus.Complete;
     }
 
+    private static string? PermissionCommand(ToolWritePlan plan, IReadOnlyList<ToolWriteFinding> findings)
+    {
+        var missing = findings.Where(finding => finding.Code == ToolWriteFindingCode.PermissionRequired)
+            .Select(finding => finding.Path).OfType<string>().Distinct(StringComparer.Ordinal).ToArray();
+        if (missing.Length == 0) return null;
+        var request = plan.Input.Request;
+        List<string> arguments = [ToolDefinitions.Group.Name, ToolWriteBinding.Name(request.Kind)];
+        if (request.Spec is { } spec)
+        {
+            var operand = spec.Id;
+            if (spec.Version.Kind == ToolVersionSelectionKind.Exact) operand = $"{spec.Id}@{spec.Version.ExactVersion}";
+            else if (spec.Version.Kind == ToolVersionSelectionKind.MinorRange && spec.Version.Range is { } range)
+                operand = $"{spec.Id}@{range.Major}.{range.Minor}";
+            arguments.Add(operand);
+        }
+        CliRetryCommand.Add(arguments, ToolWriteBinding.ChannelOption, request.Channel);
+        if (request.Yes) arguments.Add(ToolWriteBinding.YesOption);
+        if (request.Preview) arguments.Add(ToolWriteBinding.DryRunOption);
+        foreach (var path in request.AllowPaths.Concat(missing).Distinct(StringComparer.Ordinal))
+            CliRetryCommand.Add(arguments, PermissionOptions.AllowPath.Name, path);
+        CliRetryCommand.AddPresentation(arguments, new(request.Format, Detail: null, Filter: null));
+        return CliRetryCommand.BuildInWorkspace(arguments, request.Workspace.LexicalRoot,
+            request.Workspace.SelectedBy == CliWorkspaceSelectionMethod.ExplicitWorkspace);
+    }
+
     internal static ToolWriteCommandView Command(string purpose, ToolProcessRequest command)
         => new(purpose, command.ExecutablePath, command.Arguments, command.WorkingDirectory, command.Environment,
             command.Timeout.TotalSeconds, command.MaximumOutputBytes);
@@ -91,6 +124,12 @@ internal static class ToolWriteProjection
         var recorded = plan.Input.Records.Machine.GetValueOrDefault(id);
         foreach (var command in execution?.Commands ?? []) commands.Add(Command(ToolWriteStages.Channel, command));
         if (native is not null) commands.Add(Command(deferred is not null ? ManualNativeUninstallPurpose : ToolWriteStages.Native, native.Command));
+        if (tool.Config is { Request.Invocation: { } configTarget } config)
+        {
+            foreach (var observation in config.Changes.Where(change => change.Disposition == ToolChangeDisposition.Add))
+                if (observation.Change is ToolNativeConfigChange change)
+                    commands.Add(Command(ToolWriteStages.Config, ToolNativeSettings.ApplyCommand(config.Request.Context, configTarget, change)));
+        }
         commands.AddRange(state.ManualCommands.Where(command => command.ToolId == id).Select(command => command.Command));
         var kept = plan.Input.Request.Kind == ToolWriteKind.Remove
             ? (state.Records.WorkspaceMachine?.NativeSettings ?? []).Where(setting => setting.ToolId == id).ToArray()
@@ -123,9 +162,7 @@ internal static class ToolWriteProjection
             Effects = [.. (tool.Channel?.Effects ?? []).Concat(tool.DeferredNativeRemoval?.Setup.Effects ?? native?.Request.Setup.Effects ?? []).Select(effect =>
                 new ToolWriteEffectView(effect.Id, effect.Scope.ToString(), effect.Kind.ToString(), effect.Description, effect.PathTemplate))],
             Changes = [.. (tool.Config?.Changes ?? []).Select(change => Change(change)),
-                .. (tool.Config?.Removals ?? tool.Removal?.Changes ?? []).Select(change =>
-                    new ToolWriteChangeView(change.Addition.Id, AdditionKind(change.Addition), AdditionPath(change.Addition),
-                        null, change.Disposition.ToString(), change.Conflict))],
+                .. (tool.Config?.Removals ?? tool.Removal?.Changes ?? []).Select(Removal)],
             Downloads = [.. (execution?.Downloads ?? []).Select(download =>
                 new ToolWriteDownloadView(download.Asset.Url.AbsoluteUri, download.DestinationPath, download.Asset.Sha256))],
             Paths = [.. new[] { execution?.CommandPath ?? recorded?.CommandPath, execution?.ToolPath ?? recorded?.ToolPath,
@@ -138,6 +175,7 @@ internal static class ToolWriteProjection
                 setting.ChangeId, setting.NativeHomePath, setting.Applied.Native, setting.ManualRestoreArguments))],
             MinimumOpenForgeVersion = tool.Profile?.MinimumOpenForgeVersion,
             MinimumToolVersion = tool.Profile?.MinimumToolVersion,
+            Permissions = PermissionView(tool),
             Targets = [.. tool.Entry.Channels.Where(channel => channel.Id == (tool.Channel?.ChannelId ?? tool.Detection.ChannelId))
                 .SelectMany(channel => channel.Requirements.Targets).Select(target => new ToolWriteTargetView(
                     target.OperatingSystem.ToString(), target.Cpu.ToString(), target.LinuxLibc?.ToString(),
@@ -152,18 +190,59 @@ internal static class ToolWriteProjection
     }
 
     private static ToolWriteChangeView Change(ToolConfigObservation observation)
-        => observation.Change switch
+        => (observation.ResolvedChange ?? observation.Change) switch
         {
-            ToolJsonValueChange change => new(change.Id, change.Operation.ToString(), change.PathTemplate, change.Pointer, observation.Disposition.ToString(), change.Description),
-            ToolMarkedBlockChange change => new(change.Id, ToolRecordDefinitions.MarkedBlockKind, change.PathTemplate, null, observation.Disposition.ToString(), change.Description),
-            ToolManagedFileChange change => new(change.Id, ToolRecordDefinitions.ManagedFileKind, change.PathTemplate, null, observation.Disposition.ToString(), change.Description),
+            ToolJsonValueChange change => new(change.Id, change.Operation.ToString(), change.PathTemplate, change.Pointer, observation.Disposition.ToString(), change.Description)
+            {
+                Items = change.Operation == ToolJsonValueOperation.Union && change.Value is { ValueKind: System.Text.Json.JsonValueKind.Array } items
+                    ? [.. items.EnumerateArray().Select(item => item.Clone())] : null,
+                Value = change.Operation == ToolJsonValueOperation.SetIfAbsent ? change.Value : null,
+            },
+            ToolMarkedBlockChange change => new(change.Id, ToolRecordDefinitions.MarkedBlockKind, change.PathTemplate, null, observation.Disposition.ToString(), change.Description)
+            {
+                StartMarker = change.StartMarker,
+                EndMarker = change.EndMarker,
+                Content = change.ContentTemplate,
+                ContentSha256 = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(change.ContentTemplate))),
+            },
+            ToolManagedFileChange change => new(change.Id, ToolRecordDefinitions.ManagedFileKind, change.PathTemplate, null, observation.Disposition.ToString(), change.Description)
+            {
+                TemplateResource = change.TemplateResource,
+                ContentSha256 = observation.Disposition != ToolChangeDisposition.Conflict && observation.Desired.Bytes is { } bytes
+                    ? Convert.ToHexStringLower(SHA256.HashData(bytes)) : null,
+            },
             ToolNativeConfigChange change => new(change.Id, ToolRecordDefinitions.NativeCommandKind, null, null, observation.Disposition.ToString(), change.Description)
             {
                 StoredNativeValue = observation.Current.Native,
                 NativeEnvironmentOverrides = observation.NativeEnvironmentOverrides,
+                NativeValue = change.DesiredValue,
             },
             _ => throw new ArgumentOutOfRangeException(nameof(observation)),
         };
+
+    private static ToolWritePermissionView? PermissionView(ToolWriteToolPlan tool)
+    {
+        var permission = tool.Config?.Permissions ?? tool.Removal?.Permissions;
+        if (permission is null || permission.Required.IsDefaultOrEmpty && permission.Missing.IsDefaultOrEmpty
+            && permission.Decision == Core.Framework.Settings.Models.Permissions.WorkspacePermissionDecision.NotRequired) return null;
+        return new(permission.Required, permission.Missing, permission.Decision.ToString());
+    }
+
+    private static ToolWriteChangeView Removal(ToolConfigRemovalObservation observation)
+    {
+        var addition = observation.Addition;
+        var view = new ToolWriteChangeView(addition.Id, AdditionKind(addition), AdditionPath(addition),
+            null, observation.Disposition.ToString(), observation.Conflict);
+        return addition switch
+        {
+            ToolJsonUnionAddition union => view with { Pointer = union.Pointer, Items = union.Items },
+            ToolJsonValueAddition value => view with { Pointer = value.Pointer, Value = value.Value },
+            ToolMarkedBlockAddition block => view with { StartMarker = block.StartMarker, EndMarker = block.EndMarker, ContentSha256 = block.ContentSha256 },
+            ToolManagedFileAddition file => view with { ContentSha256 = file.Sha256 },
+            ToolNativeCommandAddition => view,
+            _ => throw new ArgumentOutOfRangeException(nameof(observation)),
+        };
+    }
 
     private static string? AdditionPath(ToolAppliedChange change) => change switch
     {

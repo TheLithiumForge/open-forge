@@ -77,6 +77,7 @@ internal sealed partial class ToolConfigService : IToolConfigService, IToolSetup
         {
             cancellationToken.ThrowIfCancellationRequested();
             var current = Bytes(null);
+            ToolConfigChange? resolved = null;
             IReadOnlyDictionary<string, string>? nativeEnvironmentOverrides = null;
             try
             {
@@ -88,9 +89,11 @@ internal sealed partial class ToolConfigService : IToolConfigService, IToolSetup
                     if (fact is not null && !SameNative(current, fact.Applied)) throw new InvalidDataException("The recorded native setting has drifted.");
                     _ = ManualArguments(request.Context, native, fact?.Previous.Native ?? current.Native ?? throw new InvalidDataException("The native previous value is unavailable."));
                     var recorded = remaining.OfType<ToolNativeCommandAddition>().Any(receipt => receipt.Id == native.Id && receipt.AllowListId == native.AllowListId);
+                    resolved = ToolRecipeExpansion.Native(native, request.Context, fact?.Previous.Native ?? current.Native);
                     observations.Add(new()
                     {
                         Change = change,
+                        ResolvedChange = resolved,
                         Current = current,
                         Desired = ToolNativeSettings.Value(native.DesiredValue),
                         NativeEnvironmentOverrides = nativeEnvironmentOverrides,
@@ -98,14 +101,14 @@ internal sealed partial class ToolConfigService : IToolConfigService, IToolSetup
                     });
                     continue;
                 }
-                var resolved = ToolRecipeExpansion.Change(change, request.Context);
+                resolved = ToolRecipeExpansion.Change(change, request.Context);
                 if (resolved.Scope != ToolEffectScope.Workspace) throw new InvalidDataException("A file addition must have workspace scope.");
                 var target = ToolFileReader.Target(ToolFileReader.Scope(request.Context.WorkspacePath), ToolConfigEditor.PathOf(resolved));
                 var before = await ReadSimulatedAsync(request.Context, target, simulated, cancellationToken).ConfigureAwait(false);
                 current = Bytes(before);
                 var edit = await EditAsync(request with { AppliedChanges = remaining }, resolved, before, cancellationToken).ConfigureAwait(false);
                 if (!Same(current, Bytes(edit.Bytes))) await _backups.CheckFeasibilityAsync(target, cancellationToken).ConfigureAwait(false);
-                observations.Add(new() { Change = change, Current = current, Desired = Bytes(edit.Bytes), Disposition = edit.Disposition });
+                observations.Add(new() { Change = change, ResolvedChange = resolved, Current = current, Desired = Bytes(edit.Bytes), Disposition = edit.Disposition });
                 simulated[target] = edit.Bytes;
             }
             catch (Exception exception) when (ExpectedFailure(exception))
@@ -113,6 +116,7 @@ internal sealed partial class ToolConfigService : IToolConfigService, IToolSetup
                 observations.Add(new()
                 {
                     Change = change,
+                    ResolvedChange = resolved,
                     Current = current,
                     Desired = current,
                     Disposition = ToolChangeDisposition.Conflict,
@@ -121,7 +125,8 @@ internal sealed partial class ToolConfigService : IToolConfigService, IToolSetup
                 });
             }
         }
-        return new(request, observations, removals);
+        var plan = new ToolConfigPlan(request, observations, removals);
+        return plan with { Permissions = await ToolConfigPermissions.EvaluateAsync(request.Context, ToolConfigPermissions.Destinations(plan), cancellationToken).ConfigureAwait(false) };
     }
 
     private async Task<ToolConfigEdit> EditAsync(ToolConfigRequest request, ToolConfigChange resolved, byte[]? before, CancellationToken token)

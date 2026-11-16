@@ -78,7 +78,7 @@ internal sealed class ToolLauncherWriter(IToolBackupService backups)
             }
             return new(written, null);
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException or OperationCanceledException)
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
         {
             return new(written, "Launcher publication failed. Keep backups and temporary files for checking.");
         }

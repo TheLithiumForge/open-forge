@@ -55,9 +55,24 @@ internal static class ToolWriteDataTextRenderer
             foreach (var change in tool.Changes)
             {
                 Line(ToolWriteText.Row(change.Id, $"{change.Kind} {change.Path} {change.Pointer} {change.Disposition} {change.Description}"));
+                if (change.Items is { } items)
+                    foreach (var item in items) Line(ToolWriteText.Row("Union item", item.GetRawText()));
+                if (change.Value is { } value) Line(ToolWriteText.Row("Set value", value.GetRawText()));
+                if (change.StartMarker is not null) Line(ToolWriteText.Row("Start marker", change.StartMarker));
+                if (change.EndMarker is not null) Line(ToolWriteText.Row("End marker", change.EndMarker));
+                if (change.Content is not null) Line(ToolWriteText.Row("Managed content", change.Content));
+                if (change.ContentSha256 is not null) Line(ToolWriteText.Row("Content SHA-256", change.ContentSha256));
+                if (change.TemplateResource is not null) Line(ToolWriteText.Row("Template", change.TemplateResource));
+                if (change.NativeValue is not null) Line(ToolWriteText.Row("Desired native setting", change.NativeValue));
                 if (change.StoredNativeValue is not null) Line(ToolWriteText.Row("Stored native setting", change.StoredNativeValue));
                 if (change.NativeEnvironmentOverrides is { } environment)
                     foreach (var variable in environment) Line(ToolWriteText.EffectiveNative(variable.Key, variable.Value));
+            }
+            if (tool.Permissions is { } permissions)
+            {
+                Line(ToolWriteText.Row("Destination permission", permissions.Decision));
+                foreach (var path in permissions.Required) Line(ToolWriteText.Row("Required path", path));
+                foreach (var path in permissions.Missing) Line(ToolWriteText.MissingPermission(path));
             }
             foreach (var setting in tool.KeptNativeSettings) Line(ToolWriteText.KeptSetting(setting.ChangeId, setting.NativeHome, setting.Value));
             foreach (var command in tool.Commands)

@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Request;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
@@ -33,6 +35,7 @@ internal sealed record ToolWriteResult : ICliCommandResult
     public required ToolWriteData Data { get; init; }
     public required IReadOnlyList<ToolWriteFinding> Findings { get; init; }
     public CliNextAction? Next { get; init; }
+    internal string? PermissionCommand { get; init; }
 }
 
 internal sealed record ToolWriteData
@@ -81,6 +84,8 @@ internal sealed record ToolWriteToolView
     public string? MinimumOpenForgeVersion { get; init; }
     public string? MinimumToolVersion { get; init; }
     public IReadOnlyList<ToolWriteNativeOutputView> PossibleOutputs { get; init; } = [];
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ToolWritePermissionView? Permissions { get; init; }
 }
 
 internal sealed record ToolWriteCommandView(
@@ -92,7 +97,24 @@ internal sealed record ToolWriteChangeView(string Id, string Kind, string? Path,
 {
     public string? StoredNativeValue { get; init; }
     public IReadOnlyDictionary<string, string>? NativeEnvironmentOverrides { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<JsonElement>? Items { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public JsonElement? Value { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? StartMarker { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? EndMarker { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Content { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? ContentSha256 { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? TemplateResource { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? NativeValue { get; init; }
 }
+internal sealed record ToolWritePermissionView(IReadOnlyList<string> Required, IReadOnlyList<string> Missing, string Decision);
 internal sealed record ToolWriteGrantView(
     IReadOnlyList<string> Requested, string State, IReadOnlyList<string> WrittenPaths, IReadOnlyList<string> Unfinished);
 internal sealed record ToolWriteDownloadView(string Url, string Destination, string? Sha256);

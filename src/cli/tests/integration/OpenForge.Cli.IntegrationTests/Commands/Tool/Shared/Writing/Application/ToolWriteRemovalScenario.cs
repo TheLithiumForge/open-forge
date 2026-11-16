@@ -144,6 +144,7 @@ internal sealed class ToolWriteRemovalScenario : IDisposable
         Yes = yes,
         CanPrompt = Terminal,
         Preview = preview,
+        AllowPaths = [ProjectFile],
         Format = json ? CliFormat.Json : CliFormat.Text,
     };
 

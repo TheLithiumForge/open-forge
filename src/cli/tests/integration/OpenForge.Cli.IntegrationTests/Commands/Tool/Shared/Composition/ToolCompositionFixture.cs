@@ -36,6 +36,7 @@ internal sealed partial class ToolCompositionFixture : IDisposable
     internal const string ConfigurationDirectory = "config";
     internal const string MembersPointer = "/items";
     private readonly TemporaryWorkspace _owned = TemporaryWorkspace.Create("tool-composition");
+    private readonly bool _grantDestinations;
     internal string Workspace { get; }
     internal string NativeHome { get; }
     internal string Home => _owned.Combine(ToolRecordDefinitions.HomeDirectoryName);
@@ -62,8 +63,9 @@ internal sealed partial class ToolCompositionFixture : IDisposable
     internal Core.Framework.Tools.Models.Launchers.ToolPathReadiness PathReadiness { get; set; }
         = Core.Framework.Tools.Models.Launchers.ToolPathReadiness.Ready;
 
-    internal ToolCompositionFixture(bool twoTools = false)
+    internal ToolCompositionFixture(bool twoTools = false, bool grantDestinations = true)
     {
+        _grantDestinations = grantDestinations;
         Workspace = _owned.CreateDirectory("workspace");
         NativeHome = _owned.CreateDirectory("native");
         foreach (var id in new[] { FirstId, LastId })
@@ -73,6 +75,16 @@ internal sealed partial class ToolCompositionFixture : IDisposable
             _owned.CreateFile("workspace/" + ConfigurationDirectory + "/" + id + ".json", "{\"items\":[],\"unrelated\":17}");
         }
         Catalogue = CreateCatalogue(twoTools);
+        if (grantDestinations)
+        {
+            var settingsPath = Path.Combine(Workspace, WorkspaceSettingsDefinitions.RelativePath);
+            Directory.CreateDirectory(Path.GetDirectoryName(settingsPath) ?? Workspace);
+            File.WriteAllText(settingsPath, new JsonObject
+            {
+                [WorkspaceSettingsDefinitions.SchemaVersionProperty] = WorkspaceSettingsDefinitions.SchemaVersion,
+                [WorkspaceSettingsDefinitions.AllowInstallPathsProperty] = new JsonArray(ConfigurationDirectory),
+            }.ToJsonString());
+        }
     }
 
     internal CliToolHostInputs Inputs => new()
@@ -133,9 +145,21 @@ internal sealed partial class ToolCompositionFixture : IDisposable
         var settings = codec.WriteSettings(new JsonObject
         {
             [WorkspaceSettingsDefinitions.SchemaVersionProperty] = WorkspaceSettingsDefinitions.SchemaVersion,
+            [WorkspaceSettingsDefinitions.AllowInstallPathsProperty] = _grantDestinations ? new JsonArray(ConfigurationDirectory) : new JsonArray(),
         }, selected.Entries.ToDictionary(pair => pair.Key, pair => new ToolSetting(pair.Value.Profiles[0].Range)));
         Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(Workspace, WorkspaceSettingsDefinitions.RelativePath)) ?? Workspace);
         File.WriteAllText(Path.Combine(Workspace, WorkspaceSettingsDefinitions.RelativePath), settings.ToJsonString());
+    }
+
+    internal void GrantDestinations(params string[] paths)
+    {
+        var settingsPath = Path.Combine(Workspace, WorkspaceSettingsDefinitions.RelativePath);
+        var settings = File.Exists(settingsPath) ? JsonNode.Parse(File.ReadAllBytes(settingsPath))?.AsObject() : new JsonObject();
+        if (settings is null) throw new InvalidOperationException("Synthetic settings need an object.");
+        settings[WorkspaceSettingsDefinitions.SchemaVersionProperty] = WorkspaceSettingsDefinitions.SchemaVersion;
+        settings[WorkspaceSettingsDefinitions.AllowInstallPathsProperty] = new JsonArray([.. paths.Select(path => (JsonNode?)JsonValue.Create(path))]);
+        Directory.CreateDirectory(Path.GetDirectoryName(settingsPath) ?? Workspace);
+        File.WriteAllText(settingsPath, settings.ToJsonString());
     }
 
     internal void EnsureCommands()
