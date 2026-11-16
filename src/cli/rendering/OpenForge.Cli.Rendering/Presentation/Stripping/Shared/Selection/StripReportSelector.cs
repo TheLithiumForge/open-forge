@@ -183,13 +183,18 @@ internal static class StripReportSelector
             return [];
         }
 
+        var deleted = result.Plan.Count(entry => entry.Action == StripPlanAction.Delete);
+        var rewritten = result.Plan.Count(entry => entry.Action == StripPlanAction.Rewrite);
+        var moved = result.Plan.Count(entry => entry.Action == StripPlanAction.Move);
+        var folders = result.Plan.Count(entry => entry.Action == StripPlanAction.DeleteDirectory);
+        var edited = result.Kept.Count(kept => kept.Reason == StripKeptReason.Edited);
         return
         [
-            new CliCount("filesDeleted", "files deleted", result.Plan.Count(entry => entry.Action == StripPlanAction.Delete)),
-            new CliCount("filesRewritten", "files rewritten", result.Plan.Count(entry => entry.Action == StripPlanAction.Rewrite)),
-            new CliCount("filesMoved", "files moved", result.Plan.Count(entry => entry.Action == StripPlanAction.Move)),
-            new CliCount("foldersDeleted", "folders deleted", result.Plan.Count(entry => entry.Action == StripPlanAction.DeleteDirectory)),
-            new CliCount("filesKept", "edited files kept", result.Kept.Length),
+            new CliCount("filesDeleted", StripText.LabelFilesDeleted(deleted), deleted),
+            new CliCount("filesRewritten", StripText.LabelFilesRewritten(rewritten), rewritten),
+            new CliCount("filesMoved", StripText.LabelFilesMoved(moved), moved),
+            new CliCount("foldersDeleted", StripText.LabelFoldersDeleted(folders), folders),
+            new CliCount("filesKept", StripText.LabelFilesKept(edited), edited),
         ];
     }
 

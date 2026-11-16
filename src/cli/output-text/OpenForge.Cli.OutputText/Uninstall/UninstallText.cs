@@ -14,6 +14,9 @@ internal static class UninstallText
         scaffolds it wrote, its settings and lock, and folders left empty.
         Files you wrote stay. Managed files you edited stay unless you name them.
         Preview with --dry-run. Applying asks first unless you add --automatic.
+        Redirected or JSON requests that would write need --automatic.
+        Recovery data is kept until every change verifies, and an interrupted
+        run reports it.
         """;
     internal static string HelpKept() => "Edited managed files and sections are listed as kept. Name one with --remove-edited to remove it anyway. Your own text in AGENTS.md and CLAUDE.md stays, and Git-ignore rules stay. Detach Libraries first.";
     internal static IReadOnlyList<(string Label, string? Description)> HelpRelated()
@@ -21,5 +24,5 @@ internal static class UninstallText
 
     internal static string Preview(int changes) => changes == 1 ? "Would remove Open Forge with 1 change." : $"Would remove Open Forge with {changes} changes.";
     internal static string Done(int changes) => changes == 1 ? "Removed Open Forge with 1 change." : $"Removed Open Forge with {changes} changes.";
-    internal static string NothingToDo() => "Open Forge is not installed here, and nothing needs stripping.";
+    internal static string NothingToDo() => "Nothing to do.";
 }

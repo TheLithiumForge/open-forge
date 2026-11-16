@@ -46,13 +46,14 @@ internal static class StripFlattenPlanner
             .Where(group => group.Count() > 1 || staying.Contains(group.Key))
             .Select(group => new StripCollision(
                 staying.FirstOrDefault(path => string.Equals(path, group.Key, StringComparison.OrdinalIgnoreCase)) ?? group.Select(move => move.Value).Min(StringComparer.Ordinal)!,
-                [.. group.Select(move => move.Key).Order(StringComparer.Ordinal)]))
+                [.. group.Select(move => move.Key).Order(StringComparer.Ordinal)],
+                staying.Contains(group.Key)))
             .OrderBy(collision => collision.Path, StringComparer.Ordinal)
             .ToImmutableArray();
         return new StripFlattenPlan(moves.ToImmutableDictionary(StringComparer.Ordinal), collisions);
     }
 
-    private static bool StaysInPlace(WorkspaceLayout layout, string document)
+    internal static bool StaysInPlace(WorkspaceLayout layout, string document)
         => SourceFormClassifier.TryClassify(layout, document, out var form)
             && (form == SourceDocumentForm.Skill || SourceFormClassifier.IsEntrypoint(form));
 

@@ -25,6 +25,16 @@ internal static class StrippingDefinitions
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, "The strip command kind is not defined."),
         };
 
+    // The shared message families use the command name at the start of a sentence.
+    internal static string CommandTitle(StripCommandKind kind)
+    {
+        var identity = CommandIdentity(kind);
+        return char.ToUpperInvariant(identity[0]) + identity[1..];
+    }
+
+    internal static string PartList()
+        => string.Join(", ", Enum.GetValues<StripPart>().SkipLast(1).Select(PartName)) + " or " + PartName(Enum.GetValues<StripPart>()[^1]);
+
     internal static string PartName(StripPart part)
         => part switch
         {

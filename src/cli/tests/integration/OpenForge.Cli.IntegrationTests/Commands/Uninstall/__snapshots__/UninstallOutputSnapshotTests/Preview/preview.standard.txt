@@ -1,4 +1,4 @@
-Would remove Open Forge with 10 changes.
+Would remove Open Forge with 11 changes.
 Workspace: <workspace>
   delete           .agents/README.md  (framework)
   rewrite          .agents/directives/_directives.md  (metadata)
@@ -10,9 +10,10 @@ Workspace: <workspace>
   delete           .agents/open-forge.lock.json  (state)
   rewrite          AGENTS.md  (managed-section)
   delete           CLAUDE.md  (root-host)
+  delete-directory .open-forge-state  (state)
 Kept:
   .agents/directives/_directives.md  (edited)
 No files were changed.
-7 files deleted, 3 files rewritten, 1 edited files kept, 1 infos.
+7 files deleted, 3 files rewritten, 1 folder deleted, 1 edited file kept, 1 infos.
   Apply this plan.
 Next: open-forge uninstall --strip metadata --workspace <workspace> --automatic

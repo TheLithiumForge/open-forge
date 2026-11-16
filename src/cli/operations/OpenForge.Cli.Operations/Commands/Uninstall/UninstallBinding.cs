@@ -48,7 +48,8 @@ internal static class UninstallBinding
             Help = components.Help,
             WorkspaceRequirement = CliWorkspaceRequirement.Required,
             Binder = (parse, invocation) => Bind(parse, invocation, symbols),
-            InvalidResultFactory = input => StripResultFactory.Invalid(StripCommandKind.Uninstall, null, string.Join(" ", input.InvalidInput.Diagnostics)),
+            InvalidResultFactory = input => StripResultFactory.Invalid(StripCommandKind.Uninstall, null,
+                StripResultFactory.Cannot(StripCommandKind.Uninstall, string.Join(" ", input.InvalidInput.Diagnostics))),
             Operation = components.Operation.ExecuteAsync,
         };
 
@@ -59,21 +60,27 @@ internal static class UninstallBinding
             => CliBindResult<StripRequest, StripResult>.Invalid(StripResultFactory.Invalid(StripCommandKind.Uninstall, invocation.Workspace, cause));
         if (result.Errors.Count > 0)
         {
-            return Invalid(string.Join(" ", result.Errors.Select(error => error.Message)));
+            return Invalid(StripResultFactory.Cannot(StripCommandKind.Uninstall, string.Join(" ", result.Errors.Select(error => error.Message))));
         }
 
         var stripFacts = CliOptionResultFactsReader.Read(result, symbols.Strip);
         var stripValues = CliOptionResultFactsReader.ReadValues(result, symbols.Strip);
-        if (stripFacts.IsExplicitWithoutValue || !StripPartGrammar.TryRead(stripValues, out var parts))
+        if (stripFacts.IsExplicitWithoutValue)
         {
-            return Invalid("Each --strip part must be metadata, entries or links.");
+            return Invalid(StripResultFactory.Cannot(StripCommandKind.Uninstall, $"supply a part after each {StrippingDefinitions.StripOption}."));
+        }
+
+        if (!StripPartGrammar.TryRead(stripValues, out var parts, out var rejected))
+        {
+            return Invalid(StripResultFactory.Cannot(StripCommandKind.Uninstall,
+                $"'{rejected}' is not a {StrippingDefinitions.StripOption} part. Use {StrippingDefinitions.PartList()}."));
         }
 
         var editedFacts = CliOptionResultFactsReader.Read(result, symbols.RemoveEdited);
         var edited = CliOptionResultFactsReader.ReadValues(result, symbols.RemoveEdited);
         if (editedFacts.IsExplicitWithoutValue || edited.Any(string.IsNullOrWhiteSpace))
         {
-            return Invalid("Supply a workspace-relative path after each --remove-edited.");
+            return Invalid(StripResultFactory.Cannot(StripCommandKind.Uninstall, $"supply a workspace-relative path after each {StrippingDefinitions.RemoveEditedOption}."));
         }
 
         var automatic = result.GetValue(symbols.Automatic);

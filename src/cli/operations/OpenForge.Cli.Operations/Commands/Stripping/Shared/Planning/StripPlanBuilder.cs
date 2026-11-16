@@ -1,7 +1,9 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Planning;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Request;
+using OpenForge.Cli.Core.Commands.Stripping.Models.Application;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
+using OpenForge.Cli.Core.Commands.Stripping.Shared.Application;
 using OpenForge.Cli.Core.Commands.Stripping.Shared.Documents;
 using OpenForge.Cli.Core.Commands.Stripping;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
@@ -37,8 +39,8 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
         string? folder = null;
         if (request.Flatten is { } flatten && (folder = ReadFlattenFolder(layout, flatten)) is null)
         {
-            return Stop(request, CliSemanticStatus.Invalid, StripFindingCode.InvalidInput,
-                $"'{flatten}' is not an existing folder below the main root, the native Skills folder or a registered outside route.");
+            return Stop(request, CliSemanticStatus.Invalid, StripFindingCode.InvalidInput, StripResultFactory.Cannot(request.Command,
+                $"'{flatten}' is not an existing folder below the main root, the native Skills folder or a registered outside route."));
         }
 
         if (request.Command == StripCommandKind.Strip && !read.Ownership.IsTrustworthy && read.Ownership.State != WorkspaceOwnershipReadState.Absent)
@@ -81,16 +83,25 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
         // Strip leaves managed files alone so the installed Framework keeps working. Uninstall strips the edited ones it keeps.
         var remaining = documents.Where(document => !deleted.Contains(document.Path)
             && (request.Command == StripCommandKind.Uninstall || !read.Ownership.Document.HasManagedPath(document.Path))).ToArray();
+        // Flatten is for categories, subcategories and custom routes. A managed file it would leave below the folder,
+        // other than an entrypoint or Skill file that stays in place, means the folder is not the user's to flatten.
+        if (folder is not null && ManagedBelow(layout, read, folder, deleted) is { } managedPath)
+        {
+            return Stop(request, CliSemanticStatus.Blocked, StripFindingCode.FlattenManaged,
+                $"{folder} holds {managedPath}, which Open Forge manages. Flatten a category, subcategory or custom route instead. Nothing was changed.",
+                managedPath);
+        }
+
         var flattenPlan = folder is null
             ? new StripFlattenPlan(ImmutableDictionary<string, string>.Empty, [])
             : StripFlattenPlanner.Plan(layout, folder, remaining.Select(document => document.Path), deleted);
         if (!flattenPlan.Collisions.IsEmpty)
         {
-            var collision = flattenPlan.Collisions[0];
-            return new StripPlanBuild(StripResultFactory.Stop(request, CliSemanticStatus.Blocked,
-                StripResultFactory.Error(StripFindingCode.FlattenCollision,
-                    $"Flattening would place {collision.Sources.Length} files at '{collision.Path}'. Nothing was changed.", collision.Path),
-                flattenPlan.Collisions), null);
+            // Every collision is its own finding, with its destination and the files that would land there.
+            var collisionFindings = flattenPlan.Collisions.Select(collision => StripResultFactory.Error(StripFindingCode.FlattenCollision,
+                $"Flattening would place {collision.Count} files at {collision.Path}: {string.Join(", ", collision.Sources)}. Nothing was changed.",
+                collision.Path)).ToImmutableArray();
+            return new StripPlanBuild(StripResultFactory.Stop(request, CliSemanticStatus.Blocked, collisionFindings, flattenPlan.Collisions), null);
         }
 
         var lines = new List<PlannedLine>();
@@ -136,9 +147,28 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
             .Where(item => item.Expectation is not null)
             .ToArray();
 
+        // The runtime folder is the last step: it goes only when it holds nothing but the lease's own files.
+        var kept = removalSet.Kept;
+        var runtimeFindings = ImmutableArray<StripFinding>.Empty;
+        StripPlanEntry? runtime = null;
+        if (removalSet.RemovesRuntimeFolder)
+        {
+            var state = StripRuntimeFolder.Classify(request.Workspace);
+            if (state.State is StripRuntimeFolderState.Absent or StripRuntimeFolderState.Removable)
+            {
+                runtime = new StripPlanEntry { Action = StripPlanAction.DeleteDirectory, Path = StripRuntimeFolder.Path, Reason = StripPlanReason.State };
+            }
+            else
+            {
+                kept = kept.Add(new StripKeptFile(StripRuntimeFolder.Path, StripRuntimeFolder.KeptReason(state)));
+                runtimeFindings = [StripResultFactory.Info(StripFindingCode.RuntimeRetained, StripRuntimeFolder.Retained(state), StripRuntimeFolder.Path)];
+            }
+        }
+
         lines.Sort((left, right) => string.CompareOrdinal(left.Entry.Path, right.Entry.Path));
         var entries = lines.Select(line => line.Entry)
             .Concat(folders.Select(item => new StripPlanEntry { Action = StripPlanAction.DeleteDirectory, Path = item.Path, Reason = StripPlanReason.EmptyFolder }))
+            .Concat(runtime is null ? [] : [runtime])
             .ToImmutableArray();
         var effects = new List<StripFileEffect>();
         AddEffects(lines, effects, EffectStage.Create);
@@ -148,6 +178,7 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
         var findings = inventory.Linked
             .Select(path => StripResultFactory.Info(StripFindingCode.LinkedFileSkipped, $"'{path}' is a link and was left unchanged.", path))
             .Concat(removalSet.Findings)
+            .Concat(runtimeFindings)
             .ToImmutableArray();
         return new StripPlanBuild(null, new StripPlan
         {
@@ -156,8 +187,9 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
             Entries = entries,
             Files = [.. effects],
             Directories = [.. folders.Select((item, index) => new StripDirectoryEffect(item.Expectation!, lines.Count + index))],
-            Kept = removalSet.Kept,
+            Kept = kept,
             Findings = findings,
+            RuntimeFolderEntry = runtime is null ? null : entries.Length - 1,
         });
     }
 
@@ -174,6 +206,14 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
             }
         }
     }
+
+    private static string? ManagedBelow(WorkspaceLayout layout, WorkspaceLayoutRead read, string folder, IReadOnlySet<string> deleted)
+        => read.Ownership.Document.ManagedPaths().Select(owned => owned.Path)
+            .Where(path => path.StartsWith(folder + "/", StringComparison.Ordinal) && !deleted.Contains(path)
+                && !StripFlattenPlanner.StaysInPlace(layout, path)
+                && File.Exists(Path.Combine(layout.Workspace.LexicalRoot, path.Replace('/', Path.DirectorySeparatorChar))))
+            .Order(StringComparer.Ordinal)
+            .FirstOrDefault();
 
     private static string? ReadFlattenFolder(WorkspaceLayout layout, string value)
     {

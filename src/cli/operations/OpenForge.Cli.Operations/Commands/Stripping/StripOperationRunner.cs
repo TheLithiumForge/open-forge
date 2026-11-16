@@ -63,12 +63,13 @@ internal sealed class StripOperationRunner(
             CliPromptState.Answered => StripResultFactory.Refuse(plan, CliSemanticStatus.Invalid,
                 StripResultFactory.Error(StripFindingCode.PermissionDeclined, "The plan was not confirmed. Nothing was changed.")),
             CliPromptState.Cancelled => StripResultFactory.Refuse(plan, CliSemanticStatus.Interrupted,
-                StripResultFactory.Error(StripFindingCode.Interrupted, "The run was cancelled. Nothing was changed.")),
+                StripResultFactory.Error(StripFindingCode.Interrupted, $"{StrippingDefinitions.CommandTitle(plan.Request.Command)} was cancelled. Nothing was changed.")),
             _ => RequireConfirmation(plan),
         };
     }
 
     private static StripResult RequireConfirmation(StripPlan plan)
         => StripResultFactory.Refuse(plan, CliSemanticStatus.Invalid,
-            StripResultFactory.Error(StripFindingCode.ConfirmationRequired, "Applying this plan needs confirmation or --automatic. Nothing was changed."));
+            StripResultFactory.Error(StripFindingCode.ConfirmationRequired,
+                $"{StrippingDefinitions.CommandTitle(plan.Request.Command)} needs confirmation, and this session cannot ask."));
 }

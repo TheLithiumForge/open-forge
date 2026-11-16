@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Would remove Open Forge with 10 changes.",
+    "headline": "Would remove Open Forge with 11 changes.",
     "kind": "preview"
   },
   "findings": [],
@@ -93,13 +93,21 @@
       "outcome": "planned",
       "reason": "root-host",
       "owner": null
+    },
+    {
+      "path": ".open-forge-state",
+      "kind": "directory",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": "state",
+      "owner": null
     }
   ],
   "counts": {
     "filesDeleted": 7,
     "filesRewritten": 3,
     "filesMoved": 0,
-    "foldersDeleted": 0,
+    "foldersDeleted": 1,
     "filesKept": 1,
     "infos": 1
   },
@@ -198,6 +206,13 @@
         "reason": "root-host",
         "parts": [],
         "before": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "delete-directory",
+        "path": ".open-forge-state",
+        "reason": "state",
+        "parts": [],
         "outcome": "planned"
       }
     ],

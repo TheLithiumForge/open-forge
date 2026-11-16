@@ -9,7 +9,7 @@
     "selectedBy": "explicit-workspace"
   },
   "summary": {
-    "headline": "Flattening would place 2 files at '.agents/docs/rules.md'. Nothing was changed.",
+    "headline": "Flattening would place 2 files at .agents/docs/notes.md: .agents/docs/game/notes.md, .agents/docs/other/notes.md. Nothing was changed.",
     "kind": "blocked"
   },
   "findings": [
@@ -17,7 +17,21 @@
       "severity": "error",
       "code": "strip.flatten-collision",
       "title": "Flattened names collide",
-      "message": "Flattening would place 2 files at '.agents/docs/rules.md'. Nothing was changed.",
+      "message": "Flattening would place 2 files at .agents/docs/notes.md: .agents/docs/game/notes.md, .agents/docs/other/notes.md. Nothing was changed.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/docs/notes.md",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    },
+    {
+      "severity": "error",
+      "code": "strip.flatten-collision",
+      "title": "Flattened names collide",
+      "message": "Flattening would place 2 files at .agents/docs/rules.md: .agents/docs/game/rules.md, .agents/docs/other/rules.md. Nothing was changed.",
       "subject": {
         "kind": "file",
         "path": ".agents/docs/rules.md",
@@ -30,7 +44,7 @@
   ],
   "effects": [],
   "counts": {
-    "errors": 1
+    "errors": 2
   },
   "limitations": [],
   "data": {
@@ -42,6 +56,13 @@
     "plan": [],
     "kept": [],
     "collisions": [
+      {
+        "path": ".agents/docs/notes.md",
+        "sources": [
+          ".agents/docs/game/notes.md",
+          ".agents/docs/other/notes.md"
+        ]
+      },
       {
         "path": ".agents/docs/rules.md",
         "sources": [

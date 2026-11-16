@@ -27,6 +27,9 @@ internal sealed record StripRemovalSet
 
     public ImmutableArray<StripFinding> Findings { get; init; } = [];
 
+    // Uninstall sets this while ownership records exist, so the plan ends by removing the runtime folder.
+    public bool RemovesRuntimeFolder { get; init; }
+
     // A blocking finding stops planning before strip plans any edit.
     public StripFinding? Stop { get; init; }
 }

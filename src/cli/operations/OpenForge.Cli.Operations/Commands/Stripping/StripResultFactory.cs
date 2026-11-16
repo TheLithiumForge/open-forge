@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Shared.Models.Mutation;
+using OpenForge.Cli.Core.Commands.Library;
+using OpenForge.Cli.Core.Commands.Library.Detach;
 using OpenForge.Cli.Core.Commands.Shared;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Planning;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Request;
@@ -24,7 +26,10 @@ internal static class StripResultFactory
             Next = new CliNextAction(Help(kind), "Correct the named input and retry."),
         };
 
-    internal static StripResult Stop(StripRequest request, CliSemanticStatus status, StripFinding finding, ImmutableArray<StripCollision> collisions = default)
+    internal static StripResult Stop(StripRequest request, CliSemanticStatus status, StripFinding finding)
+        => Stop(request, status, [finding], []);
+
+    internal static StripResult Stop(StripRequest request, CliSemanticStatus status, ImmutableArray<StripFinding> findings, ImmutableArray<StripCollision> collisions)
         => new()
         {
             Kind = request.Command,
@@ -33,9 +38,9 @@ internal static class StripResultFactory
             DryRun = request.DryRun,
             Parts = request.Parts,
             Flatten = request.Flatten,
-            Collisions = collisions.IsDefault ? [] : collisions,
-            Findings = [finding],
-            Next = Next(request, finding),
+            Collisions = collisions,
+            Findings = findings,
+            Next = NextFor(request, findings[0]),
         };
 
     internal static StripResult Preview(StripPlan plan)
@@ -62,7 +67,7 @@ internal static class StripResultFactory
             Status = status,
             Findings = [finding, .. plan.Findings],
             Verified = false,
-            Next = Next(plan.Request, finding),
+            Next = NextFor(plan.Request, finding),
         };
 
     internal static StripFinding Error(StripFindingCode code, string message, string? path = null, WorkspaceLockFailureInfo? lockFailure = null)
@@ -96,14 +101,26 @@ internal static class StripResultFactory
     private static string Help(StripCommandKind kind)
         => $"{CliSyntaxDefinitions.ExecutableName} {StrippingDefinitions.CommandIdentity(kind)} {CliSyntaxDefinitions.Help.Name}";
 
-    private static CliNextAction? Next(StripRequest request, StripFinding finding)
+    internal static CliNextAction? NextFor(StripRequest request, StripFinding finding)
         => finding.Code switch
         {
             StripFindingCode.ConfirmationRequired => new CliNextAction(RetryCommand(request, automatic: true, dryRun: false), "Apply the reviewed plan without a prompt.") { AppliesRequest = true },
-            StripFindingCode.TargetChanged => new CliNextAction(RetryCommand(request, automatic: false, dryRun: true), "Review a fresh preview."),
-            StripFindingCode.WriteFailed or StripFindingCode.RecoveryArtifactRetained or StripFindingCode.RuntimeRetained
+            StripFindingCode.TargetChanged or StripFindingCode.Interrupted
+                => new CliNextAction(RetryCommand(request, automatic: request.Automatic, dryRun: request.DryRun), "Run the same command again."),
+            StripFindingCode.WriteFailed or StripFindingCode.TargetChangedDuringApply
+                => new CliNextAction(CommandLines.Doctor, "Check the workspace before changing it again."),
+            StripFindingCode.RecoveryArtifactRetained
                 => new CliNextAction(CommandLines.Cleanup, "Review the retained recovery data."),
+            StripFindingCode.LibraryAttached when finding.Identifier is { } library
+                => new CliNextAction(LibraryDetach(library), "Detach the Library, then run uninstall again."),
             StripFindingCode.InvalidInput => new CliNextAction(Help(request.Command), "Correct the named input and retry."),
             _ => null,
         };
+
+    internal static string LibraryDetach(string library)
+        => CliRetryCommand.Build([LibraryDefinitions.Group.Name, LibraryDetachDefinitions.Command.Name, library]);
+
+    // The shared invalid-input family: Cannot <command>: <the exact input problem>.
+    internal static string Cannot(StripCommandKind kind, string problem)
+        => $"Cannot {StrippingDefinitions.CommandIdentity(kind)}: {problem}";
 }

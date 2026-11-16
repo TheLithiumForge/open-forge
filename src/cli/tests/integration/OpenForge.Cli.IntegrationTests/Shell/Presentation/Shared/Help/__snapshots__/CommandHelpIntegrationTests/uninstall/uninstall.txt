@@ -14,6 +14,9 @@ Behavior:
   scaffolds it wrote, its settings and lock, and folders left empty.
   Files you wrote stay. Managed files you edited stay unless you name them.
   Preview with --dry-run. Applying asks first unless you add --automatic.
+  Redirected or JSON requests that would write need --automatic.
+  Recovery data is kept until every change verifies, and an interrupted
+  run reports it.
 
 Options:
   --strip <parts>         Also strip metadata, entries or links from the

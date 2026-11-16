@@ -1,4 +1,4 @@
-Would remove Open Forge with 10 changes.
+Would remove Open Forge with 11 changes.
 Workspace: <workspace>
   Info  .agents/directives/_directives.md  Edited file stays [uninstall.edited-kept]
          '.agents/directives/_directives.md' was edited, so it stays. Name it with --remove-edited to remove it.
@@ -22,9 +22,10 @@ Workspace: <workspace>
       before <sha256>  after <sha256>
   delete           CLAUDE.md  (root-host)
       before <sha256>  after -
+  delete-directory .open-forge-state  (state)
 Kept:
   .agents/directives/_directives.md  (edited)
 No files were changed.
-7 files deleted, 3 files rewritten, 1 edited files kept, 1 infos.
+7 files deleted, 3 files rewritten, 1 folder deleted, 1 edited file kept, 1 infos.
   Apply this plan.
 Next: open-forge uninstall --strip metadata --workspace <workspace> --automatic

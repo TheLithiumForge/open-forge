@@ -68,7 +68,7 @@ Turns each Markdown link to a document into its text. A link counts as a link to
 - its path resolves inside the workspace to a file whose name ends in `.md`, whether or not that file exists;
 - its path resolves to an existing folder, which [folder links](../../shared-operation-contract.md#authored-local-destinations) read as that folder's entrypoint.
 
-The link's text is the exact source between its brackets, so emphasis and code inside it stay. Inline, full, collapsed and shortcut reference links all count. When every use of a reference definition is stripped, its definition line goes too. Unused definitions stay.
+The link's text is the exact source between its brackets, so emphasis and code inside it stay. A document link whose text cannot be read is `strip.document-unsupported`. Inline, full, collapsed and shortcut reference links all count. When every use of a reference definition is stripped, its definition line goes too, together with a title on the following line. Unused definitions stay.
 
 These stay unchanged:
 
@@ -86,17 +86,18 @@ These stay unchanged:
 
 `--flatten <folder>` moves every document below `<folder>`'s subfolders into `<folder>` itself and keeps each file name. `<folder>` is a workspace-relative path, with an optional leading `./`, to an existing folder at or below one of the inventory roots. `strip --flatten docs` moves `docs/rules/rules.md` to `docs/rules.md`.
 
+- Flatten is for categories, subcategories and custom routes. A folder that holds a file Open Forge manages, other than an entrypoint or native `SKILL.md` file that stays in place, is `strip.flatten-managed`, and nothing is written. Under `uninstall`, only files that stay managed after the planned removals count, so a folder whose managed files are all being removed can flatten.
 - Entrypoints and native `SKILL.md` files stay where they are. [`uninstall`](../uninstall/interface.md#route-scaffolds) removes recognized route scaffolds first, so their folders can empty.
 - Files that are not documents, such as images, stay where they are.
 - A folder left empty after the moves is removed, deepest first. `<folder>` itself always stays.
 - Kept links in every document are rewritten when their source or target moved, so they still resolve. The new destination is the plain relative path from the document's new folder, with the original fragment. A comment link keeps its form. A root-relative target stays root-relative, and a `./` or `../` target gets a new relative path.
 - Links in files outside the document set, such as a root `README.md`, are not rewritten.
 
-Two documents that would land on the same name, or a document that would land on a file that stays, is a collision. Names match without regard to case, so the result works on every platform. Strip reports every collision as `strip.flatten-collision` with the destination and its sources, then stops before any write. It never overwrites a file.
+Two documents that would land on the same name, or a document that would land on a file that stays, is a collision. Names match without regard to case, so the result works on every platform. Strip reports each collision as its own `strip.flatten-collision` finding that names the destination and its sources, then stops before any write. It never overwrites a file.
 
 ## Preview And Consent
 
-`--dry-run` lists every delete, rewrite and move with the SHA-256 of its bytes before and after, and writes nothing. Applying requires plan confirmation or `--automatic`. When the session cannot prompt and `--automatic` is absent, the result is `strip.confirmation-required`. JSON never prompts. A plan with no changes is a verified no-op that takes no lock and writes no recovery data.
+`--dry-run` lists every delete, rewrite and move with the SHA-256 of its bytes before and after, and writes nothing. Applying requires plan confirmation or `--automatic`. When the session cannot prompt and `--automatic` is absent, the result is `strip.confirmation-required`. JSON and redirected output never prompt. A plan with no changes is a verified no-op that takes no lock, writes no recovery data and reports `Nothing to do.`
 
 ## Results
 
@@ -112,25 +113,39 @@ The command is `strip` in the shared schema-3 report. Every plan entry is an eff
 | `collisions` | Flatten destinations with their source paths                                                                                                                           |
 | `verified`   | Whether every applied effect verified                                                                                                                                  |
 
-`outcome` is `planned` in a preview and `done`, `not-started`, `unknown` or `failed` after applying. `parts` names what changed in a rewrite or move: `metadata`, `entries`, `links`, `relink` for flatten link updates, and `managed-section` for uninstall's root hosts. Text output lists the effects. Full detail adds the hashes.
+`reason` says why an entry exists. Strip's own values are `strip` for a document rewritten in place, `flatten` for a moved document and `empty-folder` for a folder the plan leaves empty. [`uninstall`](../uninstall/interface.md#results) adds its own values.
+
+`outcome` is `planned` in a preview and `done`, `not-started`, `unknown` or `failed` after applying. `parts` names what changed in a rewrite or move: `metadata`, `entries`, `links`, `relink` for flatten link updates, and `managed-section` for uninstall's root hosts. Text output lists the effects. Full detail adds the hashes. Counts use singular labels for one, such as `1 file moved`.
 
 ## Errors And Boundaries
 
-| Code                               | Meaning                                                                                |
-| ---------------------------------- | -------------------------------------------------------------------------------------- |
-| `strip.invalid-input`              | A part, flatten folder or option is invalid.                                           |
-| `strip.workspace-unavailable`      | The workspace layout, settings or ownership lock cannot be read safely.                |
-| `strip.document-unsupported`       | A document's frontmatter or `Entries` section cannot be edited without losing meaning. |
-| `strip.flatten-collision`          | Two documents, or a document and a kept file, would share a flattened name.            |
-| `strip.linked-file-skipped`        | Information. A symbolic link or junction was left unchanged.                           |
-| `strip.target-changed`             | A planned file changed before its effect.                                              |
-| `strip.workspace-lock-unavailable` | The workspace mutation lease is unavailable.                                           |
-| `strip.confirmation-required`      | Applying needs confirmation or `--automatic`.                                          |
-| `strip.permission-declined`        | The user declined the plan.                                                            |
-| `strip.recovery-unavailable`       | Recovery data could not be prepared. Nothing was changed.                              |
-| `strip.write-failed`               | A planned effect failed. The recovery bundle stays.                                    |
-| `strip.recovery-artifact-retained` | The changes verified, but the recovery bundle could not be removed.                    |
-| `strip.interrupted`                | The run was cancelled.                                                                 |
+| Code                                | Meaning                                                                                   |
+| ----------------------------------- | ----------------------------------------------------------------------------------------- |
+| `strip.invalid-input`               | A part, flatten folder or option is invalid.                                              |
+| `strip.workspace-unavailable`       | The workspace layout, settings or ownership lock cannot be read safely.                   |
+| `strip.document-unsupported`        | A document's frontmatter or `Entries` section cannot be edited without losing meaning.    |
+| `strip.flatten-collision`           | Two documents, or a document and a kept file, would share a flattened name.               |
+| `strip.flatten-managed`             | The flatten folder holds a file Open Forge manages that flatten would not leave in place. |
+| `strip.linked-file-skipped`         | Information. A symbolic link or junction was left unchanged.                              |
+| `strip.target-changed`              | A planned file changed before the first effect. Nothing was changed.                      |
+| `strip.target-changed-during-apply` | A planned file changed after effects started. The run stopped part way.                   |
+| `strip.workspace-lock-unavailable`  | The workspace mutation lease is unavailable.                                              |
+| `strip.confirmation-required`       | Applying needs confirmation or `--automatic`.                                             |
+| `strip.permission-declined`         | The user declined the plan.                                                               |
+| `strip.recovery-unavailable`        | Recovery data could not be prepared. Nothing was changed.                                 |
+| `strip.write-failed`                | A planned effect failed. The recovery bundle stays, and the next action is `doctor`.      |
+| `strip.recovery-artifact-retained`  | The changes verified, but the recovery bundle could not be removed.                       |
+| `strip.interrupted`                 | The run was cancelled.                                                                    |
+
+Messages follow the shared families, with `strip` or `uninstall` as the command:
+
+- Invalid input is `Cannot <command>: <exact problem>.` and names the rejected value.
+- A missing confirmation is `<Command> needs confirmation, and this session cannot ask.`
+- `flatten-collision` is `Flattening would place <n> files at <path>: <sources>. Nothing was changed.`
+- `flatten-managed` is `<folder> holds <path>, which Open Forge manages. Flatten a category, subcategory or custom route instead. Nothing was changed.`
+- `target-changed` is `<path> changed after the plan was made. Nothing was changed.`
+- `target-changed-during-apply` is `<path> changed while changes were being written. Stopped after <n> of <m> changes.` with the `doctor` next action.
+- An interruption after the first effect ends with `Stopped after <n> of <m> changes.`
 
 ## Examples
 
@@ -141,18 +156,24 @@ open-forge strip --flatten docs --dry-run --format json
 open-forge strip metadata entries links --flatten docs --automatic
 ```
 
-## Eval Harness Comparison
+## Expected Bytes From The Eval Harness
 
-The demo-evals harness at `6edb7de66` strips by hand in `src/evals/materialize/`. For the Neon Pairs pack, its scoped-form documents and links give the same bytes as this contract. Where the harness disagrees with Open Forge's own rules, this contract follows Open Forge:
+Two uninstall runs over a routed workspace with scoped documents and scoped metadata have exact expected outputs. The expected bytes came from the eval harness's own output, which the test fixtures record with their origin:
+
+- `uninstall --strip metadata --flatten docs` leaves the original documents at the `docs` root, byte for byte with their original links, and no Open Forge metadata, entrypoints or state.
+- `uninstall --strip metadata,links --flatten docs` leaves the same documents without the links between them.
+
+Where the harness's own stripping code disagrees with Open Forge's rules, this contract follows Open Forge:
 
 - `frontmatter.ts` serializes the remaining YAML again, which turns its line endings into LF and can change quoting. Strip keeps the remaining lines byte for byte.
 - `frontmatter.ts` reads only the `open-forge:` form. Strip also removes root-form keys and a root `applyTo`.
+- `frontmatter.ts` rejects duplicate keys and a sequence root. Strip removes only Open Forge keys, so it leaves such foreign YAML byte for byte. Like the harness, it refuses malformed YAML, a missing closing `---` line and bytes that are not UTF-8.
 - `plain-links.ts` matches links with a regular expression. It strips links inside code spans, turns an image `![alt](x.png)` into `!alt` and strips links to files that are not documents. It toggles fences on any line starting with three backticks or tildes, so a longer or mismatched fence ends a block early, and it treats indented code blocks and HTML blocks as text. It misses reference links, titles, angle-bracket destinations and labels that contain brackets. Strip reads links through the Markdown parser, so code stays code and only document links lose their targets.
 - `scopes.ts` rewrites only links whose path uses word characters, dots, slashes and hyphens. Flatten rewrites every kept link whose source or target moved.
 
 ## Decisions
 
-The maintainer accepted that `strip` is its own command and that `uninstall` offers the same parts as options.
+The maintainer accepted that `strip` is its own command and that `uninstall` offers the same parts as options. The maintainer also accepted that strip's own plan reasons are `strip` and `flatten`, that `--flatten` is for categories, subcategories and custom routes and refuses a folder holding managed files, and that the eval harness is only the source of the expected bytes, not contract vocabulary.
 
 These defaults are recorded for the maintainer to confirm:
 

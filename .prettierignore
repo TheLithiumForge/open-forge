@@ -25,3 +25,6 @@ docs/cli-experience-fixtures/content/malformed-frontmatter.md
 src/docusaurus/build/
 src/docusaurus/.docusaurus/
 src/docusaurus/package-lock.json
+
+# Uninstall parity fixtures own the exact bytes copied from the eval harness.
+src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/Uninstall/Fixtures/

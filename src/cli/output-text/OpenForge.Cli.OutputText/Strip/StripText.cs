@@ -13,15 +13,23 @@ internal static class StripText
         and each registered outside route. Files Open Forge manages stay unchanged,
         so the Framework keeps working. Every other byte stays exactly as it was.
         Preview with --dry-run. Applying asks first unless you add --automatic.
+        Redirected or JSON requests that would write need --automatic.
+        Recovery data is kept until every change verifies, and an interrupted
+        run reports it.
         """;
     internal static string HelpParts() => "metadata removes Open Forge frontmatter keys and keeps other keys and the body. entries removes the generated Entries section and keeps text you wrote there. links turns links to documents into their text, and keeps external links, images, links to other files, code, comment links and Entries lists.";
-    internal static string HelpFlatten() => "--flatten moves each document below the folder's subfolders into the folder itself. Entrypoints and SKILL.md files stay, and kept links are rewritten so they still work. A name two files would share stops the run before any write.";
+    internal static string HelpFlatten() => "Use it on a category, subcategory or custom route. A folder that holds managed files other than entrypoints is refused. Entrypoints and SKILL.md files stay where they are, and kept links are rewritten so they still work. A name two files would share stops the run before any write.";
     internal static IReadOnlyList<(string Label, string? Description)> HelpRelated()
         => [("open-forge uninstall --help", "Remove Open Forge and strip what stays"), ("open-forge index --help", "Refresh generated navigation")];
 
     internal static string Preview(int changes) => changes == 1 ? "Would change 1 file." : $"Would change {changes} files.";
     internal static string Done(int changes) => changes == 1 ? "Changed 1 file." : $"Changed {changes} files.";
-    internal static string NothingToDo() => "Nothing to strip.";
+    internal static string NothingToDo() => "Nothing to do.";
+    internal static string LabelFilesDeleted(decimal count) => count == 1 ? "file deleted" : "files deleted";
+    internal static string LabelFilesRewritten(decimal count) => count == 1 ? "file rewritten" : "files rewritten";
+    internal static string LabelFilesMoved(decimal count) => count == 1 ? "file moved" : "files moved";
+    internal static string LabelFoldersDeleted(decimal count) => count == 1 ? "folder deleted" : "folders deleted";
+    internal static string LabelFilesKept(decimal count) => count == 1 ? "edited file kept" : "edited files kept";
     internal static string Failure(string cause) => cause;
     internal static string FindingTitle(string code) => code switch
     {
@@ -31,6 +39,8 @@ internal static class StripText
         "flatten-collision" => "Flattened names collide",
         "linked-file-skipped" => "Link left unchanged",
         "target-changed" => "File changed after the preview",
+        "flatten-managed" => "Flatten folder holds managed files",
+        "target-changed-during-apply" => "File changed while writing",
         "confirmation-required" => "Confirmation is required",
         "permission-declined" => "Plan was not confirmed",
         "recovery-unavailable" => "Recovery data is unavailable",

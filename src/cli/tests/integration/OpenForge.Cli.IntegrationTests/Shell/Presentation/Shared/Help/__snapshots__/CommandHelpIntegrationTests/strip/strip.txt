@@ -14,6 +14,9 @@ Behavior:
   and each registered outside route. Files Open Forge manages stay unchanged,
   so the Framework keeps working. Every other byte stays exactly as it was.
   Preview with --dry-run. Applying asks first unless you add --automatic.
+  Redirected or JSON requests that would write need --automatic.
+  Recovery data is kept until every change verifies, and an interrupted
+  run reports it.
 
 Arguments:
   <part>  Select metadata, entries or links. Separate several with spaces or
@@ -35,10 +38,10 @@ Details:
   wrote there. links turns links to documents into their text, and keeps
   external links, images, links to other files, code, comment links and Entries
   lists.
-  Flatten: --flatten moves each document below the folder's subfolders into the
-  folder itself. Entrypoints and SKILL.md files stay, and kept links are
-  rewritten so they still work. A name two files would share stops the run
-  before any write.
+  Flatten: Use it on a category, subcategory or custom route. A folder that
+  holds managed files other than entrypoints is refused. Entrypoints and
+  SKILL.md files stay where they are, and kept links are rewritten so they still
+  work. A name two files would share stops the run before any write.
 
 Automation:
   --format json: one minified schema-3 JSON result on stdout for every status.

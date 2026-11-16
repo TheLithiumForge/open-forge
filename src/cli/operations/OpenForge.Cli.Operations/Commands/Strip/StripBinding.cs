@@ -33,7 +33,8 @@ internal static class StripBinding
             Help = components.Help,
             WorkspaceRequirement = CliWorkspaceRequirement.Required,
             Binder = (parse, invocation) => Bind(parse, invocation, symbols),
-            InvalidResultFactory = input => StripResultFactory.Invalid(StripCommandKind.Strip, null, string.Join(" ", input.InvalidInput.Diagnostics)),
+            InvalidResultFactory = input => StripResultFactory.Invalid(StripCommandKind.Strip, null,
+                StripResultFactory.Cannot(StripCommandKind.Strip, string.Join(" ", input.InvalidInput.Diagnostics))),
             Operation = (request, token) => components.Runner.RunAsync(request, null, token),
         };
 
@@ -44,18 +45,18 @@ internal static class StripBinding
             => CliBindResult<StripRequest, StripResult>.Invalid(StripResultFactory.Invalid(StripCommandKind.Strip, invocation.Workspace, cause));
         if (result.Errors.Count > 0)
         {
-            return Invalid(string.Join(" ", result.Errors.Select(error => error.Message)));
+            return Invalid(StripResultFactory.Cannot(StripCommandKind.Strip, string.Join(" ", result.Errors.Select(error => error.Message))));
         }
 
-        if (!StripPartGrammar.TryRead(result.GetValue(symbols.Parts) ?? [], out var parts))
+        if (!StripPartGrammar.TryRead(result.GetValue(symbols.Parts) ?? [], out var parts, out var rejected))
         {
-            return Invalid("Each part must be metadata, entries or links.");
+            return Invalid(StripResultFactory.Cannot(StripCommandKind.Strip, $"'{rejected}' is not a part. Use {StrippingDefinitions.PartList()}."));
         }
 
         var flatten = result.GetValue(symbols.Flatten);
         if (parts.IsEmpty && flatten is null)
         {
-            return Invalid("Select at least one part or --flatten.");
+            return Invalid(StripResultFactory.Cannot(StripCommandKind.Strip, $"select at least one part or {StrippingDefinitions.FlattenOption}."));
         }
 
         var automatic = result.GetValue(symbols.Automatic);

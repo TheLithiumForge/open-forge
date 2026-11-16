@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Core.Commands.Stripping;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Planning;
+using OpenForge.Cli.Core.Commands.Stripping.Models.Request;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution.Operational;
 using OpenForge.Cli.Core.Framework.Distribution.Operational.Models;
@@ -35,7 +36,16 @@ internal sealed class UninstallRemovalSource(PhysicalPathResolver resolver) : IS
 
         if (ownership.Document.Libraries.FirstOrDefault() is { } library)
         {
-            return Stop(StripFindingCode.LibraryAttached, $"Library '{library.Id}' is attached. Detach it before uninstalling.");
+            return new StripRemovalSet
+            {
+                Stop = new StripFinding
+                {
+                    Code = StripFindingCode.LibraryAttached,
+                    Severity = StripFindingSeverity.Error,
+                    Message = $"Library '{library.Id}' is attached. Detach it before uninstalling.",
+                    Identifier = library.Id,
+                },
+            };
         }
 
         IReadOnlyList<FrameworkManagedTargetObservation> framework = ownership.Document.Framework is null ? [] :
@@ -55,7 +65,8 @@ internal sealed class UninstallRemovalSource(PhysicalPathResolver resolver) : IS
             var path = Normalize(value);
             if (!managed.Contains(path))
             {
-                return Stop(StripFindingCode.InvalidInput, $"'{value}' is not a file or section Open Forge manages here.");
+                return Stop(StripFindingCode.InvalidInput, StripResultFactory.Cannot(StripCommandKind.Uninstall,
+                    $"'{value}' is not a file or section Open Forge manages here."));
             }
 
             named.Add(path);
@@ -79,7 +90,10 @@ internal sealed class UninstallRemovalSource(PhysicalPathResolver resolver) : IS
             if (stop is not null) return stop;
         }
 
-        foreach (var document in input.Documents)
+        // Only ownership records make a file Open Forge's. Once they are gone, a second run finds nothing to remove,
+        // even an entrypoint that still has the scaffold's shape.
+        var owned = ownership.State != WorkspaceOwnershipReadState.Absent;
+        foreach (var document in owned ? input.Documents : [])
         {
             if (!removals.ContainsKey(document.Path) && !ownership.Document.HasManagedPath(document.Path)
                 && StripDocumentShapes.IsRouteScaffold(input.Layout, document))
@@ -88,7 +102,7 @@ internal sealed class UninstallRemovalSource(PhysicalPathResolver resolver) : IS
             }
         }
 
-        foreach (var path in new[] { SettingsPath, OwnershipPath })
+        foreach (var path in owned ? [SettingsPath, OwnershipPath] : Array.Empty<string>())
         {
             var snapshot = await input.Read(path, cancellationToken).ConfigureAwait(false);
             if (snapshot is null)
@@ -102,7 +116,7 @@ internal sealed class UninstallRemovalSource(PhysicalPathResolver resolver) : IS
             }
         }
 
-        return new StripRemovalSet { Removals = [.. removals.Values], Kept = [.. kept], Findings = [.. findings] };
+        return new StripRemovalSet { Removals = [.. removals.Values], Kept = [.. kept], Findings = [.. findings], RemovesRuntimeFolder = owned };
     }
 
     private static string SettingsPath => WorkspaceLayout.DefaultMainRoot + "/" + WorkspaceLayoutNames.SettingsFileName;

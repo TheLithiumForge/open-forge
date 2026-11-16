@@ -45,6 +45,9 @@ internal static class StripWireVocabulary
         => reason switch
         {
             StripKeptReason.Edited => "edited",
+            StripKeptReason.RecoveryData => "recovery-data",
+            StripKeptReason.Link => "link",
+            StripKeptReason.Unreadable => "unreadable",
             _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, "The strip kept reason is not defined."),
         };
 
@@ -58,8 +61,10 @@ internal static class StripWireVocabulary
             StripFindingCode.WorkspaceUnavailable => "workspace-unavailable",
             StripFindingCode.DocumentUnsupported => "document-unsupported",
             StripFindingCode.FlattenCollision => "flatten-collision",
+            StripFindingCode.FlattenManaged => "flatten-managed",
             StripFindingCode.LinkedFileSkipped => "linked-file-skipped",
             StripFindingCode.TargetChanged => "target-changed",
+            StripFindingCode.TargetChangedDuringApply => "target-changed-during-apply",
             StripFindingCode.WorkspaceLockUnavailable => "workspace-lock-unavailable",
             StripFindingCode.ConfirmationRequired => "confirmation-required",
             StripFindingCode.PermissionDeclined => "permission-declined",

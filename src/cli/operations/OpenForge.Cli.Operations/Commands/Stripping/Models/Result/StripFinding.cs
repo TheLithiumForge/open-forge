@@ -9,8 +9,10 @@ internal enum StripFindingCode
     WorkspaceUnavailable,
     DocumentUnsupported,
     FlattenCollision,
+    FlattenManaged,
     LinkedFileSkipped,
     TargetChanged,
+    TargetChangedDuringApply,
     WorkspaceLockUnavailable,
     ConfirmationRequired,
     PermissionDeclined,
@@ -42,17 +44,27 @@ internal sealed record StripFinding
 
     public string? Path { get; init; }
 
+    // A Library ID when the finding names one instead of a path.
+    public string? Identifier { get; init; }
+
     public WorkspaceLockFailureInfo? LockFailure { get; init; }
 }
 
 internal enum StripKeptReason
 {
     Edited,
+    RecoveryData,
+    Link,
+    Unreadable,
 }
 
 internal sealed record StripKeptFile(string Path, StripKeptReason Reason);
 
-internal sealed record StripCollision(string Path, ImmutableArray<string> Sources);
+// KeepsFile marks a destination that a file which stays in place already occupies.
+internal sealed record StripCollision(string Path, ImmutableArray<string> Sources, bool KeepsFile = false)
+{
+    internal int Count => Sources.Length + (KeepsFile ? 1 : 0);
+}
 
 internal enum StripRecoveryState
 {

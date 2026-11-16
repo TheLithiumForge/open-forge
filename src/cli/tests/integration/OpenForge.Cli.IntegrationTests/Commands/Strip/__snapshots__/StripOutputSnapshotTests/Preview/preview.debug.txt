@@ -6,6 +6,6 @@ Workspace: <workspace>
       before cdafc9dc11867b8cd4acca9c167acd3688d70450aaa56645ed8742cdf78d5cd1  after d1d6b2445ff35da75677ec776cbe4060f49472f74bcba0cbe921700a7bd98298
   delete-directory .agents/docs/game  (empty-folder)
 No files were changed.
-1 files rewritten, 1 files moved, 1 folders deleted.
+1 file rewritten, 1 file moved, 1 folder deleted.
   Apply this plan.
 Next: open-forge strip metadata links --flatten .agents/docs --workspace <workspace> --automatic

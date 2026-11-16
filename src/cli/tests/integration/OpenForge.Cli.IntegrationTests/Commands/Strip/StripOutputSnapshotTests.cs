@@ -28,10 +28,13 @@ public sealed class StripOutputSnapshotTests
     {
         using var workspace = Seed("strip-output-collision");
         workspace.Write(Folder + "/other/rules.md", "# Other rules\n");
+        workspace.Write(Folder + "/other/notes.md", "# Other notes\n");
+        workspace.Write(Folder + "/game/notes.md", "# Game notes\n");
 
         var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [StripPart.Metadata], Folder, dryRun: true));
 
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
+        Assert.Equal(result.Collisions.Select(collision => collision.Path), result.Findings.Select(finding => finding.Path));
         Renderers().MatchDetails(result, "collision");
     }
 

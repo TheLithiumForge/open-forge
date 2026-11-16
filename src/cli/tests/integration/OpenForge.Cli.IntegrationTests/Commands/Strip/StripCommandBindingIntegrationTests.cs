@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Uninstall;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Hosting;
+using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 using OpenForge.Cli.IntegrationTests.Commands.Stripping;
 using OpenForge.Cli.TestSupport.Snapshots;
 
@@ -45,14 +46,21 @@ public sealed class StripCommandBindingIntegrationTests
         using var workspace = StripIntegrationWorkspace.Create("strip-binding-invalid");
         var unknown = StrippingDefinitions.PartName(StripPart.Links).ToUpperInvariant();
 
-        var text = await workspace.RunWithOutputAsync([StripDefinitions.CommandIdentity, unknown]);
-        var json = await workspace.RunWithOutputAsync([StripDefinitions.CommandIdentity, unknown,
-            CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat]);
+        var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
 
-        Assert.Equal(CliSemanticStatus.Invalid, text.Completion.Status);
-        Assert.Equal(CliSemanticStatus.Invalid, json.Completion.Status);
-        CommandOutputSnapshot.MatchSnapshot(Normalize(workspace, text.Output + text.Error), "unknown-part.text", testName: nameof(StripCommandBindingIntegrationTests));
-        CommandOutputSnapshot.MatchSnapshot(Normalize(workspace, json.Output + json.Error), "unknown-part.json", testName: nameof(StripCommandBindingIntegrationTests));
+        foreach (var detail in CommandOutputDetailVocabulary.All)
+        {
+            var detailName = CommandOutputDetailVocabulary.Name(detail);
+            var text = await workspace.RunWithOutputAsync([StripDefinitions.CommandIdentity, unknown, CliSyntaxDefinitions.Detail.Name, detailName]);
+            var json = await workspace.RunWithOutputAsync([StripDefinitions.CommandIdentity, unknown, CliSyntaxDefinitions.Detail.Name, detailName,
+                CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat]);
+            Assert.Equal(CliSemanticStatus.Invalid, text.Completion.Status);
+            Assert.Equal(CliSemanticStatus.Invalid, json.Completion.Status);
+            snapshots.Add($"unknown-part.{detailName}", Normalize(workspace, text.Output + text.Error));
+            snapshots.Add($"unknown-part{CommandOutputSnapshot.JsonContentNameSegment}{detailName}", Normalize(workspace, json.Output + json.Error));
+        }
+
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots);
     }
 
     // The published uninstall journey also binds these flags. This Integration case binds every uninstall option in process.

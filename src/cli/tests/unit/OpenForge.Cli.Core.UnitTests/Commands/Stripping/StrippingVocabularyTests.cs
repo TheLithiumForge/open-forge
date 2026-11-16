@@ -55,6 +55,82 @@ public sealed class StrippingVocabularyTests
         Assert.Throws<ArgumentOutOfRangeException>(() => StripWireVocabulary.FindingCode(StrippingDefinitions.StripCommandIdentity, (StripFindingCode)int.MaxValue));
     }
 
+    // The strip and uninstall Interface contracts specify these wire names. Each map must name every enum value.
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Strip wire vocabulary matches the names the strip and uninstall contracts specify"), Trait("Feature", "strip"), Trait("Evidence", "Unit")]
+    public void VocabularyMatchesTheContract()
+    {
+        AssertSpecified<StripPart>(StrippingDefinitions.PartName, new()
+        {
+            [StripPart.Metadata] = "metadata",
+            [StripPart.Entries] = "entries",
+            [StripPart.Links] = "links",
+        });
+        AssertSpecified<StripRewritePart>(StripWireVocabulary.RewritePartName, new()
+        {
+            [StripRewritePart.Metadata] = "metadata",
+            [StripRewritePart.Entries] = "entries",
+            [StripRewritePart.Links] = "links",
+            [StripRewritePart.Relink] = "relink",
+            [StripRewritePart.ManagedSection] = "managed-section",
+        });
+        AssertSpecified<StripPlanAction>(StripWireVocabulary.ActionName, new()
+        {
+            [StripPlanAction.Delete] = "delete",
+            [StripPlanAction.Rewrite] = "rewrite",
+            [StripPlanAction.Move] = "move",
+            [StripPlanAction.DeleteDirectory] = "delete-directory",
+        });
+        AssertSpecified<StripPlanReason>(StripWireVocabulary.ReasonName, new()
+        {
+            [StripPlanReason.Framework] = "framework",
+            [StripPlanReason.Extension] = "extension",
+            [StripPlanReason.RootHost] = "root-host",
+            [StripPlanReason.Scaffold] = "scaffold",
+            [StripPlanReason.State] = "state",
+            [StripPlanReason.Strip] = "strip",
+            [StripPlanReason.Flatten] = "flatten",
+            [StripPlanReason.EmptyFolder] = "empty-folder",
+        });
+        AssertSpecified<StripKeptReason>(StripWireVocabulary.KeptReasonName, new()
+        {
+            [StripKeptReason.Edited] = "edited",
+            [StripKeptReason.RecoveryData] = "recovery-data",
+            [StripKeptReason.Link] = "link",
+            [StripKeptReason.Unreadable] = "unreadable",
+        });
+        AssertSpecified<StripFindingCode>(StripWireVocabulary.FindingSuffix, new()
+        {
+            [StripFindingCode.InvalidInput] = "invalid-input",
+            [StripFindingCode.WorkspaceUnavailable] = "workspace-unavailable",
+            [StripFindingCode.DocumentUnsupported] = "document-unsupported",
+            [StripFindingCode.FlattenCollision] = "flatten-collision",
+            [StripFindingCode.FlattenManaged] = "flatten-managed",
+            [StripFindingCode.LinkedFileSkipped] = "linked-file-skipped",
+            [StripFindingCode.TargetChanged] = "target-changed",
+            [StripFindingCode.TargetChangedDuringApply] = "target-changed-during-apply",
+            [StripFindingCode.WorkspaceLockUnavailable] = "workspace-lock-unavailable",
+            [StripFindingCode.ConfirmationRequired] = "confirmation-required",
+            [StripFindingCode.PermissionDeclined] = "permission-declined",
+            [StripFindingCode.RecoveryUnavailable] = "recovery-unavailable",
+            [StripFindingCode.WriteFailed] = "write-failed",
+            [StripFindingCode.RecoveryArtifactRetained] = "recovery-artifact-retained",
+            [StripFindingCode.Interrupted] = "interrupted",
+            [StripFindingCode.OwnershipUnavailable] = "ownership-unavailable",
+            [StripFindingCode.LibraryAttached] = "library-attached",
+            [StripFindingCode.TargetUnavailable] = "target-unavailable",
+            [StripFindingCode.EditedKept] = "edited-kept",
+            [StripFindingCode.RuntimeRetained] = "runtime-retained",
+        });
+    }
+
+    private static void AssertSpecified<T>(Func<T, string> name, Dictionary<T, string> specified)
+        where T : struct, Enum
+    {
+        Assert.Equal(Enum.GetValues<T>(), specified.Keys.Order());
+        Assert.All(specified, pair => Assert.Equal(pair.Value, name(pair.Key)));
+    }
+
     private static void AssertDistinct(IEnumerable<string> names)
     {
         var values = names.ToArray();

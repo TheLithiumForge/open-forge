@@ -64,8 +64,13 @@ internal static class StripLinkEdits
             }
 
             var generated = navigation is not null && link.Span.Start >= navigation.Start && link.Span.End <= navigation.End;
-            if (context.StripLinks && !generated && IsDocumentLink(context, link.RawDestination) && link.Link.LabelSpan is { } label)
+            if (context.StripLinks && !generated && IsDocumentLink(context, link.RawDestination))
             {
+                if (link.Link.LabelSpan is not { } label)
+                {
+                    return StripDocumentEdits.Refuse($"The link at character {link.Span.Start} has no readable text.");
+                }
+
                 edits.Add(new StripTextEdit(link.Span.Start, link.Span.End, facts.Source[label.Start..label.End], StripRewritePart.Links));
                 if (use is not null)
                 {
@@ -86,12 +91,25 @@ internal static class StripLinkEdits
         foreach (var uses in definitionUses.Values.Where(use => use.Total == use.Stripped).OrderBy(use => use.Span.Start))
         {
             var start = StripSourceLines.LineStart(facts.Source, uses.Span.Start);
-            var end = StripSourceLines.NextLineStart(facts.Source, uses.Span.End);
+            var end = TitleLineEnd(facts.Source, uses.Span.End, StripSourceLines.NextLineStart(facts.Source, uses.Span.End));
             edits.RemoveAll(edit => edit.Start >= start && edit.End <= end);
             edits.Add(new StripTextEdit(start, end, string.Empty, StripRewritePart.Links));
         }
 
         return new StripDocumentEdits(edits);
+    }
+
+    // A reference definition may put its title on the next line. That line goes with the definition.
+    private static int TitleLineEnd(string source, int destinationEnd, int lineEnd)
+    {
+        if (!StripSourceLines.IsBlank(source, destinationEnd, lineEnd) || lineEnd >= source.Length)
+        {
+            return lineEnd;
+        }
+
+        var next = StripSourceLines.NextLineStart(source, lineEnd);
+        var title = source[lineEnd..next].Trim();
+        return title.Length >= 2 && (title[0], title[^1]) is ('"', '"') or ('\'', '\'') or ('(', ')') ? next : lineEnd;
     }
 
     private static bool IsDocumentLink(StripLinkContext context, string raw)

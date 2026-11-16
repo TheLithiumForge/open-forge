@@ -7,14 +7,24 @@ namespace OpenForge.Cli.Core.Commands.Stripping;
 internal static class StripPartGrammar
 {
     internal static bool TryRead(IEnumerable<string> values, out ImmutableArray<StripPart> parts)
+        => TryRead(values, out parts, out _);
+
+    // The rejected member is reported back so the invalid-input message can name it.
+    internal static bool TryRead(IEnumerable<string> values, out ImmutableArray<StripPart> parts, out string? rejected)
     {
         var selected = new HashSet<StripPart>();
         parts = [];
+        rejected = null;
         foreach (var value in values)
         {
             foreach (var member in value.Split(StrippingDefinitions.PartSeparator))
             {
-                if (!TryReadMember(member, out var part)) return false;
+                if (!TryReadMember(member, out var part))
+                {
+                    rejected = member;
+                    return false;
+                }
+
                 selected.Add(part);
             }
         }

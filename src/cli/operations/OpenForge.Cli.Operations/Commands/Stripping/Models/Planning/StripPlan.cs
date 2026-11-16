@@ -30,6 +30,11 @@ internal sealed record StripPlan
 
     public ImmutableArray<StripFinding> Findings { get; init; } = [];
 
+    // The last entry when uninstall removes the runtime folder. It runs once the lease is released.
+    public int? RuntimeFolderEntry { get; init; }
+
+    internal int EffectCount => Files.Length + Directories.Length + (RuntimeFolderEntry is null ? 0 : 1);
+
     internal bool IsNoOp => Entries.IsEmpty;
 
     internal bool SameAs(StripPlan other)

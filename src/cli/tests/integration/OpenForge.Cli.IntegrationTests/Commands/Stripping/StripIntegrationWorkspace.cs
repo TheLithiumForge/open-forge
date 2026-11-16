@@ -30,6 +30,8 @@ internal sealed class StripIntegrationWorkspace : IDisposable
     private static readonly UTF8Encoding Utf8 = new(encoderShouldEmitUTF8Identifier: false);
     private readonly TemporaryWorkspace _temporary;
     private readonly WorkspaceLockTestStore _lockStore;
+    private readonly HashSet<string> _ownedDirectories = new(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+    private readonly HashSet<string> _ownedFiles = new(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
 
     private StripIntegrationWorkspace(TemporaryWorkspace temporary, WorkspaceLockTestStore lockStore)
     {
@@ -52,20 +54,45 @@ internal sealed class StripIntegrationWorkspace : IDisposable
 
     internal string Combine(string path) => _temporary.Combine(path);
 
-    // Folders the CLI created belong to the workspace under test, so write into them directly.
-    internal void Write(string path, string text)
+    // Seed files go through the temporary workspace whenever their nearest existing folder is one it owns, so it can
+    // delete them. Below a folder the CLI created, the workspace under test owns them, so they are written directly
+    // and removed with that folder.
+    internal void Write(string path, string text) => WriteBytes(path, Utf8.GetBytes(text));
+
+    internal void WriteBytes(string path, byte[] bytes)
     {
-        var physical = Combine(path);
-        if (Directory.Exists(System.IO.Path.GetDirectoryName(physical)))
+        var physical = System.IO.Path.GetFullPath(Combine(path));
+        var parent = System.IO.Path.GetDirectoryName(physical)!;
+        if (_ownedFiles.Contains(physical) && File.Exists(physical))
         {
-            File.WriteAllBytes(physical, Utf8.GetBytes(text));
+            _temporary.ReplaceBytes(path, bytes);
             return;
         }
 
-        _temporary.CreateFile(path, Utf8.GetBytes(text));
+        var existing = parent;
+        var created = new List<string>();
+        while (!Directory.Exists(existing))
+        {
+            created.Add(existing);
+            existing = System.IO.Path.GetDirectoryName(existing)!;
+        }
+
+        var root = System.IO.Path.GetFullPath(Path).TrimEnd(System.IO.Path.DirectorySeparatorChar);
+        if (!File.Exists(physical) && (existing.Equals(root, StringComparison.OrdinalIgnoreCase) || _ownedDirectories.Contains(existing)))
+        {
+            _ownedDirectories.UnionWith(created);
+            _temporary.CreateFile(path, bytes);
+            _ownedFiles.Add(physical);
+            return;
+        }
+
+        Directory.CreateDirectory(parent);
+        File.WriteAllBytes(physical, bytes);
     }
 
     internal string Read(string path) => File.ReadAllText(Combine(path), Utf8);
+
+    internal byte[] ReadBytes(string path) => File.ReadAllBytes(Combine(path));
 
     internal bool Exists(string path) => File.Exists(Combine(path)) || Directory.Exists(Combine(path));
 
@@ -139,6 +166,18 @@ internal sealed class StripIntegrationWorkspace : IDisposable
     {
         try
         {
+            // Strip, flatten and route commands write product files into seeded folders. Remove them, deepest first,
+            // so the temporary workspace finds only the entries it created.
+            foreach (var directory in _ownedDirectories.Where(Directory.Exists).OrderByDescending(directory => directory.Length))
+            {
+                foreach (var entry in Directory.EnumerateFileSystemEntries(directory))
+                {
+                    if (_ownedFiles.Contains(entry) || _ownedDirectories.Contains(entry)) continue;
+                    if (Directory.Exists(entry) && !File.GetAttributes(entry).HasFlag(FileAttributes.ReparsePoint)) Directory.Delete(entry, recursive: true);
+                    else File.Delete(entry);
+                }
+            }
+
             // Install, strip and uninstall create entries the temporary workspace never owned.
             foreach (var entry in new[] { WorkspaceLayout.DefaultMainRoot, WorkspaceLayoutNames.AgentHostFileName, WorkspaceLayoutNames.ClaudeHostFileName, WorkspaceRuntimePaths.DirectoryName })
             {
