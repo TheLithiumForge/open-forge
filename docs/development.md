@@ -188,6 +188,8 @@ are six execution modes on one host: managed unit and integration tests, managed
 public tests against the managed CLI, native integration and public tests, and
 managed public tests against the native CLI. Integration tests therefore run
 in two modes and public tests in three. This does not run other OS targets.
+For now osx-x64 skips native integration tests, because their native publish
+is too slow on the Intel macOS runner. osx-arm64 still runs them for macOS.
 
 By default, `pack` requires passing `test:built` reports for the existing
 artifacts. It creates the portable archive, the main npm package, and the

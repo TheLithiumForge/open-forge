@@ -341,7 +341,10 @@ text|json` selects the representation and defaults to `text`.
   built assemblies on the shared runtime. The Native AOT target publishes the
   Integration and EndToEnd projects themselves as native executables, and also
   runs the managed EndToEnd project against the native CLI. `npm run test`
-  selects the managed target; `npm run test:built` selects both. Do not author a
+  selects the managed target; `npm run test:built` selects both. For now
+  osx-x64 skips the native Integration executable, and osx-arm64 proves it for
+  macOS. The [Delivery System](../../../memory/crystallized/documents/cli/delivery-system.md#how-long-does-a-build-take)
+  records why. Do not author a
   separate parallel test population for either target, and do not describe the
   AOT gate as unavailable because its command is not at hand.
 - The managed target is the inner loop: it is the cheapest evidence that a

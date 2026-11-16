@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { test } from "node:test";
-import { distPlan } from "../dist-plan.ts";
+import { distPlan, distPlanLines } from "../dist-plan.ts";
+import { nativeTestSuites, NativeTestSuites, Projects, skippedSuiteNotice, skippedSuites, suites } from "../layout.ts";
+import { AllTargets } from "../targets.ts";
 import { readOptions } from "../options.ts";
 import { runStage } from "../stage.ts";
 
@@ -28,6 +30,28 @@ test("dist routes a validated target selection to packaging only", () => {
   assert.deepEqual(stages[0]?.args, ["--rid", rid]);
   assert.deepEqual(stages[1]?.args, ["--rid", rid]);
   assert.throws(() => distPlan(rid, { targets: "linux-x64" }), /include this host/);
+});
+
+test("only osx-x64 skips a native suite, and its plan names the skip", () => {
+  const intel = "osx-x64";
+  const integration = NativeTestSuites.find((suite) => suite.project === Projects.integration)?.name;
+  assert.deepEqual(
+    skippedSuites(intel).map((skip) => skip.name),
+    [integration],
+  );
+  for (const runtime of AllTargets) {
+    const skipped = skippedSuites(runtime).map((skip) => skip.name);
+    if (runtime !== intel) assert.deepEqual(skipped, []);
+    assert.equal(nativeTestSuites(runtime).length + skipped.length, NativeTestSuites.length);
+    const names = suites(runtime).map((suite) => suite.name);
+    for (const name of skipped) assert.ok(!names.includes(name));
+    for (const suite of nativeTestSuites(runtime)) assert.ok(names.includes(suite.name));
+    const stages = distPlan(runtime, {});
+    assert.deepEqual(
+      distPlanLines(runtime, stages).slice(stages.length + 1),
+      skippedSuites(runtime).map((skip) => skippedSuiteNotice(runtime, skip)),
+    );
+  }
 });
 
 test("commands reject misplaced skip-tests and restore flags", () => {
