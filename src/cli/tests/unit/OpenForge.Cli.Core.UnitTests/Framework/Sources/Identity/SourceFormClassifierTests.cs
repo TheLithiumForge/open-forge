@@ -11,16 +11,24 @@ public sealed class SourceFormClassifierTests
         Trait("Boundary", "Processing"), Trait("Feature", "source-catalogue"), Trait("Evidence", "Unit")]
     public void PlainMarkdownDoesNotDeriveParents()
     {
-        Assert.Equal(Allocated(".agents/a/note.md"), Allocated(".agents/long/parent/tree/with/many/folders/and/a/long/directory/name/note.md"));
+        var shortPath = Allocated(".agents/a/note.md");
+        var longPath = Allocated(".agents/long/parent/tree/with/many/folders/and/a/long/directory/name/note.md");
+        Assert.True(longPath <= shortPath, $"The long path allocated {longPath} bytes, compared with {shortPath} bytes for the short path.");
 
+        // Runtime work such as tier-up can land in one measured window, as seen once on a hosted win-x64 runner.
+        // A real per-call allocation shows in every round, so each path keeps its best of three.
         static long Allocated(string path)
         {
             for (var index = 0; index < 100; index++) Assert.True(SourceFormClassifier.Matches(DefaultWorkspaceLayout, path, SourceDocumentForm.Markdown));
-            var before = GC.GetAllocatedBytesForCurrentThread();
-            var classified = 0;
-            for (var index = 0; index < 1000; index++) if (SourceFormClassifier.Matches(DefaultWorkspaceLayout, path, SourceDocumentForm.Markdown)) classified++;
-            var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
-            Assert.Equal(1000, classified);
+            var allocated = long.MaxValue;
+            for (var round = 0; round < 3; round++)
+            {
+                var before = GC.GetAllocatedBytesForCurrentThread();
+                var classified = 0;
+                for (var index = 0; index < 1000; index++) if (SourceFormClassifier.Matches(DefaultWorkspaceLayout, path, SourceDocumentForm.Markdown)) classified++;
+                allocated = Math.Min(allocated, GC.GetAllocatedBytesForCurrentThread() - before);
+                Assert.Equal(1000, classified);
+            }
             return allocated;
         }
     }

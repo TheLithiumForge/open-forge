@@ -11,9 +11,8 @@ namespace OpenForge.Cli.Composition.Shared.Git;
 
 internal sealed class GitRenameEvidenceReader
 {
-    internal static readonly TimeSpan Deadline = TimeSpan.FromSeconds(5);
     private readonly GitProcessRunner _git;
-    private readonly TimeProvider _timeProvider;
+    private readonly GitInvocationDeadline _deadline;
     private readonly PhysicalPathResolver _physicalPaths;
 
     internal GitRenameEvidenceReader(string gitExecutable = "git", Action<ProcessStartInfo>? configureProcess = null,
@@ -21,7 +20,7 @@ internal sealed class GitRenameEvidenceReader
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(gitExecutable);
         _git = new GitProcessRunner(gitExecutable, configureProcess, processStarted);
-        _timeProvider = timeProvider ?? TimeProvider.System;
+        _deadline = new GitInvocationDeadline(timeProvider);
         _physicalPaths = physicalPaths ?? new();
     }
 
@@ -56,7 +55,7 @@ internal sealed class GitRenameEvidenceReader
             {
                 var input = Encoding.ASCII.GetBytes(string.Concat(admitted.Select(path => path.Blob).Distinct(StringComparer.Ordinal).Select(blob => $"{blob}\n")));
                 // Batch every admitted old identity so metadata uniqueness includes live HEAD records.
-                var blob = await Invoke(token => _git.RunBytesWithInputAsync(root, ["cat-file", "--batch"], input, token));
+                var blob = await _deadline.RunAsync(token => _git.RunBytesWithInputAsync(root, ["cat-file", "--batch"], input, token), cancellationToken);
                 if (blob is not { ExitCode: 0 } read || read.Error.Length != 0) return Unavailable(RenameGitAvailability.Unavailable);
                 blobs = GitRenameBlobBatchReader.Read(read.Output, admitted);
             }
@@ -83,20 +82,8 @@ internal sealed class GitRenameEvidenceReader
 
         async Task<(int ExitCode, string Output, string Error)?> Run(string[] arguments)
         {
-            var result = await Invoke(token => _git.RunAsync(root, arguments, token));
+            var result = await _deadline.RunAsync(token => _git.RunAsync(root, arguments, token), cancellationToken);
             return result is { ExitCode: 0 } read && !string.IsNullOrWhiteSpace(read.Error) ? null : result;
-        }
-
-        async Task<T> Invoke<T>(Func<CancellationToken, Task<T>> invocation)
-        {
-            using var timeout = new CancellationTokenSource(Deadline, _timeProvider);
-            using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeout.Token);
-            var started = _timeProvider.GetTimestamp();
-            deadline.Token.ThrowIfCancellationRequested();
-            var result = await invocation(deadline.Token).ConfigureAwait(false);
-            if (_timeProvider.GetElapsedTime(started) >= Deadline) timeout.Cancel();
-            deadline.Token.ThrowIfCancellationRequested();
-            return result;
         }
     }
 
