@@ -94,6 +94,7 @@ internal sealed class ToolWriteOperationFixture
     internal bool ConflictRemoval { get; set; }
     internal bool MultipleManagers { get; set; }
     internal bool AcceptOptional { get; set; }
+    internal bool CancelOptional { get; set; }
     internal bool AcceptPlan { get; set; } = true;
     internal bool Terminal { get; set; }
     internal VersionService Versions { get; } = new();
@@ -181,7 +182,7 @@ internal sealed class ToolWriteOperationFixture
                 {
                     Calls.Add(new(ToolWriteCall.OptionalPrompt));
                     OptionalQuestions.Add(question);
-                    return ValueTask.FromResult(CliPromptReply<bool>.Answered(AcceptOptional));
+                    return ValueTask.FromResult(CancelOptional ? CliPromptReply<bool>.Cancelled() : CliPromptReply<bool>.Answered(AcceptOptional));
                 },
                 ChooseManager = (_, _, _) =>
                 {

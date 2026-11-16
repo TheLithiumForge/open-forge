@@ -128,9 +128,9 @@ Tools don't add a Repair action or depend on the existing workspace lock or reco
 
 ## Remove
 
-Run a confirmed native uninstall before removing project additions.
-For Codebase Memory, `--yes`, no terminal or a declined account-wide confirmation skips native uninstall and prints its command.
-Then remove only additions recorded for this tool.
+Run a project-scoped native uninstall before removing project additions.
+For Codebase Memory, remove the project additions first. Its system-wide uninstaller runs only after a later live confirmation. `--yes`, no terminal or a decline skips it and prints its command.
+Remove only additions recorded for this tool.
 Keep account-wide native settings and print their manual change commands.
 Keep changed JSON sets and managed files and report conflicts.
 Delete a uniquely marked block as the managed span, including its interior.

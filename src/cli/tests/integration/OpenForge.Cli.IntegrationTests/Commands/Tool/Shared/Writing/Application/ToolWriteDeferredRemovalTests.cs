@@ -59,7 +59,7 @@ public sealed class ToolWriteDeferredRemovalTests
         Assert.True((await scenario.Records.ReadAsync(scenario.Locations, Token)).Portable!.Lock.ContainsKey(ToolWriteRemovalScenario.Id));
     }
 
-    [Fact(DisplayName = "Confirmed account removal preserves safe independent bindings and runs native before project cleanup")]
+    [Fact(DisplayName = "Confirmed account removal preserves safe independent bindings and runs native after project cleanup")]
     public async Task ConfirmedRemovalUsesFullSafePreparation()
     {
         using var scenario = new ToolWriteRemovalScenario { Terminal = true, AcceptAccount = true };
@@ -83,7 +83,7 @@ public sealed class ToolWriteDeferredRemovalTests
         Assert.Empty(result.Data.Plan.Backups);
     }
 
-    [Fact(DisplayName = "Confirmed account removal blocks unavailable required bindings instead of discarding them")]
+    [Fact(DisplayName = "Confirmed account removal blocks unavailable required bindings after project cleanup instead of discarding them")]
     public async Task ConfirmedMissingBindingBlocksCleanup()
     {
         using var scenario = new ToolWriteRemovalScenario(missingClient: true) { Terminal = true, AcceptAccount = true };
@@ -94,8 +94,8 @@ public sealed class ToolWriteDeferredRemovalTests
         Assert.Contains(result.Findings, finding => finding.Code == ToolWriteFindingCode.NativePlanBlocked);
         Assert.Single(scenario.Processes.Previews);
         Assert.Empty(scenario.Processes.Uninstalls);
-        Assert.True(File.Exists(scenario.Files.Combine(ToolWriteRemovalScenario.ProjectFile)));
-        Assert.True((await scenario.Records.ReadAsync(scenario.Locations, Token)).Portable!.Lock.ContainsKey(ToolWriteRemovalScenario.Id));
+        Assert.False(File.Exists(scenario.Files.Combine(ToolWriteRemovalScenario.ProjectFile)));
+        Assert.False((await scenario.Records.ReadAsync(scenario.Locations, Token)).Portable!.Lock.ContainsKey(ToolWriteRemovalScenario.Id));
         Assert.Equal(ToolWriteRemovalScenario.Before, await File.ReadAllBytesAsync(scenario.NativeOutput, Token));
     }
 
@@ -111,7 +111,7 @@ public sealed class ToolWriteDeferredRemovalTests
         Assert.Contains(result.Findings, finding => finding.Code == ToolWriteFindingCode.NativePlanBlocked);
         Assert.Single(scenario.Processes.Previews);
         Assert.Empty(scenario.Processes.Uninstalls);
-        Assert.True(File.Exists(scenario.Files.Combine(ToolWriteRemovalScenario.ProjectFile)));
+        Assert.False(File.Exists(scenario.Files.Combine(ToolWriteRemovalScenario.ProjectFile)));
         Assert.Equal(ToolWriteRemovalScenario.Before, await File.ReadAllBytesAsync(scenario.NativeOutput, Token));
     }
 
@@ -137,7 +137,7 @@ public sealed class ToolWriteDeferredRemovalTests
         Assert.True(File.Exists(scenario.Files.Combine(ToolWriteRemovalScenario.ProjectFile)));
     }
 
-    [Fact(DisplayName = "Failed confirmed uninstall keeps pending backups and leaves project cleanup unstarted")]
+    [Fact(DisplayName = "Failed confirmed uninstall keeps pending backups after project cleanup completed")]
     public async Task FailedUninstallKeepsProgress()
     {
         using var scenario = new ToolWriteRemovalScenario { Terminal = true, AcceptAccount = true };
@@ -148,13 +148,13 @@ public sealed class ToolWriteDeferredRemovalTests
         Assert.Equal(CliSemanticStatus.Failed, result.Status);
         Assert.Single(scenario.Processes.Previews);
         Assert.Single(scenario.Processes.Uninstalls);
-        Assert.True(File.Exists(scenario.Files.Combine(ToolWriteRemovalScenario.ProjectFile)));
-        Assert.True((await scenario.Records.ReadAsync(scenario.Locations, Token)).Portable!.Lock.ContainsKey(ToolWriteRemovalScenario.Id));
+        Assert.False(File.Exists(scenario.Files.Combine(ToolWriteRemovalScenario.ProjectFile)));
+        Assert.False((await scenario.Records.ReadAsync(scenario.Locations, Token)).Portable!.Lock.ContainsKey(ToolWriteRemovalScenario.Id));
         var pending = Assert.Single(result.Data.Plan.Backups, backup => backup.Target == scenario.NativeOutput);
         Assert.False(pending.Verified);
         Assert.NotNull(pending.Backup);
         Assert.True(File.Exists(pending.Backup));
         Assert.Contains(result.Data.Outcomes, outcome => outcome.Stage == ToolWriteStages.Native && outcome.State == ToolWriteStages.Failed);
-        Assert.Contains(result.Data.Outcomes, outcome => outcome.Stage == ToolWriteStages.Config && outcome.State == ToolWriteStages.NotStarted);
+        Assert.Contains(result.Data.Outcomes, outcome => outcome.Stage == ToolWriteStages.Config && outcome.State == ToolWriteStages.Completed);
     }
 }

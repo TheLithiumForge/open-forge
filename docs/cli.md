@@ -2607,7 +2607,7 @@ A blocked plan names each missing path and the command to rerun with `--allow-pa
 
 PATH edits and shared file deletion need separate live choices.
 `--yes` leaves those actions unchosen.
-For Codebase Memory, it also skips account-wide uninstall.
+For Codebase Memory, it never runs the system-wide uninstaller and prints its command instead.
 A command without `--yes` needs a terminal to accept its main plan.
 The normal global options, including `--workspace`, `--format json` and `--detail`, apply.
 Without `--yes` or a terminal, the plan lists the files to delete so you can do it yourself.
@@ -2701,10 +2701,10 @@ CodeGraph's native uninstall removes its local Claude and Codex setup.
 Its CLI and project index stay available.
 Open Forge removes its recorded archive union and conditional ignore block while keeping unrelated content.
 
-Codebase Memory's native uninstall removes the account binary and all agent entries.
-It can also edit persistent user PATH on Windows.
-Only a live interactive confirmation naming those account effects permits it.
-With `--yes`, no terminal or a declined account confirmation, Remove skips native uninstall, removes only Open Forge's project additions and prints the native command:
+Codebase Memory removal is local: the declaration, lock entry, project additions and, if you choose, Open Forge's own launcher and tool files.
+Its own uninstaller removes it system-wide: the binary, all agent entries and, on Windows, its directory from your user PATH. That directory is Open Forge's bin.
+After the local removal, an interactive Remove asks whether to run it. The default answer is no.
+With `--yes`, no terminal or a declined question, Remove never runs it and prints the native command:
 
 ```sh
 open-forge tool remove codebase-memory --yes --format json

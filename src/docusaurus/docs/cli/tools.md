@@ -119,9 +119,10 @@ CodeGraph's native project setup and Open Forge's recorded project additions are
 The installed CLI and index stay available.
 Account telemetry stays off and the result prints its manual change command.
 
-For Codebase Memory, `open-forge tool remove codebase-memory --yes` removes only Open Forge project additions and prints native uninstall instructions.
+Codebase Memory removal stays local to the project. `open-forge tool remove codebase-memory --yes` removes Open Forge's project additions and prints the native uninstall command.
 The Windows `0.12.1` journey completes this project-only removal with the account setup and index kept.
-Native uninstall removes the account binary and all agent entries, so it needs a separate live confirmation naming those effects.
+Its own uninstaller removes it system-wide, including its binary, all agent entries and, on Windows, its directory from your user PATH.
+An interactive Remove asks about it only after the local removal, and the default answer is no.
 Read [removal and backups](/guides/cli#tool-removal) before changing account setup shared by other projects.
 
 ## Command results

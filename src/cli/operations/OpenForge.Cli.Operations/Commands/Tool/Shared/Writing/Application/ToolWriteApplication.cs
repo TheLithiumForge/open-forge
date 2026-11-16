@@ -63,6 +63,12 @@ internal sealed class ToolWriteApplication(
         ToolWriteInteraction interaction, CancellationToken cancellationToken)
     {
         var request = plan.Input.Request;
+        if (tool.DeferredNativeRemoval is not null)
+        {
+            // A system-wide uninstaller is never part of the plan. Remove the project's own additions first, then ask.
+            await RemoveConfigAsync(plan, tool, state, cancellationToken).ConfigureAwait(false);
+            if (state.Stopped || ToolWriteCancellation.Stop(state, cancellationToken)) return;
+        }
         var nativeChosen = tool.Native is not null;
         if (tool.DeferredNativeRemoval is { } deferred)
         {
@@ -78,7 +84,7 @@ internal sealed class ToolWriteApplication(
                     Effects = [.. deferred.Setup.Effects.Select(ToolWriteProjection.Effect)],
                 },
             }, cancellationToken).ConfigureAwait(false);
-            if (decision == ToolWriteConsentDecision.Cancelled) throw new OperationCanceledException(cancellationToken);
+            // The project is already clean here, so leaving the question unanswered keeps the uninstaller unrun.
             nativeChosen = decision == ToolWriteConsentDecision.Accepted;
         }
         if (nativeChosen)
@@ -103,6 +109,12 @@ internal sealed class ToolWriteApplication(
         {
             state.Outcomes.Add(new(tool.Entry.Identity.Id, ToolWriteStages.Native, ToolWriteStages.Skipped, [], []));
         }
+        if (tool.DeferredNativeRemoval is null) await RemoveConfigAsync(plan, tool, state, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask RemoveConfigAsync(
+        ToolWritePlan plan, ToolWriteToolPlan tool, ToolWriteExecution state, CancellationToken cancellationToken)
+    {
         if (await config.RemoveAsync(plan, tool, state, cancellationToken).ConfigureAwait(false)
             && !state.Outcomes.Any(outcome => outcome.ToolId == tool.Entry.Identity.Id && outcome.Stage == ToolWriteStages.Config))
             state.Outcomes.Add(new(tool.Entry.Identity.Id, ToolWriteStages.Config, ToolWriteStages.Completed, [], []));

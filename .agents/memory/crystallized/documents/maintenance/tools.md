@@ -39,8 +39,8 @@ Open Forge adds no per-tool Skill or managed-block line.
 It doesn't rewrite upstream integrations.
 Native installer writes such as `.mcp.json`, `.claude/settings.json`, `AGENTS.md` and `.codex/config.toml` are covered by plan consent only.
 The normal process runner uses argument vectors, not shell strings.
-A native uninstall that requires PATH or shared-binary effects needs live confirmation.
-Codebase Memory account uninstall is skipped with `--yes` or no terminal, while Open Forge project additions are removed.
+A native uninstall that requires PATH or shared-binary effects is never part of the plan.
+Codebase Memory Remove is local. Afterwards only a live interactive run asks, default no, whether to run its system-wide uninstaller. `--yes` or no terminal prints the command instead.
 Project Remove keeps account-wide native settings and prints manual change commands.
 
 ### Review interval
@@ -129,9 +129,9 @@ The [upstream CLI](https://github.com/DeusData/codebase-memory-mcp/blob/v0.12.1/
 Open Forge writes no MCP entry, Codex TOML section, hook, instruction block or usage Skill.
 Keep the native watcher defaults.
 
-Native uninstall includes binary removal and, on Windows, persistent user PATH cleanup.
-Only live interactive confirmation naming the account-wide binary and all agent entries permits it.
-With `--yes`, no terminal or a declined confirmation, print its command and remove only Open Forge project additions.
+Native uninstall includes binary removal and, on Windows, removal of its directory, Open Forge's bin, from the user PATH.
+Remove first removes only local things. Then only a live interactive confirmation naming the binary, all agent entries and the PATH entry runs it.
+With `--yes`, no terminal or a declined confirmation, print its command.
 Never pass `--delete-indexes`.
 The native command keeps indexes by default.
 

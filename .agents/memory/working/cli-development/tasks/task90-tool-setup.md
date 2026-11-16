@@ -764,3 +764,4 @@ G8 replaces the R2-16 PATH removal offer and the last-tool offer above. Remove n
 Adding bin to PATH stays a live choice through the `HKCU\Environment` adapter (G7) or the chosen marked block.
 A draft issue tracks a later PATH cleanup offer. Nothing for it is built.
 Only the help and Status snapshot producers ran locally. The CLI Skill entries in the EndToEnd default layout come from a fresh dev-CLI install.
+G9 refines C2, R2-04 and R2-07. Codebase Memory Remove now removes only local things first. Afterwards only a live interactive run asks, default no, whether to run its system-wide uninstaller, which also takes Open Forge's bin off the Windows user PATH. CodeGraph's uninstall is project-local and keeps its CLI, so its order stays the same.

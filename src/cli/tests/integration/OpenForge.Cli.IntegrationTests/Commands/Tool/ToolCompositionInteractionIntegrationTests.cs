@@ -16,7 +16,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Tool;
 
 public sealed class ToolCompositionInteractionIntegrationTests
 {
-    [Theory(DisplayName = "Actual Root optional selection distinguishes account approval from decline and keeps native-first cleanup"), InlineData(true), InlineData(false), Trait("Feature", "tool-composition"), Trait("Evidence", "Integration")]
+    [Theory(DisplayName = "Actual Root optional selection distinguishes account approval from decline and asks only after project cleanup"), InlineData(true), InlineData(false), Trait("Feature", "tool-composition"), Trait("Evidence", "Integration")]
     public async Task AccountChoice(bool approve)
     {
         using var fixture = new ToolCompositionFixture();
@@ -25,7 +25,7 @@ public sealed class ToolCompositionInteractionIntegrationTests
         var run = await fixture.RunAsync(["tool", "remove", ToolCompositionFixture.FirstId], "y\n" + (approve ? "2\n" : "1\n"));
         Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), run.ExitCode);
         Assert.Equal(approve ? 1 : 0, fixture.Events.Count(item => item == ToolHostEvent.Uninstall));
-        Assert.Equal(approve, fixture.NativeSawProjectAddition);
+        Assert.False(fixture.NativeSawProjectAddition);
         Assert.False(fixture.HasMember());
         Assert.Empty(fixture.Backups());
         var transcript = JsonSerializer.Serialize(fixture.Normalize(run.Prompts).Split('\n'), ToolCompositionSnapshotJsonContext.Default.StringArray);

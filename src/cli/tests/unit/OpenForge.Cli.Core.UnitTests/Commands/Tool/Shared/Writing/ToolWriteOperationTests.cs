@@ -207,7 +207,7 @@ public sealed class ToolWriteOperationTests
         if (!yes) Assert.Equal(ToolWriteConsentKind.AccountUninstall, Assert.Single(fixture.OptionalQuestions).Kind);
     }
 
-    [Fact(DisplayName = "Tool live account uninstall confirmation authorizes native-first removal")]
+    [Fact(DisplayName = "Tool live account uninstall confirmation runs the native uninstaller only after project removal")]
     public async Task LiveAccountConfirmationRunsNative()
     {
         var fixture = RemovalFixture();
@@ -219,8 +219,24 @@ public sealed class ToolWriteOperationTests
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Single(fixture.Processes);
         Assert.Equal(ToolWriteConsentKind.AccountUninstall, Assert.Single(fixture.OptionalQuestions).Kind);
+        Assert.True(fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.ConfigRemove) < fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.OptionalPrompt));
         Assert.True(fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.OptionalPrompt) < fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.NativePreparation));
-        Assert.True(fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.Native) < fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.ConfigRemove));
+    }
+
+    [Fact(DisplayName = "Tool account uninstall question left unanswered keeps the uninstaller unrun after project removal")]
+    public async Task UnansweredAccountQuestionKeepsNative()
+    {
+        var fixture = RemovalFixture();
+        fixture.AccountUninstall = true;
+        fixture.Terminal = true;
+        fixture.CancelOptional = true;
+        var result = await fixture.Create().ExecuteAsync(fixture.Request(ToolWriteKind.Remove, yes: false), CancellationToken.None);
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Empty(fixture.Processes);
+        Assert.DoesNotContain(fixture.Calls, call => call.Call == ToolWriteCall.NativePreparation);
+        Assert.False(fixture.Records.Portable!.Lock.ContainsKey(ToolWriteOperationFixture.Id));
+        Assert.Contains(result.Data.Outcomes, outcome => outcome.Stage == ToolWriteStages.Native && outcome.State == ToolWriteStages.Skipped);
     }
 
     [Fact(DisplayName = "Tool Remove keeps account settings without making successful project cleanup incomplete")]

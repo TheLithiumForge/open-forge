@@ -430,16 +430,17 @@ The overseer applied these maintainer-side defaults on 16 November 2026:
 
 The maintainer decided these spec gaps on 16 November 2026:
 
-| ID  | Date       | Decided rule                                                                                                                                                                                            |
-| --- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| G1  | 2026-11-16 | Tool Status, Status and Doctor check declared or locked tools. A lock entry without its declaration is drift                                                                                            |
-| G2  | 2026-11-16 | Windows gets the `.cmd` launcher and an extensionless `sh` script for Git Bash. Remove deletes both                                                                                                     |
-| G3  | 2026-11-16 | Native installer writes are covered by plan consent only. Destination permission applies to Open Forge's own additions                                                                                  |
-| G4  | 2026-11-16 | Remove of an ID that is neither declared nor locked is refused with the shared invalid-input sentence. There is no completed no-op                                                                      |
-| G5  | 2026-11-16 | A completed Remove deletes the settings declaration and the lock entry                                                                                                                                  |
-| G6  | 2026-11-16 | Missing consent uses the shared confirmation family, `invalid-input` and exit 4. A declined plan is `cancelled`, exit 130                                                                               |
-| G7  | 2026-11-16 | No damage to the user PATH. Windows edits `HKCU\Environment` `Path` through an adapter that keeps its kind and every other entry, then broadcasts. It replaces the `SetEnvironmentVariable` mandate     |
-| G8  | 2026-11-16 | Replaces the R2-16 PATH removal offer. Remove never edits PATH. After the last tool with a launcher in bin, it prints the bin entry or marked block to remove, also with `--yes` and without a terminal |
+| ID  | Date       | Decided rule                                                                                                                                                                                                                              |
+| --- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| G1  | 2026-11-16 | Tool Status, Status and Doctor check declared or locked tools. A lock entry without its declaration is drift                                                                                                                              |
+| G2  | 2026-11-16 | Windows gets the `.cmd` launcher and an extensionless `sh` script for Git Bash. Remove deletes both                                                                                                                                       |
+| G3  | 2026-11-16 | Native installer writes are covered by plan consent only. Destination permission applies to Open Forge's own additions                                                                                                                    |
+| G4  | 2026-11-16 | Remove of an ID that is neither declared nor locked is refused with the shared invalid-input sentence. There is no completed no-op                                                                                                        |
+| G5  | 2026-11-16 | A completed Remove deletes the settings declaration and the lock entry                                                                                                                                                                    |
+| G6  | 2026-11-16 | Missing consent uses the shared confirmation family, `invalid-input` and exit 4. A declined plan is `cancelled`, exit 130                                                                                                                 |
+| G7  | 2026-11-16 | No damage to the user PATH. Windows edits `HKCU\Environment` `Path` through an adapter that keeps its kind and every other entry, then broadcasts. It replaces the `SetEnvironmentVariable` mandate                                       |
+| G8  | 2026-11-16 | Replaces the R2-16 PATH removal offer. Remove never edits PATH. After the last tool with a launcher in bin, it prints the bin entry or marked block to remove, also with `--yes` and without a terminal                                   |
+| G9  | 2026-11-16 | Refines C2, R2-04 and R2-07. Codebase Memory Remove is local by default. Afterwards only a live interactive run asks, default no, whether to run its system-wide uninstaller. `--yes` or no terminal never runs it and prints the command |
 
 The Windows broadcast uses one `LibraryImport` of `SendMessageTimeoutW` in Framework, beside the existing lock interop. It follows G7 and needs no other native code.
 

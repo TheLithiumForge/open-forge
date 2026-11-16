@@ -84,9 +84,9 @@ Use the [native output plan](../../technical-designs/tool-setup.md#native-output
 Back up its concrete targets before invoking native setup.
 Before the binary is available, a declared native plan leaves unavailable client-specific outputs conditional.
 After verified placement, refresh that plan and require safe independent bindings for detected clients before native writes.
-Run a chosen native uninstall before removing Open Forge additions.
-Codebase Memory's account-wide uninstall needs the live confirmation defined by the common Interface.
-With `--yes` or without a terminal, skip that uninstall and remove only Open Forge's project additions.
+Run a project-scoped native uninstall, such as CodeGraph's, before removing Open Forge additions.
+Codebase Memory's system-wide uninstall is never part of the plan. Remove its local additions first, then ask as the common Interface defines.
+With `--yes` or without a terminal, never run it and print its command.
 Keep account-wide native settings and print their manual change commands.
 Guard any native PATH or shared-binary effects under the common consent rule.
 Never request deletion of every project's indexes.

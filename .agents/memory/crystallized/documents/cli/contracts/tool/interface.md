@@ -47,9 +47,9 @@ If neither a live terminal nor `--yes` is available, apply performs no effects a
 
 Even with `--yes`, unattended execution never changes PATH or deletes shared tool files or runtimes.
 Print exact instructions and keep those optional actions unselected: the files to delete, and the PATH entry or marked block to remove.
-Codebase Memory uninstall removes its account-wide binary and all agent entries.
-Run it only after live interactive confirmation that names those effects, and never when `--yes` is present.
-With `--yes`, without a terminal or after declining, remove only Open Forge's project additions and print the native uninstall command.
+Codebase Memory Remove is local by default. Its own uninstaller removes it system-wide: the binary, all agent entries and, on Windows, its directory on the user PATH.
+Ask about it only after the local removal, in a live interactive run, naming those effects. The default answer is no, and `--yes` never runs it.
+With `--yes`, without a terminal or after declining, print the exact native uninstall command.
 Keep account-wide native settings on every project Remove and print the native command to change them back.
 The [recorded choices](../../technical-designs/tool-setup-lanes.md#recorded-choices) explain this guarded native-uninstall case.
 

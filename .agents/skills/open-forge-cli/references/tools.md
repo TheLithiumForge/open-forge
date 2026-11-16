@@ -74,9 +74,9 @@ Dry-run reports network use when it resolves latest.
 Open Forge's own project files, such as `codegraph.json`, need destination permission as in other commands.
 A blocked plan names each missing path and the command to rerun with `--allow-path`.
 
-Codebase Memory native uninstall removes the account binary and all agent entries.
-It requires live interactive confirmation naming those effects.
-With `--yes`, no terminal or a declined account confirmation, remove only Open Forge project additions and print the native command.
+Codebase Memory Remove is local by default.
+Afterwards an interactive run asks, default no, whether to run its own uninstaller, which removes the binary, all agent entries and its Windows user PATH entry system-wide.
+With `--yes`, no terminal or a decline, it prints that command instead.
 Every project Remove keeps account-wide settings, reports them and prints manual change commands.
 Kept account settings alone don't make removal incomplete.
 

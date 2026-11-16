@@ -5,9 +5,10 @@ internal static class ToolRemoveText
     internal static string Syntax() => "open-forge tool remove <id> [options]";
     internal static string Examples() => "open-forge tool remove codegraph --dry-run\nopen-forge tool remove codegraph --yes\nopen-forge tool remove codebase-memory --yes";
     internal static string Behavior() => """
-        Removes recorded Open Forge project additions and offers the declared native uninstall.
-        Codebase Memory uninstall removes the account binary and all agent entries. It needs a live confirmation naming those effects.
-        With --yes, no terminal or a declined account confirmation, only project additions are removed and the native command is printed.
+        Removes the project's declaration, lock entry and recorded Open Forge additions. CodeGraph's own project uninstall runs first.
+        Codebase Memory removal stays local. Afterwards an interactive run asks whether to run its own uninstaller, which removes
+        it system-wide, including its directory from the Windows user PATH. The default keeps it.
+        With --yes or no terminal, that uninstaller never runs and its command is printed.
         Project removal keeps account settings, including telemetry off, and prints manual change commands.
         Shared file deletion needs a separate live choice. Remove never edits PATH.
         After the last tool in bin, it prints the PATH entry or marked shell block to remove. Changes aren't rolled back automatically.
