@@ -59,7 +59,16 @@ internal sealed class ToolHomeProvider
 
     private string ResolveUserHome() => ToolHomePaths.Resolve(_knownFolder(Environment.SpecialFolder.UserProfile), directory: true);
     private string ResolveOpenForgeHome() => ToolHomePaths.Resolve(
-        _injectedHome ?? Path.Combine(_userHome.Value, ToolRecordDefinitions.HomeDirectoryName), directory: true);
+        _injectedHome ?? ConfiguredHome() ?? Path.Combine(_userHome.Value, ToolRecordDefinitions.HomeDirectoryName), directory: true);
+
+    // A set override must be absolute. A relative value blocks instead of silently using the profile home.
+    private string? ConfiguredHome()
+    {
+        if (_environment.Nonempty(ToolRecordDefinitions.HomeOverrideVariable) is not { } configured) return null;
+        if (!Path.IsPathFullyQualified(configured))
+            throw new IOException($"{ToolRecordDefinitions.HomeOverrideVariable} must name an absolute folder.");
+        return configured;
+    }
 
     private string NativeHome(ToolNativeHomePolicy policy)
     {

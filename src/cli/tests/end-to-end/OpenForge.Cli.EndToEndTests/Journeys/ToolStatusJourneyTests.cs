@@ -8,29 +8,29 @@ using Tokens = OpenForge.Cli.TestSupport.Contracts.PublishedTokens;
 namespace OpenForge.Cli.EndToEndTests.Journeys;
 
 /// <summary>
-/// Published Tool Status against an owned home and an owned command directory. No package
-/// manager, download or PATH edit is involved. The published binary resolves the Open Forge
-/// home through the OS user home, which only HOME relocates on Linux and macOS.
+/// Published Tool Status against an owned Tool home, user home and command directory. No package
+/// manager, download or PATH edit is involved. Published writer journeys wait for the release whose
+/// version meets the real catalogue's minimum Open Forge version, so this journey stays read-only.
 /// </summary>
 public sealed class ToolStatusJourneyTests
 {
     private const string Feature = "tool-journey";
-    // Operating-system variable names, not Open Forge contract values.
+    // Operating-system variable names and the Windows command-script extension, not Open Forge contract values.
     private const string HomeVariable = "HOME";
+    private const string UserProfileVariable = "USERPROFILE";
     private const string PathVariable = "PATH";
+    private const string WindowsScriptExtension = ".cmd";
+    // npm package manifest members that point a command at its entry script.
+    private const string NpmNameMember = "name";
+    private const string NpmBinMember = "bin";
     // A synthetic self-update below the catalogue's supported CodeGraph range.
     private const string OutOfRangeVersion = "1.5.0";
+    private const string FakeEntry = "cli.js";
 
     [Fact(DisplayName = "A declared CodeGraph that is missing, then outside support, is reported with the bin readiness and no writes"),
      Trait("Feature", Feature), Trait("Evidence", "EndToEnd"), Trait("Journey", "T01")]
     public async Task StatusReportsMissingThenUnsupportedTool()
     {
-        if (!OperatingSystem.IsLinux() && !OperatingSystem.IsMacOS())
-        {
-            Assert.Skip("Windows resolves the published Tool home through the known profile folder, which a child environment can't relocate.");
-            return;
-        }
-
         using var workspace = PublishedJourneyWorkspace.Create("tool-status-journey");
         using var machine = TemporaryWorkspace.Create("tool-status-machine");
         var home = machine.CreateDirectory("home");
@@ -42,7 +42,9 @@ public sealed class ToolStatusJourneyTests
         }.ToJsonString());
         var environment = new Dictionary<string, string>(workspace.ProcessEnvironment, StringComparer.Ordinal)
         {
+            [Tokens.Tool.HomeVariable] = machine.Combine("tool-home"),
             [HomeVariable] = home,
+            [UserProfileVariable] = home,
             // Only the owned command directory, so no real package manager, Node or CodeGraph is visible.
             [PathVariable] = commands,
         };
@@ -60,9 +62,7 @@ public sealed class ToolStatusJourneyTests
         }
         Assert.Equal(machineBefore, machine.SnapshotHashes());
 
-        var fake = Path.Combine(commands, Tokens.Tool.CodeGraphId);
-        File.WriteAllText(fake, $"#!/bin/sh\necho {OutOfRangeVersion}\n");
-        File.SetUnixFileMode(fake, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+        WriteOutOfRangeCodeGraph(machine, commands);
         machineBefore = machine.SnapshotHashes();
 
         var unsupported = await PublishedJourneyProcess.RunWithoutWritesAsync(workspace.Target, workspace.Path, workspace.SnapshotState, status, environment);
@@ -82,5 +82,29 @@ public sealed class ToolStatusJourneyTests
         var tool = Assert.Single(json.RootElement.GetProperty(Tokens.Json.Data).GetProperty(Tokens.Tool.Tools).EnumerateArray());
         Assert.Equal(Tokens.Tool.CodeGraphId, tool.GetProperty(Tokens.Json.Id).GetString());
         return tool;
+    }
+
+    // Unix runs an executable script directly. Windows resolves an npm command script through its
+    // package manifest and the Node command beside it, so the fake Node answers the version probe.
+    private static void WriteOutOfRangeCodeGraph(TemporaryWorkspace machine, string commands)
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            var script = Path.Combine(commands, Tokens.Tool.CodeGraphId);
+            File.WriteAllText(script, $"#!/bin/sh\necho {OutOfRangeVersion}\n");
+            File.SetUnixFileMode(script, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+            return;
+        }
+
+        File.WriteAllText(Path.Combine(commands, Tokens.Tool.CodeGraphId + WindowsScriptExtension), "@exit /b 1\r\n");
+        File.WriteAllText(Path.Combine(commands, Tokens.Tool.NodeCommand + WindowsScriptExtension), $"@echo {OutOfRangeVersion}\r\n");
+        var package = machine.CreateDirectory(Path.Combine(Path.GetFileName(commands), Tokens.Tool.NpmModulesDirectory, Tokens.Tool.CodeGraphId));
+        File.WriteAllText(Path.Combine(package, Tokens.Tool.NpmManifest), new JsonObject
+        {
+            [NpmNameMember] = Tokens.Tool.CodeGraphId,
+            [Tokens.Tool.Version] = OutOfRangeVersion,
+            [NpmBinMember] = FakeEntry,
+        }.ToJsonString());
+        File.WriteAllText(Path.Combine(package, FakeEntry), string.Empty);
     }
 }

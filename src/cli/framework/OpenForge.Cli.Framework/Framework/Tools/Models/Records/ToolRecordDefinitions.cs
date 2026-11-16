@@ -31,6 +31,8 @@ internal static class ToolRecordDefinitions
     internal const string WorkspacesDirectoryName = "workspaces";
     internal const string ToolsDirectoryName = "tools";
     internal const string HomeDirectoryName = ".open-forge";
+    /// <summary>Names an absolute per-user Tool home to use instead of <c>~/.open-forge</c>, like <c>CARGO_HOME</c>.</summary>
+    internal const string HomeOverrideVariable = "OPENFORGE_TOOL_HOME";
     internal const string BinDirectoryName = "bin";
     internal const string RuntimesDirectoryName = "runtimes";
     internal const string NodeDirectoryName = "node";

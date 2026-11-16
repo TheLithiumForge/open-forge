@@ -145,6 +145,8 @@ Open Forge adds no per-tool usage Skill, guidance line or replacement MCP entry.
 ### Tool paths
 
 Open Forge places launchers and native executables in `~/.open-forge/bin`, or `%USERPROFILE%\.open-forge\bin` on Windows.
+Set `OPENFORGE_TOOL_HOME` to an absolute folder to use it instead of `~/.open-forge` on every system, like `CARGO_HOME`.
+A relative value blocks Tool commands rather than falling back to your profile.
 Tool files and private runtimes live beside that folder under `tools` and `runtimes`.
 Private Node stays out of `bin`.
 CodeGraph's npm wrapper needs Node 20 or newer.

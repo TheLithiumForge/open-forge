@@ -18,7 +18,7 @@ open-forge tool list [global flags]
 ```
 
 No operands or local flags. It can show the catalogue without an installed workspace.
-The help purpose is "List catalogue tools and project declarations."
+The help purpose is "List supported tools and their setup profiles."
 
 ## Report
 

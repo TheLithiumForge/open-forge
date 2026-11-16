@@ -99,6 +99,8 @@ The [explicit grant behavior](behavior.md#explicit-grants) defines ordering and 
 ## Machine state
 
 Machine facts live under `~/.open-forge/state/`.
+An absolute `OPENFORGE_TOOL_HOME` replaces `~/.open-forge` on every system, like `CARGO_HOME`. It's a user setting, not a test mode.
+A relative value makes the home unavailable rather than falling back to the profile.
 `HomePath` names the Open Forge home itself, so state is directly below it.
 Reading an absent home reports missing facts without creating that folder.
 Use schema 1 files `tools/<id>.json`, `runtimes/node/<version>.json`, `path.json` and `workspaces/<key>.json`.

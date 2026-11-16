@@ -23,6 +23,30 @@ public sealed class ToolHomeProviderTests
         Assert.Equal(before, Directory.GetFileSystemEntries(fixture.Owned.Path, "*", SearchOption.AllDirectories).Order().ToArray());
     }
 
+    [Theory(DisplayName = "An absolute Tool home override replaces the profile home on every system without a known-folder read"),
+     InlineData((int)ToolOperatingSystem.Windows), InlineData((int)ToolOperatingSystem.MacOS), InlineData((int)ToolOperatingSystem.Linux),
+     Trait("Feature", "tool-homes"), Trait("Evidence", "Integration")]
+    public void HomeOverride(int platform)
+    {
+        using var fixture = new ToolHomeFixture();
+        var configured = fixture.Owned.Combine("configured-tool-home");
+        fixture.Environment[ToolRecordDefinitions.HomeOverrideVariable] = configured;
+        var provider = fixture.Provider((ToolOperatingSystem)platform);
+        Assert.Equal(ToolHomePaths.Resolve(configured, directory: true), provider.HomePath);
+        Assert.Equal(0, fixture.FolderCalls);
+        Assert.False(Directory.Exists(configured));
+    }
+
+    [Fact(DisplayName = "A relative Tool home override is unavailable instead of falling back to the profile"), Trait("Feature", "tool-homes"), Trait("Evidence", "Integration")]
+    public void RelativeHomeOverride()
+    {
+        using var fixture = new ToolHomeFixture();
+        fixture.Environment[ToolRecordDefinitions.HomeOverrideVariable] = ToolRecordDefinitions.HomeDirectoryName;
+        var provider = fixture.Provider();
+        Assert.Throws<IOException>(() => provider.HomePath);
+        Assert.Equal(0, fixture.FolderCalls);
+    }
+
     [Theory(DisplayName = "Native home policies keep Node platform selection distinct from HOME-first CBM"),
      InlineData((int)ToolOperatingSystem.Windows), InlineData((int)ToolOperatingSystem.MacOS), InlineData((int)ToolOperatingSystem.Linux),
      Trait("Feature", "tool-homes"), Trait("Evidence", "Integration")]

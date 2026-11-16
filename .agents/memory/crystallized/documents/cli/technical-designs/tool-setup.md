@@ -321,6 +321,7 @@ The journey provides child environment that makes the native tool use that same 
 Root doesn't rewrite normal child environment to force a resolved home.
 Resolve production known folders once in Root.
 Changing a child environment doesn't relocate .NET Windows known folders.
+D2's `OPENFORGE_TOOL_HOME` relocates the Open Forge home without relying on known folders.
 `TestDataHome` covers legacy stores and isn't a Tool home resolver.
 Workspace Status and Doctor check project declarations before constructing the Tool graph.
 With no declared tools, they skip Tool home resolution, machine-state reads and external Tool hosts.
@@ -412,6 +413,14 @@ It is the next beta. This task doesn't change the release version itself.
 The generic config mechanism can turn off declared tool behavior through allow-listed native commands or settings.
 Every change is disclosed. Telemetry is the first V1 case and stays the decided default.
 Native installer behavior stays unchanged before those declared config changes.
+
+The overseer applied these maintainer-side defaults on 16 November 2026:
+
+| ID  | Date       | Decided rule                                                                                                                                            |
+| --- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | 2026-11-16 | Keep the catalogue's `0.9.0-beta.19` minimum. Published writer journeys start after that release bump. Until then the published journey stays read-only |
+| D2  | 2026-11-16 | An absolute `OPENFORGE_TOOL_HOME` replaces `~/.open-forge` on every system, like `CARGO_HOME`. It's a documented user setting, not a test mode          |
+| D3  | 2026-11-16 | Keep the newer Tool help wording. The six leaf contracts state it, and the unused `*Definitions.Purpose` constants are removed                          |
 
 ## Not decided yet
 

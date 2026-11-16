@@ -18,7 +18,7 @@ open-forge tool install [<id[@version]>] [--channel <channel>] [--yes] [--allow-
 ```
 
 A bare name selects latest support, even when an older version is recorded. A spec such as codegraph@1.6 or codegraph@1.6.2 selects that supported range or exact version. Bare Install selects declarations and restores exact lock versions. A declared tool without a lock selects latest within its declared range. A channel override requires a named spec.
-The help purpose is "Install tools and add configuration."
+The help purpose is "Install tools, run native setup and add project configuration."
 
 ## Report
 

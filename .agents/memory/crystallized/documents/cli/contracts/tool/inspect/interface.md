@@ -18,7 +18,7 @@ open-forge tool inspect <id> [global flags]
 ```
 
 Require exactly one known catalogue ID. There are no local flags.
-The help purpose is "Show one tool's full setup picture."
+The help purpose is "Show a tool's channels, native effects and machine facts."
 
 ## Report
 

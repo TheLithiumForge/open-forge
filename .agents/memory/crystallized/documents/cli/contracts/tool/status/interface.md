@@ -18,7 +18,7 @@ open-forge tool status [<id>] [global flags]
 ```
 
 With an ID, check that known tool. Otherwise check every declared tool in ordinal order. An empty declaration set is a no-op.
-The help purpose is "Check tool versions, configuration and launch readiness."
+The help purpose is "Check tool versions, project additions and PATH readiness."
 
 ## Report
 

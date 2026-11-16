@@ -18,7 +18,7 @@ open-forge tool remove <id> [--yes] [--allow-path <path>...] [--dry-run] [global
 ```
 
 Require one known declared or locked ID, with no version selector. Repeated removal after completed cleanup is a no-op. Keep records for unfinished removal.
-The help purpose is "Uninstall tool setup and remove its additions."
+The help purpose is "Remove project additions and offer native uninstall."
 
 ## Report
 

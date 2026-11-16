@@ -80,6 +80,7 @@ using OpenForge.Cli.Core.Framework.Tools.Catalogue;
 using OpenForge.Cli.Core.Framework.Tools.Catalogue.Shared.CodeGraph;
 using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
+using OpenForge.Cli.Core.Framework.Tools.Shared.PackageManagers;
 using OpenForge.Cli.Core.Framework.Tools.Shared.Observation.Models;
 using OpenForge.Cli.TestSupport.Contracts;
 
@@ -391,6 +392,10 @@ public sealed class PublishedTokensTests
         Assert.Equal(ToolReadProjection.Name(ToolPathReadiness.Ready), PublishedTokens.Tool.Ready);
         Assert.Equal(CodeGraphDefinitions.Id, PublishedTokens.Tool.CodeGraphId);
         Assert.Equal(ToolReadProjection.Range(CodeGraphCatalogueEntry.Create().Profiles[0].Range), PublishedTokens.Tool.CodeGraphRange);
+        Assert.Equal(ToolRecordDefinitions.HomeOverrideVariable, PublishedTokens.Tool.HomeVariable);
+        Assert.Equal(ToolNpmPackageReader.ModulesDirectory, PublishedTokens.Tool.NpmModulesDirectory);
+        Assert.Equal(ToolNpmPackageReader.ManifestName, PublishedTokens.Tool.NpmManifest);
+        Assert.Equal(ToolNpmPackageReader.NodeRuntime, PublishedTokens.Tool.NodeCommand);
         Assert.Equal(CliJsonFields.Id, PublishedTokens.Json.Id);
 #pragma warning restore xUnit2000
     }

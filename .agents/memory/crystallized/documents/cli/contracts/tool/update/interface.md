@@ -18,7 +18,7 @@ open-forge tool update [<id[@version]>] [--channel <channel>] [--yes] [--allow-p
 ```
 
 Use the same named version-spec grammar as Install. A bare name selects latest support. An explicit spec selects that supported version or minor range. Without a spec, update every declared tool. A named Update requires a declared or locked tool. A channel override requires a named spec.
-The help purpose is "Update tools to a supported version."
+The help purpose is "Update declared tools within supported versions."
 
 ## Report
 

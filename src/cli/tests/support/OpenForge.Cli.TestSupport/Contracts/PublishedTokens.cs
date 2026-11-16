@@ -407,6 +407,10 @@ public static class PublishedTokens
         public const string Ready = "ready";
         public const string CodeGraphId = "codegraph";
         public const string CodeGraphRange = "1.6.x";
+        public const string HomeVariable = "OPENFORGE_TOOL_HOME";
+        public const string NpmModulesDirectory = "node_modules";
+        public const string NpmManifest = "package.json";
+        public const string NodeCommand = "node";
     }
 
     public static class RecoveryFormat

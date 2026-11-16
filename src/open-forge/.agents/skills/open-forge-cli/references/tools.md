@@ -61,6 +61,7 @@ Open Forge adds a marked archive block to `.cbmignore`.
 Direct commands are `codegraph` and `codebase-memory-mcp`.
 CodeGraph needs `codegraph init` to build a project index after setup.
 Status and Inspect show bin and manager PATH readiness.
+The tool home is `~/.open-forge`. An absolute `OPENFORGE_TOOL_HOME` replaces it on every system. A relative value blocks Tool commands.
 Follow printed manual PATH instructions and restart terminals and agent apps after a PATH change.
 
 ## Consent and removal
