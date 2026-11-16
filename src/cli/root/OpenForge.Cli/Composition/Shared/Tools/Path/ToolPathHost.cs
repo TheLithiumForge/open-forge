@@ -50,12 +50,14 @@ internal sealed class ToolPathHost(ToolPathEnvironment environment, string shell
             if (environment.IsWindows)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var prior = environment.UserPath;
-                if (!ToolPathPolicy.Contains(prior, bin, windows: true))
+                // An unreadable or unsafe stored value is never rewritten. The user gets the manual steps instead.
+                if (environment.ReadUserPath() is not { } prior || ToolWindowsUserPath.Append(prior.Text, bin) is not { } applied)
+                    return Result(State(bin, changes), ManualLines(bin), false, "The user PATH couldn't be read safely, so it was left unchanged.");
+                if (applied != prior.Text)
                 {
-                    var applied = string.IsNullOrEmpty(prior) ? bin : $"{prior};{bin}";
-                    if (environment.UserPath != prior) return Result(State(bin, changes), ManualLines(bin), false, "User PATH changed before replacement.");
-                    environment.UserPath = applied;
+                    if (environment.ReadUserPath() != prior) return Result(State(bin, changes), ManualLines(bin), false, "User PATH changed before replacement.");
+                    var written = prior with { Text = applied, Present = true };
+                    if (!environment.WriteUserPath(written)) return Result(State(bin, changes), ManualLines(bin), false, "The user PATH couldn't be written, so it was left unchanged.");
                     changes.Add(new()
                     {
                         Kind = ToolPathChangeKind.WindowsUserPath,
@@ -63,7 +65,8 @@ internal sealed class ToolPathHost(ToolPathEnvironment environment, string shell
                         Prior = new() { Present = false, Kind = ToolRecordedValueKind.Native },
                         Applied = new() { Present = true, Kind = ToolRecordedValueKind.Native, Native = bin },
                     });
-                    if (environment.UserPath != applied) return Result(State(bin, changes), ManualLines(bin), true, "User PATH didn't verify after replacement.");
+                    if (environment.ReadUserPath() != written) return Result(State(bin, changes), ManualLines(bin), true, "User PATH didn't verify after replacement.");
+                    environment.AnnounceEnvironmentChange();
                 }
             }
             else
@@ -103,7 +106,7 @@ internal sealed class ToolPathHost(ToolPathEnvironment environment, string shell
                     });
                 }
             }
-            return Result(State(bin, changes), [ToolPathPolicy.RestartInstruction], changes.Count > 0, null);
+            return Result(State(bin, changes), [], changes.Count > 0, null);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException or OperationCanceledException)
         {
@@ -111,60 +114,9 @@ internal sealed class ToolPathHost(ToolPathEnvironment environment, string shell
         }
     }
 
-    public async Task<ToolPathRemoveResult> RemoveAsync(ToolPathRemoveRequest request, CancellationToken cancellationToken)
-    {
-        var pending = new List<ToolBackupCompletionRequest>();
-        ToolPathRemoveResult Result(IReadOnlyList<string> removedPaths, IReadOnlyList<string> keptPaths, bool restart, string? failure)
-            => new(removedPaths, keptPaths, restart, failure) { PendingBackups = pending };
-        var removed = new List<string>();
-        var kept = new List<string>();
-        if (!hasLiveConsent()) return Result([], request.Expected.Changes.Select(change => change.Target).ToArray(), false, null);
-        try
-        {
-            foreach (var change in request.Expected.Changes)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                switch (change.Kind)
-                {
-                    case ToolPathChangeKind.WindowsUserPath when environment.IsWindows:
-                        var before = environment.UserPath;
-                        if (change.Applied.Native != request.Expected.BinPath || before is null) { kept.Add(change.Target); break; }
-                        var entries = before.Split(';').ToList();
-                        var index = entries.FindIndex(entry => ToolPathPolicy.SameEntry(entry, request.Expected.BinPath, windows: true));
-                        if (index >= 0) entries.RemoveAt(index);
-                        var after = string.Join(';', entries);
-                        if (environment.UserPath != before) { kept.Add(change.Target); break; }
-                        environment.UserPath = after;
-                        if (environment.UserPath != after) { kept.Add(change.Target); break; }
-                        removed.Add(change.Target);
-                        break;
-                    case ToolPathChangeKind.ShellBlock when !environment.IsWindows:
-                        var bytes = await ReadAsync(change.Target, cancellationToken).ConfigureAwait(false);
-                        if (bytes is null) { removed.Add(change.Target); break; }
-                        var text = Utf8.GetString(bytes);
-                        if (change.StartMarker != ToolPathPolicy.StartMarker || change.EndMarker != ToolPathPolicy.EndMarker
-                            || !TrySpan(text, out var start, out var length) || change.Applied.Bytes is not { } applied)
-                        { kept.Add(change.Target); break; }
-                        if (applied.Length > 0 && applied[0] == (byte)'\n' && start > 0 && text[start - 1] == '\n') { start--; length++; }
-                        if (!Utf8.GetBytes(text.Substring(start, length)).AsSpan().SequenceEqual(applied)) { kept.Add(change.Target); break; }
-                        await ReplaceAsync(change.Target, bytes, Utf8.GetBytes(text.Remove(start, length)), pending, cancellationToken).ConfigureAwait(false);
-                        removed.Add(change.Target);
-                        break;
-                    default: kept.Add(change.Target); break;
-                }
-            }
-            return Result(removed, kept, removed.Count > 0, null);
-        }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException or OperationCanceledException)
-        {
-            kept.AddRange(request.Expected.Changes.Select(change => change.Target).Except(removed).Except(kept));
-            return Result(removed, kept, removed.Count > 0, "PATH removal failed. Keep file backups for checking.");
-        }
-    }
-
     private IReadOnlyList<string> ManualLines(string bin)
-        => environment.IsWindows ? [$"Add {bin} to the user PATH.", ToolPathPolicy.RestartInstruction]
-            : [ToolPathPolicy.ManualLine(bin, ToolShellKind.Posix), ToolPathPolicy.ManualLine(bin, ToolShellKind.Fish), ToolPathPolicy.RestartInstruction];
+        => environment.IsWindows ? [$"Add {bin} to the user PATH."]
+            : [ToolPathPolicy.ManualLine(bin, ToolShellKind.Posix), ToolPathPolicy.ManualLine(bin, ToolShellKind.Fish)];
 
     private static ToolPathState State(string bin, IReadOnlyList<ToolPathChangeRecord> changes)
         => new() { SchemaVersion = ToolRecordDefinitions.LocalSchemaVersion, BinPath = bin, Changes = changes };

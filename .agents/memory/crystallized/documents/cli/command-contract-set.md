@@ -110,7 +110,7 @@ The [Tool group](contracts/tool/_tool.md) has six leaves in this order:
 Each leaf has its own Interface and Behavior.
 The 14 November 2026 round-2 contracts use native setup, `id@version`, `--yes` and additive records in the committed lock.
 The [Tool setup design](technical-designs/tool-setup.md) defines their common implementation model.
-These contracts and compile-only shared types precede command implementation.
+The six Tool leaves implement these contracts.
 
 Direct commands keep their detailed files in one local scope:
 

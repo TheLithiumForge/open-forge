@@ -17,7 +17,7 @@ internal static class ToolInspectBinding
 {
     internal static ToolInspectSymbols CreateSymbols(Command parent)
     {
-        var command = new Command(ToolInspectDefinitions.CommandName, "Show a tool's channels, native effects and machine facts.");
+        var command = new Command(ToolInspectDefinitions.CommandName, ToolInspectDefinitions.Purpose);
         var id = new Argument<string?>("id") { Description = "The exact catalogue tool ID.", Arity = ArgumentArity.ZeroOrOne };
         command.Arguments.Add(id);
         parent.Subcommands.Add(command);

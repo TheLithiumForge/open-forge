@@ -16,7 +16,7 @@ Commands follow the [context folder chosen at installation](../getting-started/i
 ## Start with these commands
 
 Tool setup installs published tools, runs their native setup and records project additions.
-To install a tool, use its direct command and share exact versions with your team, follow the [Tool setup walkthrough](tools.md).
+The [Tool setup walkthrough](tools.md) shows how to install a tool, use its direct command and share exact versions with your team.
 
 | When you want to                               | Run                                                   |
 | ---------------------------------------------- | ----------------------------------------------------- |
@@ -84,6 +84,7 @@ examples before its behavior notes and options.
 | Install, update, or remove Framework content               | [install](/guides/cli#install), [update](/guides/cli#update), [remove](/guides/cli#remove)                                                                                                                                                                                                                 |
 | Manage optional Extension packages                         | [extension list](/guides/cli#extension-list), [extension inspect](/guides/cli#extension-inspect), [extension create](/guides/cli#extension-create), [extension install](/guides/cli#extension-install), [extension update](/guides/cli#extension-update), [extension remove](/guides/cli#extension-remove) |
 | Share files through a Library                              | [library list](/guides/cli#library-list), [library inspect](/guides/cli#library-inspect), [library attach](/guides/cli#library-attach), [library sync](/guides/cli#library-sync), [library detach](/guides/cli#library-detach)                                                                             |
+| Set up developer tools                                     | [tool list](/guides/cli#tool-commands), [tool inspect](/guides/cli#tool-commands), [tool status](/guides/cli#tool-commands), [tool install](/guides/cli#tool-commands), [tool update](/guides/cli#tool-commands), [tool remove](/guides/cli#tool-commands). See [Developer tools](tools.md)                |
 
 A source can be named by an ID such as `guidance`, an exact `./<workspace-path>` path, or the literal `.agents/` path form. Custom-root files keep the same short IDs.
 See [source references](/guides/cli#source-references) when selecting a target.
@@ -126,8 +127,9 @@ defines every result. Doctor returns a nonzero code for warnings or errors, so
 it can check workspace health in CI.
 
 Each directory is its own workspace, including each Git worktree. Writing commands
-use its fixed `.open-forge-state/` folder, so a sandbox needs only workspace write
-access. See [worktrees, sandboxes and the runtime folder](/guides/cli#worktrees-sandboxes-and-the-runtime-folder)
+use its fixed `.open-forge-state/` folder, so Framework and route writers need only
+workspace write access. Tool commands also need the Open Forge home, the native tool's home
+and the network for downloads. See [worktrees, sandboxes and the runtime folder](/guides/cli#worktrees-sandboxes-and-the-runtime-folder)
 for lock failures, recovery stores and the bridge to older CLIs.
 
 When an Extension or Library asks to change paths outside the primary content locations, key mode

@@ -41,6 +41,12 @@ internal sealed class ToolWritePlanner(ToolCatalogue catalogue, ToolWriteToolPla
                 findings.Add(new(ToolWriteFindingCode.UnknownTool, CliSemanticStatus.Invalid, input.Request.Spec?.Id));
                 return Complete();
             }
+            // Remove needs one declared or locked ID. Repeating a completed removal is therefore refused, not a no-op.
+            if (!portable.Settings.ContainsKey(removal.Id) && !portable.Lock.ContainsKey(removal.Id))
+            {
+                findings.Add(new(ToolWriteFindingCode.InvalidInput, CliSemanticStatus.Invalid, removal.Id));
+                return Complete();
+            }
             planned.Add(await tools.PlanRemoveAsync(entry, input, cancellationToken).ConfigureAwait(false));
             AddNativeProblems(planned[^1]);
             AddPermissions(planned[^1]);

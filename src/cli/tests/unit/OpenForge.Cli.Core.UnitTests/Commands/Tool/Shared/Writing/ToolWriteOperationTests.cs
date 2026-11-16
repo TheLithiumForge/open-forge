@@ -5,6 +5,7 @@ using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Result;
 using OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
+using OpenForge.Cli.Core.Framework.Tools.Shared.Paths;
 using OpenForge.Cli.Core.Framework.Workspace;
 using OpenForge.Cli.Core.Shell.Definitions;
 
@@ -73,7 +74,7 @@ public sealed class ToolWriteOperationTests
         var result = await fixture.Create().ExecuteAsync(fixture.Request(yes: false), CancellationToken.None);
 
         Assert.Equal(CliSemanticStatus.Invalid, result.Status);
-        Assert.Contains(result.Findings, finding => finding.Code == ToolWriteFindingCode.MissingConsent);
+        Assert.Contains(result.Findings, finding => finding.Code == ToolWriteFindingCode.ConfirmationRequired);
         Assert.Empty(fixture.ExecutedPlans);
         Assert.Empty(fixture.Writes);
     }
@@ -254,8 +255,8 @@ public sealed class ToolWriteOperationTests
         Assert.DoesNotContain(fixture.Processes, process => process.Arguments.SequenceEqual(setting.ManualRestoreArguments));
     }
 
-    [Fact(DisplayName = "Tool repeated project removal is an effect-free no-op")]
-    public async Task RepeatedRemovalIsNoOp()
+    [Fact(DisplayName = "Tool repeated project removal is refused as invalid input without effects")]
+    public async Task RepeatedRemovalIsRefused()
     {
         var fixture = RemovalFixture();
         var writer = fixture.Create();
@@ -264,7 +265,8 @@ public sealed class ToolWriteOperationTests
         var natives = fixture.Processes.Count;
         var result = await writer.ExecuteAsync(fixture.Request(ToolWriteKind.Remove), CancellationToken.None);
 
-        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
+        Assert.Equal(ToolWriteFindingCode.InvalidInput, Assert.Single(result.Findings).Code);
         Assert.Equal(writes, fixture.Writes.Count);
         Assert.Equal(natives, fixture.Processes.Count);
     }
@@ -409,20 +411,26 @@ public sealed class ToolWriteOperationTests
         Assert.Equal(!yes, fixture.Calls.Any(call => call.Call == ToolWriteCall.PathPrompt));
     }
 
-    [Fact(DisplayName = "Tool last shared installation removal offers and publishes confirmed PATH cleanup")]
-    public async Task LastToolOffersPathRemoval()
+    [Theory(DisplayName = "Tool removal never edits PATH and names the recorded block only after the last tool in bin")]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task LastBinToolPrintsPathSteps(bool commandInBin)
     {
-        var fixture = new ToolWriteOperationFixture { Terminal = true, AddPathChoice = true, AcceptOptional = true, PlacedByOpenForge = true };
+        var fixture = new ToolWriteOperationFixture { Terminal = true, AddPathChoice = true, AcceptOptional = true, PlacedByOpenForge = true, CommandInBin = commandInBin };
         fixture.Facts = fixture.Facts with { Path = fixture.Facts.Path with { Readiness = Core.Framework.Tools.Models.Launchers.ToolPathReadiness.Missing } };
         var writer = fixture.Create();
         await writer.ExecuteAsync(fixture.Request(yes: false), CancellationToken.None);
+        var recorded = Assert.IsType<ToolPathState>(fixture.Records.Path);
+        var calls = fixture.Calls.Count;
         var result = await writer.ExecuteAsync(fixture.Request(ToolWriteKind.Remove, yes: false), CancellationToken.None);
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
-        Assert.Contains(fixture.Calls, call => call.Call == ToolWriteCall.PathRemove);
-        Assert.Contains(fixture.OptionalQuestions, question => question.Kind == ToolWriteConsentKind.PathChange);
-        Assert.Empty(Assert.IsType<ToolPathState>(fixture.Records.Path).Changes);
+        Assert.DoesNotContain(fixture.Calls.Skip(calls), call => call.Call is ToolWriteCall.PathAdd or ToolWriteCall.PathPrompt);
+        Assert.Equal(recorded.Changes, Assert.IsType<ToolPathState>(fixture.Records.Path).Changes);
         Assert.Empty(fixture.Records.Machine);
+        var change = Assert.Single(recorded.Changes);
+        string[] expected = commandInBin ? [ToolPathPolicy.RemoveBlockLine(change.Target, change.StartMarker!, change.EndMarker!)] : [];
+        Assert.Equal(expected, result.Data.Plan.PathInstructions);
     }
 
     private static ToolWriteOperationFixture RemovalFixture()

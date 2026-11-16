@@ -4,6 +4,8 @@ using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Request;
+using OpenForge.Cli.OutputText.Shared;
 using OpenForge.Cli.OutputText.Tool.Shared.Writing;
 
 namespace OpenForge.Cli.Core.Presentation.Tool.Shared.Writing;
@@ -22,7 +24,7 @@ internal static class ToolWriteReportSelector
                 Code = string.Concat(result.Command.Replace(' ', '-'), ".", Suffix(finding.Code)),
                 Severity = finding.Status is CliSemanticStatus.Attention or CliSemanticStatus.Incomplete ? CliSeverity.Warning : CliSeverity.Error,
                 Title = ToolWriteText.Finding(Suffix(finding.Code)),
-                Message = finding.Cause ?? ToolWriteText.Finding(Suffix(finding.Code)),
+                Message = finding.Cause ?? Message(result, finding),
                 Subject = new(CliSubjectKind.Identifier, Path: finding.Path, Id: finding.ToolId ?? result.Command),
                 Actions = finding.Code == ToolWriteFindingCode.PermissionRequired && result.PermissionCommand is { } command
                     ? [new(command, ToolWriteText.PermissionNext())] : [],
@@ -77,6 +79,16 @@ internal static class ToolWriteReportSelector
         return CliEffectOutcome.NotStarted;
     }
 
+    // Shared message families name the command and, for a refused Remove, the ID.
+    private static string Message(ToolWriteResult result, ToolWriteFinding finding)
+    {
+        if (finding.Code == ToolWriteFindingCode.ConfirmationRequired)
+            return CliFindingWording.ConfirmationRequired(string.Concat(char.ToUpperInvariant(result.Command[0]).ToString(), result.Command[1..]));
+        if (finding.Code == ToolWriteFindingCode.InvalidInput && result.Kind == ToolWriteKind.Remove && finding.ToolId is { } id)
+            return CliFindingWording.InvalidInput(ToolWriteText.RemoveCommand(id), ToolWriteText.NotDeclaredOrLocked());
+        return ToolWriteText.Finding(Suffix(finding.Code));
+    }
+
     internal static string Suffix(ToolWriteFindingCode code) => code switch
     {
         ToolWriteFindingCode.InvalidInput => "invalid-input",
@@ -89,7 +101,7 @@ internal static class ToolWriteReportSelector
         ToolWriteFindingCode.OpenForgeVersionUnsupported => "open-forge-version-unsupported",
         ToolWriteFindingCode.NativePlanBlocked => "native-plan-blocked",
         ToolWriteFindingCode.ConfigConflict => "config-conflict",
-        ToolWriteFindingCode.MissingConsent => "missing-consent",
+        ToolWriteFindingCode.ConfirmationRequired => "confirmation-required",
         ToolWriteFindingCode.ManagerRequired => "manager-required",
         ToolWriteFindingCode.NativeFailed => "native-failed",
         ToolWriteFindingCode.VerificationFailed => "verification-failed",

@@ -15,7 +15,7 @@ internal sealed class ToolWriteConsentOperation(CliPrompt<ToolWriteConsentQuesti
         var optional = request.Question.Kind switch
         {
             ToolWriteConsentKind.Plan => false,
-            ToolWriteConsentKind.AccountUninstall or ToolWriteConsentKind.SharedFileDeletion or ToolWriteConsentKind.PathChange => true,
+            ToolWriteConsentKind.AccountUninstall or ToolWriteConsentKind.SharedFileDeletion => true,
             _ => throw new ArgumentOutOfRangeException(nameof(request), request.Question.Kind, "The writer consent kind is not defined."),
         };
         if (request.Preview)

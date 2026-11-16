@@ -19,12 +19,6 @@ internal sealed record ToolPathSetupResult(ToolPathState? State, IReadOnlyList<s
     public required IReadOnlyList<ToolBackupCompletionRequest> PendingBackups { get; init; }
 }
 
-internal sealed record ToolPathRemoveRequest(ToolPathState Expected);
-internal sealed record ToolPathRemoveResult(IReadOnlyList<string> RemovedTargets, IReadOnlyList<string> KeptTargets, bool RestartRequired, string? Failure)
-{
-    public required IReadOnlyList<ToolBackupCompletionRequest> PendingBackups { get; init; }
-}
-
 internal sealed record ToolManagedFilesRemoveRequest
 {
     public required ToolRecordsRequest Locations { get; init; }

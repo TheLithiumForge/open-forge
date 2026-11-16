@@ -32,11 +32,12 @@ Before adding or updating a profile, complete these checks:
 8. Record native setup and uninstall commands, dry-run support and project or account effects. Review possible output declarations against native inventory, profile and legacy paths. Keep native MCP names, hooks, permissions, blocks and Skills.
 9. Check JSON union and absent-only set, marked blocks, absent-only files and native account settings against their additive removal rules.
 10. Verify exact lock versions, channels and added items, keys, markers and hashes. Keep native previous values in machine state.
-11. Test absolute launchers, private runtime compatibility, PATH choices and unattended instructions. Never edit real user PATH or shell profiles in journeys.
+11. Test absolute launchers, including the Windows `.cmd` and Git Bash `sh` pair, private runtime compatibility, PATH choices and unattended instructions. Windows PATH edits go through the registry adapter, only append bin and keep every other entry. Remove never edits PATH and prints the bin entry or marked block to remove after the last tool in bin. Never edit real user PATH or shell profiles in journeys.
 12. Run real direct-command and MCP journeys, update, confirmed native-first removal and unattended project-only removal. Keep full suites in CI.
 
 Open Forge adds no per-tool Skill or managed-block line.
 It doesn't rewrite upstream integrations.
+Native installer writes such as `.mcp.json`, `.claude/settings.json`, `AGENTS.md` and `.codex/config.toml` are covered by plan consent only.
 The normal process runner uses argument vectors, not shell strings.
 A native uninstall that requires PATH or shared-binary effects needs live confirmation.
 Codebase Memory account uninstall is skipped with `--yes` or no terminal, while Open Forge project additions are removed.
@@ -55,17 +56,17 @@ A profile starts at the current reviewed tool patch and doesn't silently raise t
 
 The V1 entry has these values:
 
-| Field                   | Value                                                                                     |
-| ----------------------- | ----------------------------------------------------------------------------------------- |
-| ID and name             | `codegraph`, CodeGraph                                                                    |
-| Origin and licence      | `third-party`, MIT                                                                        |
-| Upstream                | `https://github.com/colbymchenry/codegraph`                                               |
-| Profile and first patch | `1.6.x`, `1.6.2`                                                                          |
-| Channels                | npm `@colbymchenry/codegraph` and GitHub release                                          |
-| Setup                   | `["install", "--yes", "--location", "local", "--target", "claude,codex"]`                 |
-| Uninstall               | `["uninstall", "--yes", "--location", "local", "--target", "claude,codex", "--keep-cli"]` |
-| Added config            | `telemetry off`, `codegraph.json` `/exclude` union with `<mainRoot>/memory/archived/**`   |
-| Probe                   | `--version`, with `CODEGRAPH_NO_DOWNLOAD=1`                                               |
+| Field                   | Value                                                                                                                                                                                  |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ID and name             | `codegraph`, CodeGraph                                                                                                                                                                 |
+| Origin and licence      | `third-party`, MIT                                                                                                                                                                     |
+| Upstream                | `https://github.com/colbymchenry/codegraph`                                                                                                                                            |
+| Profile and first patch | `1.6.x`, `1.6.2`                                                                                                                                                                       |
+| Channels                | npm `@colbymchenry/codegraph` and GitHub release                                                                                                                                       |
+| Setup                   | `["install", "--yes", "--location", "local", "--target", "claude,codex"]`                                                                                                              |
+| Uninstall               | `["uninstall", "--yes", "--location", "local", "--target", "claude,codex", "--keep-cli"]`                                                                                              |
+| Added config            | `telemetry off`, `codegraph.json` `/exclude` union with `<mainRoot>/memory/archived/**`, and a marked `.gitignore` block for `.codegraph/` only when Git rules don't already ignore it |
+| Probe                   | `--version`, with `CODEGRAPH_NO_DOWNLOAD=1`                                                                                                                                            |
 
 The release bundles Node.
 Its published npm wrapper uses the host Node to locate that bundle.

@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Result;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering.Models;
+using OpenForge.Cli.Core.Presentation.Tool.Shared.Help;
 using OpenForge.Cli.Core.Presentation.Tool.Shared.Writing;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Help;
@@ -17,6 +18,6 @@ internal static class ToolRemovePresentation
         Examples = ToolRemoveText.Examples(),
         Behavior = ToolRemoveText.Behavior(),
         Details = [],
-        RelatedCommands = [("open-forge tool inspect <id>", null), ("open-forge tool status", null)],
+        RelatedCommands = ToolHelpSections.Related,
     });
 }

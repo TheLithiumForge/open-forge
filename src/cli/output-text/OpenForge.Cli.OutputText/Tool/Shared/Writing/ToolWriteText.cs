@@ -16,7 +16,6 @@ internal static class ToolWriteText
     internal static string AccountQuestion(string? id)
         => $"Run {id}'s account-wide uninstall? It removes its binary and all agent entries. The declared native PATH changes also apply.";
     internal static string DeleteQuestion(string? id) => $"Delete the shown shared files for {id}? Other projects can use them.";
-    internal static string PathQuestion() => "Remove the recorded Open Forge PATH entries after the last tool?";
     internal static string Keep() => "Keep these account or shared effects unchanged";
     internal static string Apply() => "Apply this separately confirmed change";
     internal static string Manager(string id) => $"Choose the global package manager for {id}.";
@@ -39,6 +38,9 @@ internal static class ToolWriteText
     internal static string Replacement() => "This replaces an account-wide installation used by other projects.";
     internal static string KeptSetting(string id, string home, string? value)
         => $"Kept account setting {id} at {home}: {value}. Its manual change command is shown below.";
+    internal static string RemoveCommand(string id) => $"remove {id}";
+    internal static string NotDeclaredOrLocked() => "it is not declared or locked in this project";
+    internal static string ManualDeletion(string path) => $"Delete manually after checking no other project uses it: {path}";
     internal static string Restart() => "Restart terminals and agent apps after changing PATH. Restarted apps haven't been verified.";
     internal static string Row(string name, string? value) => $"{name}: {value ?? "unavailable"}";
     internal static string Tool(string id, string? version, string? channel) => $"{id}@{version ?? "unresolved"} ({channel ?? "unresolved channel"})";
@@ -59,7 +61,7 @@ internal static class ToolWriteText
         "open-forge-version-unsupported" => "The running Open Forge version is below the profile's required version or cannot be compared.",
         "native-plan-blocked" => "The native setup plan is blocked.",
         "config-conflict" => "A recorded configuration change conflicts with current data.",
-        "missing-consent" => "Review the plan in a terminal or pass --yes.",
+        "confirmation-required" => "Review the plan in a terminal or pass --yes.",
         "manager-required" => "Choose a compatible package manager.",
         "native-failed" => "The native command failed.",
         "verification-failed" => "The resulting tool state could not be verified.",

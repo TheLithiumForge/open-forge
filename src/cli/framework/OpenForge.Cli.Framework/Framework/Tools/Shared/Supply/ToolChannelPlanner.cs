@@ -120,7 +120,9 @@ internal sealed partial class ToolChannelPlanner(IToolProcessHost processes, ITo
             TargetKind = asset.BundledRuntime is null ? ToolLauncherTargetKind.NativeBinary : ToolLauncherTargetKind.ReleaseLauncher,
             Arguments = [],
         };
-        if (ToolSupplyPaths.PreflightFile(launcherPath) is { } problem) return Blocked(problem);
+        var launchers = WithGitBashLauncher(launcher);
+        foreach (var path in launchers.Select(value => value.LauncherPath))
+            if (ToolSupplyPaths.PreflightFile(path) is { } problem) return Blocked(problem);
         if (asset.BundledRuntime is null) invocation = new() { ExecutablePath = launcherPath, PrefixArguments = [] };
         return new(new()
         {
@@ -143,11 +145,16 @@ internal sealed partial class ToolChannelPlanner(IToolProcessHost processes, ITo
                 ToolPath = root,
                 Downloads = [new(asset, archive)],
                 Extractions = [new(asset, archive, root, ToolArchivePreparation.Original)],
-                Launchers = [launcher],
+                Launchers = launchers,
                 Commands = [Probe(request, invocation)],
             },
         }, [], null, [], false);
     }
+
+    // Windows gets the .cmd launcher plus an extensionless sh script beside it for Git Bash, which Claude Code on Windows uses.
+    private static IReadOnlyList<ToolLauncherSpec> WithGitBashLauncher(ToolLauncherSpec launcher)
+        => launcher.Kind != ToolLauncherKind.WindowsCmd ? [launcher]
+            : [launcher, launcher with { Kind = ToolLauncherKind.PosixSh, LauncherPath = System.IO.Path.ChangeExtension(launcher.LauncherPath, null) }];
 
     private static ToolLauncherKind LauncherKind(ToolTarget target, bool native)
     {

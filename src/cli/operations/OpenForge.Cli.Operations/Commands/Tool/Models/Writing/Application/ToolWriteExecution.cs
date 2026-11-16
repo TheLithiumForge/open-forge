@@ -13,6 +13,7 @@ internal sealed class ToolWriteExecution(ToolRecordsResult records)
     internal Dictionary<string, ToolSetupPlan> NativeRemovals { get; } = new(StringComparer.Ordinal);
     internal List<(string ToolId, ToolWriteCommandView Command)> ManualCommands { get; } = [];
     internal List<string> PathInstructions { get; } = [];
+    internal List<string> ManualDeletions { get; } = [];
     internal ToolWriteGrantView? Grants { get; set; }
     internal bool Stopped { get; set; }
 }

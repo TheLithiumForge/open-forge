@@ -12,12 +12,7 @@ For example, a missing declared tool gets an Install next step without a workspa
 
 ## Tool checks
 
-The round-2 Tool checks report missing declared tools, unsupported detected versions, exact lock differences, additive config drift and unavailable native machine facts.
-A missing tool offers `open-forge tool install`.
-When settings declare no tools, skip Tool checks before resolving the Tool home or reading machine state.
-Use the same bounded probes as Tool Status, including CodeGraph's no-download probe environment.
-These checks don't configure tools, create Tool state or acquire a Tool lease.
-The [Tool contracts](../tool/_tool.md) define the read operations.
+The [Behavior](behavior.md#tool-checks) defines the Tool checks.
 
 The local-reference domain also checks [comment links](../shared/source-references/interface.md#comment-links) in eligible workspace files. Missing paths and fragments keep their existing finding kinds. `reference.legacy-anchor` reports an older ID-style target with suggested file paths when available. Git file moves, heading changes, section content matches and unique slugs retain separate evidence for review.
 
@@ -658,6 +653,15 @@ models, not a Doctor enum or presentation dependency.
 
 All Framework lifecycle findings remain diagnosis, targeted, manual, or future
 lifecycle actions. General Repair does not mutate Framework files.
+
+### Tool Setup
+
+| Kind                           | Detectable condition                                                                                          | Resolution or next action                                                          |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `tool.declared-missing`        | A tool declared in settings isn't installed on this machine.                                                  | `targeted-operation`; run `open-forge tool install`.                               |
+| `tool.drift`                   | The detected version differs from the lock, a recorded addition changed, or a native machine fact is missing. | `targeted-operation`; reapply with `open-forge tool install <id>`.                 |
+| `tool.unsupported`             | The detected version is outside catalogue support. The installation is kept.                                  | `manual-decision`; change the installation natively or choose a supported version. |
+| `tool.observation-unavailable` | The Tool home, machine state or a bounded probe can't be read; Tool coverage is `incomplete`.                 | `informational`; check with `open-forge tool status` after restoring access.       |
 
 ### Extension Lifecycle
 

@@ -1,6 +1,11 @@
 using OpenForge.Cli.Core.Presentation.Shared.Help;
 using OpenForge.Cli.Core.Presentation.Shared.Help.Models;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
+using OpenForge.Cli.Core.Commands.Tool.Inspect;
+using OpenForge.Cli.Core.Commands.Tool.List;
+using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Request;
+using OpenForge.Cli.Core.Commands.Tool.Shared.Writing.Binding;
+using OpenForge.Cli.Core.Commands.Tool.Status;
 using OpenForge.Cli.OutputText.Tool.Shared.Help;
 
 namespace OpenForge.Cli.Core.Presentation.Tool.Shared.Help;
@@ -18,6 +23,17 @@ internal static class ToolHelpSections
         Examples = examples,
         Behavior = behavior,
         Details = [],
-        RelatedCommands = [("tool list", null), ("tool inspect <id>", null), ("tool status [id]", null), ("tool install", null), ("tool update", null), ("tool remove <id>", null)],
+        RelatedCommands = Related,
     });
+
+    // Every Tool page lists the six leaves with their help purposes, like the Extension and Library groups.
+    internal static IReadOnlyList<(string Command, string? Description)> Related =>
+    [
+        (ToolHelpText.RelatedLeaf(ToolListDefinitions.CommandName, help: false), ToolListDefinitions.Purpose),
+        (ToolHelpText.RelatedLeaf(ToolInspectDefinitions.CommandName, help: true), ToolInspectDefinitions.Purpose),
+        (ToolHelpText.RelatedLeaf(ToolStatusDefinitions.CommandName, help: false), ToolStatusDefinitions.Purpose),
+        (ToolHelpText.RelatedLeaf(ToolWriteBinding.Name(ToolWriteKind.Install), help: true), ToolWriteBinding.Description(ToolWriteKind.Install)),
+        (ToolHelpText.RelatedLeaf(ToolWriteBinding.Name(ToolWriteKind.Update), help: true), ToolWriteBinding.Description(ToolWriteKind.Update)),
+        (ToolHelpText.RelatedLeaf(ToolWriteBinding.Name(ToolWriteKind.Remove), help: true), ToolWriteBinding.Description(ToolWriteKind.Remove)),
+    ];
 }

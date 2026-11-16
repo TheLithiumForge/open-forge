@@ -162,7 +162,7 @@ internal sealed partial class ToolChannelPlanner
             commands.Add(ToolPackageManagerDetector.Request(npmInvocation, ["install", "--global", "--prefix", toolRoot, $"{channel.Package}@{version}"], request.WorkspacePath)
                 with
             { Environment = new Dictionary<string, string?> { ["PATH"] = $"{nodeDirectory}{System.IO.Path.PathSeparator}{basePath}" }, Timeout = TimeSpan.FromMinutes(5), MaximumOutputBytes = 1024 * 1024 });
-            launchers.Add(new()
+            launchers.AddRange(WithGitBashLauncher(new()
             {
                 ToolId = request.Entry.Identity.Id,
                 Kind = LauncherKind(request.Target, native: false),
@@ -171,8 +171,9 @@ internal sealed partial class ToolChannelPlanner
                 RuntimePath = runtime,
                 EntryPath = entry,
                 Arguments = []
-            });
-            if (ToolSupplyPaths.PreflightFile(commandPath) is { } conflict) return Blocked(conflict, network);
+            }));
+            foreach (var path in launchers.Select(value => value.LauncherPath))
+                if (ToolSupplyPaths.PreflightFile(path) is { } conflict) return Blocked(conflict, network);
         }
         var invocation = new ToolCommandTarget { ExecutablePath = runtime, PrefixArguments = [entry] };
         commands.Add(Probe(request, invocation));

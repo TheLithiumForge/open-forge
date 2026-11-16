@@ -38,7 +38,5 @@ internal sealed class CliToolIsolation : IDisposable, IToolProcessHost, IToolDow
         });
     public Task<ToolPathSetupResult> AddAsync(ToolPathSetupRequest request, CancellationToken cancellationToken)
         => throw new InvalidOperationException("The isolated capture didn't authorize a PATH effect.");
-    public Task<ToolPathRemoveResult> RemoveAsync(ToolPathRemoveRequest request, CancellationToken cancellationToken)
-        => throw new InvalidOperationException("The isolated capture didn't authorize a PATH effect.");
     public void Dispose() => _owned.Dispose();
 }

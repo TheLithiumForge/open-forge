@@ -2,6 +2,7 @@ namespace OpenForge.Cli.OutputText.Tool.Shared.Help;
 
 internal static class ToolHelpText
 {
+    internal static string RelatedLeaf(string leaf, bool help) => help ? $"tool {leaf} --help" : $"tool {leaf}";
     internal static string GroupSyntax() => "open-forge tool <command> [options]";
     internal static string GroupExamples() => "open-forge tool list\nopen-forge tool inspect codegraph\nopen-forge tool install codegraph@1.6 --dry-run";
     internal static string GroupBehavior() => """

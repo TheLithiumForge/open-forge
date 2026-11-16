@@ -100,7 +100,8 @@ The committed lock stores what Open Forge added.
 Machine state stores native account-setting previous values, paths and PATH history.
 There is no Tool folder, lease, journal or recovery dependency under `.open-forge-state/`.
 Tool commands don't run concurrently by design and need no extra cross-process lock.
-Keep existing destination permissions and expected-state checks.
+Keep existing destination permissions and expected-state checks for Open Forge's own additions.
+Native installer writes, such as `.mcp.json`, `.claude/settings.json`, `AGENTS.md` and `.codex/config.toml`, are covered by plan consent only, not by destination permission.
 Other commands' workspace-lock and recovery contracts stay unchanged.
 
 ## Verification

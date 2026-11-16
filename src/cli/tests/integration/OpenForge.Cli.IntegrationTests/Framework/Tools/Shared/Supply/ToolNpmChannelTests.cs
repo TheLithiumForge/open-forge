@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Tools.Models.Channels;
+using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
 using OpenForge.Cli.Core.Framework.Tools.Shared.PackageManagers;
@@ -159,6 +160,19 @@ public sealed class ToolNpmChannelTests
         Assert.Empty(fixture.Downloads.MetadataRequests);
         Assert.Empty(fixture.Processes.Requests);
         Assert.Empty(Directory.EnumerateFileSystemEntries(fixture.Home));
+    }
+
+    [Fact(DisplayName = "A Windows private npm plan writes the .cmd launcher and an extensionless Git Bash script beside it")]
+    public async Task PlansWindowsLauncherPair()
+    {
+        using var fixture = new ToolChannelFixture();
+        Assert.Equal(ToolOperatingSystem.Windows, fixture.Target.OperatingSystem);
+        var result = await fixture.Service.PlanAsync(fixture.Request(fixture.Entry(fixture.Npm())) with
+        { AvailableNodeRuntimes = [Node(fixture, ToolChannelFixture.RuntimeVersion)] }, Token);
+        var launchers = Assert.IsType<ToolChannelResolution>(result.Resolution).Execution.Launchers;
+        Assert.Equal([ToolLauncherKind.WindowsCmd, ToolLauncherKind.PosixSh], launchers.Select(launcher => launcher.Kind));
+        Assert.Equal(System.IO.Path.ChangeExtension(launchers[0].LauncherPath, null), launchers[1].LauncherPath);
+        Assert.All(launchers, launcher => Assert.Equal(launchers[0].EntryPath, launcher.EntryPath));
     }
 
     [Fact(DisplayName = "Updating a managed private package keeps private Node even when a global npm client is available")]

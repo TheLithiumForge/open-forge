@@ -2,7 +2,7 @@ namespace OpenForge.Cli.OutputText.Tool.Update;
 
 internal static class ToolUpdateText
 {
-    internal static string Syntax() => "open-forge tool update [<id[@version]>] [--channel <channel>] [--yes] [--allow-path <path>...] [--dry-run]";
+    internal static string Syntax() => "open-forge tool update [<id[@version]>] [options]";
     internal static string Examples() => "open-forge tool update codegraph --dry-run\nopen-forge tool update codegraph --yes\nopen-forge tool update --dry-run";
     internal static string Behavior() => """
         Without a name, updates declared tools to newest support. A named tool must be declared or locked.

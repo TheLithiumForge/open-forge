@@ -96,7 +96,7 @@ public sealed class ToolWriteGrantTests
         var result = await fixture.Create().ExecuteAsync(fixture.Request(yes: false) with { AllowPaths = [ToolWriteOperationFixture.FirstChange] }, CancellationToken.None);
 
         Assert.Equal(CliSemanticStatus.Invalid, result.Status);
-        Assert.Contains(result.Findings, finding => finding.Code == ToolWriteFindingCode.MissingConsent);
+        Assert.Contains(result.Findings, finding => finding.Code == ToolWriteFindingCode.ConfirmationRequired);
         Assert.NotEmpty(fixture.SavedGrants);
         Assert.Single(result.Data.Plan.Backups);
         Assert.Empty(fixture.CompletedBackups);

@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
+using OpenForge.Cli.Core.Framework.Tools.Shared.Paths;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 
@@ -18,7 +19,7 @@ internal sealed class ToolWriteOptionalApplication(
 {
     internal async ValueTask DescribeAsync(ToolWritePlan plan, ToolWriteExecution state, CancellationToken cancellationToken)
     {
-        if (plan.Input.Facts.Path.Readiness == ToolPathReadiness.Ready) return;
+        if (plan.Input.Request.Kind == ToolWriteKind.Remove || plan.Input.Facts.Path.Readiness == ToolPathReadiness.Ready || !UsesBin(plan)) return;
         var manual = await pathHost.AddAsync(new()
         {
             Facts = plan.Input.Facts.Path,
@@ -26,9 +27,43 @@ internal sealed class ToolWriteOptionalApplication(
             ChosenShellFiles = [],
             Previous = state.Records.Path,
         }, cancellationToken).ConfigureAwait(false);
-        state.PathInstructions.AddRange(manual.ManualLines);
+        AddInstructions(state, manual.ManualLines);
         state.Backups.AddRange(manual.PendingBackups);
         ToolWriteCancellation.Stop(state, cancellationToken);
+    }
+
+    // Only plans that place launchers or native executables in the Open Forge bin need it on PATH.
+    private static bool UsesBin(ToolWritePlan plan)
+        => plan.Tools.Any(tool => tool.Channel?.Execution is { } execution && (execution.Launchers.Count > 0
+            || PhysicalIdentityTracker.PathComparer.Equals(execution.NativeInstallDirectory, execution.BinPath)
+            || PhysicalContainment.Contains(execution.BinPath, execution.CommandPath)));
+
+    // Only launchers in Open Forge's bin count. Package-manager installs keep their own global bin.
+    private static bool HasBinLauncher(ToolWritePlan plan, ToolMachineState machine)
+        => PhysicalContainment.Contains(plan.Input.Facts.Path.BinPath, machine.CommandPath)
+            || machine.Launchers.Any(launcher => PhysicalContainment.Contains(plan.Input.Facts.Path.BinPath, launcher.LauncherPath));
+
+    private static void AddInstructions(ToolWriteExecution state, IEnumerable<string> lines)
+    {
+        foreach (var line in lines)
+            if (!state.PathInstructions.Contains(line, StringComparer.Ordinal)) state.PathInstructions.Add(line);
+    }
+
+    // PATH history names the entries Open Forge added. Without history, the self-identifying marks name the shell blocks.
+    private static IEnumerable<string> PathRemovalLines(ToolWritePlan plan, ToolPathState? path)
+    {
+        var bin = path?.BinPath ?? plan.Input.Facts.Path.BinPath;
+        if (path is { Changes.Count: > 0 })
+        {
+            foreach (var change in path.Changes)
+                yield return change.Kind == ToolPathChangeKind.ShellBlock
+                    ? ToolPathPolicy.RemoveBlockLine(change.Target, change.StartMarker ?? ToolPathPolicy.StartMarker, change.EndMarker ?? ToolPathPolicy.EndMarker)
+                    : ToolPathPolicy.RemoveUserEntryLine(bin);
+            yield break;
+        }
+        var marked = plan.Input.Facts.Path.DetectedShellFiles.Where(file => ToolPathPolicy.HasMarkedBlock(file.AbsolutePath)).ToArray();
+        foreach (var file in marked) yield return ToolPathPolicy.RemoveBlockLine(file.AbsolutePath, ToolPathPolicy.StartMarker, ToolPathPolicy.EndMarker);
+        if (marked.Length == 0 && plan.Input.Facts.Path.Readiness == ToolPathReadiness.Ready) yield return ToolPathPolicy.RemoveEntryLine(bin);
     }
 
     internal async ValueTask ApplyAsync(
@@ -38,15 +73,21 @@ internal sealed class ToolWriteOptionalApplication(
         var request = plan.Input.Request;
         if (request.Kind == ToolWriteKind.Remove)
         {
+            var removing = plan.Tools.Select(tool => tool.Entry.Identity.Id).ToHashSet(StringComparer.Ordinal);
+            var removedBinTool = state.Records.Machine.Values.Any(value => removing.Contains(value.ToolId) && HasBinLauncher(plan, value));
             foreach (var tool in plan.Tools.Where(tool => !tool.NoOp))
             {
                 if (!state.Records.Machine.TryGetValue(tool.Entry.Identity.Id, out var machine) || !machine.PlacedByOpenForge) continue;
                 var paths = new[] { machine.ToolPath, machine.CommandPath }.OfType<string>()
                     .Concat(machine.Launchers.Select(launcher => launcher.LauncherPath)).Distinct(StringComparer.Ordinal).ToArray();
                 var approvedPaths = await ConfirmAsync(ToolWriteConsentKind.SharedFileDeletion, tool.Entry.Identity.Id, paths).ConfigureAwait(false) ? paths : [];
+                if (approvedPaths.Length == 0) state.ManualDeletions.AddRange(paths);
                 var approvedRuntimes = new List<ToolNodeRuntimeRecord>();
                 foreach (var runtime in state.Records.Runtimes.Values.Where(runtime => runtime.RuntimePath == machine.RuntimePath))
+                {
                     if (await ConfirmAsync(ToolWriteConsentKind.SharedFileDeletion, runtime.Version, [runtime.RuntimePath]).ConfigureAwait(false)) approvedRuntimes.Add(runtime);
+                    else state.ManualDeletions.Add(runtime.RuntimePath);
+                }
                 if (approvedPaths.Length == 0 && approvedRuntimes.Count == 0) continue;
                 var removed = await channels.RemoveAsync(new()
                 {
@@ -77,32 +118,16 @@ internal sealed class ToolWriteOptionalApplication(
                     return;
                 }
             }
-            if (state.Records.Machine.Count == 0 && state.Records.Path is { } path
-                && await ConfirmAsync(ToolWriteConsentKind.PathChange, null).ConfigureAwait(false))
-            {
-                var removed = await pathHost.RemoveAsync(new(path), cancellationToken).ConfigureAwait(false);
-                state.Backups.AddRange(removed.PendingBackups);
-                state.Outcomes.Add(new(ToolId: plan.Tools[^1].Entry.Identity.Id, Stage: ToolWriteStages.Path,
-                    State: removed.Failure is null ? ToolWriteStages.Completed : ToolWriteStages.Failed,
-                    Completed: removed.RemovedTargets, Unfinished: removed.KeptTargets));
-                if (ToolWriteCancellation.Stop(state, cancellationToken)) return;
-                var remaining = path with
-                {
-                    Changes = [.. path.Changes.Where(change => !removed.RemovedTargets.Contains(change.Target, StringComparer.Ordinal))],
-                };
-                if (!await publisher.PublishAuxiliaryAsync(state, plan, new() { Path = remaining }, cancellationToken).ConfigureAwait(false)) return;
-                if (removed.Failure is not null || removed.KeptTargets.Count != 0)
-                {
-                    state.Findings.Add(new(ToolWriteFindingCode.VerificationFailed, CliSemanticStatus.Incomplete, Cause: removed.Failure));
-                    state.Stopped = true;
-                    return;
-                }
-            }
+            // Remove never edits PATH. After the last tool with a launcher in bin, print the exact entry or block to remove.
+            if (removedBinTool && !state.Records.Machine.Values.Any(value => !removing.Contains(value.ToolId) && HasBinLauncher(plan, value)))
+                AddInstructions(state, PathRemovalLines(plan, state.Records.Path));
             return;
         }
 
+        if (!UsesBin(plan)) return;
         var facts = await pathHost.ObserveAsync(plan.Input.Facts.HomePath, cancellationToken).ConfigureAwait(false);
         if (ToolWriteCancellation.Stop(state, cancellationToken)) return;
+        if (facts.Readiness == ToolPathReadiness.Ready) return;
         ToolWritePathAnswer answer = new(false, []);
         if (facts.Readiness != ToolPathReadiness.Ready && request.CanPrompt && interaction.CanPrompt && !request.Yes && request.Format == CliFormat.Text)
         {
@@ -120,7 +145,7 @@ internal sealed class ToolWriteOptionalApplication(
             ChosenShellFiles = [.. answer.ShellFiles.Select(file => new ToolShellFile(file.Path, file.Fish ? ToolShellKind.Fish : ToolShellKind.Posix))],
             Previous = state.Records.Path,
         }, cancellationToken).ConfigureAwait(false);
-        state.PathInstructions.AddRange(result.ManualLines);
+        AddInstructions(state, result.ManualLines);
         state.Backups.AddRange(result.PendingBackups);
         if (answer.AddForMe)
             state.Outcomes.Add(new(plan.Tools[^1].Entry.Identity.Id, ToolWriteStages.Path,

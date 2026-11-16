@@ -9,7 +9,7 @@ open-forge:
 Tool setup lanes are the file assignments for implementing native tool setup and additive configuration.
 For example, lane D builds against the frozen A, B and C interfaces while their implementations run in separate worktrees.
 
-Status: Phase 3 integration is in progress. Phase 1 is accepted and Phase 2 started the isolated Worker Watch lanes.
+Status: The lanes are integrated on `feature/tool-setup` and the work is in PR review with hosted CI as the gate.
 
 ## Source and phases
 

@@ -81,11 +81,6 @@ internal sealed partial class ToolCompositionFixture : IToolProcessHost, IToolDo
         PathEffects++; Events.Add(ToolHostEvent.PathAdd);
         return Task.FromResult(new ToolPathSetupResult(new() { SchemaVersion = ToolRecordDefinitions.LocalSchemaVersion, BinPath = request.Facts.BinPath, Changes = [] }, [], true, null) { PendingBackups = [] });
     }
-    public Task<ToolPathRemoveResult> RemoveAsync(ToolPathRemoveRequest request, CancellationToken cancellationToken)
-    {
-        CheckHosts(); PathEffects++; Events.Add(ToolHostEvent.PathRemove);
-        return Task.FromResult(new ToolPathRemoveResult([.. request.Expected.Changes.Select(change => change.Target)], [], true, null) { PendingBackups = [] });
-    }
     private void CheckHosts()
     {
         if (ThrowHosts) throw new InvalidOperationException("An inert invocation called a Tool host.");

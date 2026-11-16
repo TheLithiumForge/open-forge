@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Tool.Status.Models;
 using OpenForge.Cli.Core.Commands.Tool.Shared.Observation;
+using OpenForge.Cli.Core.Framework.Tools.Shared.Observation;
 using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Tool.Status;
@@ -11,7 +12,7 @@ internal sealed class ToolStatusOperation(ToolReadObserver observer)
         try
         {
             var records = await observer.ReadRecordsAsync(request.Workspace, token).ConfigureAwait(false);
-            IReadOnlyList<string> ids = request.Id is { } id ? [id] : (records.Portable?.Settings.Keys ?? []).Order(StringComparer.Ordinal).ToArray();
+            IReadOnlyList<string> ids = request.Id is { } id ? [id] : ToolSelection.DeclaredOrLocked(records.Portable);
             var data = await observer.ReadAsync(request.Workspace, records, ids, token).ConfigureAwait(false);
             var findings = ToolReadObserver.Findings(records, data, ToolStatusDefinitions.UnavailableCode);
             var first = findings.FirstOrDefault(finding => finding.NextCommand is not null);

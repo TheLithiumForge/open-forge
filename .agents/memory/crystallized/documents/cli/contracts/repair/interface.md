@@ -9,9 +9,7 @@ open-forge:
 
 ## Tool recovery
 
-Tool failures report sibling backups and guarded manual restoration instructions.
-Repair gains no Tool action, lease or recovery record.
-The round-2 [Tool contracts](../tool/_tool.md) define native reapply and removal.
+The [Behavior](behavior.md#tool-recovery) defines the Tool recovery.
 
 Authored relinks also admit [comment links](../shared/source-references/interface.md#comment-links) in code and Markdown. An exact source location can name either file kind. Repair changes only the target word and writes an encoded repository-root path. Existing dry-run, selection, protection and recovery rules apply. Git and weak suggestions stay distinct evidence in the result and choice labels. Unique-slug choices are labelled weak. Weak candidates and legacy IDs require a chosen target.
 

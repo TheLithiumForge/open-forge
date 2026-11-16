@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Framework.Tools.Models.Records;
 using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
 using OpenForge.Cli.Core.Framework.Tools.Models.Services;
 using OpenForge.Cli.Core.Framework.Tools.Shared.NativeSettings;
+using OpenForge.Cli.Core.Framework.Tools.Shared.Versions;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Commands.Shared;
@@ -60,6 +61,7 @@ internal static class ToolWriteProjection
                     BinPath = plan.Input.Facts.Path.BinPath,
                     PathReadiness = Readiness(plan.Input.Facts.Path.Readiness),
                     PathInstructions = [.. state.PathInstructions],
+                    ManualDeletions = state.ManualDeletions.Count == 0 ? null : [.. state.ManualDeletions],
                     Backups = [.. state.Backups.GroupBy(backup => backup.Backup.TargetPath,
                         Core.Framework.Filesystem.PhysicalPaths.PhysicalIdentityTracker.PathComparer)
                         .Select(group => new ToolWriteBackupView(group.Key, group.First().Backup.BackupPath,
@@ -88,14 +90,7 @@ internal static class ToolWriteProjection
         if (missing.Length == 0) return null;
         var request = plan.Input.Request;
         List<string> arguments = [ToolDefinitions.Group.Name, ToolWriteBinding.Name(request.Kind)];
-        if (request.Spec is { } spec)
-        {
-            var operand = spec.Id;
-            if (spec.Version.Kind == ToolVersionSelectionKind.Exact) operand = $"{spec.Id}@{spec.Version.ExactVersion}";
-            else if (spec.Version.Kind == ToolVersionSelectionKind.MinorRange && spec.Version.Range is { } range)
-                operand = $"{spec.Id}@{range.Major}.{range.Minor}";
-            arguments.Add(operand);
-        }
+        if (request.Spec is { } spec) arguments.Add(SpecText(spec));
         CliRetryCommand.Add(arguments, ToolWriteBinding.ChannelOption, request.Channel);
         if (request.Yes) arguments.Add(ToolWriteBinding.YesOption);
         if (request.Preview) arguments.Add(ToolWriteBinding.DryRunOption);
@@ -104,6 +99,14 @@ internal static class ToolWriteProjection
         CliRetryCommand.AddPresentation(arguments, new(request.Format, Detail: null, Filter: null));
         return CliRetryCommand.BuildInWorkspace(arguments, request.Workspace.LexicalRoot,
             request.Workspace.SelectedBy == CliWorkspaceSelectionMethod.ExplicitWorkspace);
+    }
+
+    // The spec as the user can type it again: id, id@major.minor or id@exact.
+    private static string SpecText(ToolSpec spec)
+    {
+        if (spec.Version.Kind == ToolVersionSelectionKind.Exact) return $"{spec.Id}@{spec.Version.ExactVersion}";
+        if (spec.Version.Kind == ToolVersionSelectionKind.MinorRange && spec.Version.Range is { } range) return $"{spec.Id}@{range.Major}.{range.Minor}";
+        return spec.Id;
     }
 
     internal static ToolWriteCommandView Command(string purpose, ToolProcessRequest command)
@@ -134,18 +137,22 @@ internal static class ToolWriteProjection
         var kept = plan.Input.Request.Kind == ToolWriteKind.Remove
             ? (state.Records.WorkspaceMachine?.NativeSettings ?? []).Where(setting => setting.ToolId == id).ToArray()
             : [];
+        // The change-back command uses the detected tool, then the recorded one, then the bare command name.
+        var settingInvocation = tool.Detection.Invocation ?? recorded?.Invocation
+            ?? new() { ExecutablePath = tool.Entry.Detection.Command, PrefixArguments = [] };
         foreach (var setting in kept)
-        {
-            if (tool.Detection.Invocation is { } invocation)
-                commands.Add(new("manual-native-setting", invocation.ExecutablePath,
-                    [.. invocation.PrefixArguments, .. setting.ManualRestoreArguments], plan.Input.Request.Workspace.LexicalRoot,
-                    new Dictionary<string, string?>(), 0, 0));
-        }
+            commands.Add(new("manual-native-setting", settingInvocation.ExecutablePath,
+                [.. settingInvocation.PrefixArguments, .. setting.ManualRestoreArguments], plan.Input.Request.Workspace.LexicalRoot,
+                new Dictionary<string, string?>(), 0, 0));
         if (plan.Input.Request.Kind == ToolWriteKind.Remove) AddPackageUninstall(tool, plan, commands);
         return new()
         {
             Id = id,
+            RequestedSpec = plan.Input.Request.Kind != ToolWriteKind.Remove && plan.Input.Request.Spec is { } requested && requested.Id == id
+                ? SpecText(requested) : null,
             OldVersion = tool.Detection.Version,
+            OldProfile = plan.Input.Request.Kind == ToolWriteKind.Update && tool.Detection.Version is { } previous
+                ? ToolVersionService.MatchProfile(tool.Entry, previous)?.Id : null,
             Version = tool.Channel?.Version ?? plan.Input.Records.Portable?.Lock.GetValueOrDefault(id)?.Version,
             Channel = tool.Channel?.ChannelId ?? tool.Detection.ChannelId,
             Manager = tool.Channel?.PackageManager?.Client.ToString(),

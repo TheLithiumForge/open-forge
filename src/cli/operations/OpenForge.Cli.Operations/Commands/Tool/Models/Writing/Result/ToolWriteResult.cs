@@ -10,7 +10,7 @@ namespace OpenForge.Cli.Core.Commands.Tool.Models.Writing.Result;
 internal enum ToolWriteFindingCode
 {
     InvalidInput, RecordsUnavailable, UnknownTool, ChannelInvalid, UpdateRequiresRecord,
-    ChannelBlocked, ProfileUnavailable, NativePlanBlocked, ConfigConflict, MissingConsent,
+    ChannelBlocked, ProfileUnavailable, NativePlanBlocked, ConfigConflict, ConfirmationRequired,
     ManagerRequired, NativeFailed, VerificationFailed, ConfigFailed, RecordFailed,
     BackupFailed, ExpectedStateChanged, PermissionRequired, Interrupted, UnexpectedFailure, OpenForgeVersionUnsupported,
 }
@@ -53,13 +53,19 @@ internal sealed record ToolWritePlanView
     public required string BinPath { get; init; }
     public required string PathReadiness { get; init; }
     public required IReadOnlyList<string> PathInstructions { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<string>? ManualDeletions { get; init; }
     public IReadOnlyList<ToolWriteBackupView> Backups { get; init; } = [];
 }
 
 internal sealed record ToolWriteToolView
 {
     public required string Id { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? RequestedSpec { get; init; }
     public string? OldVersion { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? OldProfile { get; init; }
     public string? Version { get; init; }
     public string? Channel { get; init; }
     public string? Manager { get; init; }

@@ -238,6 +238,5 @@ public sealed class ToolReadCommandTests
         public Task<ToolPathFacts> ObserveAsync(string homePath, CancellationToken cancellationToken) => Task.FromResult(new ToolPathFacts
         { BinPath = fixture.Home.Combine(ToolRecordDefinitions.HomeDirectoryName, ToolRecordDefinitions.BinDirectoryName), Readiness = ToolPathReadiness.Missing, DetectedShellFiles = [] });
         public Task<ToolPathSetupResult> AddAsync(ToolPathSetupRequest request, CancellationToken cancellationToken) => throw new NotSupportedException();
-        public Task<ToolPathRemoveResult> RemoveAsync(ToolPathRemoveRequest request, CancellationToken cancellationToken) => throw new NotSupportedException();
     }
 }

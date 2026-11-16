@@ -594,7 +594,6 @@ E receives only the checked source inputs in `r_81bfd04a6acf` and reruns real pr
 The live native account command and its dry run stay forbidden in the real fixture.
 Final tested-version metadata still waits for that successful recheck.
 
-
 ## Finishing direction
 
 The maintainer redirects Phase 3 on 2026-11-14.
@@ -606,7 +605,6 @@ The coordinator commits the pending integration, merges every lane with `--no-ff
 The fresh adherence review and simplification work don't start before this push checkpoint.
 Phase 4 needs approval. Its first deliverable is a proposal with file paths, expected line savings and risks for each change.
 
-
 ## Integrated CI checkpoint
 
 The coordinator combines all finished lanes on `feature/tool-setup` on 2026-11-14.
@@ -617,14 +615,14 @@ No test suite runs locally after the redirect. The coordinator runs only the aut
 
 The local lane commits and Worker Watch runs are:
 
-| Lane | Commit | Commit run |
-| ---- | ------ | ---------- |
-| A | `bb77c511bba6e894cdc3ae6ee5e0ffe982110cda` | `r_a27309e8c97d` |
-| B | `22b8f83a54a94a9c24aa7e03807b39b17d1ce0ee` | `r_e061a86431f2` |
-| C | `b225c371b0de9a60b977bf49b01c7a1d98cdf2d5` | `r_b7d7591b6d03` |
-| D | `1c904c7ffbd8eb024a06c8e7abc0f52e118e55f1` | `r_900c27b73893` |
-| E | `3559870e7bca266bda2e57ff0f9aff386ac3166d` | `r_f0eb4d16144b` |
-| F | `049e6c0dff5293273fced51f459477a2255cee67` | `r_3894e90e584c` |
+| Lane | Commit                                     | Commit run       |
+| ---- | ------------------------------------------ | ---------------- |
+| A    | `bb77c511bba6e894cdc3ae6ee5e0ffe982110cda` | `r_a27309e8c97d` |
+| B    | `22b8f83a54a94a9c24aa7e03807b39b17d1ce0ee` | `r_e061a86431f2` |
+| C    | `b225c371b0de9a60b977bf49b01c7a1d98cdf2d5` | `r_b7d7591b6d03` |
+| D    | `1c904c7ffbd8eb024a06c8e7abc0f52e118e55f1` | `r_900c27b73893` |
+| E    | `3559870e7bca266bda2e57ff0f9aff386ac3166d` | `r_f0eb4d16144b` |
+| F    | `049e6c0dff5293273fced51f459477a2255cee67` | `r_3894e90e584c` |
 
 The coordinator commits its pending 50 files in `97ae832e24819a4b16279c8369d01fafcdf72f17`.
 That merge keeps F's native reader, E's reader review, the approved contract updates and the two CI whitespace fixes.
@@ -657,20 +655,20 @@ For the table below, I means `OpenForge.Cli.IntegrationTests` and U means `OpenF
 Each assembly is `artifacts/bin/<assembly>/release/<assembly>.dll`.
 Every command is `dotnet <assembly> <selection> --minimum-expected-tests <cases> --fail-warns on --fail-skips on --no-ansi --progress off`.
 
-| Assembly | Selection | Cases |
-| -------- | --------- | ----- |
-| I | `--filter-class OpenForge.Cli.IntegrationTests.Shell.Presentation.Shared.Help.CommandHelpIntegrationTests` | 43 |
-| I | `--filter-method OpenForge.Cli.IntegrationTests.Framework.Distribution.WorkspaceLayoutPayloadRenderingIntegrationTests.CustomGuidanceMatchesReviewedTemplates` | 1 |
-| I | `--filter-class OpenForge.Cli.IntegrationTests.Commands.Install.InstallBeforeOutputSnapshotTests` | 10 |
-| I | `--filter-class OpenForge.Cli.IntegrationTests.Commands.Install.InstallChangeOutputSnapshotTests` | 3 |
-| I | `--filter-method OpenForge.Cli.IntegrationTests.Commands.Install.InstallOperationIntegrationTests.SafeAbsentAutomaticApplyIsExactAndIdempotent` | 1 |
-| I | `--filter-class OpenForge.Cli.IntegrationTests.Commands.Install.InstallSetupRecapIntegrationTests --filter-not-method OpenForge.Cli.IntegrationTests.Commands.Install.InstallSetupRecapIntegrationTests.ResolvedEssentialsWizardRetryPreservesSelection` | 4 |
-| I | `--filter-method OpenForge.Cli.IntegrationTests.Commands.Install.InstallOutsideRouteSetupIntegrationTests.RegistersAfterInstall` | 1 |
-| I | `--filter-method OpenForge.Cli.IntegrationTests.Commands.Install.InstallOutsideRouteSetupIntegrationTests.FailedRegistration` | 1 |
-| I | `--filter-class OpenForge.Cli.IntegrationTests.Commands.Status.StatusBeforeOutputSnapshotTests` | 5 |
-| U | `--filter-class OpenForge.Cli.Core.UnitTests.Commands.Tool.Models.Read.ToolReadPresentationTests` | 2 |
-| U | `--filter-class OpenForge.Cli.Core.UnitTests.Presentation.Tool.Shared.Writing.ToolWritePresentationTests` | 6 |
-| I | `--filter-method OpenForge.Cli.IntegrationTests.Commands.Tool.ToolCompositionInteractionIntegrationTests.AccountChoice` | 2 |
+| Assembly | Selection                                                                                                                                                                                                                                                | Cases |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| I        | `--filter-class OpenForge.Cli.IntegrationTests.Shell.Presentation.Shared.Help.CommandHelpIntegrationTests`                                                                                                                                               | 43    |
+| I        | `--filter-method OpenForge.Cli.IntegrationTests.Framework.Distribution.WorkspaceLayoutPayloadRenderingIntegrationTests.CustomGuidanceMatchesReviewedTemplates`                                                                                           | 1     |
+| I        | `--filter-class OpenForge.Cli.IntegrationTests.Commands.Install.InstallBeforeOutputSnapshotTests`                                                                                                                                                        | 10    |
+| I        | `--filter-class OpenForge.Cli.IntegrationTests.Commands.Install.InstallChangeOutputSnapshotTests`                                                                                                                                                        | 3     |
+| I        | `--filter-method OpenForge.Cli.IntegrationTests.Commands.Install.InstallOperationIntegrationTests.SafeAbsentAutomaticApplyIsExactAndIdempotent`                                                                                                          | 1     |
+| I        | `--filter-class OpenForge.Cli.IntegrationTests.Commands.Install.InstallSetupRecapIntegrationTests --filter-not-method OpenForge.Cli.IntegrationTests.Commands.Install.InstallSetupRecapIntegrationTests.ResolvedEssentialsWizardRetryPreservesSelection` | 4     |
+| I        | `--filter-method OpenForge.Cli.IntegrationTests.Commands.Install.InstallOutsideRouteSetupIntegrationTests.RegistersAfterInstall`                                                                                                                         | 1     |
+| I        | `--filter-method OpenForge.Cli.IntegrationTests.Commands.Install.InstallOutsideRouteSetupIntegrationTests.FailedRegistration`                                                                                                                            | 1     |
+| I        | `--filter-class OpenForge.Cli.IntegrationTests.Commands.Status.StatusBeforeOutputSnapshotTests`                                                                                                                                                          | 5     |
+| U        | `--filter-class OpenForge.Cli.Core.UnitTests.Commands.Tool.Models.Read.ToolReadPresentationTests`                                                                                                                                                        | 2     |
+| U        | `--filter-class OpenForge.Cli.Core.UnitTests.Presentation.Tool.Shared.Writing.ToolWritePresentationTests`                                                                                                                                                | 6     |
+| I        | `--filter-method OpenForge.Cli.IntegrationTests.Commands.Tool.ToolCompositionInteractionIntegrationTests.AccountChoice`                                                                                                                                  | 2     |
 
 Each command also writes a CTRF result with `--report-xunit-ctrf --report-xunit-ctrf-filename results.json --results-directory artifacts/tool-setup/finish/snapshots/<selection-name>`.
 The selection names and full arguments are in `artifacts/tool-setup/finish/snapshot-receipts.json`.
@@ -709,7 +707,6 @@ The changed source, documents and generated baselines pass UTF-8, LF and BOM che
 Full managed suites, all platform builds and Native AOT execution await hosted CI.
 The fresh adherence review hasn't started. Phase 4 simplification hasn't started and needs approval.
 After committing this checkpoint, the coordinator requests the overseer's push and stops for CI results.
-
 
 ## Adherence corrections
 
@@ -758,3 +755,12 @@ Lock v2 and settings v6 broke two version literals.
 The account-choice transcript sat outside the report-snapshot conventions, so it moved to a `.content` capture under its owning class. Owned paths now normalize one shell-quoting form.
 Record-deletion fixtures seeded records the reader never observed as absent. They now add those absences.
 `OPENFORGE_TOOL_HOME` (D2) lets the published Status journey run on every system.
+
+### Spec-adherence review and G1-G8
+
+The PR #32 spec-adherence review fixes B1, S1, S3-S8, S10-S14 and N1, N2, N4-N7, N9 landed on 2026-11-16 with the maintainer's G1-G8 decisions.
+Each decision has a row in the [Tool setup design](../../../crystallized/documents/cli/technical-designs/tool-setup.md) record and matching contract text.
+G8 replaces the R2-16 PATH removal offer and the last-tool offer above. Remove never edits PATH. After the last tool with a launcher in bin, it prints the Windows user PATH entry or the marked shell block to remove, also with `--yes` and without a terminal.
+Adding bin to PATH stays a live choice through the `HKCU\Environment` adapter (G7) or the chosen marked block.
+A draft issue tracks a later PATH cleanup offer. Nothing for it is built.
+Only the help and Status snapshot producers ran locally. The CLI Skill entries in the EndToEnd default layout come from a fresh dev-CLI install.

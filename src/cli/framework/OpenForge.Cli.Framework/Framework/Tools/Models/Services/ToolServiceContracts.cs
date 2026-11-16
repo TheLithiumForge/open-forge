@@ -82,5 +82,4 @@ internal interface IToolPathHost
 {
     Task<ToolPathFacts> ObserveAsync(string homePath, CancellationToken cancellationToken);
     Task<ToolPathSetupResult> AddAsync(ToolPathSetupRequest request, CancellationToken cancellationToken);
-    Task<ToolPathRemoveResult> RemoveAsync(ToolPathRemoveRequest request, CancellationToken cancellationToken);
 }

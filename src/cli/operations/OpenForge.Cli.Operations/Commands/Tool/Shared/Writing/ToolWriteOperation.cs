@@ -104,7 +104,7 @@ internal sealed class ToolWriteOperation(
                 throw new OperationCanceledException(cancellationToken);
             if (decision != ToolWriteConsentDecision.Accepted)
             {
-                state.Findings.Add(new(ToolWriteFindingCode.MissingConsent, CliSemanticStatus.Invalid, request.Spec?.Id));
+                state.Findings.Add(new(ToolWriteFindingCode.ConfirmationRequired, CliSemanticStatus.Invalid, request.Spec?.Id));
                 return Finish();
             }
             var fresh = await records.ReadAsync(new(request.Workspace.LexicalRoot, facts.HomePath), cancellationToken).ConfigureAwait(false);

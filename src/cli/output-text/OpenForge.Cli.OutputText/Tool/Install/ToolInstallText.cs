@@ -2,7 +2,7 @@ namespace OpenForge.Cli.OutputText.Tool.Install;
 
 internal static class ToolInstallText
 {
-    internal static string Syntax() => "open-forge tool install [<id[@version]>] [--channel <channel>] [--yes] [--allow-path <path>...] [--dry-run]";
+    internal static string Syntax() => "open-forge tool install [<id[@version]>] [options]";
     internal static string Examples() => "open-forge tool install codegraph@1.6 --dry-run\nopen-forge tool install codegraph@1.6 --yes\nopen-forge tool install";
     internal static string Behavior() => """
         Without a name, restores exact lock versions for teammates. A named bare ID selects latest support.

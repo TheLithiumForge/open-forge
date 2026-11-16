@@ -20,13 +20,8 @@ internal sealed class ToolCompositionInteraction(CliPrompts prompts)
         ChoosePath = ChoosePathAsync,
     };
 
-    private async ValueTask<CliPromptReply<bool>> ConfirmOptionalAsync(ToolWriteConsentQuestion question, CliPromptPolicy policy, CancellationToken token)
-    {
-        var answer = await prompts.SelectAsync(ToolWriteInteractionPresentation.OptionalQuestion(question), policy, token).ConfigureAwait(false);
-        if (question.Kind == ToolWriteConsentKind.PathChange)
-            HasLivePathConsent = prompts.CanPrompt(policy) && answer.State == CliPromptState.Answered && answer.Value;
-        return answer;
-    }
+    private ValueTask<CliPromptReply<bool>> ConfirmOptionalAsync(ToolWriteConsentQuestion question, CliPromptPolicy policy, CancellationToken token)
+        => prompts.SelectAsync(ToolWriteInteractionPresentation.OptionalQuestion(question), policy, token);
 
     private async ValueTask<CliPromptReply<ToolWritePathAnswer>> ChoosePathAsync(ToolWritePathQuestion question, CliPromptPolicy policy, CancellationToken token)
     {

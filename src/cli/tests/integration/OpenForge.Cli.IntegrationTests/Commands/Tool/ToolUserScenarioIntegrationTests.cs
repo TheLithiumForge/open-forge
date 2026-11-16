@@ -86,6 +86,26 @@ public sealed class ToolUserScenarioIntegrationTests
         Assert.NotEqual(ToolReadProjection.Name(ToolPathReadiness.Ready), ToolCompositionFixture.Field(plan, nameof(ToolWritePlanView.PathReadiness)).GetString());
     }
 
+    [Fact(DisplayName = "Unattended Remove of the last placed tool keeps shared files and PATH and prints exact cleanup steps")]
+    public async Task UnattendedRemovePrintsCleanup()
+    {
+        using var fixture = new ToolCompositionFixture { Missing = true, AllowSyntheticDownload = true };
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), (await fixture.RunAsync(Write(ToolWriteKind.Install, ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption))).ExitCode);
+        var machine = (await fixture.RecordService().ReadAsync(new(fixture.Workspace, fixture.Home), TestContext.Current.CancellationToken)).Machine[ToolCompositionFixture.FirstId];
+        Assert.True(machine.PlacedByOpenForge);
+
+        var run = await fixture.RunAsync(Write(ToolWriteKind.Remove, ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption));
+
+        Assert.Contains(run.ExitCode, new[] { ToolCompositionFixture.Exit(CliSemanticStatus.Complete), ToolCompositionFixture.Exit(CliSemanticStatus.Attention) });
+        Assert.True(File.Exists(machine.CommandPath));
+        Assert.True(File.Exists(fixture.RecordPaths.Tool(ToolCompositionFixture.FirstId)));
+        Assert.Equal(0, fixture.PathEffects);
+        using var json = run.Json();
+        var plan = ToolCompositionFixture.Field(ToolCompositionFixture.Field(json.RootElement, nameof(ToolWriteResult.Data)), nameof(ToolWriteData.Plan));
+        Assert.Contains(ToolCompositionFixture.Field(plan, nameof(ToolWritePlanView.ManualDeletions)).EnumerateArray(), path => path.GetString() == machine.CommandPath);
+        Assert.NotEmpty(ToolCompositionFixture.Field(plan, nameof(ToolWritePlanView.PathInstructions)).EnumerateArray());
+    }
+
     private static string[] Status()
         => [ToolDefinitions.Group.Name, ToolStatusDefinitions.CommandName, CliSyntaxDefinitions.Format.Name, CliPresentationDefinitions.JsonFormat];
 

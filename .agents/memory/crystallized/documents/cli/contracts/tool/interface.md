@@ -43,10 +43,10 @@ Show the plan before asking or applying.
 It chooses npm when manager selection is unresolved and npm is usable, then the first usable client in the fixed npm, pnpm, Yarn Classic, bun order.
 A single usable project-lockfile preference wins before that fallback.
 Without `--yes`, ask when several compatible managers are possible.
-If neither a live terminal nor `--yes` is available, apply reports missing consent and performs no effects.
+If neither a live terminal nor `--yes` is available, apply performs no effects and reports the shared confirmation family: `<Command> needs confirmation, and this session cannot ask.` It has the `invalid-input` status and exit 4. A declined plan is `cancelled`, exit 130.
 
 Even with `--yes`, unattended execution never changes PATH or deletes shared tool files or runtimes.
-Print exact instructions and keep those optional actions unselected.
+Print exact instructions and keep those optional actions unselected: the files to delete, and the PATH entry or marked block to remove.
 Codebase Memory uninstall removes its account-wide binary and all agent entries.
 Run it only after live interactive confirmation that names those effects, and never when `--yes` is present.
 With `--yes`, without a terminal or after declining, remove only Open Forge's project additions and print the native uninstall command.

@@ -38,6 +38,9 @@ internal sealed class ToolObservationReader(IToolChannelService channels, IToolC
         if (machine is null) issues.Add(new(ToolObservationIssueKind.MachineRecordMissing));
         if (path.Readiness != ToolPathReadiness.Ready) issues.Add(new(ToolObservationIssueKind.PathNotReady));
         if (locked is null && setting is not null) issues.Add(new(ToolObservationIssueKind.LockMissing));
+        // A lock entry without its declaration is drift, whether or not the tool is still installed.
+        var undeclared = locked is not null && setting is null;
+        if (undeclared) issues.Add(new(ToolObservationIssueKind.DeclarationMissing));
         if (detection.Version is not null && (locked is not null && locked.Version != detection.Version || machine is not null && machine.Version != detection.Version))
             issues.Add(new(ToolObservationIssueKind.VersionChanged));
         ToolConfigPlan? configuration = null;
@@ -68,7 +71,7 @@ internal sealed class ToolObservationReader(IToolChannelService channels, IToolC
             foreach (var removal in configuration.Removals.Where(value => value.Disposition != ToolChangeDisposition.NoChange))
                 issues.Add(new(ToolObservationIssueKind.ConfigurationDrift, removal.Addition.Id));
         }
-        if (state == ToolObservationState.Current && issues.Count > 0) state = ToolObservationState.Changed;
+        if (state == ToolObservationState.Current && issues.Count > 0 || undeclared && state == ToolObservationState.Missing) state = ToolObservationState.Changed;
         token.ThrowIfCancellationRequested();
         return new ToolObservation
         {

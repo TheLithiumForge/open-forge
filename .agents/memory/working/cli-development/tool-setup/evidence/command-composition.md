@@ -17,7 +17,7 @@ The [Root packet](../packets/lane-c-root.md) assigns this graph and its Integrat
 The worktree is on checked core `885b17db3e56ceb6839ba23609e85a4380c75018`.
 The coordinator authorized the fast-forward and implementation.
 Both preflight Markdown files survived the fast-forward byte for byte.
-Their hashes and copies are in [fast-forward evidence](../../../../../../artifacts/tool-root/fast-forward.json).
+Their hashes and copies were in the ignored `artifacts/tool-root/fast-forward.json`.
 The original report is kept as `artifacts/tool-root/preflight-command-composition.md`.
 The coordinator accepted the complete 36-file v3 candidate and authorized its local implementation commit.
 
@@ -256,7 +256,7 @@ The eight workspace cases check Status and Doctor once each for missing, drifted
 The schema class adds six Tool commands to its existing 30 cases.
 Only the two deferred payload-fixture cases fail. Their failure is described under Remaining work.
 
-The exact command for each selected class, including minimum counts and flags, is kept in [focused commands](../../../../../../artifacts/tool-root/focused-commands.txt).
+The exact command for each selected class, including minimum counts and flags, was kept in `artifacts/tool-root/focused-commands.txt`.
 The shared generated test assembly is `artifacts/bin/OpenForge.Cli.IntegrationTests/release/OpenForge.Cli.IntegrationTests.dll`.
 Its hash and those of each supporting product assembly are in `artifacts/tool-root/assembly-sha256.txt`.
 Final candidate paths and hashes are in `artifacts/tool-root/changed-files.txt` and `artifacts/tool-root/source-sha256.txt`.
@@ -273,7 +273,7 @@ Both mandatory .NET commands exit zero on the final source candidate.
 Their logs are `artifacts/tool-root/whitespace-checked.txt` and `artifacts/tool-root/style-checked.txt`.
 Targeted `dotnet format whitespace --include` also exits zero before the final build.
 The 34-file candidate contains 30 C# files, two Markdown files and two new snapshot files.
-The complete [file manifest](../../../../../../artifacts/tool-root/changed-files.txt) includes nine modified files and 25 new files.
+The complete file manifest, `artifacts/tool-root/changed-files.txt`, includes nine modified files and 25 new files.
 The assigned-path check confirms that Framework models, contracts, schemas, actual workspace settings/lock, A/F private hosts and other packets are unchanged.
 The packet before Progress matches HEAD byte for byte.
 The index is empty and HEAD is still the exact checked core SHA.

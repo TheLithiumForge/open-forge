@@ -1,4 +1,5 @@
 using System.Text;
+using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Application;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Result;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Text;
@@ -23,7 +24,9 @@ internal static class ToolWriteDataTextRenderer
         foreach (var tool in data.Tools)
         {
             Line(ToolWriteText.Tool(tool.Id, tool.Version, tool.Channel));
+            if (tool.RequestedSpec is not null) Line(ToolWriteText.Row("Requested", tool.RequestedSpec));
             Line(ToolWriteText.Row("Previous version", tool.OldVersion));
+            if (tool.OldProfile is not null) Line(ToolWriteText.Row("Previous profile", tool.OldProfile));
             Line(ToolWriteText.Row("Native home", tool.NativeHome));
             if (tool.AccountReplacement) Line(ToolWriteText.Replacement());
             if (tool.Manager is not null)
@@ -99,12 +102,16 @@ internal static class ToolWriteDataTextRenderer
         }
         Line(ToolWriteText.Row("Open Forge bin", data.Plan.BinPath));
         Line(ToolWriteText.Row("PATH", data.Plan.PathReadiness));
+        foreach (var path in data.Plan.ManualDeletions ?? []) Line(ToolWriteText.ManualDeletion(path));
         foreach (var instruction in data.Plan.PathInstructions) Line(instruction);
         foreach (var backup in data.Plan.Backups.Where(backup => backup.Backup is not null))
             Line(ToolWriteText.GuardedBackup(backup.Target, backup.Backup ?? string.Empty, backup.Verified ? backup.ExpectedSha256 : null));
         foreach (var backup in data.Plan.Backups.Where(backup => backup.Backup is null && backup.GitObjectId is not null))
             Line(ToolWriteText.GuardedGit(backup.Target, backup.GitObjectId ?? string.Empty));
-        if (data.Plan.PathInstructions.Count != 0) Line(ToolWriteText.Restart());
+        // The renderer owns the one restart reminder after manual PATH steps or a completed PATH change.
+        if (data.Plan.PathInstructions.Count != 0
+            || data.Outcomes.Any(outcome => outcome.Stage == ToolWriteStages.Path && outcome.State == ToolWriteStages.Completed))
+            Line(ToolWriteText.Restart());
         return new([new(text.ToString())]);
 
         void Line(string value) => text.AppendLine(CliText.Escape(value));

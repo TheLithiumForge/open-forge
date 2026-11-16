@@ -120,8 +120,8 @@ public sealed class ToolWriteAdherenceIntegrationTests
         Assert.Equal(planned, Assert.Single(applied.RootElement.GetProperty(ToolCompositionFixture.MembersPointer[1..]).EnumerateArray()).GetString());
     }
 
-    [Fact(DisplayName = "Confirmed shared deletion removes actual record identities and then offers safe final-tool PATH cleanup")]
-    public async Task ExplicitDeletionEnablesFinalPathOffer()
+    [Fact(DisplayName = "Confirmed shared deletion removes actual record identities and leaves PATH and its history unchanged")]
+    public async Task ExplicitDeletionKeepsPath()
     {
         using var fixture = new ToolCompositionFixture { Missing = true, AllowSyntheticDownload = true };
         Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), (await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--format", "json"])).ExitCode);
@@ -164,11 +164,10 @@ public sealed class ToolWriteAdherenceIntegrationTests
         Assert.Null(written.Failure);
         foreach (var backup in written.PendingBackups) Assert.Null((await backups.CompleteAsync(backup, Token)).Failure);
         fixture.Events.Clear();
-        var run = await fixture.RunAsync(["tool", "remove", ToolCompositionFixture.FirstId], "y\n1\n2\n2\n2\n");
+        var run = await fixture.RunAsync(["tool", "remove", ToolCompositionFixture.FirstId], "y\n1\n2\n2\n");
 
         Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), run.ExitCode);
-        Assert.Contains(ToolHostEvent.PathRemove, fixture.Events);
-        Assert.Equal(1, fixture.PathEffects);
+        Assert.Equal(0, fixture.PathEffects);
         var current = await records.ReadAsync(locations, Token);
         Assert.Empty(current.Machine);
         Assert.False(File.Exists(fixture.RecordPaths.Tool(machine.ToolId)));
@@ -177,7 +176,7 @@ public sealed class ToolWriteAdherenceIntegrationTests
         Assert.False(File.Exists(fixture.RecordPaths.Runtime(selected.Version)));
         Assert.False(Directory.Exists(selected.RuntimePath));
         Assert.True(Directory.Exists(kept.RuntimePath));
-        Assert.Empty(current.Path!.Changes);
+        Assert.Equal(path.Changes.Select(change => (change.Target, change.StartMarker, change.EndMarker)), current.Path!.Changes.Select(change => (change.Target, change.StartMarker, change.EndMarker)));
         Assert.Empty(fixture.Backups());
 
         ToolNodeRuntimeRecord Runtime(string version) => new()

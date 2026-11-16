@@ -13,7 +13,7 @@ Status: Round-2 design decided on 14 November 2026.
 
 ## Flow
 
-Use bounded native probes. CodeGraph's version probe sets CODEGRAPH_NO_DOWNLOAD=1. Compare additions with the lock and native previous/applied state with machine records. Missing declared tools offer `open-forge tool install`. A supported self-update offers named Install to reapply. An unsupported one warns without downgrading.
+Check the tools that settings declare or the lock records. A lock entry without its declaration is drift. Use bounded native probes. CodeGraph's version probe sets CODEGRAPH_NO_DOWNLOAD=1. Compare additions with the lock and native previous/applied state with machine records. Missing declared tools offer `open-forge tool install`. A supported self-update offers named Install to reapply. An unsupported one warns without downgrading.
 Use the [common Behavior](../behavior.md) for detection, channels, native setup and additive effects.
 Keep syntax and reports in the [Interface](interface.md).
 

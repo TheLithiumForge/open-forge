@@ -16,7 +16,6 @@ internal static class ToolWriteInteractionPresentation
         {
             ToolWriteConsentKind.AccountUninstall => ToolWriteText.AccountQuestion(question.ToolId),
             ToolWriteConsentKind.SharedFileDeletion => ToolWriteText.DeleteQuestion(question.ToolId),
-            ToolWriteConsentKind.PathChange => ToolWriteText.PathQuestion(),
             _ => throw new ArgumentOutOfRangeException(nameof(question)),
         }, [new(false, ToolWriteText.Keep()), new(true, ToolWriteText.Apply())])
         {

@@ -7,7 +7,7 @@ using OpenForge.Cli.Core.Framework.Tools.Models.Services;
 namespace OpenForge.Cli.Core.Framework.Tools.Shared.Observation.Models;
 
 internal enum ToolObservationState { Current, Missing, Unavailable, Unsupported, Changed }
-internal enum ToolObservationIssueKind { Missing, Unavailable, Unsupported, VersionChanged, ConfigurationDrift, MachineRecordMissing, NativeRecordMissing, LockMissing, ProfileChanged, PathNotReady }
+internal enum ToolObservationIssueKind { Missing, Unavailable, Unsupported, VersionChanged, ConfigurationDrift, MachineRecordMissing, NativeRecordMissing, LockMissing, ProfileChanged, PathNotReady, DeclarationMissing }
 internal sealed record ToolObservationIssue(ToolObservationIssueKind Kind, string? ChangeId = null);
 internal sealed record ToolObservationRequest(ToolCatalogueEntry Entry, ToolRecordsRequest Locations, ToolRecordsResult Records, string MainRoot);
 internal sealed record ToolObservation

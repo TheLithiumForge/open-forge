@@ -1,7 +1,7 @@
   Install tools, run native setup and add project configuration.
 
 Usage:
-  open-forge tool install [<id[@version]>] [--channel <channel>] [--yes] [--allow-path <path>...] [--dry-run]
+  open-forge tool install [<id[@version]>] [options]
 
 Examples:
   open-forge tool install codegraph@1.6 --dry-run
@@ -43,5 +43,11 @@ Automation:
   Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
 
 Related commands:
-  open-forge tool inspect <id>
-  open-forge tool status
+  tool list            List supported tools and their setup profiles.
+  tool inspect --help  Show a tool's channels, native effects and machine facts.
+  tool status          Check tool versions, project additions and PATH
+                       readiness.
+  tool install --help  Install tools, run native setup and add project
+                       configuration.
+  tool update --help   Update declared tools within supported versions.
+  tool remove --help   Remove project additions and offer native uninstall.

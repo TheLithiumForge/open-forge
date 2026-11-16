@@ -4,7 +4,7 @@ using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Result;
 
 namespace OpenForge.Cli.Core.Commands.Tool.Models.Writing.Consent;
 
-internal enum ToolWriteConsentKind { Plan, AccountUninstall, SharedFileDeletion, PathChange }
+internal enum ToolWriteConsentKind { Plan, AccountUninstall, SharedFileDeletion }
 internal enum ToolWriteConsentDecision { Accepted, Preview, MissingConsent, Skipped, Declined, Cancelled }
 
 internal sealed record ToolWriteConsentQuestion

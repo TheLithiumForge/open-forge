@@ -19,7 +19,7 @@ using OpenForge.Cli.Core.Shell.Interaction.Models;
 
 namespace OpenForge.Cli.Core.UnitTests.Commands.Tool.Shared.Writing;
 
-internal enum ToolWriteCall { Read, Grant, ChannelPlan, ChannelInstall, ConfigPlan, ConfigApply, ConfigRemovePlan, ConfigRemove, Native, Write, BackupComplete, OptionalPrompt, PlanPrompt, ManagerPrompt, SharedRemove, PathAdd, PathRemove, PathPrompt, NativePreparation }
+internal enum ToolWriteCall { Read, Grant, ChannelPlan, ChannelInstall, ConfigPlan, ConfigApply, ConfigRemovePlan, ConfigRemove, Native, Write, BackupComplete, OptionalPrompt, PlanPrompt, ManagerPrompt, SharedRemove, PathAdd, PathPrompt, NativePreparation }
 internal sealed record ToolWriteCallFact(ToolWriteCall Call, string? Id = null);
 
 // The other lanes implement these frozen services independently. These doubles exercise
@@ -42,6 +42,7 @@ internal sealed class ToolWriteOperationFixture
     internal ToolWriteHostFacts Facts { get; set; }
     internal Action? OnPlanConfirmed { get; set; }
     internal bool PlacedByOpenForge { get; set; }
+    internal bool CommandInBin { get; set; }
     internal ToolRecordsResult Records { get; set; }
     internal Dictionary<string, string?> DetectedVersions { get; } = new(StringComparer.Ordinal);
     internal List<ToolChannelRequest> ChannelRequests { get; } = [];
@@ -320,7 +321,7 @@ internal sealed class ToolWriteOperationFixture
                     WorkspacePath = request.WorkspacePath,
                     BinPath = fixture.Facts.Path.BinPath,
                     NativeInstallDirectory = fixture.Facts.Path.BinPath,
-                    CommandPath = Target(fixture.Root).ExecutablePath,
+                    CommandPath = fixture.CommandInBin ? Path.Combine(fixture.Facts.Path.BinPath, request.Entry.Identity.Id) : Target(fixture.Root).ExecutablePath,
                     Invocation = Target(fixture.Root),
                     Downloads = [],
                     Extractions = [],
@@ -567,17 +568,6 @@ internal sealed class ToolWriteOperationFixture
                     Prior = Value(false), Applied = Value(true), StartMarker = "synthetic-start", EndMarker = "synthetic-end",
                 }],
             }, [], true, fixture.FailPath ? "synthetic-path-failure" : null)
-            { PendingBackups = [backup] });
-        }
-        public Task<ToolPathRemoveResult> RemoveAsync(ToolPathRemoveRequest request, CancellationToken cancellationToken)
-        {
-            fixture.Calls.Add(new(ToolWriteCall.PathRemove));
-            fixture.Cancel(ToolWriteCall.PathRemove);
-            var backup = fixture.PendingBackup("synthetic-profile");
-            fixture.PathBackups.Add(backup);
-            if (fixture.FailPathPublication) fixture.FailWrite = true;
-            return Task.FromResult(new ToolPathRemoveResult([.. request.Expected.Changes.Select(change => change.Target)], [], true,
-                fixture.FailPath ? "synthetic-path-failure" : null)
             { PendingBackups = [backup] });
         }
     }

@@ -33,10 +33,9 @@ public sealed class ToolWriteConsentOperationTests
         Assert.Equal(ToolWriteConsentDecision.MissingConsent, result);
     }
 
-    [Theory(DisplayName = "Tool yes never accepts account uninstall shared deletion or PATH changes")]
+    [Theory(DisplayName = "Tool yes never accepts account uninstall or shared deletion")]
     [InlineData((int)ToolWriteConsentKind.AccountUninstall)]
     [InlineData((int)ToolWriteConsentKind.SharedFileDeletion)]
-    [InlineData((int)ToolWriteConsentKind.PathChange)]
     public async Task YesSkipsOptionalEffects(int kind)
     {
         var result = await NeverPrompt().AskAsync(Request((ToolWriteConsentKind)kind, yes: true, terminal: true), CancellationToken.None);
@@ -49,8 +48,6 @@ public sealed class ToolWriteConsentOperationTests
     [InlineData((int)ToolWriteConsentKind.AccountUninstall, true, true)]
     [InlineData((int)ToolWriteConsentKind.SharedFileDeletion, false, false)]
     [InlineData((int)ToolWriteConsentKind.SharedFileDeletion, true, true)]
-    [InlineData((int)ToolWriteConsentKind.PathChange, false, false)]
-    [InlineData((int)ToolWriteConsentKind.PathChange, true, true)]
     public async Task UnattendedSkipsOptionalEffects(int kind, bool json, bool terminal)
     {
         var result = await NeverPrompt().AskAsync(Request((ToolWriteConsentKind)kind, terminal: terminal, json: json), CancellationToken.None);
@@ -62,7 +59,6 @@ public sealed class ToolWriteConsentOperationTests
     [InlineData((int)ToolWriteConsentKind.Plan)]
     [InlineData((int)ToolWriteConsentKind.AccountUninstall)]
     [InlineData((int)ToolWriteConsentKind.SharedFileDeletion)]
-    [InlineData((int)ToolWriteConsentKind.PathChange)]
     public async Task PreviewNeverPrompts(int kind)
     {
         var request = Request((ToolWriteConsentKind)kind, terminal: true) with { Preview = true };

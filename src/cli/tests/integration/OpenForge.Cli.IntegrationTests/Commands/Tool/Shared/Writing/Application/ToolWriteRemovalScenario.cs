@@ -238,6 +238,5 @@ internal sealed class ToolWriteRemovalScenario : IDisposable
     {
         public Task<ToolPathFacts> ObserveAsync(string homePath, CancellationToken cancellationToken) => throw new InvalidOperationException();
         public Task<ToolPathSetupResult> AddAsync(ToolPathSetupRequest request, CancellationToken cancellationToken) => throw new InvalidOperationException();
-        public Task<ToolPathRemoveResult> RemoveAsync(ToolPathRemoveRequest request, CancellationToken cancellationToken) => throw new InvalidOperationException();
     }
 }

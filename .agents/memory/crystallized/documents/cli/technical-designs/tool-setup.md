@@ -70,6 +70,7 @@ Use `~/.open-forge/`, or `%USERPROFILE%\.open-forge\` on Windows:
 | `state/`                   | Machine facts, native previous settings and PATH history |
 
 Launchers are small `.cmd` files and executable `sh` scripts with absolute paths baked in.
+Windows gets both: the `.cmd` launcher and an extensionless executable `sh` script beside it for Git Bash, which Claude Code on Windows uses. Records and Remove cover both.
 They start the tool entry on its pinned runtime or forward to the upstream release launcher.
 A native `.exe` can be placed directly.
 Never put Node itself in bin.
@@ -112,15 +113,20 @@ Rune isn't published and isn't a V1 entry.
 Status and Inspect always show bin and PATH membership.
 Also show the selected manager's global-bin readiness.
 If bin is missing, offer "Add it for me" or "I'll do it myself".
-On Windows, use `Environment.SetEnvironmentVariable(..., EnvironmentVariableTarget.User)`.
+On Windows, read and write `HKCU\Environment` `Path` directly through an injectable registry adapter.
+Keep the value kind, so `REG_EXPAND_SZ` stays `REG_EXPAND_SZ`, and keep every other entry as written: unexpanded `%VAR%`, order, separators and duplicates.
+Only append Open Forge's bin entry, then broadcast `WM_SETTINGCHANGE` for `Environment`.
+If the value can't be read or edited safely, write nothing and print the manual steps.
 Never use `setx` or system PATH.
+On macOS and Linux, change only Open Forge's marked block, keep every other byte of the shell file and keep the sibling backup.
 On macOS and Linux, offer detected `.zshrc`, `.bashrc`, `.profile`, fish config and a custom file.
 Write a self-identifying marked block only in files the person chooses.
 Print the exact POSIX or fish line for manual setup.
-Keep history per machine, and use the marks to find entries if history is lost.
-Offer confirmed PATH removal after the last tool.
+Keep history per machine. Remove never edits PATH.
+After the last tool with a launcher in bin, print the exact manual step: the Windows user PATH entry, or the marked block in each shell file that history names.
+If history is lost, the marks only name the blocks in those steps.
 Say that terminals and agent apps need a restart.
-`--yes` doesn't supply live confirmation for PATH edits or shared deletion.
+`--yes` doesn't supply live confirmation for adding bin to PATH or for shared deletion.
 Without a TTY, print instructions and leave those actions unselected.
 
 ## Native setup
@@ -198,7 +204,7 @@ A returns verified private-runtime records with its tool state.
 Shared-file removal receives C's locations and expected records, then checks the current launcher inventory before removing an unused runtime.
 A handles package-manager paths and supply ordering.
 D uses those facts for reporting and native setup.
-PATH add and removal results also return pending file-backup handles.
+PATH add results also return pending file-backup handles.
 D keeps those handles until their machine record and the final operation verify.
 For reused CBM, the native install directory contains its verified existing command.
 Setup `--dir` points there without creating another installation.
@@ -381,7 +387,7 @@ These decisions override the earlier [redesign](https://github.com/TheLithiumFor
 | R2-13 | 2026-11-14 | CodeGraph version probes set `CODEGRAPH_NO_DOWNLOAD=1`                                                                                                                          |
 | R2-14 | 2026-11-14 | Bare writers preflight all tools, perform no effects if blocked and stop at the first failure after effects start                                                               |
 | R2-15 | 2026-11-14 | Detect npm, pnpm, Yarn Classic and bun, prefer project lockfiles, ask about multiple clients and check global-bin PATH                                                          |
-| R2-16 | 2026-11-14 | Keep the round-1 home, absolute launchers, private Node and chosen marked PATH setup                                                                                            |
+| R2-16 | 2026-11-14 | Keep the round-1 home, absolute launchers, private Node and chosen marked PATH setup. G8 replaces its PATH removal offer                                                        |
 
 The maintainer accepted Phase 1 and answered C1 through C7 in the task conversation on 14 November 2026.
 These answers override the earlier R2-07 interpretation and per-project native-setting restoration:
@@ -420,7 +426,22 @@ The overseer applied these maintainer-side defaults on 16 November 2026:
 | --- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | D1  | 2026-11-16 | Keep the catalogue's `0.9.0-beta.19` minimum. Published writer journeys start after that release bump. Until then the published journey stays read-only |
 | D2  | 2026-11-16 | An absolute `OPENFORGE_TOOL_HOME` replaces `~/.open-forge` on every system, like `CARGO_HOME`. It's a documented user setting, not a test mode          |
-| D3  | 2026-11-16 | Keep the newer Tool help wording. The six leaf contracts state it, and the unused `*Definitions.Purpose` constants are removed                          |
+| D3  | 2026-11-16 | Keep the newer Tool help wording. The six leaf contracts state it, and one owner per leaf supplies it to the binding and the related-command help       |
+
+The maintainer decided these spec gaps on 16 November 2026:
+
+| ID  | Date       | Decided rule                                                                                                                                                                                            |
+| --- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| G1  | 2026-11-16 | Tool Status, Status and Doctor check declared or locked tools. A lock entry without its declaration is drift                                                                                            |
+| G2  | 2026-11-16 | Windows gets the `.cmd` launcher and an extensionless `sh` script for Git Bash. Remove deletes both                                                                                                     |
+| G3  | 2026-11-16 | Native installer writes are covered by plan consent only. Destination permission applies to Open Forge's own additions                                                                                  |
+| G4  | 2026-11-16 | Remove of an ID that is neither declared nor locked is refused with the shared invalid-input sentence. There is no completed no-op                                                                      |
+| G5  | 2026-11-16 | A completed Remove deletes the settings declaration and the lock entry                                                                                                                                  |
+| G6  | 2026-11-16 | Missing consent uses the shared confirmation family, `invalid-input` and exit 4. A declined plan is `cancelled`, exit 130                                                                               |
+| G7  | 2026-11-16 | No damage to the user PATH. Windows edits `HKCU\Environment` `Path` through an adapter that keeps its kind and every other entry, then broadcasts. It replaces the `SetEnvironmentVariable` mandate     |
+| G8  | 2026-11-16 | Replaces the R2-16 PATH removal offer. Remove never edits PATH. After the last tool with a launcher in bin, it prints the bin entry or marked block to remove, also with `--yes` and without a terminal |
+
+The Windows broadcast uses one `LibraryImport` of `SendMessageTimeoutW` in Framework, beside the existing lock interop. It follows G7 and needs no other native code.
 
 ## Not decided yet
 

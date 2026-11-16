@@ -31,7 +31,13 @@ internal static class ToolWriteBinding
             Arity = ArgumentArity.ZeroOrOne,
         };
         command.Arguments.Add(spec);
-        var yes = new Option<bool>(YesOption) { Description = "Accept the shown plan and downloads. Skip PATH edits, shared deletion and account-wide uninstall.", Arity = ArgumentArity.Zero };
+        var yes = new Option<bool>(YesOption)
+        {
+            Description = kind == ToolWriteKind.Remove
+                ? "Accept the shown removal plan. Skip PATH edits, shared deletion and account-wide uninstall."
+                : "Accept the shown plan and downloads. Skip PATH edits, shared deletion and account-wide uninstall.",
+            Arity = ArgumentArity.Zero,
+        };
         var dryRun = new Option<bool>(DryRunOption) { Description = "Show the checked plan without applying changes.", Arity = ArgumentArity.Zero };
         var allow = new Option<string[]>(PermissionOptions.AllowPath.Name)
         {
@@ -100,7 +106,7 @@ internal static class ToolWriteBinding
             => ToolWriteResults.Invalid(request.Kind, new(code, status, request.Spec?.Id), request.Workspace, request.Preview);
     }
 
-    private static string Description(ToolWriteKind kind) => kind switch
+    internal static string Description(ToolWriteKind kind) => kind switch
     {
         ToolWriteKind.Install => "Install tools, run native setup and add project configuration.",
         ToolWriteKind.Update => "Update declared tools within supported versions.",
