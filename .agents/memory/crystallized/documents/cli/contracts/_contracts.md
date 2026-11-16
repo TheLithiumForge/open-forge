@@ -51,6 +51,12 @@ final catalogue and expected-state validation under that lease. Its local
 Interface and Behavior Contracts define the complete default-all deletion
 boundary; this entrypoint does not duplicate that meaning.
 
+The direct root [`uninstall`](uninstall/_uninstall.md) command removes the
+Framework and Extension files Open Forge installed and still recognizes, its
+managed sections and its state. The direct root [`strip`](strip/_strip.md)
+command removes metadata, generated `Entries` and links between documents, and
+flattens routed documents. Uninstall offers the same parts as options.
+
 The [CLI Architecture](../architecture.md) defines the accepted implementation
 structure and cross-command boundaries. The [MVP Architecture](../mvp-architecture.md)
 records the frozen `open-forge-old` implementation as historical reference. The
@@ -77,4 +83,6 @@ active development records track execution without replacing these contracts.
 - [Routing-only group entrypoint for the `route` command family](route/_route.md) - #Memory #Crystallized #CLI #Release #Command #Route #Contract #CurrentTruth
 - [Permanent route for accepted shared CLI contract sets](shared/_shared.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #CurrentTruth
 - [Current Crystallized contract set for workspace status, context-size comparison, root customization, managed Extensions, and recognized recovery bundles](status/_status.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Status #CurrentTruth
+- [Route the strip contracts that turn routed documents back into plain Markdown, shared by the strip command and uninstall](strip/_strip.md) - #Memory #Crystallized #CLI #Command #Contract #Strip #Uninstall #Mutation #CurrentTruth
+- [Route the uninstall contracts that take Open Forge back out of a workspace while keeping the files the user wrote](uninstall/_uninstall.md) - #Memory #Crystallized #CLI #Command #Contract #Uninstall #Lifecycle #Mutation #CurrentTruth
 - [Route the accepted current root Framework update contracts for trusted managed reconciliation](update/_update.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Update #Framework #Lifecycle #CurrentTruth

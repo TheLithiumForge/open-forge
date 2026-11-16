@@ -397,6 +397,13 @@ attach, sync, detach, list, and inspect policy, plans, findings, results, and
 rendering remain under `Commands/Library/`. This placement adds no dependency
 injection, runtime registry, reflection, or sibling-private import.
 
+Uninstall and strip follow the same map. Their two commands share one plain-workspace
+plan under `Commands/Shared/Stripping/`: document edits, flatten moves, plan
+application, findings and the result model. Uninstall's removal selection and
+runtime-folder removal stay under `Commands/Uninstall/`. The Markdown parser supplies
+link label spans, and Framework Sources resolves local destinations, so neither
+command adds a parser.
+
 Definitions, binding, behavior-owning composition, models, and supporting
 behavior remain within the narrowest command or capability owner. A private
 `Shared/<Capability>/` child marks its support boundary. Semantic behavior moves
