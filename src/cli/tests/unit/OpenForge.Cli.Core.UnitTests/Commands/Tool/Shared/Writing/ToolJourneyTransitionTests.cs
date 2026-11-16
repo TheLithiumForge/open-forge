@@ -6,8 +6,10 @@ namespace OpenForge.Cli.Core.UnitTests.Commands.Tool.Shared.Writing;
 
 public sealed class ToolJourneyTransitionTests
 {
+    // Install restore is guarded by ToolWriteOperationTests "Tool Install restores the lock version without forcing the lock channel".
+    // The Update row stays: it is the only guard that Update publishes the new exact version to the lock.
     [Theory(DisplayName = "Synthetic patch Update publishes a new exact lock while teammate Install restores its existing lock")]
-    [InlineData(false), InlineData(true), Trait("Feature", "tool-journey"), Trait("Evidence", "Unit")]
+    [InlineData(true), Trait("Feature", "tool-journey"), Trait("Evidence", "Unit")]
     public async Task ExactLockAndPatchTransition(bool update)
     {
         var fixture = new ToolWriteOperationFixture();

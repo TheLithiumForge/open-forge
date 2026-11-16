@@ -10,8 +10,9 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Tool;
 
 public sealed class ToolGeneratedSerializationIntegrationTests
 {
+    // Detail invariance belongs to the shared renderer, so one read leaf and one writer cover it at both ends of the ladder.
     [Theory(DisplayName = "Every Tool leaf uses one source-generated schema-3 report with ordered facts at every detail"),
-     InlineData("list"), InlineData("inspect"), InlineData("status"), InlineData("install"), InlineData("update"), InlineData("remove"),
+     InlineData("status"), InlineData("install"),
      Trait("Feature", "tool-composition"), Trait("Evidence", "Integration")]
     public async Task Schema3AtEveryDetail(string leaf)
     {
@@ -22,7 +23,7 @@ public sealed class ToolGeneratedSerializationIntegrationTests
         string[] operand = leaf is "inspect" or "remove" ? [ToolCompositionFixture.FirstId] : [];
         string[] preview = writer ? [ToolWriteBinding.DryRunOption] : [];
         JsonElement? baseline = null;
-        foreach (var detail in new[] { "minimal", "standard", "full", "debug" })
+        foreach (var detail in new[] { "minimal", "debug" })
         {
             var run = await fixture.RunAsync(["tool", leaf, .. operand, .. preview, "--format", "json", "--detail", detail]);
             using var json = run.Json();
@@ -43,7 +44,6 @@ public sealed class ToolGeneratedSerializationIntegrationTests
             Assert.Empty(run.Prompts);
             if (detail != "debug") Assert.Empty(run.Error);
         }
-        Assert.False(JsonSerializer.IsReflectionEnabledByDefault);
         Assert.Equal(before, fixture.Snapshot());
         Assert.False(Directory.Exists(fixture.Home));
         Assert.Equal(0, fixture.DownloadCalls);

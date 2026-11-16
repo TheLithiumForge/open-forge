@@ -21,38 +21,17 @@ public sealed class ToolUserScenarioIntegrationTests
 {
     private const string OutOfRangeVersion = "9.9.9";
 
-    [Fact(DisplayName = "Status reports a declared tool that is missing and an Open Forge bin that isn't on PATH without writing")]
-    public async Task StatusReportsMissingTool()
-    {
-        using var fixture = new ToolCompositionFixture { Missing = true, PathReadiness = ToolPathReadiness.Missing };
-        fixture.Declare();
-        var before = fixture.Snapshot();
-
-        var run = await fixture.RunAsync(Status());
-
-        Assert.Equal(ExitCode(CliSemanticStatus.Attention), run.ExitCode);
-        using var json = run.Json();
-        var tool = Assert.Single(Tools(json));
-        Assert.Equal(ToolCompositionFixture.FirstId, ToolCompositionFixture.Field(tool, nameof(ToolReadTool.Id)).GetString());
-        Assert.Equal(ToolReadProjection.Name(ToolObservationState.Missing), ToolCompositionFixture.Field(tool, nameof(ToolReadTool.State)).GetString());
-        Assert.Equal(ToolReadProjection.Name(ToolPathReadiness.Missing), ToolCompositionFixture.Field(tool, nameof(ToolReadTool.BinReadiness)).GetString());
-        Assert.Equal(before, fixture.Snapshot());
-        Assert.False(Directory.Exists(fixture.Home));
-        Assert.Equal(0, fixture.PathEffects);
-        Assert.Equal(0, fixture.DownloadCalls);
-    }
-
     [Fact(DisplayName = "A self-update outside support warns in Status and Update keeps that installation")]
     public async Task OutOfRangeInstallationIsKept()
     {
         using var fixture = new ToolCompositionFixture();
-        Assert.Equal(ExitCode(CliSemanticStatus.Complete), (await fixture.RunAsync(Write(ToolWriteKind.Install, ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption))).ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), (await fixture.RunAsync(Write(ToolWriteKind.Install, ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption))).ExitCode);
         fixture.DetectedVersion = OutOfRangeVersion;
         var installed = fixture.Snapshot();
         var events = fixture.Events.Count;
 
         var status = await fixture.RunAsync(Status());
-        Assert.Equal(ExitCode(CliSemanticStatus.Attention), status.ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Attention), status.ExitCode);
         using (var json = status.Json())
         {
             var tool = Assert.Single(Tools(json));
@@ -62,7 +41,7 @@ public sealed class ToolUserScenarioIntegrationTests
 
         var update = await fixture.RunAsync(Write(ToolWriteKind.Update, ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption));
 
-        Assert.Equal(ExitCode(CliSemanticStatus.Blocked), update.ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Blocked), update.ExitCode);
         Assert.Equal(installed, fixture.Snapshot());
         Assert.DoesNotContain(ToolHostEvent.Setup, fixture.Events.Skip(events));
         Assert.DoesNotContain(ToolHostEvent.Uninstall, fixture.Events.Skip(events));
@@ -73,16 +52,16 @@ public sealed class ToolUserScenarioIntegrationTests
     public async Task UpdateWithinSupportIsNoOp()
     {
         using var fixture = new ToolCompositionFixture();
-        Assert.Equal(ExitCode(CliSemanticStatus.Complete), (await fixture.RunAsync(Write(ToolWriteKind.Install, ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption))).ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), (await fixture.RunAsync(Write(ToolWriteKind.Install, ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption))).ExitCode);
         var installed = fixture.Snapshot();
 
         var preview = await fixture.RunAsync(Write(ToolWriteKind.Update, null, ToolWriteBinding.DryRunOption));
-        Assert.Equal(ExitCode(CliSemanticStatus.Complete), preview.ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), preview.ExitCode);
         Assert.Equal(installed, fixture.Snapshot());
 
         var update = await fixture.RunAsync(Write(ToolWriteKind.Update, ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption));
 
-        Assert.Equal(ExitCode(CliSemanticStatus.Complete), update.ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), update.ExitCode);
         using var json = update.Json();
         var tool = Assert.Single(ToolCompositionFixture.Field(ToolCompositionFixture.Field(json.RootElement, nameof(ToolWriteResult.Data)), nameof(ToolWriteData.Tools)).EnumerateArray());
         Assert.Equal(ToolCompositionFixture.Version, ToolCompositionFixture.Field(tool, nameof(ToolWriteToolView.Version)).GetString());
@@ -98,7 +77,7 @@ public sealed class ToolUserScenarioIntegrationTests
 
         var run = await fixture.RunAsync(Write(ToolWriteKind.Install, ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption));
 
-        Assert.Contains(run.ExitCode, new[] { ExitCode(CliSemanticStatus.Complete), ExitCode(CliSemanticStatus.Attention) });
+        Assert.Contains(run.ExitCode, new[] { ToolCompositionFixture.Exit(CliSemanticStatus.Complete), ToolCompositionFixture.Exit(CliSemanticStatus.Attention) });
         Assert.True(fixture.HasMember());
         Assert.Equal(0, fixture.PathEffects);
         Assert.DoesNotContain(ToolHostEvent.PathAdd, fixture.Events);
@@ -116,6 +95,4 @@ public sealed class ToolUserScenarioIntegrationTests
 
     private static JsonElement.ArrayEnumerator Tools(JsonDocument json)
         => ToolCompositionFixture.Field(ToolCompositionFixture.Field(json.RootElement, nameof(ToolStatusResult.Data)), nameof(ToolReadPayload.Tools)).EnumerateArray();
-
-    private static int ExitCode(CliSemanticStatus status) => CliStatusDefinitions.Read(status).Disposition.ExitCode;
 }

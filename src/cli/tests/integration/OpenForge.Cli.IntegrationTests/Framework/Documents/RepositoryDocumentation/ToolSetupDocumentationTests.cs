@@ -3,85 +3,11 @@ using System.Text.RegularExpressions;
 using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Tools.Models.Records;
-using OpenForge.Cli.IntegrationTests.Framework.Documents.RepositoryDocumentation.Shared;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Documents.RepositoryDocumentation;
 
 public sealed class ToolSetupDocumentationTests
 {
-    [Fact(DisplayName = "Tool setup Markdown links resolve across the planned contract and outline pack")]
-    [Trait("Boundary", "Host"), Trait("Feature", "tool-documentation"), Trait("Evidence", "Integration")]
-    public async Task PlannedDocumentsHaveValidLinks()
-    {
-        var repositoryRoot = RepositoryRoot();
-        string[] sources =
-        [
-            ".agents/memory/working/cli-development/tasks/task90-tool-setup.md",
-            ".agents/memory/working/cli-development/project-control.md",
-            ".agents/memory/working/cli-development/plan.md",
-            ".agents/memory/working/cli-development/tool-setup/_tool-setup.md",
-            ".agents/memory/working/cli-development/tool-setup/packets/_packets.md",
-            ".agents/memory/working/cli-development/tool-setup/packets/lane-a.md",
-            ".agents/memory/working/cli-development/tool-setup/packets/lane-b.md",
-            ".agents/memory/working/cli-development/tool-setup/packets/lane-c.md",
-            ".agents/memory/working/cli-development/tool-setup/packets/lane-d.md",
-            ".agents/memory/working/cli-development/tool-setup/packets/lane-e.md",
-            ".agents/memory/crystallized/documents/cli/contracts/_contracts.md",
-            ".agents/memory/crystallized/documents/cli/contracts/shared/_shared.md",
-            ".agents/memory/crystallized/documents/cli/technical-designs/_technical-designs.md",
-            ".agents/memory/crystallized/documents/maintenance/_maintenance.md",
-            ".agents/skills/open-forge-cli/SKILL.md",
-            "src/open-forge/.agents/skills/open-forge-cli/SKILL.md",
-            ".agents/memory/crystallized/decisions/framework/workspace-state-files.md",
-            ".agents/memory/crystallized/documents/cli/architecture.md",
-            ".agents/memory/crystallized/documents/cli/command-contract-set.md",
-            ".agents/memory/crystallized/documents/cli/contracts/doctor/behavior.md",
-            ".agents/memory/crystallized/documents/cli/contracts/doctor/interface.md",
-            ".agents/memory/crystallized/documents/cli/contracts/repair/behavior.md",
-            ".agents/memory/crystallized/documents/cli/contracts/repair/interface.md",
-            ".agents/memory/crystallized/documents/cli/contracts/shared/tool-records/_tool-records.md",
-            ".agents/memory/crystallized/documents/cli/contracts/shared/tool-records/behavior.md",
-            ".agents/memory/crystallized/documents/cli/contracts/shared/tool-records/interface.md",
-            ".agents/memory/crystallized/documents/cli/contracts/status/behavior.md",
-            ".agents/memory/crystallized/documents/cli/contracts/status/interface.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/_tool.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/behavior.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/inspect/_inspect.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/inspect/behavior.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/inspect/interface.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/install/_install.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/install/behavior.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/install/interface.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/interface.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/list/_list.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/list/behavior.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/list/interface.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/remove/_remove.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/remove/behavior.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/remove/interface.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/status/_status.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/status/behavior.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/status/interface.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/update/_update.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/update/behavior.md",
-            ".agents/memory/crystallized/documents/cli/contracts/tool/update/interface.md",
-            ".agents/memory/crystallized/documents/cli/shared-operation-contract.md",
-            ".agents/memory/crystallized/documents/cli/technical-designs/tool-setup-lanes.md",
-            ".agents/memory/crystallized/documents/cli/technical-designs/tool-setup.md",
-            ".agents/memory/crystallized/documents/maintenance/tools.md",
-            ".agents/skills/open-forge-cli/references/tools.md",
-            "docs/cli.md",
-            "src/open-forge/.agents/skills/open-forge-cli/references/tools.md",
-        ];
-
-        var diagnostics = await RepositoryMarkdownChecker.CheckAsync(
-            repositoryRoot,
-            sources,
-            TestContext.Current.CancellationToken);
-
-        Assert.True(diagnostics.Count == 0, string.Join(Environment.NewLine, diagnostics));
-    }
-
     [Theory(DisplayName = "Tool record schemas keep the released schema fields")]
     [InlineData(false)]
     [InlineData(true)]

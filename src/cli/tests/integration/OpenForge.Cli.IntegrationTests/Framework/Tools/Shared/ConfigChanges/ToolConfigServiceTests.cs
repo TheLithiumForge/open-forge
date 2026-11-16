@@ -233,23 +233,6 @@ public sealed class ToolConfigServiceTests
         Assert.Equal(Encoding.UTF8.GetBytes("{}"), await File.ReadAllBytesAsync(temporary.Combine(Other), Token));
     }
 
-    [Fact(DisplayName = "Cancellation retains completed receipts and unstarted work without creating runtime state")]
-    public async Task Cancellation()
-    {
-        using var temporary = new ToolConfigFixture("tool-config-cancel");
-        temporary.Grant(Target);
-        var service = Service();
-        var plan = await service.PlanAsync(Request(temporary, [Json("json", Target, "/items", "[1]")]), Token);
-        using var cancelled = new CancellationTokenSource();
-        cancelled.Cancel();
-        var result = await service.ApplyAsync(plan, cancelled.Token);
-        Assert.True(result.Cancelled);
-        Assert.NotNull(result.Failure);
-        Assert.Empty(result.RemainingAdditions);
-        Assert.Single(result.Unfinished);
-        Assert.False(File.Exists(temporary.Combine(Target)));
-    }
-
     private static ToolConfigRequest Request(ToolConfigFixture temporary, IReadOnlyList<ToolConfigChange> changes) => new()
     { ToolId = ToolId, Context = Context(temporary), ProfileDigest = "synthetic-digest", Changes = changes, AppliedChanges = [], NativeSettings = [] };
     private static ToolConfigRemoveRequest Remove(ToolConfigFixture temporary, IReadOnlyList<ToolAppliedChange> changes) => new()

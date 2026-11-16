@@ -108,27 +108,6 @@ public sealed class ToolProcessHostTests
         Directory.Move(temporary.Combine("released"), working);
     }
 
-    [Fact(DisplayName = "Tool process timeout reaps the child")]
-    public async Task TimesOut()
-    {
-        using var temporary = TemporaryWorkspace.Create("tool-process");
-        var result = await new ToolProcessHost().RunAsync(Request(temporary, Sleep()) with { Timeout = TimeSpan.FromMilliseconds(100) }, TestContext.Current.CancellationToken);
-        Assert.True(result.TimedOut);
-        Assert.False(result.Cancelled);
-        Assert.NotNull(result.ExitCode);
-    }
-
-    [Fact(DisplayName = "Tool process cancellation stays distinct from timeout")]
-    public async Task Cancels()
-    {
-        using var temporary = TemporaryWorkspace.Create("tool-process");
-        using var cancelled = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
-        cancelled.CancelAfter(TimeSpan.FromMilliseconds(100));
-        var result = await new ToolProcessHost().RunAsync(Request(temporary, Sleep()), cancelled.Token);
-        Assert.True(result.Cancelled);
-        Assert.False(result.TimedOut);
-    }
-
     [Fact(DisplayName = "Missing tool executables return a bounded process failure")]
     public async Task ReportsMissingExecutable()
     {

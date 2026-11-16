@@ -65,7 +65,7 @@ public sealed class ToolCompositionIntegrationTests
         fixture.Declare();
         var before = fixture.Snapshot();
         var run = await fixture.RunAsync([ToolDefinitions.Group.Name, leaf, ToolCompositionFixture.FirstId, ToolWriteBinding.DryRunOption, "--format", "json"]);
-        Assert.True(run.ExitCode == 0, run.Output + run.Error);
+        Assert.True(run.ExitCode == ToolCompositionFixture.Exit(CliSemanticStatus.Complete), run.Output + run.Error);
         using var json = run.Json();
         var data = ToolCompositionFixture.Field(json.RootElement, nameof(ToolWriteResult.Data));
         Assert.True(ToolCompositionFixture.Field(data, nameof(ToolWriteData.Preview)).GetBoolean());
@@ -104,7 +104,7 @@ public sealed class ToolCompositionIntegrationTests
         };
         var run = await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId + "@" + ToolCompositionFixture.Version,
             ToolWriteBinding.YesOption, "--allow-path", ToolCompositionFixture.ConfigurationDirectory, "--format", "json"]);
-        Assert.True(run.ExitCode == 0, run.Output + run.Error);
+        Assert.True(run.ExitCode == ToolCompositionFixture.Exit(CliSemanticStatus.Complete), run.Output + run.Error);
         Assert.True(fixture.HasMember());
         Assert.Contains(fixture.NativeRequests, request => request.Arguments.Contains(mainRoot, StringComparer.Ordinal));
         Assert.True(fixture.NativeSawBackup);
@@ -128,7 +128,7 @@ public sealed class ToolCompositionIntegrationTests
     {
         using var fixture = new ToolCompositionFixture { Missing = true, AllowSyntheticDownload = true };
         var run = await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--format", "json"]);
-        Assert.True(run.ExitCode == 0, run.Output + run.Error);
+        Assert.True(run.ExitCode == ToolCompositionFixture.Exit(CliSemanticStatus.Complete), run.Output + run.Error);
         Assert.Equal(1, fixture.DownloadCalls);
         Assert.True(fixture.HasMember());
         Assert.True(fixture.NativeSawBackup);
@@ -150,9 +150,9 @@ public sealed class ToolCompositionIntegrationTests
     public async Task ExactRestoreAndNamedLatest()
     {
         using var fixture = new ToolCompositionFixture();
-        Assert.Equal(0, (await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--format", "json"])).ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), (await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--format", "json"])).ExitCode);
         var preview = await fixture.RunAsync(["tool", "install", ToolWriteBinding.DryRunOption, "--format", "json"]);
-        Assert.Equal(0, preview.ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), preview.ExitCode);
         using var json = preview.Json();
         var tool = Assert.Single(ToolCompositionFixture.Field(ToolCompositionFixture.Field(json.RootElement, nameof(ToolWriteResult.Data)), nameof(ToolWriteData.Tools)).EnumerateArray());
         Assert.Equal(ToolCompositionFixture.Version, ToolCompositionFixture.Field(tool, nameof(ToolWriteToolView.Version)).GetString());
@@ -171,7 +171,7 @@ public sealed class ToolCompositionIntegrationTests
             { [entry.Identity.Id] = entry with { Profiles = [entry.Profiles[0] with { MinimumOpenForgeVersion = "999.0.0" }] } }
         };
         var run = await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--allow-path", ToolCompositionFixture.ConfigurationDirectory, "--format", "json"]);
-        Assert.Equal(5, run.ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Blocked), run.ExitCode);
         var settings = WorkspaceSettingsCodec.Read(File.ReadAllBytes(Path.Combine(fixture.Workspace, WorkspaceSettingsDefinitions.RelativePath))).Document;
         Assert.NotNull(settings);
         Assert.Contains(ToolCompositionFixture.ConfigurationDirectory, settings.AllowInstallPaths);
@@ -186,7 +186,7 @@ public sealed class ToolCompositionIntegrationTests
     {
         using var fixture = new ToolCompositionFixture { FailSetup = true };
         var run = await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--format", "json"]);
-        Assert.True(run.ExitCode == 1, run.Output + run.Error);
+        Assert.True(run.ExitCode == ToolCompositionFixture.Exit(CliSemanticStatus.Failed), run.Output + run.Error);
         Assert.True(fixture.NativeSawBackup);
         Assert.NotEmpty(fixture.Backups());
         Assert.False(fixture.HasMember());
@@ -201,7 +201,7 @@ public sealed class ToolCompositionIntegrationTests
         await fixture.EnableGitAsync();
         fixture.Declare();
         var run = await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--format", "json"]);
-        Assert.True(run.ExitCode == 0, run.Output + run.Error);
+        Assert.True(run.ExitCode == ToolCompositionFixture.Exit(CliSemanticStatus.Complete), run.Output + run.Error);
         Assert.True(fixture.GitCalls > 0);
         Assert.True(fixture.HasMember());
         Assert.Empty(fixture.Backups());
@@ -226,7 +226,7 @@ public sealed class ToolCompositionIntegrationTests
             }
         };
         var run = await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--format", "json"]);
-        Assert.True(run.ExitCode == 0, run.Output + run.Error);
+        Assert.True(run.ExitCode == ToolCompositionFixture.Exit(CliSemanticStatus.Complete), run.Output + run.Error);
         Assert.True(fixture.NativeSawBackup);
         Assert.False(Directory.Exists(fixture.NativeFile()));
         Assert.Empty(fixture.Backups());
@@ -251,7 +251,7 @@ public sealed class ToolCompositionIntegrationTests
         };
         var before = fixture.Snapshot();
         var run = await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--format", "json"]);
-        Assert.Equal(5, run.ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Blocked), run.ExitCode);
         Assert.Contains(ToolHostEvent.Inventory, fixture.Events);
         Assert.DoesNotContain(ToolHostEvent.Setup, fixture.Events);
         Assert.Equal(before, fixture.Snapshot());
@@ -269,7 +269,7 @@ public sealed class ToolCompositionIntegrationTests
         }
         var before = fixture.Snapshot();
         var run = await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--format", "json"]);
-        Assert.Equal(cancel ? 130 : 1, run.ExitCode);
+        Assert.Equal(cancel ? ToolCompositionFixture.Exit(CliSemanticStatus.Interrupted) : ToolCompositionFixture.Exit(CliSemanticStatus.Failed), run.ExitCode);
         using var json = run.Json();
         Assert.Equal(JsonValueKind.Object, ToolCompositionFixture.Field(json.RootElement, nameof(ToolWriteResult.Data)).ValueKind);
         Assert.Equal(before, fixture.Snapshot());

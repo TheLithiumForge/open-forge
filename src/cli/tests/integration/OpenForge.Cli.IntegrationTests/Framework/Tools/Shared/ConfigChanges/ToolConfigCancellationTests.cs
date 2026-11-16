@@ -27,6 +27,8 @@ public sealed class ToolConfigCancellationTests
         cancellation.Cancel();
         var applied = await scenario.Service.ApplyAsync(plan, cancellation.Token);
         Assert.True(applied.Cancelled);
+        Assert.NotNull(applied.Failure);
+        Assert.NotEmpty(applied.Unfinished);
         Assert.Same(receipt, Assert.Single(applied.RemainingAdditions));
         Assert.Same(fact, Assert.Single(applied.NativeSettings));
         Assert.Empty(applied.CompletedChanges);

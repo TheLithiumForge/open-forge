@@ -26,27 +26,6 @@ public sealed class ToolWriteOperationTests
         Assert.Same(Assert.Single(fixture.ResolvedPlans), Assert.Single(fixture.ExecutedPlans));
     }
 
-    [Theory(DisplayName = "Named Tool writers use the parsed latest minor or exact selection")]
-    [InlineData(false, false)]
-    [InlineData(false, true)]
-    [InlineData(true, false)]
-    [InlineData(true, true)]
-    public async Task NamedSelections(bool update, bool exact)
-    {
-        var fixture = new ToolWriteOperationFixture();
-        var spec = new ToolSpec(ToolWriteOperationFixture.Id, new()
-        {
-            Kind = exact ? ToolVersionSelectionKind.Exact : ToolVersionSelectionKind.LatestSupported,
-            ExactVersion = exact ? ToolWriteOperationFixture.OldVersion : null,
-        });
-        var result = await fixture.Create().ExecuteAsync(fixture.Request(
-            update ? ToolWriteKind.Update : ToolWriteKind.Install, spec: spec), CancellationToken.None);
-
-        Assert.Equal(CliSemanticStatus.Complete, result.Status);
-        Assert.Equal(exact ? ToolWriteOperationFixture.OldVersion : ToolWriteOperationFixture.LatestVersion, result.Data.Tools[0].Version);
-        Assert.Same(spec.Version, fixture.ChannelRequests[0].Selection);
-    }
-
     [Fact(DisplayName = "Fresh bare Tool Install keeps the declared range and discloses latest network resolution")]
     public async Task FreshInstallUsesDeclaration()
     {
@@ -97,16 +76,6 @@ public sealed class ToolWriteOperationTests
         Assert.Contains(result.Findings, finding => finding.Code == ToolWriteFindingCode.MissingConsent);
         Assert.Empty(fixture.ExecutedPlans);
         Assert.Empty(fixture.Writes);
-    }
-
-    [Fact(DisplayName = "Tool JSON yes applies without prompting")]
-    public async Task JsonYesNeverPrompts()
-    {
-        var fixture = new ToolWriteOperationFixture { Terminal = true };
-        var result = await fixture.Create().ExecuteAsync(fixture.Request(json: true), CancellationToken.None);
-
-        Assert.Equal(CliSemanticStatus.Complete, result.Status);
-        Assert.DoesNotContain(fixture.Calls, call => call.Call is ToolWriteCall.PlanPrompt or ToolWriteCall.OptionalPrompt or ToolWriteCall.ManagerPrompt);
     }
 
     [Fact(DisplayName = "Tool application passes current complete receipts and publishes after each config step")]

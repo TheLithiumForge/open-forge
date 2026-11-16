@@ -15,10 +15,8 @@ public sealed class ToolWriteDeferredRemovalTests
     private static CancellationToken Token => TestContext.Current.CancellationToken;
 
     [Theory(DisplayName = "Project-only removal cleans real additions without any unchosen preview or output binding")]
+    // Unit ToolWriteRemovePlanningTests covers the yes, terminal and JSON combinations.
     [InlineData(true, false, false)]
-    [InlineData(true, true, false)]
-    [InlineData(false, true, false)]
-    [InlineData(true, true, true)]
     public async Task ProjectOnlySkipsAllNativeRequests(bool yes, bool terminal, bool json)
     {
         using var scenario = new ToolWriteRemovalScenario(missingClient: true) { Terminal = terminal };
@@ -44,9 +42,9 @@ public sealed class ToolWriteDeferredRemovalTests
         Assert.Empty(result.Data.Plan.Backups);
     }
 
+    // Without --yes a live terminal could confirm, so it is the meaningful row. --yes never runs account uninstall.
     [Theory(DisplayName = "Account uninstall preview remains a description even with a live terminal")]
     [InlineData(false)]
-    [InlineData(true)]
     public async Task PreviewDoesNotPrepareAccountEffects(bool yes)
     {
         using var scenario = new ToolWriteRemovalScenario(missingClient: true) { Terminal = true, AcceptAccount = true };

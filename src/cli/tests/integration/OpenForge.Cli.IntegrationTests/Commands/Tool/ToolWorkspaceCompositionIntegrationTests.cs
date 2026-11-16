@@ -21,8 +21,8 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Tool;
 public sealed class ToolWorkspaceCompositionIntegrationTests
 {
     [Theory(DisplayName = "Full Root Status and Doctor without declarations never resolve Tool homes or call hosts"),
-     InlineData("status", "absent"), InlineData("doctor", "absent"), InlineData("status", "legacy"), InlineData("doctor", "legacy"),
-     InlineData("status", "empty-tools"), InlineData("doctor", "empty-tools"), InlineData("status", "malformed-lock"), InlineData("doctor", "malformed-lock"),
+     // ToolWorkspaceObservationReaderTests decides every settings shape. One shape per command proves the Root wiring.
+     InlineData("status", "absent"), InlineData("doctor", "malformed-lock"),
      Trait("Feature", "tool-read-isolation"), Trait("Evidence", "Integration")]
     public async Task NoDeclaredTools(string command, string shape)
     {
@@ -73,7 +73,7 @@ public sealed class ToolWorkspaceCompositionIntegrationTests
     }
 
     [Theory(DisplayName = "Full Root Status and Doctor add each Tool finding exactly once without writes"),
-     InlineData("status", "missing"), InlineData("doctor", "missing"), InlineData("status", "drift"), InlineData("doctor", "drift"), InlineData("status", "invalid"), InlineData("doctor", "invalid"), InlineData("status", "unsupported"), InlineData("doctor", "unsupported"),
+     InlineData("status", "missing"), InlineData("doctor", "unsupported"),
      Trait("Feature", "tool-composition"), Trait("Evidence", "Integration")]
     public async Task OnceOnlyWorkspaceFindings(string command, string scenario)
     {

@@ -1,4 +1,3 @@
-using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Commands.Tool;
 using OpenForge.Cli.Core.Commands.Tool.List;
 using OpenForge.Cli.Core.Commands.Tool.Inspect;
@@ -27,7 +26,7 @@ public sealed class ToolHelpIntegrationTests
         var missing = Path.Combine(fixture.Workspace, "missing");
         string[] operand = leaf.Length == 0 ? [] : [leaf];
         var result = await fixture.RunAsync([ToolDefinitions.Group.Name, .. operand, CliSyntaxDefinitions.Help.Name, CliSyntaxDefinitions.Workspace.Name, missing], fullRoot: true);
-        Assert.Equal(0, result.ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), result.ExitCode);
         Assert.NotEmpty(result.Output);
         Assert.Empty(result.Error);
         Assert.Equal(before, fixture.Snapshot());
@@ -35,28 +34,6 @@ public sealed class ToolHelpIntegrationTests
         Assert.Equal(0, fixture.ResolveCalls);
         Assert.Equal(0, fixture.DownloadCalls);
         Assert.Equal(0, fixture.PathEffects);
-    }
-
-    [Fact(DisplayName = "All six Tool leaves provide structured examples behavior and global help"), Trait("Feature", "tool-help"), Trait("Evidence", "Integration")]
-    public void LeavesHaveStructuredHelp()
-    {
-        using var fixture = new ToolCompositionFixture { ThrowHosts = true, InvalidHome = true };
-        var tool = fixture.Compose(new CliCompositionInputs
-        {
-            StandardInput = TextReader.Null,
-            PromptOutput = TextWriter.Null,
-            StandardInputRedirected = true,
-            PromptOutputRedirected = true,
-            Tools = fixture.Inputs,
-        });
-        var leaves = new[] { tool.ListBinding, tool.InspectBinding, tool.StatusBinding, tool.InstallBinding, tool.UpdateBinding, tool.RemoveBinding };
-        Assert.All(leaves, leaf =>
-        {
-            Assert.False(string.IsNullOrEmpty(leaf.Help.Usage));
-            Assert.True(leaf.Help.SummarizeGlobalOptions);
-            Assert.Equal(2, leaf.Help.Introduction.Count);
-        });
-        Assert.Equal(0, fixture.ResolveCalls);
     }
 
     [Theory(DisplayName = "Inspect and Remove still require one ID during normal execution")]

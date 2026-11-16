@@ -104,6 +104,7 @@ internal sealed partial class ToolCompositionFixture : IDisposable
     internal IReadOnlyDictionary<string, string> Snapshot() => _owned.SnapshotHashes(includeRuntime: true);
     internal string[] Backups() => Directory.GetFiles(_owned.Path, "*" + ToolBackupPaths.Suffix, SearchOption.AllDirectories);
     internal static JsonElement Field(JsonElement value, string member) => value.GetProperty(JsonNamingPolicy.CamelCase.ConvertName(member));
+    internal static int Exit(CliSemanticStatus status) => CliStatusDefinitions.Read(status).Disposition.ExitCode;
     internal static CliProcessIdentity Identity => new(CliSyntaxDefinitions.ExecutableName, CliBuildVersion.InformationalVersion);
     // Backups are operation-scoped, so a caller that completes them passes the service that prepared them.
     internal ToolRecordService RecordService(ToolCatalogue? catalogue = null, ToolBackupService? backups = null)

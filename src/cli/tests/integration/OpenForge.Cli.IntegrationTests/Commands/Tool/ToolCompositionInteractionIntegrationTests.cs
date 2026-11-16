@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Tool.Shared.Composition.Models;
 using System.Text.Json;
 using OpenForge.Cli.Composition;
@@ -19,10 +20,10 @@ public sealed class ToolCompositionInteractionIntegrationTests
     public async Task AccountChoice(bool approve)
     {
         using var fixture = new ToolCompositionFixture();
-        Assert.Equal(0, (await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--format", "json"])).ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), (await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--format", "json"])).ExitCode);
         fixture.Events.Clear();
         var run = await fixture.RunAsync(["tool", "remove", ToolCompositionFixture.FirstId], "y\n" + (approve ? "2\n" : "1\n"));
-        Assert.Equal(0, run.ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), run.ExitCode);
         Assert.Equal(approve ? 1 : 0, fixture.Events.Count(item => item == ToolHostEvent.Uninstall));
         Assert.Equal(approve, fixture.NativeSawProjectAddition);
         Assert.False(fixture.HasMember());
@@ -37,11 +38,11 @@ public sealed class ToolCompositionInteractionIntegrationTests
     public async Task UnattendedRemoval(bool json)
     {
         using var fixture = new ToolCompositionFixture();
-        Assert.Equal(0, (await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--format", "json"])).ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), (await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, "--format", "json"])).ExitCode);
         fixture.Events.Clear();
         string[] format = json ? ["--format", "json"] : [];
         var run = await fixture.RunAsync(["tool", "remove", ToolCompositionFixture.FirstId, ToolWriteBinding.YesOption, .. format]);
-        Assert.Equal(0, run.ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Complete), run.ExitCode);
         Assert.Empty(run.Prompts);
         Assert.DoesNotContain(ToolHostEvent.Uninstall, fixture.Events);
         Assert.False(fixture.HasMember());
@@ -55,7 +56,7 @@ public sealed class ToolCompositionInteractionIntegrationTests
         using var fixture = new ToolCompositionFixture();
         var before = fixture.Snapshot();
         var run = await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId], string.Empty);
-        Assert.Equal(130, run.ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Interrupted), run.ExitCode);
         Assert.Equal(before, fixture.Snapshot());
         Assert.DoesNotContain(ToolHostEvent.Setup, fixture.Events);
     }
@@ -66,7 +67,7 @@ public sealed class ToolCompositionInteractionIntegrationTests
         using var fixture = new ToolCompositionFixture();
         var before = fixture.Snapshot();
         var run = await fixture.RunAsync(["tool", "install", ToolCompositionFixture.FirstId]);
-        Assert.Equal(4, run.ExitCode);
+        Assert.Equal(ToolCompositionFixture.Exit(CliSemanticStatus.Invalid), run.ExitCode);
         Assert.Empty(run.Prompts);
         Assert.Equal(before, fixture.Snapshot());
         Assert.Equal(0, fixture.PathEffects);

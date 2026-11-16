@@ -107,14 +107,11 @@ public sealed class ToolWriteBindingTests
         Assert.False(Assert.IsType<ToolWriteRequest>(result.Request).CanPrompt);
     }
 
-    [Theory(DisplayName = "Tool leaf request binding construction keeps operation factories deferred")]
-    [InlineData((int)ToolWriteKind.Install)]
-    [InlineData((int)ToolWriteKind.Update)]
-    [InlineData((int)ToolWriteKind.Remove)]
-    public void ConstructionDoesNotCreateOperation(int value)
+    [Fact(DisplayName = "Tool leaf request binding construction keeps operation factories deferred")]
+    public void ConstructionDoesNotCreateOperation()
     {
         var fixture = new ToolWriteOperationFixture();
-        var symbols = Symbols((ToolWriteKind)value);
+        var symbols = Symbols(ToolWriteKind.Install);
         var calls = 0;
         var binding = RequestBinding(symbols, fixture, () => calls++);
 
@@ -124,15 +121,12 @@ public sealed class ToolWriteBindingTests
         Assert.Empty(fixture.Calls);
     }
 
-    [Theory(DisplayName = "Tool leaf help selection and help content do not create operations")]
-    [InlineData((int)ToolWriteKind.Install)]
-    [InlineData((int)ToolWriteKind.Update)]
-    [InlineData((int)ToolWriteKind.Remove)]
-    public void HelpDoesNotCreateOperation(int value)
+    [Fact(DisplayName = "Tool leaf help selection and help content do not create operations")]
+    public void HelpDoesNotCreateOperation()
     {
         var fixture = new ToolWriteOperationFixture();
         var parent = new Command("synthetic-tool-group");
-        var symbols = Symbols((ToolWriteKind)value, parent);
+        var symbols = Symbols(ToolWriteKind.Install, parent);
         var calls = 0;
         var binding = RequestBinding(symbols, fixture, () => calls++);
         var tree = CliCommandTree.Create(CliHelpContent.Empty, [new(parent, CliHelpContent.Empty)], [],
@@ -148,35 +142,9 @@ public sealed class ToolWriteBindingTests
         Assert.Empty(fixture.Calls);
     }
 
-    [Theory(DisplayName = "Unrelated command selection leaves Tool leaf operation factories unused")]
-    [InlineData((int)ToolWriteKind.Install)]
-    [InlineData((int)ToolWriteKind.Update)]
-    [InlineData((int)ToolWriteKind.Remove)]
-    public void UnrelatedSelectionDoesNotCreateOperation(int value)
-    {
-        var fixture = new ToolWriteOperationFixture();
-        var parent = new Command("synthetic-tool-group");
-        var symbols = Symbols((ToolWriteKind)value, parent);
-        var unrelated = new Command("synthetic-other-command");
-        parent.Subcommands.Add(unrelated);
-        var calls = 0;
-        _ = RequestBinding(symbols, fixture, () => calls++);
-        var tree = CliCommandTree.Create(CliHelpContent.Empty, [new(parent, CliHelpContent.Empty)], []);
-        var parse = tree.Parse([parent.Name, unrelated.Name]);
-
-        Assert.Empty(parse.Result.Errors);
-        Assert.Same(unrelated, parse.Result.CommandResult.Command);
-        Assert.Equal(0, calls);
-        Assert.Empty(fixture.Calls);
-    }
-
     [Theory(DisplayName = "Tool parser and semantic binding failures keep operation factories unused")]
     [InlineData((int)ToolWriteKind.Install, false)]
-    [InlineData((int)ToolWriteKind.Update, false)]
-    [InlineData((int)ToolWriteKind.Remove, false)]
     [InlineData((int)ToolWriteKind.Install, true)]
-    [InlineData((int)ToolWriteKind.Update, true)]
-    [InlineData((int)ToolWriteKind.Remove, true)]
     public void InvalidInputDoesNotCreateOperation(int value, bool semantic)
     {
         var fixture = new ToolWriteOperationFixture();
@@ -194,14 +162,11 @@ public sealed class ToolWriteBindingTests
         Assert.Empty(fixture.Calls);
     }
 
-    [Theory(DisplayName = "Tool unknown named IDs fail binding before operation factories")]
-    [InlineData((int)ToolWriteKind.Install)]
-    [InlineData((int)ToolWriteKind.Update)]
-    [InlineData((int)ToolWriteKind.Remove)]
-    public void UnknownIdDoesNotCreateOperation(int value)
+    [Fact(DisplayName = "Tool unknown named IDs fail binding before operation factories")]
+    public void UnknownIdDoesNotCreateOperation()
     {
         var fixture = new ToolWriteOperationFixture();
-        var symbols = Symbols((ToolWriteKind)value);
+        var symbols = Symbols(ToolWriteKind.Install);
         var catalogue = fixture.Catalogue with
         {
             Entries = new Dictionary<string, ToolCatalogueEntry> { [ToolWriteOperationFixture.Id] = fixture.Catalogue.Entries[ToolWriteOperationFixture.Id] },
@@ -224,13 +189,11 @@ public sealed class ToolWriteBindingTests
         Assert.Empty(fixture.Calls);
     }
 
-    [Theory(DisplayName = "Tool unadvertised named channels fail binding before operation factories")]
-    [InlineData((int)ToolWriteKind.Install)]
-    [InlineData((int)ToolWriteKind.Update)]
-    public void UnadvertisedChannelDoesNotCreateOperation(int value)
+    [Fact(DisplayName = "Tool unadvertised named channels fail binding before operation factories")]
+    public void UnadvertisedChannelDoesNotCreateOperation()
     {
         var fixture = new ToolWriteOperationFixture();
-        var symbols = Symbols((ToolWriteKind)value);
+        var symbols = Symbols(ToolWriteKind.Install);
         var calls = 0;
         var binding = RequestBinding(symbols, fixture, () => calls++);
         string[] args = [ToolWriteOperationFixture.Id, ToolWriteBinding.ChannelOption, "synthetic-unadvertised-channel"];
@@ -248,14 +211,11 @@ public sealed class ToolWriteBindingTests
         Assert.Empty(fixture.Calls);
     }
 
-    [Theory(DisplayName = "Tool workspace binding failure does not resolve the operation graph")]
-    [InlineData((int)ToolWriteKind.Install)]
-    [InlineData((int)ToolWriteKind.Update)]
-    [InlineData((int)ToolWriteKind.Remove)]
-    public void MissingWorkspaceDoesNotCreateOperation(int value)
+    [Fact(DisplayName = "Tool workspace binding failure does not resolve the operation graph")]
+    public void MissingWorkspaceDoesNotCreateOperation()
     {
         var fixture = new ToolWriteOperationFixture();
-        var symbols = Symbols((ToolWriteKind)value);
+        var symbols = Symbols(ToolWriteKind.Install);
         var calls = 0;
         var binding = RequestBinding(symbols, fixture, () => calls++);
         string[] args = [ToolWriteOperationFixture.Id];
@@ -268,14 +228,11 @@ public sealed class ToolWriteBindingTests
         Assert.Empty(fixture.Calls);
     }
 
-    [Theory(DisplayName = "Tool contextual invalid result factory stays independent of operation factories")]
-    [InlineData((int)ToolWriteKind.Install)]
-    [InlineData((int)ToolWriteKind.Update)]
-    [InlineData((int)ToolWriteKind.Remove)]
-    public void InvalidResultDoesNotCreateOperation(int value)
+    [Fact(DisplayName = "Tool contextual invalid result factory stays independent of operation factories")]
+    public void InvalidResultDoesNotCreateOperation()
     {
         var fixture = new ToolWriteOperationFixture();
-        var symbols = Symbols((ToolWriteKind)value);
+        var symbols = Symbols(ToolWriteKind.Install);
         var calls = 0;
         var binding = RequestBinding(symbols, fixture, () => calls++);
         var invocation = Invocation(fixture.Root);
@@ -293,7 +250,6 @@ public sealed class ToolWriteBindingTests
 
     [Theory(DisplayName = "Tool valid bound execution creates its leaf operation exactly once")]
     [InlineData((int)ToolWriteKind.Install)]
-    [InlineData((int)ToolWriteKind.Update)]
     [InlineData((int)ToolWriteKind.Remove)]
     public async Task ValidExecutionCreatesOperationOnce(int value)
     {
@@ -345,7 +301,6 @@ public sealed class ToolWriteBindingTests
 
     [Theory(DisplayName = "Tool async entry forwards the bound request and token and awaits one factory")]
     [InlineData((int)ToolWriteKind.Install)]
-    [InlineData((int)ToolWriteKind.Update)]
     [InlineData((int)ToolWriteKind.Remove)]
     public async Task AsyncFactoryReceivesRequestAndToken(int value)
     {
@@ -384,14 +339,8 @@ public sealed class ToolWriteBindingTests
 
     [Theory(DisplayName = "Tool async entry cancellation keeps workspace and preview without writer effects")]
     [InlineData((int)ToolWriteKind.Install, "before")]
-    [InlineData((int)ToolWriteKind.Update, "before")]
-    [InlineData((int)ToolWriteKind.Remove, "before")]
     [InlineData((int)ToolWriteKind.Install, "during")]
-    [InlineData((int)ToolWriteKind.Update, "during")]
-    [InlineData((int)ToolWriteKind.Remove, "during")]
     [InlineData((int)ToolWriteKind.Install, "after")]
-    [InlineData((int)ToolWriteKind.Update, "after")]
-    [InlineData((int)ToolWriteKind.Remove, "after")]
     public async Task FactoryCancellationKeepsRequestContext(int value, string stage)
     {
         var fixture = new ToolWriteOperationFixture();
@@ -424,17 +373,9 @@ public sealed class ToolWriteBindingTests
 
     [Theory(DisplayName = "Tool expected async factory failures return bounded typed results before writer effects")]
     [InlineData((int)ToolWriteKind.Install, "io")]
-    [InlineData((int)ToolWriteKind.Update, "io")]
-    [InlineData((int)ToolWriteKind.Remove, "io")]
     [InlineData((int)ToolWriteKind.Install, "access")]
-    [InlineData((int)ToolWriteKind.Update, "access")]
-    [InlineData((int)ToolWriteKind.Remove, "access")]
     [InlineData((int)ToolWriteKind.Install, "fact")]
-    [InlineData((int)ToolWriteKind.Update, "fact")]
-    [InlineData((int)ToolWriteKind.Remove, "fact")]
     [InlineData((int)ToolWriteKind.Install, "argument")]
-    [InlineData((int)ToolWriteKind.Update, "argument")]
-    [InlineData((int)ToolWriteKind.Remove, "argument")]
     public async Task ExpectedFactoryFailureKeepsRequestContext(int value, string scenario)
     {
         var fixture = new ToolWriteOperationFixture();

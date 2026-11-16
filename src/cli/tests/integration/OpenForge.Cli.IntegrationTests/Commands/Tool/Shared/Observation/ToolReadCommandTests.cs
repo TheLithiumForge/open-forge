@@ -40,9 +40,9 @@ public sealed class ToolReadCommandTests
         Assert.False(Directory.Exists(fixture.Paths.StatePath));
     }
 
-    [Theory(DisplayName = "Tool Status distinguishes supported self updates from unsupported versions"), InlineData(ToolRecordFixture.ChangedVersion, (int)CliSemanticStatus.Attention, "changed"),
-     InlineData(ToolRecordFixture.UnsupportedVersion, (int)CliSemanticStatus.Attention, "unsupported"), Trait("Feature", "tool-read"), Trait("Evidence", "Integration")]
-    public async Task SelfUpdateFacts(string version, int expected, string state)
+    [Theory(DisplayName = "Tool Status distinguishes supported self updates from unsupported versions"), InlineData(ToolRecordFixture.ChangedVersion, (int)CliSemanticStatus.Attention, (int)ToolObservationState.Changed),
+     InlineData(ToolRecordFixture.UnsupportedVersion, (int)CliSemanticStatus.Attention, (int)ToolObservationState.Unsupported), Trait("Feature", "tool-read"), Trait("Evidence", "Integration")]
+    public async Task SelfUpdateFacts(string version, int expected, int state)
     {
         using var fixture = new ToolRecordFixture();
         var token = TestContext.Current.CancellationToken;
@@ -51,7 +51,7 @@ public sealed class ToolReadCommandTests
         var result = await new ToolStatusOperation(Observer(fixture, channels)).ExecuteAsync(new(Workspace(fixture), null), token);
         Assert.Equal((CliSemanticStatus)expected, result.Status);
         var tool = Assert.Single(result.Data.Tools);
-        Assert.Equal(state, tool.State);
+        Assert.Equal(ToolReadProjection.Name((ToolObservationState)state), tool.State);
         Assert.Equal(ToolRecordFixture.InitialVersion, tool.LockedVersion);
         Assert.Equal(version, tool.DetectedVersion);
         Assert.Equal(fixture.Catalogue.Entries[ToolRecordFixture.Id].Detection.Environment, channels.LastRequest?.Entry.Detection.Environment);
@@ -59,16 +59,16 @@ public sealed class ToolReadCommandTests
         Assert.Equal(fixture.CommandPath, channels.LastRequest?.RecordedState?.CommandPath);
     }
 
-    [Theory(DisplayName = "Tool Inspect separates missing commands from unavailable native probes"), InlineData(false, (int)CliSemanticStatus.Attention, "missing"),
-     InlineData(true, (int)CliSemanticStatus.Incomplete, "unavailable"), Trait("Feature", "tool-read"), Trait("Evidence", "Integration")]
-    public async Task MissingAndUnavailable(bool failure, int status, string state)
+    [Theory(DisplayName = "Tool Inspect separates missing commands from unavailable native probes"), InlineData(false, (int)CliSemanticStatus.Attention, (int)ToolObservationState.Missing),
+     InlineData(true, (int)CliSemanticStatus.Incomplete, (int)ToolObservationState.Unavailable), Trait("Feature", "tool-read"), Trait("Evidence", "Integration")]
+    public async Task MissingAndUnavailable(bool failure, int status, int state)
     {
         using var fixture = new ToolRecordFixture();
         var channels = new Channels(fixture) { Version = null, Failure = failure ? "synthetic probe failure" : null };
         var result = await new ToolInspectOperation(Observer(fixture, channels)).ExecuteAsync(new(Workspace(fixture), ToolRecordFixture.Id), TestContext.Current.CancellationToken);
         Assert.Equal((CliSemanticStatus)status, result.Status);
         var tool = Assert.Single(result.Data.Tools);
-        Assert.Equal(state, tool.State);
+        Assert.Equal(ToolReadProjection.Name((ToolObservationState)state), tool.State);
         Assert.NotNull(tool.BinPath);
         Assert.Equal(channels.Failure, tool.DetectionFailure);
         Assert.NotNull(tool.ManagerGlobalBinReadiness);
