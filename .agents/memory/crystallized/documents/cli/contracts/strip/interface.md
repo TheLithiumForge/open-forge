@@ -150,11 +150,12 @@ The demo-evals harness at `6edb7de66` strips by hand in `src/evals/materialize/`
 - `plain-links.ts` matches links with a regular expression. It strips links inside code spans, turns an image `![alt](x.png)` into `!alt` and strips links to files that are not documents. It toggles fences on any line starting with three backticks or tildes, so a longer or mismatched fence ends a block early, and it treats indented code blocks and HTML blocks as text. It misses reference links, titles, angle-bracket destinations and labels that contain brackets. Strip reads links through the Markdown parser, so code stays code and only document links lose their targets.
 - `scopes.ts` rewrites only links whose path uses word characters, dots, slashes and hyphens. Flatten rewrites every kept link whose source or target moved.
 
-## Decisions To Confirm
+## Decisions
+
+The maintainer accepted that `strip` is its own command and that `uninstall` offers the same parts as options.
 
 These defaults are recorded for the maintainer to confirm:
 
-- `strip` is its own command, and `uninstall` offers the same parts as options.
 - Strip is opt-in. The issue's proposed `uninstall --keep` is not added, because without `--strip` everything stays.
 - `strip` leaves managed Framework and Extension files unchanged, so the Framework keeps working. `uninstall` strips the edited managed files it keeps.
 - `--strip links` keeps links in generated `Entries` lists, so links and navigation can be ablated separately.

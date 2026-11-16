@@ -102,13 +102,18 @@ open-forge uninstall --strip metadata,entries,links --flatten docs --automatic
 open-forge uninstall --remove-edited .agents/loader.md --dry-run --format json
 ```
 
-## Decisions To Confirm
+## Accepted Decisions
 
-These defaults answer the issue's questions and are recorded for the maintainer to confirm:
+The maintainer accepted these answers to the issue's questions:
 
 - **Edited managed files stay by default.** Uninstall never asks about them one by one. `--remove-edited <path>` names each one to remove.
-- **Managed sections go, user text stays.** Uninstall removes Open Forge's own sections in `AGENTS.md` and `CLAUDE.md`, keeps the user's text and deletes a host only when nothing else is left.
+- **Managed sections go, user text stays.** Uninstall removes only Open Forge's own sections in `AGENTS.md` and `CLAUDE.md`, keeps the user's text and deletes a host only when nothing else is left.
 - **`strip` is its own command,** and its parts are also options on `uninstall`.
+
+## Decisions To Confirm
+
+These defaults are recorded for the maintainer to confirm:
+
 - **Route scaffolds count as installed files.** Uninstall removes an unowned entrypoint only when it matches the scaffold shape above.
 - **State goes after a verified run.** Uninstall deletes its own recovery bundle after every effect verifies, then removes `.open-forge-state/` when nothing else is stored there.
 - **Libraries block.** A later pass may detach them as part of uninstall.
