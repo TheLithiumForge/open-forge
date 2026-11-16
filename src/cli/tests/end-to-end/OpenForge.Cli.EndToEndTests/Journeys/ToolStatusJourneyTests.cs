@@ -26,6 +26,7 @@ public sealed class ToolStatusJourneyTests
     // A synthetic self-update below the catalogue's supported CodeGraph range.
     private const string OutOfRangeVersion = "1.5.0";
     private const string FakeEntry = "cli.js";
+    private const string CommandsDirectory = "commands";
 
     [Fact(DisplayName = "A declared CodeGraph that is missing, then outside support, is reported with the bin readiness and no writes"),
      Trait("Feature", Feature), Trait("Evidence", "EndToEnd"), Trait("Journey", "T01")]
@@ -34,7 +35,7 @@ public sealed class ToolStatusJourneyTests
         using var workspace = PublishedJourneyWorkspace.Create("tool-status-journey");
         using var machine = TemporaryWorkspace.Create("tool-status-machine");
         var home = machine.CreateDirectory("home");
-        var commands = machine.CreateDirectory("commands");
+        var commands = machine.CreateDirectory(CommandsDirectory);
         workspace.WriteText(Tokens.Settings.RelativePath, new JsonObject
         {
             [Tokens.Settings.SchemaVersionProperty] = Tokens.Settings.SchemaVersion,
@@ -62,7 +63,7 @@ public sealed class ToolStatusJourneyTests
         }
         Assert.Equal(machineBefore, machine.SnapshotHashes());
 
-        WriteOutOfRangeCodeGraph(machine, commands);
+        WriteOutOfRangeCodeGraph(machine);
         machineBefore = machine.SnapshotHashes();
 
         var unsupported = await PublishedJourneyProcess.RunWithoutWritesAsync(workspace.Target, workspace.Path, workspace.SnapshotState, status, environment);
@@ -86,25 +87,25 @@ public sealed class ToolStatusJourneyTests
 
     // Unix runs an executable script directly. Windows resolves an npm command script through its
     // package manifest and the Node command beside it, so the fake Node answers the version probe.
-    private static void WriteOutOfRangeCodeGraph(TemporaryWorkspace machine, string commands)
+    // Every fake file goes through the owned workspace so its cleanup knows about it.
+    private static void WriteOutOfRangeCodeGraph(TemporaryWorkspace machine)
     {
         if (!OperatingSystem.IsWindows())
         {
-            var script = Path.Combine(commands, Tokens.Tool.CodeGraphId);
-            File.WriteAllText(script, $"#!/bin/sh\necho {OutOfRangeVersion}\n");
+            var script = machine.CreateFile(Path.Combine(CommandsDirectory, Tokens.Tool.CodeGraphId), $"#!/bin/sh\necho {OutOfRangeVersion}\n");
             File.SetUnixFileMode(script, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
             return;
         }
 
-        File.WriteAllText(Path.Combine(commands, Tokens.Tool.CodeGraphId + WindowsScriptExtension), "@exit /b 1\r\n");
-        File.WriteAllText(Path.Combine(commands, Tokens.Tool.NodeCommand + WindowsScriptExtension), $"@echo {OutOfRangeVersion}\r\n");
-        var package = machine.CreateDirectory(Path.Combine(Path.GetFileName(commands), Tokens.Tool.NpmModulesDirectory, Tokens.Tool.CodeGraphId));
-        File.WriteAllText(Path.Combine(package, Tokens.Tool.NpmManifest), new JsonObject
+        machine.CreateFile(Path.Combine(CommandsDirectory, Tokens.Tool.CodeGraphId + WindowsScriptExtension), "@exit /b 1\r\n");
+        machine.CreateFile(Path.Combine(CommandsDirectory, Tokens.Tool.NodeCommand + WindowsScriptExtension), $"@echo {OutOfRangeVersion}\r\n");
+        var package = Path.Combine(CommandsDirectory, Tokens.Tool.NpmModulesDirectory, Tokens.Tool.CodeGraphId);
+        machine.CreateFile(Path.Combine(package, Tokens.Tool.NpmManifest), new JsonObject
         {
             [NpmNameMember] = Tokens.Tool.CodeGraphId,
             [Tokens.Tool.Version] = OutOfRangeVersion,
             [NpmBinMember] = FakeEntry,
         }.ToJsonString());
-        File.WriteAllText(Path.Combine(package, FakeEntry), string.Empty);
+        machine.CreateFile(Path.Combine(package, FakeEntry));
     }
 }
