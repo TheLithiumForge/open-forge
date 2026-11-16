@@ -78,6 +78,9 @@ public sealed class ToolReadBindingTests
             if (parsed.Errors.Count == 0) Assert.Equal(CliSemanticStatus.Invalid, bind?.Invoke(new CliBindingParse(parsed, arguments)));
             else Assert.NotEmpty(parsed.Errors);
         }
-        Assert.Equal(leaf != 1, command.Parse(Array.Empty<string>()).Errors.Count == 0);
+        // Help needs an operand-free parse, so Inspect's binder, not the parser, requires its one ID.
+        var empty = command.Parse(Array.Empty<string>());
+        Assert.Empty(empty.Errors);
+        if (leaf == 1) Assert.Equal(CliSemanticStatus.Invalid, bind?.Invoke(new CliBindingParse(empty, [])));
     }
 }
