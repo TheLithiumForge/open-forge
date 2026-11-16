@@ -102,35 +102,35 @@ Two documents that would land on the same name, or a document that would land on
 
 The command is `strip` in the shared schema-3 report. Every plan entry is an effect. A move is two effects, the created destination and the deleted source. The JSON `data` holds the complete plan at every detail level:
 
-| Field        | Meaning                                                                                                   |
-| ------------ | --------------------------------------------------------------------------------------------------------- |
-| `mode`       | `dry-run` or `apply`                                                                                      |
-| `strip`      | The selected parts in fixed order                                                                         |
-| `flatten`    | The canonical flatten folder, or `null`                                                                   |
+| Field        | Meaning                                                                                                                                                                |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`       | `dry-run` or `apply`                                                                                                                                                   |
+| `strip`      | The selected parts in fixed order                                                                                                                                      |
+| `flatten`    | The canonical flatten folder, or `null`                                                                                                                                |
 | `plan`       | Ordered entries with `action` (`delete`, `rewrite`, `move` or `delete-directory`), `path`, optional `to`, `reason`, `parts`, `before` and `after` hashes and `outcome` |
-| `kept`       | Paths left in place with their reason                                                                     |
-| `collisions` | Flatten destinations with their source paths                                                              |
-| `verified`   | Whether every applied effect verified                                                                      |
+| `kept`       | Paths left in place with their reason                                                                                                                                  |
+| `collisions` | Flatten destinations with their source paths                                                                                                                           |
+| `verified`   | Whether every applied effect verified                                                                                                                                  |
 
 `outcome` is `planned` in a preview and `done`, `not-started`, `unknown` or `failed` after applying. `parts` names what changed in a rewrite or move: `metadata`, `entries`, `links`, `relink` for flatten link updates, and `managed-section` for uninstall's root hosts. Text output lists the effects. Full detail adds the hashes.
 
 ## Errors And Findings
 
-| Code                              | Meaning                                                                                  |
-| --------------------------------- | ---------------------------------------------------------------------------------------- |
-| `strip.invalid-input`             | A part, flatten folder or option is invalid.                                             |
-| `strip.workspace-unavailable`     | The workspace layout, settings or ownership lock cannot be read safely.                  |
-| `strip.document-unsupported`      | A document's frontmatter or `Entries` section cannot be edited without losing meaning.   |
-| `strip.flatten-collision`         | Two documents, or a document and a kept file, would share a flattened name.              |
-| `strip.linked-file-skipped`       | Information. A symbolic link or junction was left unchanged.                             |
-| `strip.target-changed`            | A planned file changed before its effect.                                                |
-| `strip.workspace-lock-unavailable` | The workspace mutation lease is unavailable.                                            |
-| `strip.confirmation-required`     | Applying needs confirmation or `--automatic`.                                            |
-| `strip.permission-declined`       | The user declined the plan.                                                              |
-| `strip.recovery-unavailable`      | Recovery data could not be prepared. Nothing was changed.                                |
-| `strip.write-failed`              | A planned effect failed. The recovery bundle stays.                                      |
-| `strip.recovery-artifact-retained` | The changes verified, but the recovery bundle could not be removed.                     |
-| `strip.interrupted`               | The run was cancelled.                                                                   |
+| Code                               | Meaning                                                                                |
+| ---------------------------------- | -------------------------------------------------------------------------------------- |
+| `strip.invalid-input`              | A part, flatten folder or option is invalid.                                           |
+| `strip.workspace-unavailable`      | The workspace layout, settings or ownership lock cannot be read safely.                |
+| `strip.document-unsupported`       | A document's frontmatter or `Entries` section cannot be edited without losing meaning. |
+| `strip.flatten-collision`          | Two documents, or a document and a kept file, would share a flattened name.            |
+| `strip.linked-file-skipped`        | Information. A symbolic link or junction was left unchanged.                           |
+| `strip.target-changed`             | A planned file changed before its effect.                                              |
+| `strip.workspace-lock-unavailable` | The workspace mutation lease is unavailable.                                           |
+| `strip.confirmation-required`      | Applying needs confirmation or `--automatic`.                                          |
+| `strip.permission-declined`        | The user declined the plan.                                                            |
+| `strip.recovery-unavailable`       | Recovery data could not be prepared. Nothing was changed.                              |
+| `strip.write-failed`               | A planned effect failed. The recovery bundle stays.                                    |
+| `strip.recovery-artifact-retained` | The changes verified, but the recovery bundle could not be removed.                    |
+| `strip.interrupted`                | The run was cancelled.                                                                 |
 
 ## Examples
 

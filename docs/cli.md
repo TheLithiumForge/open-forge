@@ -37,7 +37,7 @@ examples need no preview. Mutation examples show a preview before application.
 | Read and discover context     | [status](#status), [context](#context), [find](#find), [references](#references), [route list](#route-list), [route inspect](#route-inspect)                                                                                             |
 | Add and organize knowledge    | [route init](#route-init), [route create](#route-create), [route include](#route-include), [route exclude](#route-exclude), [route update](#route-update), [route move](#route-move), [route remove](#route-remove)                                                                                        |
 | Check and repair              | [index](#index), [doctor](#doctor), [repair](#repair), [cleanup](#cleanup)                                                                                                                                                               |
-| Manage the Framework          | [install](#install), [update](#update), [remove](#remove)                                                                                                                                                                                |
+| Manage the Framework          | [install](#install), [update](#update), [uninstall](#uninstall), [strip](#strip), [remove](#remove)                                                                                                                                      |
 | Manage Extensions             | [extension list](#extension-list), [extension inspect](#extension-inspect), [extension create](#extension-create), [extension install](#extension-install), [extension update](#extension-update), [extension remove](#extension-remove) |
 | Share files through Libraries | [library list](#library-list), [library inspect](#library-inspect), [library attach](#library-attach), [library sync](#library-sync), [library detach](#library-detach)                                                                  |
 
@@ -217,7 +217,7 @@ skip those questions. Noninteractive Configure requires an explicit preset or
 These commands confirm this way and accept `--automatic`, which skips
 interaction and adds no force, prune, or other authority:
 
-- `install`, `update`, `remove`, `route remove`, and `repair`
+- `install`, `update`, `uninstall`, `strip`, `remove`, `route remove`, and `repair`
 - `extension create`, `extension install`, `extension update`, and
   `extension remove`
 - `library attach`, `library sync`, and `library detach`
@@ -1884,6 +1884,100 @@ Entries name workspace-relative files or folders, not patterns. A file entry cov
 Doctor shows how many links it ignored and notes listed paths that no longer exist. Route Move updates matching entries. Route Remove drops them. Both preserve ignored links as written. Install adds the archive entry when it installs Memory archive and the key is absent. An existing key, even `[]`, is your choice. Update leaves your settings unchanged. Add the entry by hand in an existing workspace.
 
 An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
+
+### `uninstall`
+
+Remove Open Forge from the workspace and keep the files you wrote.
+
+#### Common examples
+
+```sh
+open-forge uninstall --dry-run
+# Review the plan before applying it.
+open-forge uninstall --automatic
+```
+
+Build plain docs from a full workspace:
+
+```sh
+open-forge uninstall --strip metadata,entries,links --automatic
+open-forge uninstall --strip metadata,links --flatten docs --automatic
+```
+
+#### Options
+
+- Repeat `--strip <parts>` or list parts with commas: `metadata`, `entries` and `links`. See [`strip`](#strip).
+- `--flatten <folder>` moves the documents below the folder's subfolders into the folder.
+- Repeat `--remove-edited <path>` to remove a managed file or section you edited.
+- `--dry-run` lists every delete, rewrite and move with SHA-256 hashes and writes nothing.
+- `--automatic` skips confirmation.
+
+See [global options](#global-options) for shared flags.
+
+#### Behavior notes
+
+Uninstall deletes the Framework and Extension files that still match what Open
+Forge installed. It removes Open Forge's own sections in `AGENTS.md` and
+`CLAUDE.md` and keeps your text there. A host with nothing else left is deleted.
+It also deletes route scaffolds, meaning entrypoints that hold nothing but what
+Open Forge wrote for a route, then `.agents/open-forge.json`,
+`.agents/open-forge.lock.json` and folders left empty. After a verified run it
+removes `.open-forge-state/` when no earlier recovery data is stored there.
+
+Files you wrote stay. Managed files you edited stay too and are listed as kept.
+Name one with `--remove-edited` to remove it anyway. Git-ignore rules stay.
+Detach Libraries before uninstalling.
+
+The same workspace and options give the same bytes. A file that changed after
+the plan stops the run, and an interrupted run keeps its recovery bundle. The
+[Uninstall contract](../.agents/memory/crystallized/documents/cli/contracts/uninstall/_uninstall.md)
+defines the complete boundary.
+
+#### Next step
+
+Review the remaining files with `git status` and `git diff`.
+
+### `strip`
+
+Remove Open Forge metadata, generated `Entries` or links between documents, or flatten routed documents into one folder. The Framework stays installed.
+
+#### Common examples
+
+```sh
+open-forge strip links --dry-run
+# Review the plan before applying it.
+open-forge strip links --automatic
+open-forge strip metadata,entries --flatten docs --dry-run --format json
+```
+
+#### Options
+
+- `<part>...` selects `metadata`, `entries` or `links`. Separate several with spaces or commas.
+- `--flatten <folder>` moves the documents below the folder's subfolders into the folder.
+- `--dry-run` lists every rewrite and move with SHA-256 hashes and writes nothing.
+- `--automatic` skips confirmation.
+
+See [global options](#global-options) for shared flags.
+
+#### Behavior notes
+
+Strip edits the Markdown files below the main root, the native Skills folder and
+each registered outside route. Files Open Forge manages stay unchanged, so the
+Framework keeps working. Every byte outside the selected edits stays.
+
+- `metadata` removes Open Forge frontmatter keys in either form and keeps other keys and the body.
+- `entries` removes the generated `Entries` section and keeps text you wrote there.
+- `links` turns links to documents into their text. External links, images, links to other files, code, comment links and generated `Entries` lists stay.
+
+`--flatten` keeps each file name. Entrypoints and `SKILL.md` files stay where
+they are. Kept links are rewritten so they still work. A name two files would
+share stops the run before any write. The
+[Strip contract](../.agents/memory/crystallized/documents/cli/contracts/strip/_strip.md)
+defines the parts and how they compare with the eval harness.
+
+#### Next step
+
+Run [`index`](#index) when you keep Open Forge and want fresh navigation.
 
 <a id="remove-and-keep-removed"></a>
 

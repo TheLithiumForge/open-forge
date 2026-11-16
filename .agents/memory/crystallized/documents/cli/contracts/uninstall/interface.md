@@ -84,13 +84,13 @@ The command is `uninstall` in the shared schema-3 report, with the [strip result
 
 Uninstall uses every [strip code](../strip/interface.md#errors-and-findings) with the `uninstall.` prefix, plus:
 
-| Code                             | Meaning                                                                                     |
-| -------------------------------- | ------------------------------------------------------------------------------------------- |
-| `uninstall.ownership-unavailable` | The ownership lock cannot be read, so uninstall cannot tell what Open Forge installed.     |
-| `uninstall.library-attached`     | A Library is attached. Detach it first.                                                     |
-| `uninstall.target-unavailable`   | An owned target cannot be read or compared with its payload.                                |
-| `uninstall.edited-kept`          | Information. An edited managed file or section stays.                                      |
-| `uninstall.runtime-retained`     | Information. `.open-forge-state/` stays because it holds earlier recovery bundles.          |
+| Code                              | Meaning                                                                                |
+| --------------------------------- | -------------------------------------------------------------------------------------- |
+| `uninstall.ownership-unavailable` | The ownership lock cannot be read, so uninstall cannot tell what Open Forge installed. |
+| `uninstall.library-attached`      | A Library is attached. Detach it first.                                                |
+| `uninstall.target-unavailable`    | An owned target cannot be read or compared with its payload.                           |
+| `uninstall.edited-kept`           | Information. An edited managed file or section stays.                                  |
+| `uninstall.runtime-retained`      | Information. `.open-forge-state/` stays because it holds earlier recovery bundles.     |
 
 ## Examples
 

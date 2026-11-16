@@ -125,6 +125,22 @@ Remove one exact path or delegate to a typed route, Extension, or Library remova
 
 Removal retains eligible removed bytes in recovery data. Use [Cleanup](routes.md#cleanup) only after the user has checked the changes.
 
+## `uninstall`
+
+Remove Open Forge from the workspace. Uninstall deletes the Framework and Extension files that still match what Open Forge installed, its sections in `AGENTS.md` and `CLAUDE.md`, route scaffolds, settings, the lock and folders left empty. User files stay. Edited managed files stay and are listed as kept. Detach Libraries first. Run it only when the user asked to remove Open Forge.
+
+| Flag                     | Meaning                                                                                        |
+| ------------------------ | ---------------------------------------------------------------------------------------------- |
+| `--strip <parts>`        | Also strip `metadata`, `entries` or `links` from the documents that stay. Repeat or use commas |
+| `--flatten <folder>`     | Move the documents below the folder's subfolders into the folder                               |
+| `--remove-edited <path>` | Remove a named edited managed file or section. Repeat as needed                                |
+| `--dry-run`              | List every delete, rewrite and move with SHA-256 hashes                                        |
+| `--automatic`            | Run without confirmation                                                                       |
+
+## `strip [<part>...]`
+
+Remove Open Forge metadata, generated `Entries` or links between documents while the Framework stays installed. Managed files stay unchanged. `links` keeps external links, images, links to other files, code, comment links and generated `Entries` lists. `--flatten <folder>` works as in `uninstall`, keeps entrypoints and `SKILL.md` files in place and stops on a name collision before any write. Accepts `--dry-run` and `--automatic`.
+
 ## Extensions
 
 An Extension is an optional package of complete files. Use exact lowercase stable IDs. A local package has `extension.json` beside `content/`, with payload paths below `content/`. A catalogue contains such packages. The manifest fields are `id`, `name`, `description`, `version`, and `dependencies`.

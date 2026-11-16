@@ -78,7 +78,7 @@ examples before its behavior notes and options.
 | Use documents you already have                             | [route include](/guides/cli#route-include), [route exclude](/guides/cli#route-exclude)                                                                                                                                                                                                                     |
 | Learn how the framework works                              | [help concepts](/guides/cli#help)                                                                                                                                                                                                                                                                          |
 | Check and repair                                           | [index](/guides/cli#index), [doctor](/guides/cli#doctor), [repair](/guides/cli#repair), [cleanup](/guides/cli#cleanup)                                                                                                                                                                                     |
-| Install, update, or remove Framework content               | [install](/guides/cli#install), [update](/guides/cli#update), [remove](/guides/cli#remove)                                                                                                                                                                                                                 |
+| Install, update, or remove Framework content               | [install](/guides/cli#install), [update](/guides/cli#update), [uninstall](/guides/cli#uninstall), [strip](/guides/cli#strip), [remove](/guides/cli#remove)                                                                                                                                                 |
 | Manage optional Extension packages                         | [extension list](/guides/cli#extension-list), [extension inspect](/guides/cli#extension-inspect), [extension create](/guides/cli#extension-create), [extension install](/guides/cli#extension-install), [extension update](/guides/cli#extension-update), [extension remove](/guides/cli#extension-remove) |
 | Share files through a Library                              | [library list](/guides/cli#library-list), [library inspect](/guides/cli#library-inspect), [library attach](/guides/cli#library-attach), [library sync](/guides/cli#library-sync), [library detach](/guides/cli#library-detach)                                                                             |
 
@@ -96,6 +96,10 @@ Index and Repair preserve protected sources, including managed files. Doctor nam
 Code and docs can connect through `@open-forge <path> <text>` or `@rune <path> <text>` at the start of a comment. Markdown uses an HTML comment. Plain paths start at the repository root, while `./` and `../` start next to the file holding the comment.
 
 References lists these links, Context checks them during requested link expansion and Doctor reports broken targets. Repair suggests moved targets and edits the chosen target word with an encoded repository-root path. Its choices distinguish Git renames, heading diffs, old section content and weak unique slugs. The [comment-link reference](/guides/cli#comment-links) gives the grammar, examples and repair rules.
+
+## Take Open Forge back out
+
+`uninstall` removes the files Open Forge installed and still recognizes, its sections in `AGENTS.md` and `CLAUDE.md`, the route scaffolds it wrote and its state. Your files stay, and so do managed files you edited. Add `--strip metadata,entries,links` to end with plain Markdown, or `--flatten docs` to put the documents in one folder. Run `strip` on its own to drop one part while Open Forge stays. See [uninstall](/guides/cli#uninstall) and [strip](/guides/cli#strip).
 
 ## Everyday habits
 

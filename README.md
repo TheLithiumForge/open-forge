@@ -473,6 +473,7 @@ The CLI speeds up the repetitive parts, such as finding context, keeping navigat
 | Check that everything still fits             | `open-forge status`, `open-forge doctor`           | Broken links and stale navigation show up before they mislead an agent            |
 | Pick up a new Framework version              | `open-forge update --dry-run`                      | Every file it would replace is listed, so local edits are never replaced silently |
 | Remove a default for good                    | `open-forge remove <path> --dry-run`               | Later updates respect the removal                                                 |
+| Take Open Forge back out                     | `open-forge uninstall --dry-run`                   | Your files stay, and edited managed files stay unless you name them               |
 
 Commands that change files offer `--dry-run`, so you see the plan before anything is written. These flags come up most often:
 
