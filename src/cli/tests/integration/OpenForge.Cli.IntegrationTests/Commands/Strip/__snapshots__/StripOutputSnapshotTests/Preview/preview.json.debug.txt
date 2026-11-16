@@ -25,16 +25,6 @@
       "after": "<sha256>"
     },
     {
-      "path": ".agents/docs/rules.md",
-      "kind": "file",
-      "action": "created",
-      "outcome": "planned",
-      "reason": "flatten",
-      "owner": null,
-      "before": null,
-      "after": "<sha256>"
-    },
-    {
       "path": ".agents/docs/game/rules.md",
       "kind": "file",
       "action": "deleted",
@@ -43,6 +33,16 @@
       "owner": null,
       "before": "<sha256>",
       "after": null
+    },
+    {
+      "path": ".agents/docs/rules.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": "flatten",
+      "owner": null,
+      "before": null,
+      "after": "<sha256>"
     },
     {
       "path": ".agents/docs/game",

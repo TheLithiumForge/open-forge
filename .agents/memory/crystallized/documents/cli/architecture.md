@@ -398,7 +398,7 @@ rendering remain under `Commands/Library/`. This placement adds no dependency
 injection, runtime registry, reflection, or sibling-private import.
 
 Uninstall and strip follow the same map. Their two commands share one plain-workspace
-plan under `Commands/Shared/Stripping/`: document edits, flatten moves, plan
+plan under `Commands/Stripping/`: document edits, flatten moves, plan
 application, findings and the result model. Uninstall's removal selection and
 runtime-folder removal stay under `Commands/Uninstall/`. The Markdown parser supplies
 link label spans, and Framework Sources resolves local destinations, so neither

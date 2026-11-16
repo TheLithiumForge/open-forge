@@ -23,17 +23,17 @@
       "owner": null
     },
     {
-      "path": ".agents/docs/rules.md",
+      "path": ".agents/docs/game/rules.md",
       "kind": "file",
-      "action": "created",
+      "action": "deleted",
       "outcome": "planned",
       "reason": "flatten",
       "owner": null
     },
     {
-      "path": ".agents/docs/game/rules.md",
+      "path": ".agents/docs/rules.md",
       "kind": "file",
-      "action": "deleted",
+      "action": "created",
       "outcome": "planned",
       "reason": "flatten",
       "owner": null

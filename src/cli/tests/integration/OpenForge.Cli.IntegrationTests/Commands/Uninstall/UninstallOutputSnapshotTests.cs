@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using OpenForge.Cli.Core.Commands.Shared.Stripping.Models.Request;
-using OpenForge.Cli.Core.Commands.Shared.Stripping.Models.Result;
-using OpenForge.Cli.Core.Presentation.Shared.Stripping;
+using OpenForge.Cli.Core.Commands.Stripping.Models.Request;
+using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
+using OpenForge.Cli.Core.Presentation.Stripping;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
 

@@ -114,7 +114,7 @@ The command is `strip` in the shared schema-3 report. Every plan entry is an eff
 
 `outcome` is `planned` in a preview and `done`, `not-started`, `unknown` or `failed` after applying. `parts` names what changed in a rewrite or move: `metadata`, `entries`, `links`, `relink` for flatten link updates, and `managed-section` for uninstall's root hosts. Text output lists the effects. Full detail adds the hashes.
 
-## Errors And Findings
+## Errors And Boundaries
 
 | Code                               | Meaning                                                                                |
 | ---------------------------------- | -------------------------------------------------------------------------------------- |

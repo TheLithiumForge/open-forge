@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using System.Text;
-using OpenForge.Cli.Core.Commands.Shared.Stripping;
-using OpenForge.Cli.Core.Commands.Shared.Stripping.Models.Planning;
-using OpenForge.Cli.Core.Commands.Shared.Stripping.Models.Result;
+using OpenForge.Cli.Core.Commands.Stripping;
+using OpenForge.Cli.Core.Commands.Stripping.Models.Planning;
+using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
 using OpenForge.Cli.Core.Framework.Distribution.Operational;
 using OpenForge.Cli.Core.Framework.Distribution.Operational.Models;
 using OpenForge.Cli.Core.Framework.Extensions;

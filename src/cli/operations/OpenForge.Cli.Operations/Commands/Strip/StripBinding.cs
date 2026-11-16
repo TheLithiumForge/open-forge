@@ -1,7 +1,7 @@
 using System.CommandLine;
-using OpenForge.Cli.Core.Commands.Shared.Stripping.Models.Request;
-using OpenForge.Cli.Core.Commands.Shared.Stripping.Models.Result;
-using OpenForge.Cli.Core.Commands.Shared.Stripping;
+using OpenForge.Cli.Core.Commands.Stripping.Models.Request;
+using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
+using OpenForge.Cli.Core.Commands.Stripping;
 using OpenForge.Cli.Core.Commands.Strip.Models.Binding;
 using OpenForge.Cli.Core.Shell.Composition.Models;
 using OpenForge.Cli.Core.Shell.Definitions;

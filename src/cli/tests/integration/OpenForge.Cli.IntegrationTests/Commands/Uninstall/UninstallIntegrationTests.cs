@@ -1,13 +1,13 @@
 using System.Text;
-using OpenForge.Cli.Core.Commands.Shared.Stripping.Models.Planning;
-using OpenForge.Cli.Core.Commands.Shared.Stripping.Models.Request;
-using OpenForge.Cli.Core.Commands.Shared.Stripping.Models.Result;
+using OpenForge.Cli.Core.Commands.Stripping.Models.Planning;
+using OpenForge.Cli.Core.Commands.Stripping.Models.Request;
+using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 using OpenForge.Cli.Core.Shell.Definitions;
-using OpenForge.Cli.IntegrationTests.Commands.Shared.Stripping;
+using OpenForge.Cli.IntegrationTests.Commands.Stripping;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Uninstall;
 

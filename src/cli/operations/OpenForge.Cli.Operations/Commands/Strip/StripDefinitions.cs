@@ -1,4 +1,4 @@
-using OpenForge.Cli.Core.Commands.Shared.Stripping;
+using OpenForge.Cli.Core.Commands.Stripping;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Definitions.Models;
 

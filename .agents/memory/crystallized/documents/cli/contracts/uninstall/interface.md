@@ -80,17 +80,30 @@ Its frontmatter may hold only Open Forge keys. Any other line, key or section me
 
 The command is `uninstall` in the shared schema-3 report, with the [strip result fields](../strip/interface.md#results). Plan entries add these `reason` values: `framework`, `extension`, `root-host`, `scaffold`, `state` and `empty-folder`. Kept edited files appear in `kept` with reason `edited`.
 
-## Errors And Findings
+## Errors And Boundaries
 
-Uninstall uses every [strip code](../strip/interface.md#errors-and-findings) with the `uninstall.` prefix, plus:
+Uninstall uses every [strip code](../strip/interface.md#errors-and-boundaries) with the `uninstall.` prefix, plus its own codes:
 
-| Code                              | Meaning                                                                                |
-| --------------------------------- | -------------------------------------------------------------------------------------- |
-| `uninstall.ownership-unavailable` | The ownership lock cannot be read, so uninstall cannot tell what Open Forge installed. |
-| `uninstall.library-attached`      | A Library is attached. Detach it first.                                                |
-| `uninstall.target-unavailable`    | An owned target cannot be read or compared with its payload.                           |
-| `uninstall.edited-kept`           | Information. An edited managed file or section stays.                                  |
-| `uninstall.runtime-retained`      | Information. `.open-forge-state/` stays because it holds earlier recovery bundles.     |
+| Code                                   | Meaning                                                                                |
+| -------------------------------------- | -------------------------------------------------------------------------------------- |
+| `uninstall.invalid-input`              | Same meaning as `strip.invalid-input`.                                                 |
+| `uninstall.workspace-unavailable`      | Same meaning as `strip.workspace-unavailable`.                                         |
+| `uninstall.document-unsupported`       | Same meaning as `strip.document-unsupported`.                                          |
+| `uninstall.flatten-collision`          | Same meaning as `strip.flatten-collision`.                                             |
+| `uninstall.linked-file-skipped`        | Same meaning as `strip.linked-file-skipped`.                                           |
+| `uninstall.target-changed`             | Same meaning as `strip.target-changed`.                                                |
+| `uninstall.workspace-lock-unavailable` | Same meaning as `strip.workspace-lock-unavailable`.                                    |
+| `uninstall.confirmation-required`      | Same meaning as `strip.confirmation-required`.                                         |
+| `uninstall.permission-declined`        | Same meaning as `strip.permission-declined`.                                           |
+| `uninstall.recovery-unavailable`       | Same meaning as `strip.recovery-unavailable`.                                          |
+| `uninstall.write-failed`               | Same meaning as `strip.write-failed`.                                                  |
+| `uninstall.recovery-artifact-retained` | Same meaning as `strip.recovery-artifact-retained`.                                    |
+| `uninstall.interrupted`                | Same meaning as `strip.interrupted`.                                                   |
+| `uninstall.ownership-unavailable`      | The ownership lock cannot be read, so uninstall cannot tell what Open Forge installed. |
+| `uninstall.library-attached`           | A Library is attached. Detach it first.                                                |
+| `uninstall.target-unavailable`         | An owned target cannot be read or compared with its payload.                           |
+| `uninstall.edited-kept`                | Information. An edited managed file or section stays.                                  |
+| `uninstall.runtime-retained`           | Information. `.open-forge-state/` stays because it holds earlier recovery bundles.     |
 
 ## Examples
 

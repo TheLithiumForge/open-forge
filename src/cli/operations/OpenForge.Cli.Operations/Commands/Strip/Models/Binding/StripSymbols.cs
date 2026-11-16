@@ -1,5 +1,5 @@
 using System.CommandLine;
-using OpenForge.Cli.Core.Commands.Shared.Stripping;
+using OpenForge.Cli.Core.Commands.Stripping;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.Commands.Strip.Models.Binding;

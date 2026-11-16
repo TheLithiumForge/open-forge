@@ -1,0 +1,77 @@
+using OpenForge.Cli.Core.Commands.Stripping.Models.Planning;
+using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
+
+namespace OpenForge.Cli.Core.Presentation.Stripping.Shared.Selection;
+
+// The strip Interface contract's Results and Errors sections define these wire names for strip and uninstall.
+internal static class StripWireVocabulary
+{
+    internal static string RewritePartName(StripRewritePart part)
+        => part switch
+        {
+            StripRewritePart.Metadata => "metadata",
+            StripRewritePart.Entries => "entries",
+            StripRewritePart.Links => "links",
+            StripRewritePart.Relink => "relink",
+            StripRewritePart.ManagedSection => "managed-section",
+            _ => throw new ArgumentOutOfRangeException(nameof(part), part, "The strip rewrite part is not defined."),
+        };
+
+    internal static string ActionName(StripPlanAction action)
+        => action switch
+        {
+            StripPlanAction.Delete => "delete",
+            StripPlanAction.Rewrite => "rewrite",
+            StripPlanAction.Move => "move",
+            StripPlanAction.DeleteDirectory => "delete-directory",
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, "The strip plan action is not defined."),
+        };
+
+    internal static string ReasonName(StripPlanReason reason)
+        => reason switch
+        {
+            StripPlanReason.Framework => "framework",
+            StripPlanReason.Extension => "extension",
+            StripPlanReason.RootHost => "root-host",
+            StripPlanReason.Scaffold => "scaffold",
+            StripPlanReason.State => "state",
+            StripPlanReason.Strip => "strip",
+            StripPlanReason.Flatten => "flatten",
+            StripPlanReason.EmptyFolder => "empty-folder",
+            _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, "The strip plan reason is not defined."),
+        };
+
+    internal static string KeptReasonName(StripKeptReason reason)
+        => reason switch
+        {
+            StripKeptReason.Edited => "edited",
+            _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, "The strip kept reason is not defined."),
+        };
+
+    internal static string FindingCode(string command, StripFindingCode code)
+        => $"{command}.{FindingSuffix(code)}";
+
+    internal static string FindingSuffix(StripFindingCode code)
+        => code switch
+        {
+            StripFindingCode.InvalidInput => "invalid-input",
+            StripFindingCode.WorkspaceUnavailable => "workspace-unavailable",
+            StripFindingCode.DocumentUnsupported => "document-unsupported",
+            StripFindingCode.FlattenCollision => "flatten-collision",
+            StripFindingCode.LinkedFileSkipped => "linked-file-skipped",
+            StripFindingCode.TargetChanged => "target-changed",
+            StripFindingCode.WorkspaceLockUnavailable => "workspace-lock-unavailable",
+            StripFindingCode.ConfirmationRequired => "confirmation-required",
+            StripFindingCode.PermissionDeclined => "permission-declined",
+            StripFindingCode.RecoveryUnavailable => "recovery-unavailable",
+            StripFindingCode.WriteFailed => "write-failed",
+            StripFindingCode.RecoveryArtifactRetained => "recovery-artifact-retained",
+            StripFindingCode.Interrupted => "interrupted",
+            StripFindingCode.OwnershipUnavailable => "ownership-unavailable",
+            StripFindingCode.LibraryAttached => "library-attached",
+            StripFindingCode.TargetUnavailable => "target-unavailable",
+            StripFindingCode.EditedKept => "edited-kept",
+            StripFindingCode.RuntimeRetained => "runtime-retained",
+            _ => throw new ArgumentOutOfRangeException(nameof(code), code, "The strip finding code is not defined."),
+        };
+}
