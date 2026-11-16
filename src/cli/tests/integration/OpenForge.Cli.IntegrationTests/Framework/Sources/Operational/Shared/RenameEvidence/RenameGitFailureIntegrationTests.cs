@@ -42,7 +42,7 @@ public sealed class RenameGitFailureIntegrationTests
             processStarted: _ =>
             {
                 invocations++;
-                clock.Advance(GitRenameEvidenceReader.Deadline / 2);
+                clock.Advance(GitInvocationDeadline.Duration / 2);
             });
         var result = await adapter.ReadAsync(new(repository.Workspace, new() { Layout = WorkspaceLayout.Create(repository.Workspace, WorkspaceLayout.DefaultMainRoot) }), TestContext.Current.CancellationToken);
         Assert.Equal(RenameGitAvailability.Available, result.Availability);
@@ -86,7 +86,7 @@ public sealed class RenameGitFailureIntegrationTests
             child = Process.GetProcessById(process.Id);
             Assert.False(child.HasExited);
             if (cancel) cancellation.Cancel();
-            else clock.Advance(GitRenameEvidenceReader.Deadline);
+            else clock.Advance(GitInvocationDeadline.Duration);
         });
         try
         {

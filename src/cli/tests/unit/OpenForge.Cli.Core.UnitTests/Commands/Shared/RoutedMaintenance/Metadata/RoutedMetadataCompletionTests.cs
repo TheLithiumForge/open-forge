@@ -59,13 +59,19 @@ public sealed class RoutedMetadataCompletionTests
                 $"Membership allocation growth was {membershipGrowth} bytes for {AdditionalCheckCount} additional checks, compared with {directGrowth} bytes for direct protection.");
         }
 
+        // Runtime work such as tier-up can land in one measured window. A real per-check allocation shows in every
+        // round, so each measurement keeps its best of three.
         static long Allocated(Func<bool> check, int count)
         {
-            var before = GC.GetAllocatedBytesForCurrentThread();
-            var allowed = 0;
-            for (var index = 0; index < count; index++) if (check()) allowed++;
-            var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
-            Assert.Equal(count, allowed);
+            var allocated = long.MaxValue;
+            for (var round = 0; round < 3; round++)
+            {
+                var before = GC.GetAllocatedBytesForCurrentThread();
+                var allowed = 0;
+                for (var index = 0; index < count; index++) if (check()) allowed++;
+                allocated = Math.Min(allocated, GC.GetAllocatedBytesForCurrentThread() - before);
+                Assert.Equal(count, allowed);
+            }
             return allocated;
         }
     }
@@ -101,12 +107,18 @@ public sealed class RoutedMetadataCompletionTests
             };
         }
 
+        // Each catalogue size keeps its best of three rounds, so runtime work in one window is not counted.
         long Allocated(RoutedMetadataPolicyContext context)
         {
             for (var index = 0; index < 8; index++) _ = ReferenceProtectionReader.Allows(path, context);
-            var before = GC.GetAllocatedBytesForCurrentThread();
-            for (var index = 0; index < 100; index++) _ = ReferenceProtectionReader.Allows(path, context);
-            return GC.GetAllocatedBytesForCurrentThread() - before;
+            var allocated = long.MaxValue;
+            for (var round = 0; round < 3; round++)
+            {
+                var before = GC.GetAllocatedBytesForCurrentThread();
+                for (var index = 0; index < 100; index++) _ = ReferenceProtectionReader.Allows(path, context);
+                allocated = Math.Min(allocated, GC.GetAllocatedBytesForCurrentThread() - before);
+            }
+            return allocated;
         }
     }
 

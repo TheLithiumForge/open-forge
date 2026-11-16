@@ -60,6 +60,8 @@ For historical heading suggestions, compare parsed old and current headings with
 the changed line ranges of the Git target diff. Use a unique removed and added
 heading pair of the same level before the old section-content hash fallback.
 Keep heading-diff, section-content and weak unique-slug evidence distinct.
+Each Git invocation in a history read has its own five-second deadline under the
+[rename evidence](../../../technical-designs/forgiving-maintenance.md#observation-model) timeout rules.
 
 Resolve the contained target and classify its kind before parsing. Use the
 [local fragment rules](interface.md#local-fragments) for Markdown headings,

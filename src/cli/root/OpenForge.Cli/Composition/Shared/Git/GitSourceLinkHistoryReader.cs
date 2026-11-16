@@ -4,15 +4,15 @@ using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 
 namespace OpenForge.Cli.Composition.Shared.Git;
 
-internal sealed class GitSourceLinkHistoryReader(Action<ProcessStartInfo>? configureProcess = null)
+internal sealed class GitSourceLinkHistoryReader(Action<ProcessStartInfo>? configureProcess = null,
+    TimeProvider? timeProvider = null, Action<Process>? processStarted = null)
 {
-    private readonly GitProcessRunner _git = new("git", configureProcess);
+    private readonly GitProcessRunner _git = new("git", configureProcess, processStarted);
+    private readonly GitInvocationDeadline _deadline = new(timeProvider);
 
     internal async ValueTask<SourceLinkHistory> ReadAsync(SourceLinkHistoryRequest request, CancellationToken token)
     {
         var entries = new List<SourceLinkHistoryEntry>();
-        using var timeout = new CancellationTokenSource(GitRenameEvidenceReader.Deadline);
-        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token, timeout.Token);
         try
         {
             var prefixRead = await Run(["rev-parse", "--show-prefix"]);
@@ -21,7 +21,7 @@ internal sealed class GitSourceLinkHistoryReader(Action<ProcessStartInfo>? confi
             foreach (var reference in request.References.Where(reference => reference.Facts.Target.Path is not null
                 && reference.Facts.Target.Resolution is SourceLinkTargetResolution.Missing or SourceLinkTargetResolution.FragmentMissing))
             {
-                deadline.Token.ThrowIfCancellationRequested();
+                token.ThrowIfCancellationRequested();
                 var line = reference.Location?.Line ?? 1;
                 var blame = await Run(["blame", "--porcelain", "-L", $"{line},{line}", "--", reference.SourcePath]);
                 if (blame.ExitCode != 0) continue;
@@ -49,8 +49,8 @@ internal sealed class GitSourceLinkHistoryReader(Action<ProcessStartInfo>? confi
         return new(entries);
 
         async Task<(int ExitCode, string Output, string Error)> Run(string[] arguments)
-            => await _git.RunAsync(request.Workspace.PhysicalRoot, arguments, deadline.Token).ConfigureAwait(false)
-                ?? (-1, string.Empty, string.Empty);
+            => await _deadline.RunAsync(deadline => _git.RunAsync(request.Workspace.PhysicalRoot, arguments, deadline), token)
+                .ConfigureAwait(false) ?? (-1, string.Empty, string.Empty);
     }
 
     private static string? ReadMove(string output, string oldPath)

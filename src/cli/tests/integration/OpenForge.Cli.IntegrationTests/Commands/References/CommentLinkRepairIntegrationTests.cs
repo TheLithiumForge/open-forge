@@ -195,27 +195,60 @@ public sealed class CommentLinkRepairIntegrationTests
         Assert.Equal(before, repository.Snapshot());
     }
 
+    [Theory(DisplayName = "Each history Git invocation gets its own deadline, so only one slow call times the read out"), InlineData(false), InlineData(true)]
+    public async Task HistoryDeadlineIsPerInvocation(bool slowCall)
+    {
+        using var repository = new RenameEvidenceGitWorkspace();
+        await repository.InitializeAsync(unborn: true);
+        Seed(repository);
+        repository.Write(CodePath, $"// {SourceCommentLinkReader.OpenForgeMarker} {GuidePath}#{OldFragment} explains this behavior\n");
+        await Commit(repository);
+        repository.Move(GuidePath, NewGuidePath);
+        await Commit(repository);
+        var clock = new RenameEvidenceClock();
+        var call = slowCall ? GitInvocationDeadline.Duration : GitInvocationDeadline.Duration / 2;
+        SourceLinkHistory? history = null;
+        var reader = new GitSourceLinkHistoryReader(repository.Configure, clock, _ => clock.Advance(call));
+
+        await Contributor(async (request, token) =>
+        {
+            var read = await reader.ReadAsync(request, token);
+            history = read;
+            return read;
+        }).ReadDoctorAsync(repository.Workspace, TestContext.Current.CancellationToken);
+
+        Assert.NotNull(history);
+        Assert.Equal(slowCall, history.TimedOut);
+        if (slowCall) return;
+        Assert.True(clock.GetElapsedTime(0) > GitInvocationDeadline.Duration);
+        Assert.Contains(history.Entries, entry => entry.SourcePath == CodePath && entry.MovedPath == NewGuidePath);
+    }
+
     private static async ValueTask<LocalReferenceDoctorView> Read(RenameEvidenceGitWorkspace repository)
     {
-        // The product bounds its Git history read and reports a timeout as absent Git evidence. A loaded
+        // The product bounds each Git history call and reports a timeout as absent Git evidence. A loaded
         // hosted runner can exceed that bound, and such a run proves nothing about the evidence, so read again.
-        var paths = new PhysicalPathResolver();
         var history = new GitSourceLinkHistoryReader(repository.Configure);
         for (var attempt = 1; ; attempt++)
         {
             var timedOut = false;
-            var contributor = new LocalReferenceOperationalContributor(new RouteSourceInspector(new SourceReadSessionReader(paths), paths),
-                new SourceLinkDestinationResolver(paths, StrictUtf8FileReader.ReadAsync, new MarkdownDocumentParser().Parse),
-                new LocalReferenceCandidateReader(), async (request, token) =>
-                {
-                    var read = await history.ReadAsync(request, token);
-                    timedOut = read.TimedOut;
-                    return read;
-                });
-            var view = await contributor.ReadDoctorAsync(repository.Workspace, TestContext.Current.CancellationToken);
+            var view = await Contributor(async (request, token) =>
+            {
+                var read = await history.ReadAsync(request, token);
+                timedOut = read.TimedOut;
+                return read;
+            }).ReadDoctorAsync(repository.Workspace, TestContext.Current.CancellationToken);
             if (!timedOut) return view;
             Assert.True(attempt < HistoryReadAttempts, "Every Git history read exceeded the product deadline.");
         }
+    }
+
+    private static LocalReferenceOperationalContributor Contributor(SourceLinkHistoryRead historyRead)
+    {
+        var paths = new PhysicalPathResolver();
+        return new(new RouteSourceInspector(new SourceReadSessionReader(paths), paths),
+            new SourceLinkDestinationResolver(paths, StrictUtf8FileReader.ReadAsync, new MarkdownDocumentParser().Parse),
+            new LocalReferenceCandidateReader(), historyRead);
     }
 
     private static string Document(string body) => OpenForgeDocumentSeed.Metadata(description: "Guide", tags: ["Docs"], body: body);
