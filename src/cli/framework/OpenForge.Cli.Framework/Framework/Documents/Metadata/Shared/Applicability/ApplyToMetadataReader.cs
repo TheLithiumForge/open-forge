@@ -9,8 +9,8 @@ namespace OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability;
 
 internal static class ApplyToMetadataReader
 {
-    private const string ApplyToKey = "applyTo";
-    private const string OpenForgeKey = "open-forge";
+    internal const string ApplyToKey = "applyTo";
+    internal const string OpenForgeKey = "open-forge";
 
     internal static ApplyToMetadataFacts Read(YamlDocumentFacts document)
     {

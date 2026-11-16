@@ -90,11 +90,12 @@ internal static class CliCompositionRoot
             inputs.LockStoreRoot);
         var library = CliLibraryComposer.Compose(interaction);
         var rootRemove = CliRootRemoveComposer.Compose(interaction, inputs.LockStoreRoot);
+        var strip = CliStripComposer.Compose(interaction, inputs.LockStoreRoot);
         var tree = CliCommandTree.Create(
             CreateRootHelp(
             [
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingSetUpAndManage(),
-                    [standalone.InstallBinding.Command, standalone.UpdateBinding.Command, rootRemove.Command, extension.Branch.Command, library.Branch.Command]),
+                    [standalone.InstallBinding.Command, standalone.UpdateBinding.Command, strip.UninstallBinding.Command, strip.StripBinding.Command, rootRemove.Command, extension.Branch.Command, library.Branch.Command]),
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingReadAndDiscover(),
                     [standalone.HelpBinding.Command, standalone.StatusBinding.Command, standalone.ContextBinding.Command, standalone.FindBinding.Command, standalone.ReferencesBinding.Command, route.Branch.Command]),
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingCheckAndMaintain(),
@@ -134,8 +135,10 @@ internal static class CliCompositionRoot
                 library.SyncBinding,
                 library.DetachBinding,
                 rootRemove,
+                strip.UninstallBinding,
+                strip.StripBinding,
             ],
-            rootLeaves: [.. standalone.RootLeaves, new CliRootLeaf(rootRemove.Command)]);
+            rootLeaves: [.. standalone.RootLeaves, new CliRootLeaf(rootRemove.Command), new CliRootLeaf(strip.UninstallBinding.Command), new CliRootLeaf(strip.StripBinding.Command)]);
         return new CliCoreApplication(
             process,
             tree,
