@@ -11,7 +11,7 @@ The [Interface Contract](interface.md) defines the parts, the document set and f
 
 ## Plan Before Effects
 
-Read the workspace layout once. Invalid or unavailable settings stop the run as `strip.workspace-unavailable`. Enumerate the documents below the inventory roots without following links, and read each one as strict UTF-8. Parse each document through the shared Markdown and YAML readers. Strip adds no second parser. It uses the parser's frontmatter, generated-region and link spans and edits only those spans.
+Read the workspace layout once. Invalid or unavailable settings stop the run as `strip.workspace-unavailable`. So does an unreadable ownership lock, because strip then cannot tell which files Open Forge manages. Enumerate the documents below the inventory roots without following links, and read each one as strict UTF-8. Parse each document through the shared Markdown and YAML readers. Strip adds no second parser. It uses the parser's frontmatter, generated-region and link spans and edits only those spans.
 
 Form every edit for every document before the first effect. Edits never overlap, and an edit inside a removed span is dropped. A document that cannot be edited safely blocks the whole plan before any write. Resolve link destinations through the shared local-destination rules, against each document's current location, then compute flattened spellings from the new locations.
 

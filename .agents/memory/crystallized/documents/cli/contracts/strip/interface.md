@@ -40,6 +40,8 @@ Each `<part>` is `metadata`, `entries` or `links`. One operand may also list sev
 
 Strip reads every Markdown file below the main root, the native Skills folder and each registered outside route. These are the layout's inventory roots. A file counts when its name ends in `.md`, including overwrite companions. Strip never enters `.open-forge-state/`, Git metadata or a symbolic link. A symbolic link or junction inside a root is skipped and reported as `strip.linked-file-skipped`, so a Library link never rewrites its source. Files outside these roots, such as a root `README.md` or `AGENTS.md`, are not documents and stay unchanged.
 
+Strip leaves the files Open Forge manages unchanged, meaning the owned Framework and Extension files, so the installed Framework keeps working. `uninstall` strips the edited managed files it keeps, because Open Forge no longer reads them.
+
 A document keeps its encoding, line endings and every byte outside the selected edits.
 
 ## Parts
@@ -72,6 +74,7 @@ These stay unchanged:
 
 - external links, meaning any destination with a URI scheme;
 - links to other local files, such as images, source files or data files;
+- links in a generated `Entries` list, which are navigation that the `entries` part removes;
 - images, autolinks, code spans, fenced and indented code blocks and HTML blocks;
 - local destinations that cannot be decoded, which keep their bytes.
 
@@ -104,19 +107,19 @@ The command is `strip` in the shared schema-3 report. Every plan entry is an eff
 | `mode`       | `dry-run` or `apply`                                                                                      |
 | `strip`      | The selected parts in fixed order                                                                         |
 | `flatten`    | The canonical flatten folder, or `null`                                                                   |
-| `plan`       | Ordered entries with `action` (`delete`, `rewrite`, `move` or `delete-directory`), `path`, optional `to`, `reason`, `parts`, `before` and `after` hashes |
+| `plan`       | Ordered entries with `action` (`delete`, `rewrite`, `move` or `delete-directory`), `path`, optional `to`, `reason`, `parts`, `before` and `after` hashes and `outcome` |
 | `kept`       | Paths left in place with their reason                                                                     |
 | `collisions` | Flatten destinations with their source paths                                                              |
 | `verified`   | Whether every applied effect verified                                                                      |
 
-`parts` names what changed in a rewrite or move: `metadata`, `entries`, `links`, `relink` for flatten link updates, and `managed-section` for uninstall's root hosts. Text output lists the effects. Full detail adds the hashes.
+`outcome` is `planned` in a preview and `done`, `not-started`, `unknown` or `failed` after applying. `parts` names what changed in a rewrite or move: `metadata`, `entries`, `links`, `relink` for flatten link updates, and `managed-section` for uninstall's root hosts. Text output lists the effects. Full detail adds the hashes.
 
 ## Errors And Findings
 
 | Code                              | Meaning                                                                                  |
 | --------------------------------- | ---------------------------------------------------------------------------------------- |
 | `strip.invalid-input`             | A part, flatten folder or option is invalid.                                             |
-| `strip.workspace-unavailable`     | The workspace layout or settings cannot be read safely.                                  |
+| `strip.workspace-unavailable`     | The workspace layout, settings or ownership lock cannot be read safely.                  |
 | `strip.document-unsupported`      | A document's frontmatter or `Entries` section cannot be edited without losing meaning.   |
 | `strip.flatten-collision`         | Two documents, or a document and a kept file, would share a flattened name.              |
 | `strip.linked-file-skipped`       | Information. A symbolic link or junction was left unchanged.                             |
@@ -153,6 +156,8 @@ These defaults are recorded for the maintainer to confirm:
 
 - `strip` is its own command, and `uninstall` offers the same parts as options.
 - Strip is opt-in. The issue's proposed `uninstall --keep` is not added, because without `--strip` everything stays.
+- `strip` leaves managed Framework and Extension files unchanged, so the Framework keeps working. `uninstall` strips the edited managed files it keeps.
+- `--strip links` keeps links in generated `Entries` lists, so links and navigation can be ablated separately.
 - `--strip links` keeps comment links and rebases them on flatten.
 - Fragment-only links count as links to a document, because they point into the current document. This matches the harness.
 - Flatten leaves entrypoints and native `SKILL.md` files in place and never rewrites files outside the document set.

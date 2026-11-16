@@ -19,7 +19,7 @@ Then classify unowned entrypoints below the inventory roots against the route sc
 
 ## Combine With Strip
 
-Remove planned deletions from strip's document set before strip plans its edits. Plan flatten moves from the documents that stay. A folder becomes an empty-folder removal only when every file below it is deleted or moved. The main root, outside routes and the flatten folder can go only when they empty.
+Remove planned deletions from strip's document set before strip plans its edits. Plan flatten moves from the documents that stay. A folder becomes an empty-folder removal only when every file below it is deleted or moved. The main root and outside routes can go only when they empty. The flatten folder always stays.
 
 ## Apply
 
@@ -27,4 +27,4 @@ Apply the combined plan under one lease as strip's behavior defines. Delete cont
 
 ## Required Evidence
 
-Cover recognized, edited, missing and shared targets, both root hosts with and without user text, legacy host markers, named edited files, route scaffolds with and without user text, absent and malformed ownership, attached Libraries, combined strip and flatten plans, the runtime folder with and without earlier bundles, and a second run that is a verified no-op. Compare one complete scoped workspace with the eval harness's plain setup byte for byte.
+Cover recognized, edited, missing and shared targets, both root hosts with and without user text, legacy host markers, named edited files, route scaffolds with and without user text, absent and malformed ownership, attached Libraries, combined strip and flatten plans, the runtime folder with and without earlier bundles, and a second plain run that is a verified no-op. Compare one complete scoped workspace with the eval harness's plain setup byte for byte.
