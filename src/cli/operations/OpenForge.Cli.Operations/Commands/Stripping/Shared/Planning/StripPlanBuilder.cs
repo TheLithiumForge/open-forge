@@ -83,9 +83,10 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
         // Strip leaves managed files alone so the installed Framework keeps working. Uninstall strips the edited ones it keeps.
         var remaining = documents.Where(document => !deleted.Contains(document.Path)
             && (request.Command == StripCommandKind.Uninstall || !read.Ownership.Document.HasManagedPath(document.Path))).ToArray();
-        // Flatten is for categories, subcategories and custom routes. A managed file it would leave below the folder,
-        // other than an entrypoint or Skill file that stays in place, means the folder is not the user's to flatten.
-        if (folder is not null && ManagedBelow(layout, read, folder, deleted) is { } managedPath)
+        // Flatten is for categories, subcategories and custom routes, whose files the user owns. Strip never edits a
+        // managed file, so flattening around one would leave Open Forge's own navigation pointing at moved files.
+        // Uninstall removes ownership itself, so nothing it flattens stays managed.
+        if (folder is not null && request.Command == StripCommandKind.Strip && ManagedBelow(layout, read, folder) is { } managedPath)
         {
             return Stop(request, CliSemanticStatus.Blocked, StripFindingCode.FlattenManaged,
                 $"{folder} holds {managedPath}, which Open Forge manages. Flatten a category, subcategory or custom route instead. Nothing was changed.",
@@ -207,10 +208,9 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
         }
     }
 
-    private static string? ManagedBelow(WorkspaceLayout layout, WorkspaceLayoutRead read, string folder, IReadOnlySet<string> deleted)
+    private static string? ManagedBelow(WorkspaceLayout layout, WorkspaceLayoutRead read, string folder)
         => read.Ownership.Document.ManagedPaths().Select(owned => owned.Path)
-            .Where(path => path.StartsWith(folder + "/", StringComparison.Ordinal) && !deleted.Contains(path)
-                && !StripFlattenPlanner.StaysInPlace(layout, path)
+            .Where(path => path.StartsWith(folder + "/", StringComparison.Ordinal)
                 && File.Exists(Path.Combine(layout.Workspace.LexicalRoot, path.Replace('/', Path.DirectorySeparatorChar))))
             .Order(StringComparer.Ordinal)
             .FirstOrDefault();

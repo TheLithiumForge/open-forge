@@ -18,7 +18,7 @@ internal static class StripText
         run reports it.
         """;
     internal static string HelpParts() => "metadata removes Open Forge frontmatter keys and keeps other keys and the body. entries removes the generated Entries section and keeps text you wrote there. links turns links to documents into their text, and keeps external links, images, links to other files, code, comment links and Entries lists.";
-    internal static string HelpFlatten() => "Use it on a category, subcategory or custom route. A folder that holds managed files other than entrypoints is refused. Entrypoints and SKILL.md files stay where they are, and kept links are rewritten so they still work. A name two files would share stops the run before any write.";
+    internal static string HelpFlatten() => "Use it on a category, subcategory or custom route. A folder that holds any file Open Forge manages is refused. Entrypoints and SKILL.md files stay where they are, and kept links are rewritten so they still work. A name two files would share stops the run before any write.";
     internal static IReadOnlyList<(string Label, string? Description)> HelpRelated()
         => [("open-forge uninstall --help", "Remove Open Forge and strip what stays"), ("open-forge index --help", "Refresh generated navigation")];
 

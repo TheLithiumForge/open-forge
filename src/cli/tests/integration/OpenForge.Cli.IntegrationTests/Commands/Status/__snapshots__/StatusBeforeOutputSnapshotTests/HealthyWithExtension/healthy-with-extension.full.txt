@@ -146,4 +146,4 @@ Extension workflows files
   .agents/templates/workflows/_workflows.md              current
   .agents/templates/workflows/workflow.md                current
 Recovery data: none
-59 routed files, 7 startup files, 4148 startup tokens, 1 may-load-again files, 315 may-load-again tokens, 46924 all routed tokens, 8.839873198540184874397293481 startup share, 7 root categories, 26 current Entries sections, 20 current Framework files, 6 installed Extensions.
+59 routed files, 7 startup files, 4148 startup tokens, 1 may-load-again files, 315 may-load-again tokens, 46925 all routed tokens, 8.839684814516859439847841491 startup share, 7 root categories, 26 current Entries sections, 20 current Framework files, 6 installed Extensions.

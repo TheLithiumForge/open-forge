@@ -10,6 +10,8 @@ using OpenForge.Cli.Core.Commands.Stripping.Models.Planning;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Request;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
 using OpenForge.Cli.Core.Commands.Stripping.Shared.Application;
+using OpenForge.Cli.Core.Framework.Documents.Markdown;
+using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Extension.Install;
@@ -28,6 +30,9 @@ public sealed class UninstallBoundaryIntegrationTests
     private const string SharedContents = "shared package bytes\n";
     private const string Alpha = "alpha";
     private const string Beta = "beta";
+    private const string GuideFolder = WorkspaceLayout.DefaultMainRoot + "/notes";
+    private const string Guide = GuideFolder + "/team/guide.md";
+    private const string GuideContents = "---\ndescription: Team guide\ntags: [Team]\n---\n# Guide\n";
 
     [Fact(DisplayName = "Uninstall removes the section from a host with user text and deletes a host with nothing else"), Trait("Feature", "uninstall"), Trait("Evidence", "Integration")]
     public async Task RootHostsWithAndWithoutUserText()
@@ -104,21 +109,29 @@ public sealed class UninstallBoundaryIntegrationTests
         Assert.DoesNotContain(result.Findings, finding => finding.Code == StripFindingCode.FlattenManaged);
     }
 
-    [Fact(DisplayName = "Uninstall refuses to flatten a folder that still holds an edited managed file it keeps"), Trait("Feature", "uninstall"), Trait("Evidence", "Integration")]
-    public async Task FlattenRefusesKeptManagedFile()
+    // Nothing stays managed after uninstall, so a kept edited file is a user document like any other.
+    [Fact(DisplayName = "Uninstall flattens a folder holding an edited managed file it keeps, stripping and moving that file"), Trait("Feature", "uninstall"), Trait("Evidence", "Integration")]
+    public async Task FlattenMovesKeptManagedFile()
     {
         using var workspace = StripIntegrationWorkspace.Create("uninstall-flatten-managed-kept");
         await workspace.InstallAsync();
-        var loader = WorkspaceLayout.DefaultMainRoot + "/" + WorkspaceLayoutNames.LoaderFileName;
-        workspace.Write(loader, workspace.Read(loader) + "\nOur own rule.\n");
-        var before = workspace.SnapshotHashes();
+        using var source = ExtensionInstallCatalogue.Create("uninstall-flatten-managed-kept-source");
+        source.AddPackage(Alpha, [], (Guide, GuideContents));
+        var installed = await workspace.RunAsync([
+            ExtensionDefinitions.ExtensionGroup.Name, ExtensionInstallDefinitions.InstallCommand.Name, Alpha,
+            ExtensionInstallDefinitions.Source.Name, source.Path, ExtensionInstallDefinitions.Automatic.Name]);
+        Assert.Equal(CliSemanticStatus.Complete, installed.Status);
+        workspace.Write(Guide, workspace.Read(Guide) + "\nOur own rule.\n");
 
-        var result = await workspace.UninstallAsync(workspace.Request(StripCommandKind.Uninstall, [], WorkspaceLayout.DefaultMainRoot));
+        var result = await workspace.UninstallAsync(workspace.Request(StripCommandKind.Uninstall, [StripPart.Metadata], GuideFolder));
 
-        Assert.Equal(CliSemanticStatus.Blocked, result.Status);
-        var finding = Assert.Single(result.Findings);
-        Assert.Equal((StripFindingCode.FlattenManaged, loader), (finding.Code, finding.Path));
-        Assert.Equal(before, workspace.SnapshotHashes());
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Contains(result.Kept, kept => kept.Path == Guide && kept.Reason == StripKeptReason.Edited);
+        var moved = Assert.Single(result.Plan, entry => entry.Action == StripPlanAction.Move);
+        Assert.Equal((Guide, GuideFolder + "/" + Path.GetFileName(Guide)), (moved.Path, moved.To));
+        Assert.Contains(StripRewritePart.Metadata, moved.Parts);
+        Assert.Equal(MarkdownFrontmatterState.Missing, new MarkdownDocumentParser().Parse(workspace.Read(moved.To!)).Frontmatter.State);
+        Assert.DoesNotContain(result.Findings, finding => finding.Code == StripFindingCode.FlattenManaged);
     }
 
     [Fact(DisplayName = "Uninstall deletes the route scaffold it wrote and keeps an entrypoint the user wrote in"), Trait("Feature", "uninstall"), Trait("Evidence", "Integration")]

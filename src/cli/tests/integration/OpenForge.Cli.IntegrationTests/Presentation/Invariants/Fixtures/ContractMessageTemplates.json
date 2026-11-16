@@ -1118,10 +1118,6 @@
       "forms": ["Flattening would place <n> files at <path>: <sources>. Nothing was changed."]
     },
     {
-      "code": "uninstall.flatten-managed",
-      "forms": ["<folder> holds <path>, which Open Forge manages. Flatten a category, subcategory or custom route instead. Nothing was changed."]
-    },
-    {
       "code": "uninstall.target-changed",
       "forms": ["<path> changed after the plan was made. Nothing was changed."]
     },

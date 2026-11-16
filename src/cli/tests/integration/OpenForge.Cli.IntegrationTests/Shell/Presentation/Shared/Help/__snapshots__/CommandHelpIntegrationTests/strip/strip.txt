@@ -39,9 +39,9 @@ Details:
   external links, images, links to other files, code, comment links and Entries
   lists.
   Flatten: Use it on a category, subcategory or custom route. A folder that
-  holds managed files other than entrypoints is refused. Entrypoints and
-  SKILL.md files stay where they are, and kept links are rewritten so they still
-  work. A name two files would share stops the run before any write.
+  holds any file Open Forge manages is refused. Entrypoints and SKILL.md files
+  stay where they are, and kept links are rewritten so they still work. A name
+  two files would share stops the run before any write.
 
 Automation:
   --format json: one minified schema-3 JSON result on stdout for every status.

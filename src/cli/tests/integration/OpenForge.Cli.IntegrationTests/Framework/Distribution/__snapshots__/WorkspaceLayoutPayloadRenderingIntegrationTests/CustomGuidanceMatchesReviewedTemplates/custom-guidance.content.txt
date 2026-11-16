@@ -931,7 +931,7 @@ Remove Open Forge from the workspace. Uninstall deletes the Framework and Extens
 
 ## `strip [<part>...]`
 
-Remove Open Forge metadata, generated `Entries` or links between documents while the Framework stays installed. Managed files stay unchanged. `links` keeps external links, images, links to other files, code, comment links and generated `Entries` lists. `--flatten <folder>` works as in `uninstall`: it is for categories, subcategories and custom routes, refuses a folder holding managed files other than entrypoints, keeps entrypoints and `SKILL.md` files in place and stops on a name collision before any write. Under `uninstall`, only files still managed after the removals count. Accepts `--dry-run` and `--automatic`.
+Remove Open Forge metadata, generated `Entries` or links between documents while the Framework stays installed. Managed files stay unchanged. `links` keeps external links, images, links to other files, code, comment links and generated `Entries` lists. `--flatten <folder>` works as in `uninstall`: it is for categories, subcategories and custom routes, keeps entrypoints and `SKILL.md` files in place and stops on a name collision before any write. `strip` refuses a folder holding any managed file, entrypoints included. `uninstall` never does, because nothing stays managed after it. Accepts `--dry-run` and `--automatic`.
 
 ## Extensions
 

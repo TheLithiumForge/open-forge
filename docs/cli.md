@@ -1971,8 +1971,9 @@ Framework keeps working. Every byte outside the selected edits stays.
 - `entries` removes the generated `Entries` section and keeps text you wrote there.
 - `links` turns links to documents into their text. External links, images, links to other files, code, comment links and generated `Entries` lists stay.
 
-`--flatten` is for categories, subcategories and custom routes, and it refuses a
-folder that holds managed files other than entrypoints. It keeps each file name.
+`--flatten` is for categories, subcategories and custom routes. `strip` refuses
+a folder that holds any file Open Forge manages, entrypoints included, while
+`uninstall` removes or strips those files first. It keeps each file name.
 Entrypoints and `SKILL.md` files stay where they are. Kept links are rewritten so they still work. A name two files would
 share stops the run before any write, and each such name is reported with the
 files that would land there. The

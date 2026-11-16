@@ -86,7 +86,7 @@ These stay unchanged:
 
 `--flatten <folder>` moves every document below `<folder>`'s subfolders into `<folder>` itself and keeps each file name. `<folder>` is a workspace-relative path, with an optional leading `./`, to an existing folder at or below one of the inventory roots. `strip --flatten docs` moves `docs/rules/rules.md` to `docs/rules.md`.
 
-- Flatten is for categories, subcategories and custom routes. A folder that holds a file Open Forge manages, other than an entrypoint or native `SKILL.md` file that stays in place, is `strip.flatten-managed`, and nothing is written. Under `uninstall`, only files that stay managed after the planned removals count, so a folder whose managed files are all being removed can flatten.
+- Flatten is for categories, subcategories and custom routes, whose files the user owns. `strip --flatten` refuses a folder that holds any file Open Forge manages, entrypoints and native `SKILL.md` files included, as `strip.flatten-managed`, and nothing is written. Strip never edits a managed file, so flattening around one would leave Open Forge's own navigation pointing at moved documents. `uninstall --flatten` never refuses this way: nothing stays managed after it, so an edited managed file it keeps is stripped and moved like any other document.
 - Entrypoints and native `SKILL.md` files stay where they are. [`uninstall`](../uninstall/interface.md#route-scaffolds) removes recognized route scaffolds first, so their folders can empty.
 - Files that are not documents, such as images, stay where they are.
 - A folder left empty after the moves is removed, deepest first. `<folder>` itself always stays.
@@ -119,23 +119,23 @@ The command is `strip` in the shared schema-3 report. Every plan entry is an eff
 
 ## Errors And Boundaries
 
-| Code                                | Meaning                                                                                   |
-| ----------------------------------- | ----------------------------------------------------------------------------------------- |
-| `strip.invalid-input`               | A part, flatten folder or option is invalid.                                              |
-| `strip.workspace-unavailable`       | The workspace layout, settings or ownership lock cannot be read safely.                   |
-| `strip.document-unsupported`        | A document's frontmatter or `Entries` section cannot be edited without losing meaning.    |
-| `strip.flatten-collision`           | Two documents, or a document and a kept file, would share a flattened name.               |
-| `strip.flatten-managed`             | The flatten folder holds a file Open Forge manages that flatten would not leave in place. |
-| `strip.linked-file-skipped`         | Information. A symbolic link or junction was left unchanged.                              |
-| `strip.target-changed`              | A planned file changed before the first effect. Nothing was changed.                      |
-| `strip.target-changed-during-apply` | A planned file changed after effects started. The run stopped part way.                   |
-| `strip.workspace-lock-unavailable`  | The workspace mutation lease is unavailable.                                              |
-| `strip.confirmation-required`       | Applying needs confirmation or `--automatic`.                                             |
-| `strip.permission-declined`         | The user declined the plan.                                                               |
-| `strip.recovery-unavailable`        | Recovery data could not be prepared. Nothing was changed.                                 |
-| `strip.write-failed`                | A planned effect failed. The recovery bundle stays, and the next action is `doctor`.      |
-| `strip.recovery-artifact-retained`  | The changes verified, but the recovery bundle could not be removed.                       |
-| `strip.interrupted`                 | The run was cancelled.                                                                    |
+| Code                                | Meaning                                                                                                                                                    |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `strip.invalid-input`               | A part, flatten folder or option is invalid.                                                                                                               |
+| `strip.workspace-unavailable`       | The workspace layout, settings or ownership lock cannot be read safely.                                                                                    |
+| `strip.document-unsupported`        | A document's frontmatter or `Entries` section cannot be edited without losing meaning.                                                                     |
+| `strip.flatten-collision`           | Two documents, or a document and a kept file, would share a flattened name.                                                                                |
+| `strip.flatten-managed`             | `strip --flatten` was given a folder that holds a file Open Forge manages, entrypoints and native `SKILL.md` files included. `uninstall` never reports it. |
+| `strip.linked-file-skipped`         | Information. A symbolic link or junction was left unchanged.                                                                                               |
+| `strip.target-changed`              | A planned file changed before the first effect. Nothing was changed.                                                                                       |
+| `strip.target-changed-during-apply` | A planned file changed after effects started. The run stopped part way.                                                                                    |
+| `strip.workspace-lock-unavailable`  | The workspace mutation lease is unavailable.                                                                                                               |
+| `strip.confirmation-required`       | Applying needs confirmation or `--automatic`.                                                                                                              |
+| `strip.permission-declined`         | The user declined the plan.                                                                                                                                |
+| `strip.recovery-unavailable`        | Recovery data could not be prepared. Nothing was changed.                                                                                                  |
+| `strip.write-failed`                | A planned effect failed. The recovery bundle stays, and the next action is `doctor`.                                                                       |
+| `strip.recovery-artifact-retained`  | The changes verified, but the recovery bundle could not be removed.                                                                                        |
+| `strip.interrupted`                 | The run was cancelled.                                                                                                                                     |
 
 Messages follow the shared families, with `strip` or `uninstall` as the command:
 
@@ -173,7 +173,7 @@ Where the harness's own stripping code disagrees with Open Forge's rules, this c
 
 ## Decisions
 
-The maintainer accepted that `strip` is its own command and that `uninstall` offers the same parts as options. The maintainer also accepted that strip's own plan reasons are `strip` and `flatten`, that `--flatten` is for categories, subcategories and custom routes and refuses a folder holding managed files, and that the eval harness is only the source of the expected bytes, not contract vocabulary.
+The maintainer accepted that `strip` is its own command and that `uninstall` offers the same parts as options. The maintainer also accepted that strip's own plan reasons are `strip` and `flatten`, that `--flatten` is for categories, subcategories and custom routes, that `strip --flatten` refuses a folder holding any managed file, entrypoints included, while `uninstall --flatten` never does, and that the eval harness is only the source of the expected bytes, not contract vocabulary.
 
 These defaults are recorded for the maintainer to confirm:
 

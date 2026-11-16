@@ -53,7 +53,7 @@ internal static class StripFlattenPlanner
         return new StripFlattenPlan(moves.ToImmutableDictionary(StringComparer.Ordinal), collisions);
     }
 
-    internal static bool StaysInPlace(WorkspaceLayout layout, string document)
+    private static bool StaysInPlace(WorkspaceLayout layout, string document)
         => SourceFormClassifier.TryClassify(layout, document, out var form)
             && (form == SourceDocumentForm.Skill || SourceFormClassifier.IsEntrypoint(form));
 

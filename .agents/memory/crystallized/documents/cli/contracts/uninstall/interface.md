@@ -82,30 +82,29 @@ The command is `uninstall` in the shared schema-3 report, with the [strip result
 
 ## Errors And Boundaries
 
-Uninstall uses every [strip code](../strip/interface.md#errors-and-boundaries) with the `uninstall.` prefix, plus its own codes:
+Uninstall uses every [strip code](../strip/interface.md#errors-and-boundaries) with the `uninstall.` prefix except `flatten-managed`, plus its own codes. Nothing stays managed after uninstall, so its `--flatten` never refuses a folder for holding managed files:
 
-| Code                                    | Meaning                                                                                                    |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `uninstall.invalid-input`               | Same meaning as `strip.invalid-input`.                                                                     |
-| `uninstall.workspace-unavailable`       | Same meaning as `strip.workspace-unavailable`.                                                             |
-| `uninstall.document-unsupported`        | Same meaning as `strip.document-unsupported`.                                                              |
-| `uninstall.flatten-collision`           | Same meaning as `strip.flatten-collision`.                                                                 |
-| `uninstall.flatten-managed`             | Same meaning as `strip.flatten-managed`, counting only files that stay managed after the planned removals. |
-| `uninstall.linked-file-skipped`         | Same meaning as `strip.linked-file-skipped`.                                                               |
-| `uninstall.target-changed`              | Same meaning as `strip.target-changed`.                                                                    |
-| `uninstall.target-changed-during-apply` | Same meaning as `strip.target-changed-during-apply`.                                                       |
-| `uninstall.workspace-lock-unavailable`  | Same meaning as `strip.workspace-lock-unavailable`.                                                        |
-| `uninstall.confirmation-required`       | Same meaning as `strip.confirmation-required`.                                                             |
-| `uninstall.permission-declined`         | Same meaning as `strip.permission-declined`.                                                               |
-| `uninstall.recovery-unavailable`        | Same meaning as `strip.recovery-unavailable`.                                                              |
-| `uninstall.write-failed`                | Same meaning as `strip.write-failed`.                                                                      |
-| `uninstall.recovery-artifact-retained`  | Same meaning as `strip.recovery-artifact-retained`.                                                        |
-| `uninstall.interrupted`                 | Same meaning as `strip.interrupted`.                                                                       |
-| `uninstall.ownership-unavailable`       | The ownership lock cannot be read, so uninstall cannot tell what Open Forge installed.                     |
-| `uninstall.library-attached`            | A Library is attached. Detach it first.                                                                    |
-| `uninstall.target-unavailable`          | An owned target cannot be read or compared with its payload.                                               |
-| `uninstall.edited-kept`                 | Information. An edited managed file or section stays.                                                      |
-| `uninstall.runtime-retained`            | `.open-forge-state/` stays. The message names why: recovery data, a link, or a read or removal failure.    |
+| Code                                    | Meaning                                                                                                 |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `uninstall.invalid-input`               | Same meaning as `strip.invalid-input`.                                                                  |
+| `uninstall.workspace-unavailable`       | Same meaning as `strip.workspace-unavailable`.                                                          |
+| `uninstall.document-unsupported`        | Same meaning as `strip.document-unsupported`.                                                           |
+| `uninstall.flatten-collision`           | Same meaning as `strip.flatten-collision`.                                                              |
+| `uninstall.linked-file-skipped`         | Same meaning as `strip.linked-file-skipped`.                                                            |
+| `uninstall.target-changed`              | Same meaning as `strip.target-changed`.                                                                 |
+| `uninstall.target-changed-during-apply` | Same meaning as `strip.target-changed-during-apply`.                                                    |
+| `uninstall.workspace-lock-unavailable`  | Same meaning as `strip.workspace-lock-unavailable`.                                                     |
+| `uninstall.confirmation-required`       | Same meaning as `strip.confirmation-required`.                                                          |
+| `uninstall.permission-declined`         | Same meaning as `strip.permission-declined`.                                                            |
+| `uninstall.recovery-unavailable`        | Same meaning as `strip.recovery-unavailable`.                                                           |
+| `uninstall.write-failed`                | Same meaning as `strip.write-failed`.                                                                   |
+| `uninstall.recovery-artifact-retained`  | Same meaning as `strip.recovery-artifact-retained`.                                                     |
+| `uninstall.interrupted`                 | Same meaning as `strip.interrupted`.                                                                    |
+| `uninstall.ownership-unavailable`       | The ownership lock cannot be read, so uninstall cannot tell what Open Forge installed.                  |
+| `uninstall.library-attached`            | A Library is attached. Detach it first.                                                                 |
+| `uninstall.target-unavailable`          | An owned target cannot be read or compared with its payload.                                            |
+| `uninstall.edited-kept`                 | Information. An edited managed file or section stays.                                                   |
+| `uninstall.runtime-retained`            | `.open-forge-state/` stays. The message names why: recovery data, a link, or a read or removal failure. |
 
 ## Examples
 

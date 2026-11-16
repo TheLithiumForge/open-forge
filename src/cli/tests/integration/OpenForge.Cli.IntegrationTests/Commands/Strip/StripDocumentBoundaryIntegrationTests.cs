@@ -19,6 +19,7 @@ public sealed class StripDocumentBoundaryIntegrationTests
     private const string Notes = WorkspaceLayout.DefaultMainRoot + "/notes";
     private const string Note = Notes + "/note.md";
     private const string Chart = "chart.png";
+    private const string MemoryCategory = WorkspaceLayout.DefaultMainRoot + "/memory/crystallized";
 
     // Each case names its part by the wire name the contract gives it.
     public static TheoryData<string, string> Refusals => new()
@@ -91,6 +92,41 @@ public sealed class StripDocumentBoundaryIntegrationTests
         Assert.Equal(StripFindingCode.FlattenManaged, finding.Code);
         Assert.StartsWith(WorkspaceLayout.DefaultMainRoot + "/", finding.Path, StringComparison.Ordinal);
         Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    // Strip never edits the managed entrypoint, so moving the documents below it would break Open Forge's own Entries.
+    [Fact(DisplayName = "Strip refuses to flatten a Framework category that holds only its managed entrypoint and user documents below it"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
+    public async Task FlattenRefusesManagedEntrypointFolder()
+    {
+        using var workspace = StripIntegrationWorkspace.Create("strip-flatten-managed-entrypoint");
+        await workspace.InstallAsync();
+        var entrypoint = Assert.Single(Directory.GetFiles(workspace.Combine(MemoryCategory)));
+        workspace.Write(MemoryCategory + "/team/note.md", "# Note\n");
+        var before = workspace.SnapshotHashes();
+
+        var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [], MemoryCategory));
+
+        Assert.Equal(CliSemanticStatus.Blocked, result.Status);
+        var finding = Assert.Single(result.Findings);
+        Assert.Equal((StripFindingCode.FlattenManaged, MemoryCategory + "/" + Path.GetFileName(entrypoint)), (finding.Code, finding.Path));
+        Assert.Equal(before, workspace.SnapshotHashes());
+    }
+
+    [Fact(DisplayName = "Strip flattens a user route whose entrypoint is an unowned scaffold"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
+    public async Task FlattenUserRouteWithScaffold()
+    {
+        using var workspace = StripIntegrationWorkspace.Create("strip-flatten-user-route");
+        await workspace.InstallAsync();
+        workspace.Write(Docs + "/rules/rules.md", "# Rules\n");
+        await workspace.IncludeAsync(Docs);
+        Assert.True(workspace.Exists(Docs + "/_" + Docs + ".md"));
+
+        var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [], Docs));
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        var moved = Assert.Single(result.Plan, entry => entry.Action == StripPlanAction.Move);
+        Assert.Equal((Docs + "/rules/rules.md", Docs + "/rules.md"), (moved.Path, moved.To));
+        Assert.True(workspace.Exists(Docs + "/rules.md"));
     }
 
     [Theory(DisplayName = "Strip refuses a document it cannot edit safely and writes nothing"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
