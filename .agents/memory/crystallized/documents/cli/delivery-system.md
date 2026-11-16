@@ -74,7 +74,7 @@ commit's own Build.
 A direct push reuses another branch's passed Build of the same commit. It waits
 for an earlier one that is still running and reuses it only if it passes, so a
 branch never shows green without a passing Build. A Build that fails, is
-cancelled or runs past 90 minutes makes the push build the commit itself.
+cancelled or runs past 130 minutes makes the push build the commit itself.
 Pull requests, manual runs and Release calls always build. A newer push to a pull request cancels that pull request's older Build, while direct pushes, manual runs and Release calls are never cancelled or queued by another run. Retry failed hosts
 with GitHub's **Re-run failed jobs**, then reuse the completed run.
 

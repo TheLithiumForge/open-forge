@@ -172,9 +172,10 @@ checks. If no run qualifies, Release builds once.
 
 On direct branch pushes, `ci:reuse` skips duplicate checks and builds when
 another branch's trusted Build of that commit has passed. When that Build
-started earlier and is still running, `ci:reuse` waits for it, for up to 90
-minutes. It skips only if that Build passes. If it fails, is cancelled or runs
-too long, this push builds the commit itself, so a branch never shows green
+started earlier and is still running, `ci:reuse` waits for it, for up to 130
+minutes. That covers the 120-minute Build job limit and the wait for a runner.
+It skips only if that Build passes. If it fails, is cancelled or runs too long,
+this push builds the commit itself, so a branch never shows green
 without a passing Build. Pull requests, manual runs and calls from Release
 always build. A newer push to a pull request cancels that pull request's older
 Build. Direct pushes, manual runs and Release calls are never cancelled or
