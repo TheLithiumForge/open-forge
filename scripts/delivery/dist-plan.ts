@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { parseTargets } from "./targets.ts";
 import type { SupportedRuntime } from "./package-model.ts";
+import { skippedSuiteNotice, skippedSuites } from "./layout.ts";
 
 export interface DistOptions {
   sha?: boolean;
@@ -10,7 +11,14 @@ export interface DistOptions {
   "skip-tests"?: boolean;
 }
 
-export function distPlan(rid: SupportedRuntime, options: DistOptions) {
+export interface DistStage {
+  name: string;
+  script: string;
+  args: string[];
+  skipped: boolean;
+}
+
+export function distPlan(rid: SupportedRuntime, options: DistOptions): DistStage[] {
   const targets = parseTargets(options.targets);
   assert.ok(targets.includes(rid), "The wrapper target selection must include this host.");
   const target = ["--rid", rid];
@@ -25,5 +33,14 @@ export function distPlan(rid: SupportedRuntime, options: DistOptions) {
       args: [...target, ...(options.targets === undefined ? [] : ["--targets", targets.join(",")]), ...(options["skip-tests"] ? ["--skip-tests"] : [])],
       skipped: false,
     },
+  ];
+}
+
+/** The printed plan: the target, each numbered stage, then any suite this RID skips with its reason. */
+export function distPlanLines(rid: SupportedRuntime, stages: readonly DistStage[]): string[] {
+  return [
+    `Native target: ${rid}`,
+    ...stages.map((stage, index) => `${index + 1}. ${stage.name}${stage.skipped ? " [SKIPPED]" : ""}: npm run ${stage.script} -- ${stage.args.join(" ")}`),
+    ...skippedSuites(rid).map((skip) => skippedSuiteNotice(rid, skip)),
   ];
 }

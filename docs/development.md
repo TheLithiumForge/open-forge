@@ -188,6 +188,8 @@ are six execution modes on one host: managed unit and integration tests, managed
 public tests against the managed CLI, native integration and public tests, and
 managed public tests against the native CLI. Integration tests therefore run
 in two modes and public tests in three. This does not run other OS targets.
+For now osx-x64 skips native integration tests, because their native publish
+is too slow on the Intel macOS runner. osx-arm64 still runs them for macOS.
 
 By default, `pack` requires passing `test:built` reports for the existing
 artifacts. It creates the portable archive, the main npm package, and the
@@ -375,9 +377,9 @@ The explicit matrix RID is an assertion that the host matches the target.
 The build uploads finished packages and diagnostics from stable output paths.
 There are no intermediate build/test transfers or platform packaging workflows.
 
-Each test suite stops after 20 minutes, lists running processes and fails. With
+Each test suite stops after 30 minutes, lists running processes and fails. With
 the slowest build and suites observed so far, a stall still leaves diagnostics
-before the 90-minute job limit. Suites print progress
+before the 120-minute job limit. Suites print progress
 every two minutes and name tests running longer than two minutes. In GitHub
 Actions, failed and hung tests become annotations that `ci:watch` prints.
 `npx forge ci:timings` compares step times across recent Build runs and lists

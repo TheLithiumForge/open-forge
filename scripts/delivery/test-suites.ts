@@ -15,6 +15,7 @@ import {
   longRunningReports,
   longRunningTest,
   minutesToMilliseconds,
+  skippedAnnotation,
   slowestSummary,
   SuiteLimits,
 } from "./suite-diagnostics.ts";
@@ -107,6 +108,12 @@ async function runSuite(root: string, suite: Suite, output: string): Promise<voi
   if (!result.finished) throw new Error(deadlineFailure(suite.name, SuiteLimits.deadlineMinutes, processes));
   reportFailedTests(root, suite.name, output);
   throw new Error(`${executable} failed (${result.status ?? result.signal}); ${log}`);
+}
+
+/** Reports a suite this host leaves out, with its reason, so the summary never drops it silently. */
+export function reportSkippedSuite(suite: string, notice: string): void {
+  process.stdout.write(`${notice}\n`);
+  if (inGithubActions()) process.stdout.write(`${skippedAnnotation(suite, notice)}\n`);
 }
 
 export async function runSuites(root: string, selections: readonly Suite[], reports: string): Promise<void> {
