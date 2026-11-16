@@ -21,7 +21,6 @@ Automation:
   Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
 
 Related commands:
-  tool list            List supported tools and their setup profiles.
   tool inspect --help  Show a tool's channels, native effects and machine facts.
   tool status          Check tool versions, project additions and PATH
                        readiness.

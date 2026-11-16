@@ -47,7 +47,5 @@ Related commands:
   tool inspect --help  Show a tool's channels, native effects and machine facts.
   tool status          Check tool versions, project additions and PATH
                        readiness.
-  tool install --help  Install tools, run native setup and add project
-                       configuration.
   tool update --help   Update declared tools within supported versions.
   tool remove --help   Remove project additions and offer native uninstall.

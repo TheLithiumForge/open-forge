@@ -12,28 +12,33 @@ namespace OpenForge.Cli.Core.Presentation.Tool.Shared.Help;
 
 internal static class ToolHelpSections
 {
-    internal static CliHelpContent CreateGroup() => Create(ToolHelpText.GroupSyntax(), ToolHelpText.GroupExamples(), ToolHelpText.GroupBehavior());
-    internal static CliHelpContent CreateList() => Create(ToolHelpText.ListSyntax(), ToolHelpText.ListExamples(), ToolHelpText.ListBehavior());
-    internal static CliHelpContent CreateInspect() => Create(ToolHelpText.InspectSyntax(), ToolHelpText.InspectExamples(), ToolHelpText.InspectBehavior());
-    internal static CliHelpContent CreateStatus() => Create(ToolHelpText.StatusSyntax(), ToolHelpText.StatusExamples(), ToolHelpText.StatusBehavior());
+    internal static CliHelpContent CreateGroup() => Create(ToolHelpText.GroupSyntax(), ToolHelpText.GroupExamples(), ToolHelpText.GroupBehavior(), leaf: null);
+    internal static CliHelpContent CreateList() => Create(ToolHelpText.ListSyntax(), ToolHelpText.ListExamples(), ToolHelpText.ListBehavior(), ToolListDefinitions.CommandName);
+    internal static CliHelpContent CreateInspect() => Create(ToolHelpText.InspectSyntax(), ToolHelpText.InspectExamples(), ToolHelpText.InspectBehavior(), ToolInspectDefinitions.CommandName);
+    internal static CliHelpContent CreateStatus() => Create(ToolHelpText.StatusSyntax(), ToolHelpText.StatusExamples(), ToolHelpText.StatusBehavior(), ToolStatusDefinitions.CommandName);
 
-    private static CliHelpContent Create(string usage, string examples, string behavior) => CliCommandHelp.Create(new CliCommandHelpDefinition
+    private static CliHelpContent Create(string usage, string examples, string behavior, string? leaf) => CliCommandHelp.Create(new CliCommandHelpDefinition
     {
         Usage = usage,
         Examples = examples,
         Behavior = behavior,
         Details = [],
-        RelatedCommands = Related,
+        RelatedCommands = Related(leaf),
     });
 
-    // Every Tool page lists the six leaves with their help purposes, like the Extension and Library groups.
-    internal static IReadOnlyList<(string Command, string? Description)> Related =>
+    // Tool pages list the six leaves with their help purposes, like the Extension and Library groups. A leaf page leaves itself out.
+    internal static IReadOnlyList<(string Command, string? Description)> Related(string? leaf) =>
     [
-        (ToolHelpText.RelatedLeaf(ToolListDefinitions.CommandName, help: false), ToolListDefinitions.Purpose),
-        (ToolHelpText.RelatedLeaf(ToolInspectDefinitions.CommandName, help: true), ToolInspectDefinitions.Purpose),
-        (ToolHelpText.RelatedLeaf(ToolStatusDefinitions.CommandName, help: false), ToolStatusDefinitions.Purpose),
-        (ToolHelpText.RelatedLeaf(ToolWriteBinding.Name(ToolWriteKind.Install), help: true), ToolWriteBinding.Description(ToolWriteKind.Install)),
-        (ToolHelpText.RelatedLeaf(ToolWriteBinding.Name(ToolWriteKind.Update), help: true), ToolWriteBinding.Description(ToolWriteKind.Update)),
-        (ToolHelpText.RelatedLeaf(ToolWriteBinding.Name(ToolWriteKind.Remove), help: true), ToolWriteBinding.Description(ToolWriteKind.Remove)),
+        .. new (string Name, bool Help, string Purpose)[]
+        {
+            (ToolListDefinitions.CommandName, false, ToolListDefinitions.Purpose),
+            (ToolInspectDefinitions.CommandName, true, ToolInspectDefinitions.Purpose),
+            (ToolStatusDefinitions.CommandName, false, ToolStatusDefinitions.Purpose),
+            (ToolWriteBinding.Name(ToolWriteKind.Install), true, ToolWriteBinding.Description(ToolWriteKind.Install)),
+            (ToolWriteBinding.Name(ToolWriteKind.Update), true, ToolWriteBinding.Description(ToolWriteKind.Update)),
+            (ToolWriteBinding.Name(ToolWriteKind.Remove), true, ToolWriteBinding.Description(ToolWriteKind.Remove)),
+        }
+        .Where(item => !string.Equals(item.Name, leaf, StringComparison.Ordinal))
+        .Select(item => (ToolHelpText.RelatedLeaf(item.Name, item.Help), (string?)item.Purpose)),
     ];
 }

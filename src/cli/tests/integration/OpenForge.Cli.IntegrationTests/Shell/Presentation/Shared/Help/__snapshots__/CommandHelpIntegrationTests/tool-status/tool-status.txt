@@ -29,8 +29,6 @@ Automation:
 Related commands:
   tool list            List supported tools and their setup profiles.
   tool inspect --help  Show a tool's channels, native effects and machine facts.
-  tool status          Check tool versions, project additions and PATH
-                       readiness.
   tool install --help  Install tools, run native setup and add project
                        configuration.
   tool update --help   Update declared tools within supported versions.

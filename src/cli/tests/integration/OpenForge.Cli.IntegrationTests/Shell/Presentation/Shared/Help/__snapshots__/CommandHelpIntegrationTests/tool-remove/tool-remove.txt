@@ -48,4 +48,3 @@ Related commands:
   tool install --help  Install tools, run native setup and add project
                        configuration.
   tool update --help   Update declared tools within supported versions.
-  tool remove --help   Remove project additions and offer native uninstall.
