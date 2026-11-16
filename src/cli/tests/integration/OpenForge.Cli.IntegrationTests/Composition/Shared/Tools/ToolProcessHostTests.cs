@@ -103,7 +103,7 @@ public sealed class ToolProcessHostTests
         else Assert.Null(result.Failure);
         Assert.InRange(Encoding.UTF8.GetByteCount(result.StandardOutput) + Encoding.UTF8.GetByteCount(result.StandardError), 0, request.MaximumOutputBytes);
         AssertStopped(temporary, "root");
-        AssertStopped(temporary, "child");
+        AssertReleased(temporary, "child");
         Directory.Move(working, temporary.Combine("released"));
         Directory.Move(temporary.Combine("released"), working);
     }
@@ -162,6 +162,7 @@ public sealed class ToolProcessHostTests
     private static string Quote(string value) => OperatingSystem.IsWindows() ? $"'{value.Replace("'", "''", StringComparison.Ordinal)}'"
         : $"'{value.Replace("'", "'\\''", StringComparison.Ordinal)}'";
 
+    // The host starts and reaps the root, so the root has exited when RunAsync returns.
     private static void AssertStopped(TemporaryWorkspace temporary, string name)
     {
         var pid = int.Parse(File.ReadAllText(temporary.Combine($"{name}.pid")), CultureInfo.InvariantCulture);
@@ -169,6 +170,14 @@ public sealed class ToolProcessHostTests
         try { process = Process.GetProcessById(pid); }
         catch (ArgumentException) { process = null; }
         using (process) if (process is not null) Assert.True(process.WaitForExit(TimeSpan.Zero));
+        AssertReleased(temporary, name);
+    }
+
+    // A killed descendant isn't the host's child. On Unix it is reparented and its exit status is
+    // collected by another process later, so a process-table check would observe that reaper.
+    // The promise is that its files are released: its exclusive lease must be free on return.
+    private static void AssertReleased(TemporaryWorkspace temporary, string name)
+    {
         using var lease = File.Open(temporary.Combine($"{name}.lease"), FileMode.Open, FileAccess.ReadWrite, FileShare.None);
     }
 
