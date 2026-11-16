@@ -393,6 +393,22 @@ public static class PublishedTokens
         public const string ContentDirectory = "content";
     }
 
+    public static class Tool
+    {
+        public const string Command = "tool";
+        public const string Status = "status";
+        public const string Tools = "tools";
+        public const string Version = "version";
+        public const string State = "state";
+        public const string DetectedVersion = "detectedVersion";
+        public const string BinReadiness = "binReadiness";
+        public const string Missing = "missing";
+        public const string Unsupported = "unsupported";
+        public const string Ready = "ready";
+        public const string CodeGraphId = "codegraph";
+        public const string CodeGraphRange = "1.6.x";
+    }
+
     public static class RecoveryFormat
     {
         public const string FinalFilePrefix = "operation-";

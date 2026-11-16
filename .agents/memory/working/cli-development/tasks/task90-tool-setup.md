@@ -740,3 +740,12 @@ Channel, config, record and grant services report cancellation beside completed 
 Plans project resolved union items, set values, marked-block markers and content, managed-file hashes, the desired native value and every native config command that apply runs.
 The native config command comes from the same builder that apply uses.
 The stale lane E stash predates `350768fbb` and contributed nothing new.
+
+### User scenarios
+
+Composed-Root Integration scenarios use owned homes, the synthetic catalogue and injected hosts, so they never download or edit PATH.
+They now cover first install, bare restore from the lock, a missing declared tool, an out-of-range self-update kept by Status and Update, an Update no-op, unattended install with bin off PATH and account-uninstall approval, decline and `--yes` removal.
+The published EndToEnd journey checks Status for a missing and then an out-of-range CodeGraph on Linux and macOS.
+Published writer journeys aren't possible yet for two reasons.
+The real catalogue's `0.9.0-beta.19` floor blocks every writer in the current `0.9.0-beta.18` build.
+Windows resolves the published Tool home through the known profile folder, and no product home override exists.
