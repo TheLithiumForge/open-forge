@@ -1,5 +1,6 @@
 using OpenForge.Cli.Core.Commands.Stripping.Models.Request;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Stripping;
 
@@ -9,8 +10,9 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Strip;
 // plain-links.test.ts and frontmatter.test.ts cases, plus the cases where Open Forge's own rules differ.
 public sealed class StripHarnessParityIntegrationTests
 {
-    private const string Note = ".agents/notes/note.md";
-    private const string Other = ".agents/notes/rules.md";
+    private const string Root = WorkspaceLayout.DefaultMainRoot;
+    private const string Note = Root + "/notes/note.md";
+    private const string Other = Root + "/notes/rules.md";
 
     [Fact(DisplayName = "Strip links keeps text, external links and code exactly as the eval harness does"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
     public async Task LinksMatchTheHarnessCases()
@@ -101,49 +103,49 @@ public sealed class StripHarnessParityIntegrationTests
     public async Task EntriesKeepUserText()
     {
         using var workspace = StripIntegrationWorkspace.Create("strip-entries");
-        workspace.Write(".agents/notes/_notes.md", "# Notes\n\nIntro.\n\n## Entries\n\n- [Rules](rules.md) - #Docs\n");
-        workspace.Write(".agents/guide/_guide.md", "# Guide\n\n## Entries\n\nRead these first.\n\n- [Rules](../notes/rules.md) - #Docs\n");
+        workspace.Write(Root + "/notes/_notes.md", "# Notes\n\nIntro.\n\n## Entries\n\n- [Rules](rules.md) - #Docs\n");
+        workspace.Write(Root + "/guide/_guide.md", "# Guide\n\n## Entries\n\nRead these first.\n\n- [Rules](../notes/rules.md) - #Docs\n");
         workspace.Write(Other, "# Rules\n");
 
         var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [StripPart.Entries, StripPart.Links]));
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
-        Assert.Equal("# Notes\n\nIntro.\n", workspace.Read(".agents/notes/_notes.md"));
-        Assert.Equal("# Guide\n\n## Entries\n\nRead these first.\n\n", workspace.Read(".agents/guide/_guide.md"));
+        Assert.Equal("# Notes\n\nIntro.\n", workspace.Read(Root + "/notes/_notes.md"));
+        Assert.Equal("# Guide\n\n## Entries\n\nRead these first.\n\n", workspace.Read(Root + "/guide/_guide.md"));
     }
 
     [Fact(DisplayName = "Strip flatten moves documents and rewrites kept links to their new places"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
     public async Task FlattenRewritesKeptLinks()
     {
         using var workspace = StripIntegrationWorkspace.Create("strip-flatten");
-        workspace.Write(".agents/docs/README.md", "Start at [Rules](game/rules.md#moves).\n");
-        workspace.Write(".agents/docs/game/rules.md", "See [Input](../ui/input.md), ![board](board.png) and [README](../README.md).\n");
-        workspace.Write(".agents/docs/game/board.png", "png");
-        workspace.Write(".agents/docs/ui/input.md", "Back to [Rules](../game/rules.md).\n<!-- @rune ../game/rules.md defines moves -->\n");
+        workspace.Write(Root + "/docs/README.md", "Start at [Rules](game/rules.md#moves).\n");
+        workspace.Write(Root + "/docs/game/rules.md", "See [Input](../ui/input.md), ![board](board.png) and [README](../README.md).\n");
+        workspace.Write(Root + "/docs/game/board.png", "png");
+        workspace.Write(Root + "/docs/ui/input.md", "Back to [Rules](../game/rules.md).\n<!-- @rune ../game/rules.md defines moves -->\n");
 
-        var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [], flatten: ".agents/docs"));
+        var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [], flatten: Root + "/docs"));
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
-        Assert.Equal("Start at [Rules](rules.md#moves).\n", workspace.Read(".agents/docs/README.md"));
-        Assert.Equal("See [Input](input.md), ![board](game/board.png) and [README](README.md).\n", workspace.Read(".agents/docs/rules.md"));
-        Assert.Equal("Back to [Rules](rules.md).\n<!-- @rune ./rules.md defines moves -->\n", workspace.Read(".agents/docs/input.md"));
-        Assert.True(workspace.Exists(".agents/docs/game/board.png"));
-        Assert.False(workspace.Exists(".agents/docs/ui"));
+        Assert.Equal("Start at [Rules](rules.md#moves).\n", workspace.Read(Root + "/docs/README.md"));
+        Assert.Equal("See [Input](input.md), ![board](game/board.png) and [README](README.md).\n", workspace.Read(Root + "/docs/rules.md"));
+        Assert.Equal("Back to [Rules](rules.md).\n<!-- @rune ./rules.md defines moves -->\n", workspace.Read(Root + "/docs/input.md"));
+        Assert.True(workspace.Exists(Root + "/docs/game/board.png"));
+        Assert.False(workspace.Exists(Root + "/docs/ui"));
     }
 
     [Fact(DisplayName = "Strip flatten reports every name collision and writes nothing"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
     public async Task FlattenCollisionWritesNothing()
     {
         using var workspace = StripIntegrationWorkspace.Create("strip-flatten-collision");
-        workspace.Write(".agents/docs/a/notes.md", "A\n");
-        workspace.Write(".agents/docs/b/Notes.md", "B\n");
+        workspace.Write(Root + "/docs/a/notes.md", "A\n");
+        workspace.Write(Root + "/docs/b/Notes.md", "B\n");
         var before = workspace.SnapshotHashes();
 
-        var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [StripPart.Metadata], flatten: ".agents/docs"));
+        var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [StripPart.Metadata], flatten: Root + "/docs"));
 
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Assert.Equal(StripFindingCode.FlattenCollision, Assert.Single(result.Findings).Code);
-        Assert.Equal([".agents/docs/a/notes.md", ".agents/docs/b/Notes.md"], Assert.Single(result.Collisions).Sources);
+        Assert.Equal([Root + "/docs/a/notes.md", Root + "/docs/b/Notes.md"], Assert.Single(result.Collisions).Sources);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 

@@ -11,6 +11,7 @@ using OpenForge.Cli.Core.Commands.Stripping;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Request;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
 using OpenForge.Cli.Core.Commands.Uninstall;
+using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
@@ -107,8 +108,15 @@ internal sealed class StripIntegrationWorkspace : IDisposable
     internal ValueTask<StripResult> UninstallAsync(StripRequest request)
         => new UninstallOperation(Runner()).ExecuteAsync(request, TestContext.Current.CancellationToken);
 
-    private async Task<CliProcessCompletion> RunAsync(IReadOnlyList<string> arguments)
+    internal WorkspaceLockStoreRoot LockStoreRoot => _lockStore.StoreRoot;
+
+    internal async Task<CliProcessCompletion> RunAsync(IReadOnlyList<string> arguments)
+        => (await RunWithOutputAsync(arguments)).Completion;
+
+    internal async Task<(CliProcessCompletion Completion, string Output, string Error)> RunWithOutputAsync(IReadOnlyList<string> arguments)
     {
+        using var output = new StringWriter();
+        using var error = new StringWriter();
         var application = CliCompositionRoot.Create(
             new CliProcessIdentity(CliSyntaxDefinitions.ExecutableName, nameof(StripIntegrationWorkspace)),
             new CliCompositionInputs
@@ -119,11 +127,12 @@ internal sealed class StripIntegrationWorkspace : IDisposable
                 PromptOutputRedirected = true,
                 LockStoreRoot = _lockStore.StoreRoot,
             });
-        return await application.RunAsync(
+        var completion = await application.RunAsync(
             [.. arguments],
             new CliProcessEnvironment(Path),
-            new CliOutputWriters(new StringWriter(), new StringWriter()),
+            new CliOutputWriters(output, error),
             TestContext.Current.CancellationToken);
+        return (completion, output.ToString(), error.ToString());
     }
 
     public void Dispose()

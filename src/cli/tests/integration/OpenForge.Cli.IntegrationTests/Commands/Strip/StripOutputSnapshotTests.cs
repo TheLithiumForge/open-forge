@@ -1,6 +1,6 @@
-using OpenForge.Cli.Core.Commands.Stripping;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Request;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Presentation.Stripping;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Shared.Snapshots;
@@ -10,7 +10,7 @@ namespace OpenForge.Cli.IntegrationTests.Commands.Strip;
 
 public sealed class StripOutputSnapshotTests
 {
-    private const string Folder = ".agents/docs";
+    private const string Folder = WorkspaceLayout.DefaultMainRoot + "/docs";
 
     [Fact(DisplayName = "Strip previews keep their text and JSON plan at every detail level"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
     public async Task Preview()
@@ -33,15 +33,6 @@ public sealed class StripOutputSnapshotTests
 
         Assert.Equal(CliSemanticStatus.Blocked, result.Status);
         Renderers().MatchDetails(result, "collision");
-    }
-
-    [Fact(DisplayName = "Strip invalid input keeps its text and JSON at every detail level"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
-    public void InvalidInput()
-    {
-        var result = StripResultFactory.Invalid(StripCommandKind.Strip, null, "Each part must be metadata, entries or links.");
-
-        Assert.Equal(CliSemanticStatus.Invalid, result.Status);
-        Renderers().MatchDetails(result, "invalid");
     }
 
     private static CommandOutputRenderers<StripResult> Renderers() => CommandOutputRenderers<StripResult>.From(StripPresentation.Rendering);

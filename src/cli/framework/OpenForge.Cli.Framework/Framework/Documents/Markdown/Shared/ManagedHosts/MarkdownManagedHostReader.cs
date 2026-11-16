@@ -10,8 +10,8 @@ internal static class MarkdownManagedHostReader
 {
     internal const string HeadingText = "Open Forge";
     internal const string FooterText = "End of Open Forge managed section.";
-    private const string LegacyStart = "<!-- open-forge:start -->";
-    private const string LegacyEnd = "<!-- open-forge:end -->";
+    internal const string LegacyStart = "<!-- open-forge:start -->";
+    internal const string LegacyEnd = "<!-- open-forge:end -->";
     private const string InvalidBoundary = "The managed host contains an incomplete, duplicate, reversed, or mixed Open Forge boundary.";
 
     internal static MarkdownManagedHostFact Read(string source, MarkdownDocument document, int parseStart)
