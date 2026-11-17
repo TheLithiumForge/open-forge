@@ -100,18 +100,18 @@
   ],
   "effects": [],
   "counts": {
-    "routedFiles": 20,
+    "routedFiles": 19,
     "startupFiles": 7,
     "startupTokens": 3977,
     "mayLoadAgainFiles": 1,
     "mayLoadAgainTokens": 243,
-    "allTokens": 30285,
-    "startupShare": 13.131087997358428264817566452,
+    "allTokens": 29256,
+    "startupShare": 13.592822046571245460371715445,
     "rootCategories": 7,
     "entriesSectionsCurrent": 10,
     "entriesSectionsStale": 2,
     "entriesSectionsMissing": 0,
-    "frameworkFilesCurrent": 20,
+    "frameworkFilesCurrent": 19,
     "frameworkFilesChanged": 1,
     "frameworkFilesMissing": 0,
     "extensionsInstalled": 0,
@@ -158,12 +158,12 @@
         }
       },
       "allRouted": {
-        "files": 20,
-        "characters": 121139,
-        "bytes": 121140,
-        "tokens": 30285
+        "files": 19,
+        "characters": 117024,
+        "bytes": 117025,
+        "tokens": 29256
       },
-      "startupShare": 13.131087997358428264817566452
+      "startupShare": 13.592822046571245460371715445
     },
     "structure": {
       "rootCategories": {

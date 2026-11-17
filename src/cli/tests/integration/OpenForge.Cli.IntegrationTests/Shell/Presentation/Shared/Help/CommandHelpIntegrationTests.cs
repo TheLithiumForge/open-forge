@@ -12,7 +12,7 @@ public sealed class CommandHelpIntegrationTests
     public static TheoryData<string> Pages => new()
     {
         "", "route", "extension", "library", "tool",
-        "tool list", "tool inspect", "tool status", "tool install", "tool update", "tool remove",
+        "tool list", "tool install", "tool remove",
         "install", "update", "remove", "status", "context", "find", "references", "index", "doctor", "repair", "cleanup", "help",
         "route list", "route inspect", "route init", "route create", "route include", "route exclude", "route update", "route move", "route remove",
         "extension list", "extension inspect", "extension create", "extension install", "extension update", "extension remove",

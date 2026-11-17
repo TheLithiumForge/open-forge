@@ -1,0 +1,1 @@
+This project has no tools to install. Add one with open-forge tool install <id>.

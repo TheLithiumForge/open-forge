@@ -1,37 +1,24 @@
-  Remove project additions and offer native uninstall.
+  Remove Open Forge's changes for a tool and offer its own uninstall.
 
 Usage:
-  open-forge tool remove <id> [options]
+  open-forge tool remove <id> [--yes] [--dry-run] [options]
 
 Examples:
+  open-forge tool remove codegraph
   open-forge tool remove codegraph --dry-run
-  open-forge tool remove codegraph --yes
-  open-forge tool remove codebase-memory --yes
 
 Behavior:
-  Removes the project's declaration, lock entry and recorded Open Forge
-  additions. CodeGraph's own project uninstall runs first.
-  Codebase Memory removal stays local. Afterwards an interactive run asks
-  whether to run its own uninstaller, which removes
-  it system-wide from its versioned tool folder and every agent app. Open
-  Forge's bin stays on PATH. The default keeps it.
-  With --yes or no terminal, that uninstaller never runs and its command is
-  printed.
-  Project removal keeps account settings, including telemetry off, and prints
-  manual change commands.
-  Shared file deletion needs a separate live choice. Remove never edits PATH.
-  After the last tool in bin, it prints the PATH entry or marked shell block to
-  remove. Changes aren't rolled back automatically.
+  Removes Open Forge's changes for the tool and takes it out of this project's
+  tools.
+  Then shows what the tool's own uninstall does and asks whether to run it too.
+  The default is no, and --yes keeps the tool installed.
 
 Arguments:
-  <id>  The declared or locked tool ID.
+  <id>  The tool ID from open-forge tool list.
 
 Options:
-  --yes                Accept the shown removal plan. Skip PATH edits, shared
-                       deletion and account-wide uninstall.
-  --dry-run            Show the checked plan without applying changes.
-  --allow-path <path>  Permit writing to this workspace-relative path, recording
-                       it in .agents/open-forge.json.
+  --yes      Don't ask. Keep the tool installed and show its uninstall commands.
+  --dry-run  Show the plan without running or changing anything.
 
 Global options: --workspace, --format, --detail, --detail-filter, --help,
 --version. See open-forge --help.
@@ -43,10 +30,7 @@ Automation:
   Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
 
 Related commands:
-  tool list            List supported tools and their setup profiles.
-  tool inspect --help  Show a tool's channels, native effects and machine facts.
-  tool status          Check tool versions, project additions and PATH
-                       readiness.
-  tool install --help  Install tools, run native setup and add project
-                       configuration.
-  tool update --help   Update declared tools within supported versions.
+  tool list --help     List supported tools, their install method and their
+                       state.
+  tool install --help  Install a tool and set it up for this project, or install
+                       this project's missing tools.

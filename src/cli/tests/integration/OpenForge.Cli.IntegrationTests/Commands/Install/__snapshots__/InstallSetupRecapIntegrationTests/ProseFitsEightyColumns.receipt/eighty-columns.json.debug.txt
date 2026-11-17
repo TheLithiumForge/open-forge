@@ -325,16 +325,6 @@
       "after": null
     },
     {
-      "path": ".agents/skills/open-forge-cli/references/tools.md",
-      "kind": "file",
-      "action": "created",
-      "outcome": "done",
-      "reason": null,
-      "owner": null,
-      "before": null,
-      "after": null
-    },
-    {
       "path": ".agents/templates/_templates.md",
       "kind": "file",
       "action": "created",
@@ -386,7 +376,7 @@
     }
   ],
   "counts": {
-    "filesCreated": 19,
+    "filesCreated": 18,
     "directoriesCreated": 13,
     "sectionsAdded": 0,
     "filesReplaced": 0
@@ -398,7 +388,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 19,
+      "files": 18,
       "directories": 13,
       "sections": 2
     },
@@ -515,10 +505,6 @@
         "sourceAssetPath": ".agents/skills/open-forge-cli/references/routes.md"
       },
       {
-        "path": ".agents/skills/open-forge-cli/references/tools.md",
-        "sourceAssetPath": ".agents/skills/open-forge-cli/references/tools.md"
-      },
-      {
         "path": ".agents/templates/_templates.md",
         "sourceAssetPath": ".agents/templates/_templates.md"
       },
@@ -539,7 +525,7 @@
     ],
     "source": {
       "inventoryFingerprint": "<sha256>",
-      "assetCount": 21
+      "assetCount": 20
     },
     "lifecycle": {
       "action": "publish",

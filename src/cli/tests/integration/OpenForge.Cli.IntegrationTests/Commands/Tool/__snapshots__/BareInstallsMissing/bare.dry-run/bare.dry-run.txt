@@ -1,0 +1,3 @@
+Previewed tool install. Nothing was run or changed.
+Open Forge will run these commands to install CodeGraph:
+  npm i -g @colbymchenry/codegraph@1.6.2

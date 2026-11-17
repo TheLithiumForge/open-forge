@@ -1,0 +1,7 @@
+Found 2 supported tools.
+  Warning  .agents/open-forge.json  Check the tool command.
+         .agents/open-forge.json can't be used. Expected depth to be zero at the end of the JSON payload. There is an open JSON object or array that should be closed. LineNumber: 0 | BytePositionInLine: 1. Fix it, then run the command again.
+Code search
+  codegraph        npm     not installed  Gives coding agents a searchable graph of the code's symbols and calls.
+  codebase-memory  script  not installed  Indexes the codebase into a knowledge graph that coding agents can query.
+1 warnings.

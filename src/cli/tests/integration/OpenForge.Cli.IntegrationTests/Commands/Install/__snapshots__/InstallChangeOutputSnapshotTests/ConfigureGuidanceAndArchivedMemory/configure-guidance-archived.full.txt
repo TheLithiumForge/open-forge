@@ -17,7 +17,7 @@ memory/archived: leave out -> add with Git-ignored contents
   Would create 2 files and 2 directories under .agents, and update 5 existing
   files.
   Bundled Framework fingerprint:
-  <sha256> (21 assets).
+  <sha256> (20 assets).
   The ownership record is planned for publication.
   No recovery bundle was created.
   Verification was not requested.

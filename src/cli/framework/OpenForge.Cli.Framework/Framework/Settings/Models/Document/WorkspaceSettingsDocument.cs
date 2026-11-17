@@ -42,6 +42,9 @@ internal sealed record WorkspaceSettingsDocument(
 
     internal ImmutableArray<string> OutsideRoutes { get; init; } = [];
 
+    /// <summary>The IDs of the tools this project uses. `tool install` adds one and `tool remove` takes it out.</summary>
+    internal ImmutableArray<string> Tools { get; init; } = [];
+
     internal static readonly WorkspaceSettingsDocument Empty =
         new(WorkspaceSettingsDefinitions.SchemaVersion, [], [], []);
 

@@ -32,7 +32,7 @@ Package files follow your installation choices. Essentials leaves out Templates,
 
 ## Why Extensions exist
 
-Full Core supplies 21 Framework Markdown files. They include `AGENTS.md`, `CLAUDE.md`, the loader, the guide for people, six Core category entrypoints, five Memory entrypoints, and the `open-forge-cli` Skill with its five reference files. Essentials and Custom follow your [installation choices](../getting-started/installation.md#choose-the-installed-routes). The CLI also keeps settings and an [ownership record](../glossary.md#ownership-record) for maintenance. Methods for planning, documenting, developing, or coordinating agents ship as optional packages you choose. Records such as Decisions and Checkpoints, workflow recipes, and starter Templates come from an Extension or from you.
+Full Core supplies 20 Framework Markdown files. They include `AGENTS.md`, `CLAUDE.md`, the loader, the guide for people, six Core category entrypoints, five Memory entrypoints, and the `open-forge-cli` Skill with its four reference files. Essentials and Custom follow your [installation choices](../getting-started/installation.md#choose-the-installed-routes). The CLI also keeps settings and an [ownership record](../glossary.md#ownership-record) for maintenance. Methods for planning, documenting, developing, or coordinating agents ship as optional packages you choose. Records such as Decisions and Checkpoints, workflow recipes, and starter Templates come from an Extension or from you.
 
 Three rules shape the [catalogue](../glossary.md#catalogue):
 

@@ -135,14 +135,6 @@
       "owner": null
     },
     {
-      "path": ".agents/skills/open-forge-cli/references/tools.md",
-      "kind": "file",
-      "action": "replaced",
-      "outcome": "planned",
-      "reason": null,
-      "owner": null
-    },
-    {
       "path": ".agents/templates/_templates.md",
       "kind": "file",
       "action": "replaced",
@@ -164,7 +156,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 16,
+      "files": 15,
       "directories": 0,
       "sections": 2
     },

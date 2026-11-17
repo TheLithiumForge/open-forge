@@ -13,7 +13,7 @@ Status: Lean design decided on 17 November 2026.
 
 ## Named install
 
-1. Read the settings, detect the tool and read its integration files. Stop on a conflict.
+1. Read the settings, detect the tool and read its integration files. Stop on a conflict. Stop when the folder has no Open Forge `.agents` folder, because the tools list has nowhere to go, and say to run `open-forge install` first.
 2. Check the tool's package manager or runner unless the tool is already installed. Stop if it's missing.
 3. Show the plan and obtain consent.
 4. Run the install command unless the tool is already installed.
@@ -46,4 +46,5 @@ Required cases cover:
 - A failed command with its exit code, output tail and next step.
 - No consent without a terminal, a declined plan and `--dry-run`.
 - Bare install with nothing configured, nothing missing and one missing tool.
+- A folder without Open Forge.
 - Unchanged unrelated settings and file content.

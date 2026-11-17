@@ -1,5 +1,3 @@
-using OpenForge.Cli.Core.Framework.Tools.Catalogue;
-using OpenForge.Cli.Composition.Shared.Tools;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Extensions;
@@ -82,18 +80,17 @@ internal static class CliCompositionRoot
                 new ExtensionLifecycleTargetReader(physicalPathResolver)),
             new LibraryOperationalContributor());
         var route = CliRouteComposer.Compose(interaction, inputs.LockStoreRoot);
-        var tool = CliToolComposer.Compose(interaction, ToolCatalogueFactory.Create(ToolHostFactory.CreateNodeRuntimes()), inputs.Tools);
         var standalone = CliStandaloneComposer.Compose(
             interaction,
             inputs.LockStoreRoot,
             operationalContributors,
-            physicalPathResolver,
-            tool.CreateWorkspaceReader);
+            physicalPathResolver);
         var extension = CliExtensionComposer.Compose(
             interaction,
             inputs.LockStoreRoot);
         var library = CliLibraryComposer.Compose(interaction);
         var rootRemove = CliRootRemoveComposer.Compose(interaction, inputs.LockStoreRoot);
+        var tool = CliToolComposer.Compose(interaction, inputs);
         var tree = CliCommandTree.Create(
             CreateRootHelp(
             [
@@ -139,10 +136,7 @@ internal static class CliCompositionRoot
                 library.DetachBinding,
                 rootRemove,
                 tool.ListBinding,
-                tool.InspectBinding,
-                tool.StatusBinding,
                 tool.InstallBinding,
-                tool.UpdateBinding,
                 tool.RemoveBinding,
             ],
             rootLeaves: [.. standalone.RootLeaves, new CliRootLeaf(rootRemove.Command)]);

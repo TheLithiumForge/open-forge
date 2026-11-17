@@ -7,7 +7,6 @@ using OpenForge.Cli.Core.Commands.Install.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
-using OpenForge.Cli.Core.Framework.Ownership;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Presentation.Install;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -229,7 +228,7 @@ public sealed class InstallOperationIntegrationTests
             OwnershipPath,
             TestContext.Current.CancellationToken));
         var root = ownership.RootElement;
-        Assert.Equal(WorkspaceOwnershipDefinitions.SchemaVersion, root.GetProperty(WorkspaceOwnershipDefinitions.SchemaVersionProperty).GetInt32());
+        Assert.Equal(1, root.GetProperty("schemaVersion").GetInt32());
         var framework = root.GetProperty("framework");
         var ownedPaths = framework
             .GetProperty("paths")

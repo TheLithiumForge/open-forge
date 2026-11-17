@@ -17,7 +17,6 @@ public sealed class InstallConfigurationHealthIntegrationTests
         ".agents/skills/open-forge-cli/references/discovery.md",
         ".agents/skills/open-forge-cli/references/packages.md",
         ".agents/skills/open-forge-cli/references/routes.md",
-        ".agents/skills/open-forge-cli/references/tools.md",
     ];
 
     [Fact(DisplayName = "Omitted native Skill resources are not installed and existing user files remain untouched")]

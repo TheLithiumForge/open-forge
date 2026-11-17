@@ -1,0 +1,7 @@
+Finished tool remove.
+Open Forge removed these changes:
+  .cbmignore               Keep archived Open Forge memory out of the index  (done)
+  .agents/open-forge.json  Remove codebase-memory from this project's tools  (done)
+Codebase Memory's own uninstall:
+  Removes Codebase Memory, its PATH entry and its entries from every coding agent on your account. Your indexes stay.
+  codebase-memory-mcp uninstall --yes  (done)

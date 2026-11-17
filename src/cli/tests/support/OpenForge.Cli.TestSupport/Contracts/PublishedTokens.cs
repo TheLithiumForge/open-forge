@@ -374,7 +374,7 @@ public static class PublishedTokens
         public const string RootsProperty = "roots";
         public const string OutsideRoutesProperty = "outsideRoutes";
         public const string RelativePath = ".agents/open-forge.json";
-        public const int SchemaVersion = 6;
+        public const int SchemaVersion = 5;
         public const string SchemaVersionProperty = "schemaVersion";
         public const string MainRootProperty = "mainRoot";
         public const string FrontmatterProperty = "frontmatter";
@@ -391,26 +391,6 @@ public static class PublishedTokens
         public const string Dependencies = "dependencies";
         public const string ManifestFile = "extension.json";
         public const string ContentDirectory = "content";
-    }
-
-    public static class Tool
-    {
-        public const string Command = "tool";
-        public const string Status = "status";
-        public const string Tools = "tools";
-        public const string Version = "version";
-        public const string State = "state";
-        public const string DetectedVersion = "detectedVersion";
-        public const string BinReadiness = "binReadiness";
-        public const string Missing = "missing";
-        public const string Unsupported = "unsupported";
-        public const string Ready = "ready";
-        public const string CodeGraphId = "codegraph";
-        public const string CodeGraphRange = "1.6.x";
-        public const string HomeVariable = "OPENFORGE_TOOL_HOME";
-        public const string NpmModulesDirectory = "node_modules";
-        public const string NpmManifest = "package.json";
-        public const string NodeCommand = "node";
     }
 
     public static class RecoveryFormat

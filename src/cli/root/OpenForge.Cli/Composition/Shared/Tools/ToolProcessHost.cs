@@ -1,167 +1,105 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
-using OpenForge.Cli.Core.Framework.Tools.Models.Services;
-using OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
+using OpenForge.Cli.Core.Framework.Tools.Models;
 
 namespace OpenForge.Cli.Composition.Shared.Tools;
 
+/// <summary>
+/// Runs a catalogue command the way a person would type it: through cmd.exe on Windows, /bin/sh elsewhere, or
+/// PowerShell for a PowerShell command. The text is always a fixed catalogue constant, never user input. Input is
+/// closed, the environment is inherited, and timeout or cancellation stops the whole process tree.
+/// </summary>
 internal sealed class ToolProcessHost : IToolProcessHost
 {
-    internal const string CodeGraphHostPpidVariable = "CODEGRAPH_HOST_PPID";
-    internal static readonly TimeSpan CleanupTimeout = TimeSpan.FromSeconds(5);
-    // Linux and macOS refuse to execute a file that any process still holds open for writing (ETXTBSY, errno 26 on both).
-    // Setup extracts a binary or private Node and then runs it, and a fork on another thread during that write keeps the
-    // inherited descriptor until the child's own exec. Only that brief refusal is retried.
-    internal const int TextFileBusyError = 26;
-    internal const int StartAttempts = 5;
-    internal static readonly TimeSpan StartRetryDelay = TimeSpan.FromMilliseconds(50);
-    private readonly IReadOnlyDictionary<string, string?> _environment;
-    private readonly ToolCatalogue? _catalogue;
-    internal ToolProcessHost(IReadOnlyDictionary<string, string?>? environment = null, ToolCatalogue? catalogue = null)
-    {
-        _environment = environment ?? Environment.GetEnvironmentVariables().Cast<System.Collections.DictionaryEntry>()
-            .ToDictionary(pair => (string)pair.Key, pair => pair.Value?.ToString(), OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
-        _catalogue = catalogue;
-    }
+    private const int TailCharacters = 8 * 1024;
+    private static readonly TimeSpan CleanupTimeout = TimeSpan.FromSeconds(5);
 
-    public Task<ToolResolvedCommand?> ResolveAsync(string command, string workingDirectory, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-        return Task.FromResult(new ToolCommandResolver(_environment, _catalogue).Resolve(command, workingDirectory));
-    }
-    private static readonly Encoding OutputEncoding = Encoding.GetEncoding(Encoding.UTF8.CodePage,
-        EncoderFallback.ExceptionFallback, new DecoderReplacementFallback("?"));
     public async Task<ToolProcessResult> RunAsync(ToolProcessRequest request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
-        if (request.Timeout <= TimeSpan.Zero || request.MaximumOutputBytes <= 0 || !System.IO.Path.IsPathFullyQualified(request.WorkingDirectory)
-            || !System.IO.Path.IsPathFullyQualified(request.ExecutablePath))
-            throw new ArgumentException("A process needs a working directory and positive bounds.", nameof(request));
+        var start = Start(request.Command);
+        start.WorkingDirectory = request.WorkingDirectory;
+        start.UseShellExecute = false;
+        start.CreateNoWindow = true;
+        start.RedirectStandardInput = true;
+        start.RedirectStandardOutput = true;
+        start.RedirectStandardError = true;
+        var tail = new StringBuilder();
         using var timeout = new CancellationTokenSource(request.Timeout);
         using var stopping = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeout.Token);
-        using var reading = new CancellationTokenSource();
-        var start = new ProcessStartInfo(request.ExecutablePath)
-        {
-            WorkingDirectory = request.WorkingDirectory,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-        };
-        foreach (var argument in request.Arguments) start.ArgumentList.Add(argument);
-        start.Environment.Clear();
-        foreach (var (key, value) in _environment) if (value is not null) start.Environment[key] = value;
-        foreach (var (key, value) in request.Environment)
-        {
-            if (value is null) start.Environment.Remove(key);
-            else start.Environment[key] = value;
-        }
-        if (!request.Environment.ContainsKey(CodeGraphHostPpidVariable)
-            && (!start.Environment.TryGetValue(CodeGraphHostPpidVariable, out var hostPid) || string.IsNullOrEmpty(hostPid))
-            && new ToolCommandResolver(_environment, _catalogue).IsCodeGraphBundle(request))
-            start.Environment[CodeGraphHostPpidVariable] = Environment.ProcessId.ToString(System.Globalization.CultureInfo.InvariantCulture);
-        Process? process = null;
-        using var output = new MemoryStream();
-        using var error = new MemoryStream();
-        long budget = request.MaximumOutputBytes;
-        var exceeded = false;
-        string? failure = null;
-        int? exitCode = null;
+        Process process;
         try
         {
-            stopping.Token.ThrowIfCancellationRequested();
-            process = await StartAsync(start, stopping.Token).ConfigureAwait(false);
-            var stdout = DrainAsync(process.StandardOutput.BaseStream, output);
-            var stderr = DrainAsync(process.StandardError.BaseStream, error);
-            var execution = Task.WhenAll(process.WaitForExitAsync(stopping.Token), stdout, stderr);
+            process = Process.Start(start) ?? throw new InvalidOperationException("The process didn't start.");
+        }
+        catch (Exception exception) when (exception is Win32Exception or InvalidOperationException)
+        {
+            return new() { Started = false };
+        }
+        using (process)
+        {
+            process.StandardInput.Close();
+            var output = DrainAsync(process.StandardOutput);
+            var error = DrainAsync(process.StandardError);
             try
             {
-                process.StandardInput.Close();
-                await execution.WaitAsync(stopping.Token).ConfigureAwait(false);
+                await process.WaitForExitAsync(stopping.Token).ConfigureAwait(false);
             }
-            finally
+            catch (OperationCanceledException) when (stopping.IsCancellationRequested)
             {
-                try
-                {
-                    if (stopping.IsCancellationRequested || !process.WaitForExit(TimeSpan.Zero))
-                    {
-                        try { process.Kill(entireProcessTree: true); }
-                        catch (InvalidOperationException) when (process.WaitForExit(TimeSpan.Zero)) { }
-                        catch (Exception exception) when (exception is Win32Exception or AggregateException)
-                        {
-                            failure = "The tool process tree couldn't be terminated completely.";
-                        }
-                    }
-                    // HasExited and WaitForExitAsync can see a Windows exit code before handles close.
-                    // The synchronous bounded wait observes the process handle's signal instead.
-                    if (process.WaitForExit(CleanupTimeout)) exitCode = process.ExitCode;
-                    else failure = "The tool process didn't exit within its cleanup limit.";
-                    try
-                    {
-                        // Inherited pipes must reach EOF after tree termination, including child writers.
-                        await Task.WhenAll(stdout, stderr).WaitAsync(CleanupTimeout).ConfigureAwait(false);
-                    }
-                    catch (TimeoutException) { failure = "The tool process pipes didn't close within their cleanup limit."; }
-                }
-                finally
-                {
-                    await stopping.CancelAsync().ConfigureAwait(false);
-                    await reading.CancelAsync().ConfigureAwait(false);
-                    await execution.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
-                }
+                try { process.Kill(entireProcessTree: true); }
+                catch (Exception exception) when (exception is InvalidOperationException or Win32Exception or AggregateException) { }
+                process.WaitForExit(CleanupTimeout);
+                cancellationToken.ThrowIfCancellationRequested();
+                return new() { Started = true, TimedOut = true, OutputTail = Tail() };
             }
+            // A background process the tool started can keep the pipes open, so the output gets a short grace period only.
+            try { await Task.WhenAll(output, error).WaitAsync(CleanupTimeout, CancellationToken.None).ConfigureAwait(false); }
+            catch (TimeoutException) { }
+            // The synchronous wait observes the process handle, so the exit code is final.
+            process.WaitForExit();
+            return new() { Started = true, ExitCode = process.ExitCode, OutputTail = Tail() };
         }
-        catch (OperationCanceledException) when (stopping.IsCancellationRequested) { }
-        catch (Exception exception) when (exception is Win32Exception or IOException or InvalidOperationException)
-        {
-            failure ??= "The tool process couldn't be started or read.";
-        }
-        finally
-        {
-            process?.Dispose();
-        }
-        if (exceeded) failure ??= "The tool process exceeded its output limit.";
-        return new()
-        {
-            ExitCode = exitCode,
-            TimedOut = timeout.IsCancellationRequested && !cancellationToken.IsCancellationRequested,
-            Cancelled = cancellationToken.IsCancellationRequested,
-            StandardOutput = OutputEncoding.GetString(output.ToArray()),
-            StandardError = OutputEncoding.GetString(error.ToArray()),
-            Failure = failure,
-        };
 
-        async Task DrainAsync(Stream source, Stream destination)
+        async Task DrainAsync(StreamReader reader)
         {
-            var buffer = new byte[4096];
-            while (await source.ReadAsync(buffer, reading.Token).ConfigureAwait(false) is var count && count > 0)
+            var buffer = new char[4096];
+            while (await reader.ReadAsync(buffer, CancellationToken.None).ConfigureAwait(false) is var count && count > 0)
             {
-                var remaining = Interlocked.Add(ref budget, -count);
-                var kept = (int)Math.Clamp(remaining + count, 0, count);
-                if (kept > 0) await destination.WriteAsync(buffer.AsMemory(0, kept), CancellationToken.None).ConfigureAwait(false);
-                if (remaining < 0 && !exceeded)
+                lock (tail)
                 {
-                    exceeded = true;
-                    await stopping.CancelAsync().ConfigureAwait(false);
+                    tail.Append(buffer, 0, count);
+                    if (tail.Length > TailCharacters) tail.Remove(0, tail.Length - TailCharacters);
                 }
             }
+        }
+
+        string Tail()
+        {
+            lock (tail) return tail.ToString();
         }
     }
 
-    private static async Task<Process> StartAsync(ProcessStartInfo start, CancellationToken cancellationToken)
+    private static ProcessStartInfo Start(ToolCommand command)
     {
-        for (var attempt = 1; ; attempt++)
+        if (command.Shell == ToolShell.PowerShell)
         {
-            try
-            {
-                return Process.Start(start) ?? throw new InvalidOperationException("The tool process didn't start.");
-            }
-            catch (Win32Exception exception) when (!OperatingSystem.IsWindows() && exception.NativeErrorCode == TextFileBusyError && attempt < StartAttempts)
-            {
-                await Task.Delay(StartRetryDelay * attempt, cancellationToken).ConfigureAwait(false);
-            }
+            // An encoded command needs no quoting, so the catalogue text reaches PowerShell exactly.
+            var encoded = Convert.ToBase64String(Encoding.Unicode.GetBytes(command.Text));
+            var start = new ProcessStartInfo("powershell");
+            foreach (var argument in new[] { "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-EncodedCommand", encoded })
+                start.ArgumentList.Add(argument);
+            return start;
         }
+        if (OperatingSystem.IsWindows())
+        {
+            // cmd.exe resolves npm.cmd and other shims from PATH. /s keeps the quoted text exactly as written.
+            return new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe")) { Arguments = $"/d /s /c \"{command.Text}\"" };
+        }
+        var shell = new ProcessStartInfo("/bin/sh");
+        shell.ArgumentList.Add("-c");
+        shell.ArgumentList.Add(command.Text);
+        return shell;
     }
 }

@@ -1,0 +1,7 @@
+Found 2 supported tools.
+Workspace: <workspace>
+Code search
+  codegraph        npm     not installed  Gives coding agents a searchable graph of the code's symbols and calls.
+                   CodeGraph, MIT, https://github.com/colbymchenry/codegraph
+  codebase-memory  script  not installed  Indexes the codebase into a knowledge graph that coding agents can query.
+                   Codebase Memory, MIT, https://github.com/DeusData/codebase-memory-mcp

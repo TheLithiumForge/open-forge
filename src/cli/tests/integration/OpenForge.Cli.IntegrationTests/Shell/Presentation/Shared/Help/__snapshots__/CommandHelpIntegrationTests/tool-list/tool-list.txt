@@ -1,4 +1,4 @@
-  List supported tools and their setup profiles.
+  List supported tools, their install method and their state.
 
 Usage:
   open-forge tool list [options]
@@ -8,8 +8,9 @@ Examples:
   open-forge tool list --format json
 
 Behavior:
-  Lists catalogue entries and any project declarations. Changes no files.
-  Use Inspect for channels, requirements and native effects before installation.
+  Shows each supported tool by category, with its install method, whether this
+  project uses it and the version installed on this machine.
+  Runs each tool's version command and changes nothing.
 
 Global options: --workspace, --format, --detail, --detail-filter, --help,
 --version. See open-forge --help.
@@ -21,10 +22,7 @@ Automation:
   Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
 
 Related commands:
-  tool inspect --help  Show a tool's channels, native effects and machine facts.
-  tool status          Check tool versions, project additions and PATH
-                       readiness.
-  tool install --help  Install tools, run native setup and add project
-                       configuration.
-  tool update --help   Update declared tools within supported versions.
-  tool remove --help   Remove project additions and offer native uninstall.
+  tool install --help  Install a tool and set it up for this project, or install
+                       this project's missing tools.
+  tool remove --help   Remove Open Forge's changes for a tool and offer its own
+                       uninstall.

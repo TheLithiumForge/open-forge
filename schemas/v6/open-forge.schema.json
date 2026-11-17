@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v6/open-forge.schema.json",
   "title": "Open Forge workspace settings",
-  "description": "Authored workspace settings. Unknown keys are preserved. Outside routes require a CLI that supports settings v5.",
+  "description": "Authored workspace settings. Unknown keys are preserved. Outside routes require a CLI that supports settings v5. The tools list requires a CLI that supports settings v6.",
   "type": "object",
   "additionalProperties": true,
   "properties": {
@@ -18,7 +18,10 @@
     },
     "frontmatter": {
       "type": "string",
-      "enum": ["root", "scoped"],
+      "enum": [
+        "root",
+        "scoped"
+      ],
       "default": "scoped",
       "description": "Selects where Open Forge writes metadata: at the frontmatter root or under open-forge. Both forms are always read. A missing value means scoped."
     },
@@ -125,16 +128,14 @@
       "uniqueItems": true
     },
     "tools": {
-      "type": "object",
-      "description": "Declared tools and their supported major.minor ranges. Project additions go in the committed lock. Machine paths and native previous settings stay in per-user state.",
-      "additionalProperties": {
-        "type": "object",
-        "additionalProperties": true,
-        "required": ["version"],
-        "properties": {
-          "version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.x$" }
-        }
-      }
+      "type": "array",
+      "description": "The IDs of the supported tools this project uses. open-forge tool install adds an ID and open-forge tool remove takes it out. A teammate runs open-forge tool install to install the listed tools that are missing on their machine.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "description": "One tool ID from open-forge tool list, such as codegraph."
+      },
+      "uniqueItems": true
     },
     "mainRoot": {
       "type": "string",
@@ -146,16 +147,41 @@
   "examples": [
     {
       "schemaVersion": 6,
-      "allowInstallPaths": ["docs/agents", "tools/agent-notes.md"],
-      "removedCategories": ["skills"],
-      "removedFiles": [".agents/patterns/_patterns.md", "AGENTS.md"],
-      "removedDirectories": ["docs/obsolete"],
-      "removedExtensions": ["planning"],
-      "removedLibraries": ["team-knowledge"],
-      "ignoreLinksFrom": [".agents/memory/archived"],
+      "allowInstallPaths": [
+        "docs/agents",
+        "tools/agent-notes.md"
+      ],
+      "removedCategories": [
+        "skills"
+      ],
+      "removedFiles": [
+        ".agents/patterns/_patterns.md",
+        "AGENTS.md"
+      ],
+      "removedDirectories": [
+        "docs/obsolete"
+      ],
+      "removedExtensions": [
+        "planning"
+      ],
+      "removedLibraries": [
+        "team-knowledge"
+      ],
+      "ignoreLinksFrom": [
+        ".agents/memory/archived"
+      ],
       "ignoreLinksTo": [],
-      "outsideRoutes": ["docs/team"],
-      "roots": ["CONTRIBUTING.md", ".cursor/rules/testing.mdc", "docs/team/_team.md"]
+      "outsideRoutes": [
+        "docs/team"
+      ],
+      "roots": [
+        "CONTRIBUTING.md",
+        ".cursor/rules/testing.mdc",
+        "docs/team/_team.md"
+      ],
+      "tools": [
+        "codegraph"
+      ]
     }
   ]
 }

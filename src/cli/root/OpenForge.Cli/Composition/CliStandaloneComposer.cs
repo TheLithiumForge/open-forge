@@ -1,4 +1,3 @@
-using OpenForge.Cli.Core.Framework.Tools.Shared.Observation;
 using OpenForge.Cli.Composition.Models;
 using OpenForge.Cli.Composition.Shared.InstallOutsideRoute;
 using OpenForge.Cli.Core.Commands.Help;
@@ -80,8 +79,7 @@ internal static class CliStandaloneComposer
         CliInteractionComposition interaction,
         WorkspaceLockStoreRoot? lockStoreRoot,
         OperationalContributorCatalogue operationalContributors,
-        PhysicalPathResolver physicalPathResolver,
-        Func<ToolWorkspaceObservationReader> tools)
+        PhysicalPathResolver physicalPathResolver)
     {
         ArgumentNullException.ThrowIfNull(interaction);
         var helpSymbols = HelpBinding.CreateSymbols();
@@ -104,8 +102,8 @@ internal static class CliStandaloneComposer
             StatusBinding = BuildStatus(
                 statusSymbols,
                 operationalContributors,
-                physicalPathResolver, tools),
-            DoctorBinding = BuildDoctor(doctorSymbols, operationalContributors, tools),
+                physicalPathResolver),
+            DoctorBinding = BuildDoctor(doctorSymbols, operationalContributors),
             RepairBinding = BuildRepair(repairSymbols, interaction, lockStoreRoot, operationalContributors),
             CleanupBinding = BuildCleanup(cleanupSymbols, lockStoreRoot),
             ContextBinding = BuildContext(contextSymbols),
@@ -177,8 +175,7 @@ internal static class CliStandaloneComposer
     private static ICliCommandBinding BuildStatus(
         StatusSymbols symbols,
         OperationalContributorCatalogue operationalContributors,
-        PhysicalPathResolver physicalPathResolver,
-        Func<ToolWorkspaceObservationReader> tools)
+        PhysicalPathResolver physicalPathResolver)
         => CliReportBinding.Close(StatusBinding.CreateRequestBinding(
             symbols,
             new StatusBindingComponents
@@ -186,20 +183,19 @@ internal static class CliStandaloneComposer
                 Help = StatusHelpSections.Create(),
                 Operation = new StatusOperation(
                     operationalContributors,
-                    physicalPathResolver, tools),
+                    physicalPathResolver),
             }), StatusPresentation.Rendering);
 
     private static ICliCommandBinding BuildDoctor(
         DoctorSymbols symbols,
-        OperationalContributorCatalogue operationalContributors,
-        Func<ToolWorkspaceObservationReader> tools)
+        OperationalContributorCatalogue operationalContributors)
         => CliReportBinding.Close(DoctorBinding.CreateRequestBinding(
             symbols,
             new DoctorBindingComponents
             {
                 Help = DoctorPresentation.CreateHelp(),
                 Operation = new DoctorOperation(operationalContributors,
-                    new RenameEvidenceReader(new PhysicalPathResolver(), new GitRenameEvidenceReader().ReadAsync), tools: tools),
+                    new RenameEvidenceReader(new PhysicalPathResolver(), new GitRenameEvidenceReader().ReadAsync)),
             }), DoctorPresentation.Rendering);
 
     private static ICliCommandBinding BuildInstall(

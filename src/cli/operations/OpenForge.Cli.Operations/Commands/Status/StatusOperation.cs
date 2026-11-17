@@ -7,15 +7,12 @@ using OpenForge.Cli.Core.Commands.Shared.NavigationSharing;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Ownership.Shared.Observation;
 using OpenForge.Cli.Core.Framework.OperationalContributors.Models;
-using OpenForge.Cli.Core.Framework.Tools.Shared.Observation;
-using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Status;
 
 internal sealed class StatusOperation(
     OperationalContributorCatalogue contributors,
-    PhysicalPathResolver physicalPathResolver,
-    Func<ToolWorkspaceObservationReader>? tools = null)
+    PhysicalPathResolver physicalPathResolver)
 {
     internal async ValueTask<StatusResult> ExecuteAsync(
         StatusRequest request,
@@ -59,15 +56,7 @@ internal sealed class StatusOperation(
                 LayoutRead = observation,
                 OutsideRoutes = outside,
             };
-            var result = StatusResultBuilder.Build(request, observations);
-            if (tools is null) return result;
-            try
-            {
-                return StatusToolFindingAppender.Append(result, await tools().ReadAsync(request.Workspace.PhysicalRoot,
-                    layout?.MainRoot ?? WorkspaceLayout.DefaultMainRoot, cancellationToken).ConfigureAwait(false));
-            }
-            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException)
-            { return StatusToolFindingAppender.Append(result, [], exception.Message); }
+            return StatusResultBuilder.Build(request, observations);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

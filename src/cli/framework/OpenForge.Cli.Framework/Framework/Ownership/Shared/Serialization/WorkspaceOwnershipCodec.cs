@@ -43,14 +43,12 @@ internal static class WorkspaceOwnershipCodec
                 return Invalid($"{WorkspaceOwnershipDefinitions.FileName} must contain a JSON object.");
             }
 
-            using var original = JsonDocument.Parse(bytes);
             return new WorkspaceOwnershipDecode(
                 new WorkspaceOwnershipDocument(
                     envelope.SchemaVersion,
                     ReadFramework(envelope.Framework),
                     ReadExtensions(envelope.Extensions),
-                    ReadLibraries(envelope.Libraries))
-                { OriginalJson = original.RootElement.Clone() },
+                    ReadLibraries(envelope.Libraries)),
                 Cause: null);
         }
         catch (JsonException exception)
@@ -117,10 +115,9 @@ internal static class WorkspaceOwnershipCodec
             ],
         };
 
-        var generated = JsonSerializer.SerializeToUtf8Bytes(
+        return JsonSerializer.SerializeToUtf8Bytes(
             envelope,
             WorkspaceOwnershipJsonContext.Default.WorkspaceOwnershipEnvelope);
-        return WorkspaceOwnershipPreservation.Merge(document.OriginalJson, generated);
     }
 
     /// <summary>

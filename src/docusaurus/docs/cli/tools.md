@@ -1,136 +1,71 @@
 ---
-title: Tool setup
+title: Developer tools
+description: Install supported code-search tools with their own installers and set them up for a project in one step.
 ---
 
-# Tool setup
+# Developer tools
 
-Tool setup is the CLI command group that installs published developer tools and runs their native setup for your project.
+Open Forge can install a few supported developer tools for you and set them up for your project. It uses each tool's own install command and its own setup, then adds one small change of its own: it keeps archived Open Forge memory out of the tool's index, so search results stay current.
 
-For example, you can install CodeGraph, build its project index and use the same direct command from your terminal and agent app.
-The project lock lets a teammate restore the exact version later.
+The project lists the tools it uses in `.agents/open-forge.json`. A teammate who clones the project runs one command to install the ones they're missing.
 
-## Requirements
-
-Use Open Forge `0.9.0-beta.19` or newer in your project directory.
-Run `open-forge tool list` to see the catalogue, then read the entry before installing it:
+## See what's available
 
 ```sh
-open-forge tool inspect codegraph
+open-forge tool list
 ```
 
-Inspect shows supported versions, channels, machine requirements, native writes and Open Forge additions.
-CodeGraph starts at `1.6.2` in `1.6.x`.
-Codebase Memory starts at `0.12.1` in `0.12.x`.
-Review native effects, telemetry changes and watcher defaults in the [command reference](/guides/cli#tool-native-effects) first.
+Each row shows the tool's ID, how it installs (`npm` or `script`), whether this project uses it and the version on your machine. Today both tools are in the Code search category:
 
-## Install
+- **CodeGraph** (`codegraph`) installs with npm and adds itself to Claude Code and Codex in your project.
+- **Codebase Memory** (`codebase-memory`) installs with its own script. Its installer configures every coding agent it finds for your account and adds its folder to your PATH.
 
-Preview the exact version and channel, then apply the plan:
+## Install a tool
+
+Preview first. Nothing runs and nothing changes:
 
 ```sh
-open-forge tool install codegraph@1.6.2 --channel github-release --dry-run
-open-forge tool install codegraph@1.6.2 --channel github-release --yes
-open-forge tool status codegraph
+open-forge tool install codegraph --dry-run
 ```
 
-The install produces CodeGraph `1.6.2` and Status reports the same locked and detected version.
-The native installer configures local Claude and Codex integration.
-Open Forge turns account telemetry off, excludes archived memory and checks Gitignore coverage.
+Then run it without `--dry-run`. Open Forge shows the same plan and asks before it does anything:
 
-`--yes` accepts downloads and the shown setup plan.
-PATH changes and shared deletion need separate live choices.
-Remove never edits PATH. After the last tool in bin, it prints the PATH entry or marked shell block to remove.
-Each tool's own files live in `tools/<id>/<version>/`, and bin holds only launchers. Update offers the replaced version folder for deletion.
-If bin isn't on PATH, follow the printed instructions, restart your terminal and agent apps, then run Status again.
-The Open Forge tool home is `~/.open-forge`, and bin is inside it.
-Set `OPENFORGE_TOOL_HOME` to an absolute folder to use it instead of `~/.open-forge` on every system, like `CARGO_HOME`.
-A relative value blocks Tool commands rather than falling back to your profile.
-A dry run can use the network to resolve latest and reports that use.
-Open Forge's own project files, such as `codegraph.json`, need destination permission as in other commands.
-A blocked plan names each missing path and the command to rerun with `--allow-path`.
+```text
+Open Forge will run these commands to install CodeGraph:
+  npm i -g @colbymchenry/codegraph@1.6.2
+  codegraph install --yes --location local --target claude,codex
+      Adds CodeGraph to Claude Code and Codex in this project
+      CodeGraph keeps its default telemetry. Turn it off with: codegraph telemetry off
+Then Open Forge will make these changes:
+  codegraph.json           Keep archived Open Forge memory out of the graph
+  .agents/open-forge.json  Add codegraph to this project's tools
+Continue? [y/N]
+```
 
-## Use the tool
+If npm isn't installed, Open Forge stops before running anything and tells you to install Node.js, which includes npm. For a script install it checks for curl and bash, or for Windows PowerShell on Windows.
 
-From your project, build the index and read it:
+## Set up a teammate's machine
+
+After cloning a project that already lists its tools, run:
 
 ```sh
-codegraph --version
-codegraph init
-codegraph query greeting
+open-forge tool install
 ```
 
-`--version` reports `1.6.2`.
-`init` indexes your project so a query can find a symbol such as `greeting`.
-Restart Claude and Codex after setup.
-Codex needs to trust your project before it enables project configuration.
-The native MCP entries, hooks, permissions and instructions stay under the upstream installer.
+This installs only the listed tools that are missing on your machine. The project is already set up, so it doesn't rerun any tool's setup.
 
-For Codebase Memory, the catalogue ID is `codebase-memory` and the direct command is `codebase-memory-mcp`.
-Its setup uses default account-wide client discovery.
-Read its entry to check the account files and watcher defaults before applying it.
+## Update or remove a tool
 
-To install that version and build an index from your project directory:
+To update a tool, use its own update command or run `open-forge tool install <id>` again.
+
+To stop using a tool in a project:
 
 ```sh
-open-forge tool install codebase-memory@0.12.1 --channel github-release --yes
-codebase-memory-mcp --version
-codebase-memory-mcp cli --quiet index_repository --repo-path .
+open-forge tool remove codegraph
 ```
 
-The direct command reports `codebase-memory-mcp 0.12.1`.
-Indexing returns the project name for later graph queries.
-The native agent setup uses the same installed executable for MCP.
+Open Forge removes its own changes first. Then it explains what the tool's own uninstall does and asks whether to run it too. The answer defaults to no, so the tool stays installed unless you say yes.
 
-## Versions and teams
+## What Open Forge doesn't do
 
-On named Install and Update, a bare ID chooses latest support.
-Use `codegraph@1.6` for a supported minor or `codegraph@1.6.2` for an exact stable version.
-`--channel` applies to a named Install or Update.
-For channel choice and valid syntax, read the [selector rules](/guides/cli#tool-selectors).
-
-Commit `.agents/open-forge.json` and `.agents/open-forge.lock.json`.
-These paths stay fixed when you use a custom context root.
-A teammate restores the exact locked versions with this sequence:
-
-```sh
-open-forge tool install --dry-run
-open-forge tool install --yes
-```
-
-To choose newest support for declared tools, preview Update, then apply it:
-
-```sh
-open-forge tool update codegraph --dry-run
-open-forge tool update codegraph --yes
-```
-
-In this `1.6.2` example, Update reuses the verified installation because it is already current.
-An account-wide replacement can affect other projects.
-
-## Remove
-
-Preview removal, then remove the project setup:
-
-```sh
-open-forge tool remove codegraph --dry-run
-open-forge tool remove codegraph --yes
-```
-
-CodeGraph's native project setup and Open Forge's recorded project additions are removed.
-The installed CLI and index stay available.
-Account telemetry stays off and the result prints its manual change command.
-
-Codebase Memory removal stays local to the project. `open-forge tool remove codebase-memory --yes` removes Open Forge's project additions and prints the native uninstall command.
-The Windows `0.12.1` journey completes this project-only removal with the account setup and index kept.
-Its own uninstaller removes it system-wide: its binary in its versioned tool folder and all agent entries. On Windows it also removes that folder from your user PATH if it is there. Open Forge's bin stays on PATH.
-An interactive Remove asks about it only after the local removal, and the default answer is no.
-Read [removal and backups](/guides/cli#tool-removal) before changing account setup shared by other projects.
-
-## Command results
-
-The six commands are `list`, `inspect`, `status`, `install`, `update` and `remove` under `open-forge tool`.
-Use `open-forge tool <command> --help` for options and examples.
-
-For scripts, use `--format json` and check `status` and exit code.
-Tool results use schema 3 and `data.tools`.
-For actual Status fields, read the [JSON example](/guides/cli#tool-json).
+Open Forge doesn't edit your PATH, install runtimes such as Node.js or change a tool's own settings. A tool's own installer may do some of these, and the plan says so before you agree. The [command reference](/guides/cli#developer-tools) has every option.

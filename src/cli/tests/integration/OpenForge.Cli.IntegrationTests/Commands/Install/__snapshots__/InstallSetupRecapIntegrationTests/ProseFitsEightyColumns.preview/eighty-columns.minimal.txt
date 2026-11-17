@@ -7,7 +7,7 @@ Git-ignored contents: none
 Leave out: none
 Frontmatter: root
   .agents/open-forge.lock.json  would be created
-  Would create 19 files and 13 directories under .agents, plus AGENTS.md and
+  Would create 18 files and 13 directories under .agents, plus AGENTS.md and
   CLAUDE.md.
   Nothing that already exists would be changed.
 No files were changed.

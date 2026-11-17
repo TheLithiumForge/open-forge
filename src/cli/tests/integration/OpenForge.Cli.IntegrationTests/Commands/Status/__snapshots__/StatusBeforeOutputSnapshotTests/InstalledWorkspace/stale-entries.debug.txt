@@ -28,9 +28,9 @@ Startup context
   Shipped by this CLI:   7 files, about 4.0k tokens
   This workspace:        7 files, about 4.0k tokens
   May load again later:  1 file, about 0.2k tokens
-All routed files: 20 files, about 30.3k tokens (startup is 13%)
+All routed files: 19 files, about 29.3k tokens (startup is 14%)
 Routes: 7 root categories, 10 Entries sections current
-Framework files: 20 current
+Framework files: 19 current
 Largest may-load-again sources
   memory/emerging  971 B
 Framework files
@@ -51,7 +51,6 @@ Framework files
   .agents/skills/open-forge-cli/references/discovery.md  current
   .agents/skills/open-forge-cli/references/packages.md   current
   .agents/skills/open-forge-cli/references/routes.md     current
-  .agents/skills/open-forge-cli/references/tools.md      current
   .agents/templates/_templates.md                        current
   AGENTS.md                                              current
   CLAUDE.md                                              current
@@ -69,6 +68,6 @@ Entries sections
   .agents/skills/_skills.md                     current
   .agents/templates/_templates.md               current
 Recovery data: none
-20 routed files, 7 startup files, 3977 startup tokens, 1 may-load-again files, 243 may-load-again tokens, 30285 all routed tokens, 13.131087997358428264817566452 startup share, 7 root categories, 10 current Entries sections, 2 stale Entries sections, 20 current Framework files, 1 changed Framework files, 4 warnings.
+19 routed files, 7 startup files, 3977 startup tokens, 1 may-load-again files, 243 may-load-again tokens, 29256 all routed tokens, 13.592822046571245460371715445 startup share, 7 root categories, 10 current Entries sections, 2 stale Entries sections, 19 current Framework files, 1 changed Framework files, 4 warnings.
   Update the Framework files that need attention.
 Next: open-forge update
