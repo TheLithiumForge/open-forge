@@ -29,6 +29,23 @@ public sealed class RenameGitBatchIntegrationTests
         Assert.All(blobs, blob => Assert.Equal(File.ReadAllBytes(repository.PathFor(path)), blob.Bytes));
     }
 
+    // The runner writes input without the caller's token, because a cancelled Windows pipe write can complete while its
+    // native IO is pending. A child that exits without reading breaks the pipe, which must not fail the invocation.
+    [Fact(DisplayName = "Git input a child exits without reading leaves its result intact")]
+    public async Task UnreadInputKeepsTheResult()
+    {
+        using var repository = new RenameEvidenceGitWorkspace();
+        await repository.InitializeAsync();
+        var runner = new GitProcessRunner("git", repository.Configure);
+        var input = new byte[8 * 1024 * 1024];
+
+        var output = await runner.RunBytesWithInputAsync(repository.Root, ["rev-parse", "--is-inside-work-tree"], input, TestContext.Current.CancellationToken);
+
+        Assert.NotNull(output);
+        Assert.Equal(0, output.Value.ExitCode);
+        Assert.NotEmpty(output.Value.Output);
+    }
+
     [Theory(DisplayName = "Malformed or truncated batch records cannot supply optional Git evidence")]
     [InlineData(""), InlineData("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb blob 2\nx\n")]
     [InlineData("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb tree 1\nx\n")]
