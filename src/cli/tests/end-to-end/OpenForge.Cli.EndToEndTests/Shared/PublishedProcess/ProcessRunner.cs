@@ -118,6 +118,13 @@ internal sealed class ProcessRunCanceledException : OperationCanceledException
 /// </summary>
 internal static class ProcessRunner
 {
+    // Linux and macOS refuse to execute a file that any process still holds open for writing (ETXTBSY, errno 26
+    // on both). A test that has just copied an executable meets this when another test thread forks while the
+    // copy is open: the forked child keeps the inherited descriptor until its own exec closes it.
+    private const int TextFileBusyError = 26;
+    private const int StartAttempts = 5;
+    private static readonly TimeSpan StartRetryDelay = TimeSpan.FromMilliseconds(50);
+
     /// <summary>
     /// Runs a process to completion and captures standard output and standard
     /// error separately. Caller cancellation kills and awaits the owned process;
@@ -131,8 +138,7 @@ internal static class ProcessRunner
         cancellationToken.ThrowIfCancellationRequested();
 
         var startInfo = CreateStartInfo(request);
-        using var process = Process.Start(startInfo)
-            ?? throw new InvalidOperationException($"Unable to start executable: {request.ExecutablePath}");
+        using var process = await StartAsync(startInfo, request.ExecutablePath, cancellationToken).ConfigureAwait(false);
         var stdout = process.StandardOutput.ReadToEndAsync(CancellationToken.None);
         var stderr = process.StandardError.ReadToEndAsync(CancellationToken.None);
         using var timeoutSource = CreateTimeoutSource(request.Timeout);
@@ -182,6 +188,30 @@ internal static class ProcessRunner
         }
 
         return new ProcessRunResult(process.ExitCode, stdout.Result, stderr.Result);
+    }
+
+    /// <summary>
+    /// Starts the process, retrying only the brief text-file-busy refusal with a growing backoff.
+    /// </summary>
+    private static async Task<Process> StartAsync(
+        ProcessStartInfo startInfo,
+        string executablePath,
+        CancellationToken cancellationToken)
+    {
+        for (var attempt = 1; ; attempt++)
+        {
+            try
+            {
+                return Process.Start(startInfo)
+                    ?? throw new InvalidOperationException($"Unable to start executable: {executablePath}");
+            }
+            catch (Win32Exception error) when (!OperatingSystem.IsWindows()
+                && error.NativeErrorCode == TextFileBusyError
+                && attempt < StartAttempts)
+            {
+                await Task.Delay(StartRetryDelay * attempt, cancellationToken).ConfigureAwait(false);
+            }
+        }
     }
 
     private static ProcessStartInfo CreateStartInfo(ProcessRunRequest request)
