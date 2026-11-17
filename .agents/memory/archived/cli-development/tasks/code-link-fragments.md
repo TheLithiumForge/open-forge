@@ -20,7 +20,7 @@ The issue #21 follow-up fixes all 66 audited code-link occurrences across 15 doc
 
 Each replacement selects code checked in retained Git history. Historical citations keep the code their prose describes, including retired TypeScript modules and behavior that later changed. The two colon-style line suffixes now use GitHub line fragments. Stale line ranges now select the relevant methods or constants. The `ReadAxioms` citations select its checked implementation at lines 97-129 of commit `62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f`.
 
-Eight retired TypeScript files are kept as `.ts.txt` files under `../../cli-v2/source-snapshots/`. They match commit `c246601c64acf3916adf3da71126a17d424dfbc9` byte for byte. These copies keep the historical citations usable in a checkout because a public permalink for that revision could not be verified. The other citations use GitHub blobs from revisions contained in retained remote refs.
+Eight retired TypeScript files were never published at their original paths. Their citations use GitHub permalinks to byte-identical `.ts.txt` copies at commit `d9be2d93be415648e7669b9542237d2c13e5ca87`, which matches commit `c246601c64acf3916adf3da71126a17d424dfbc9`. The copies are no longer kept in the checkout. The other citations use GitHub blobs from revisions contained in retained remote refs.
 
 Focused References reads check all 15 affected documents. The 11 local replacement links resolve. The 55 web replacement links report `external-unchecked`, with their selected code checked through Git. Those reads also report 56 other archival findings outside the supplied code-link list. The local audit keeps them at `artifacts/comment-links-historical-reference-coverage.json` for a separate follow-up.
 

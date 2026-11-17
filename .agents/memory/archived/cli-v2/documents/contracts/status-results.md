@@ -46,11 +46,11 @@ Production source defines each protocol inventory once through a readonly const
 object and derives its type from that object.
 
 The focused production modules for [Framework
-anchors](../../source-snapshots/commands/status/framework-anchors.ts.txt), the
-[managed record](../../source-snapshots/commands/status/managed-record.ts.txt),
-[recovery artifacts](../../source-snapshots/commands/status/recovery-artifacts.ts.txt),
+anchors](https://github.com/TheLithiumForge/open-forge/blob/d9be2d93be415648e7669b9542237d2c13e5ca87/.agents/memory/archived/cli-v2/source-snapshots/commands/status/framework-anchors.ts.txt), the
+[managed record](https://github.com/TheLithiumForge/open-forge/blob/d9be2d93be415648e7669b9542237d2c13e5ca87/.agents/memory/archived/cli-v2/source-snapshots/commands/status/managed-record.ts.txt),
+[recovery artifacts](https://github.com/TheLithiumForge/open-forge/blob/d9be2d93be415648e7669b9542237d2c13e5ca87/.agents/memory/archived/cli-v2/source-snapshots/commands/status/recovery-artifacts.ts.txt),
 and [relevant Git
-paths](../../source-snapshots/commands/status/status-git-paths.ts.txt) are
+paths](https://github.com/TheLithiumForge/open-forge/blob/d9be2d93be415648e7669b9542237d2c13e5ca87/.agents/memory/archived/cli-v2/source-snapshots/commands/status/status-git-paths.ts.txt) are
 authoritative for their exact implemented values, types, interfaces, and import
 paths. This contract defines their status meaning without copying those
 declarations.
