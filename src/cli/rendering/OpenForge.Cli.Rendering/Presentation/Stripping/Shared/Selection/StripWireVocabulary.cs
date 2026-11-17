@@ -10,7 +10,8 @@ internal static class StripWireVocabulary
         => part switch
         {
             StripRewritePart.Metadata => "metadata",
-            StripRewritePart.Entries => "entries",
+            StripRewritePart.Frontmatter => "frontmatter",
+            StripRewritePart.Entrypoints => "entrypoints",
             StripRewritePart.Links => "links",
             StripRewritePart.Relink => "relink",
             StripRewritePart.ManagedSection => "managed-section",

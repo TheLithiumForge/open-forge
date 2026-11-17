@@ -5,13 +5,13 @@ internal static class UninstallText
     internal static string HelpSyntax() => "open-forge uninstall [--strip <parts>]... [--flatten <folder>] [--remove-edited <path>]... [--dry-run] [--automatic]";
     internal static string HelpExamples() => """
         open-forge uninstall --dry-run
-        open-forge uninstall --strip metadata,entries,links --automatic
-        open-forge uninstall --strip metadata,links --flatten docs --automatic
+        open-forge uninstall --strip metadata,entrypoints --automatic
+        open-forge uninstall --strip metadata,entrypoints,links --flatten docs
         """;
     internal static string HelpBehavior() => """
         Uninstall deletes the Framework and Extension files that still match what
-        Open Forge installed, its sections in AGENTS.md and CLAUDE.md, the route
-        scaffolds it wrote, its settings and lock, and folders left empty.
+        Open Forge installed, its sections in AGENTS.md and CLAUDE.md, route
+        scaffolds, its settings and lock, and folders left empty.
         Files you wrote stay. Managed files you edited stay unless you name them.
         Preview with --dry-run. Applying asks first unless you add --automatic.
         Redirected or JSON requests that would write need --automatic.

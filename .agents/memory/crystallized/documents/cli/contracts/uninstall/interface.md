@@ -27,7 +27,7 @@ Follow the [shared help template](../shared/global-flags/interface.md#--help).
 
 ```text
 open-forge uninstall
-  [--strip <metadata|entries|links>[,...]]...
+  [--strip <metadata|frontmatter|entrypoints|links>[,...]]...
   [--flatten <folder>]
   [--remove-edited <path>]...
   [--dry-run] [--automatic]
@@ -52,7 +52,7 @@ Only ownership records make a file Open Forge's, with one exception: while they 
 
 - Every file Open Forge does not own, including notes the user added to Framework folders and overwrite companions.
 - Owned files and managed sections the user edited. Each one is reported as `uninstall.edited-kept`, an information finding naming the `--remove-edited` option.
-- Generated `Entries` sections in documents that stay. Add `--strip entries` to remove them.
+- Entrypoints that are not route scaffolds, with their generated `Entries` sections. Add `--strip entrypoints` to delete them.
 - Git-ignore rules. This pass leaves the Install and Library sections of `.gitignore` in place.
 
 Libraries project links into the workspace and record them in the lock. While a Library is attached, uninstall stops with `uninstall.library-attached` and the `library detach` next action, so no projected link loses its record.
@@ -111,8 +111,8 @@ Uninstall uses every [strip code](../strip/interface.md#errors-and-boundaries) w
 ```sh
 open-forge uninstall --dry-run
 open-forge uninstall --automatic
-open-forge uninstall --strip metadata,entries,links --automatic
-open-forge uninstall --strip metadata,entries,links --flatten docs --automatic
+open-forge uninstall --strip metadata,entrypoints --automatic
+open-forge uninstall --strip metadata,entrypoints,links --flatten docs --automatic
 open-forge uninstall --remove-edited .agents/loader.md --dry-run --format json
 ```
 

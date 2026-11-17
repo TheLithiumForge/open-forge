@@ -23,8 +23,9 @@ internal enum StripManagedSectionState
 internal sealed record StripManagedSectionRemoval(StripManagedSectionState State, ImmutableArray<byte> Bytes);
 
 /// <summary>
-/// Recognizes the document shapes uninstall removes: route scaffolds and the managed
-/// sections of root hosts. The uninstall Interface contract defines both shapes.
+/// Recognizes entrypoints, which the entrypoints part deletes, and the document shapes uninstall
+/// removes: route scaffolds and the managed sections of root hosts. The strip and uninstall
+/// Interface contracts define these shapes.
 /// </summary>
 internal static class StripDocumentShapes
 {
@@ -32,9 +33,12 @@ internal static class StripDocumentShapes
     private const char DefinitionTerminator = '.';
     private static readonly UTF8Encoding Utf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
+    internal static bool IsEntrypoint(WorkspaceLayout layout, string path)
+        => SourceFormClassifier.TryClassify(layout, path, out var form) && SourceFormClassifier.IsEntrypoint(form);
+
     internal static bool IsRouteScaffold(WorkspaceLayout layout, StripDocument document)
     {
-        if (!SourceFormClassifier.TryClassify(layout, document.Path, out var form) || !SourceFormClassifier.IsEntrypoint(form))
+        if (!IsEntrypoint(layout, document.Path))
         {
             return false;
         }
@@ -53,19 +57,22 @@ internal static class StripDocumentShapes
             return false;
         }
 
-        var entries = StripEntriesEdits.Read(facts);
-        if (entries.Unsupported is not null)
+        // The generated Entries section is set aside whole. Text the user wrote inside it means the file is theirs.
+        var source = document.Source;
+        var region = facts.GeneratedRegion;
+        if (region.State != MarkdownGeneratedRegionState.Absent)
         {
-            return false;
+            if (region is not { State: MarkdownGeneratedRegionState.Complete, RegionSpan: { } section, ContentSpan: { } content, EntriesBlock: { } block }
+                || !StripSourceLines.IsBlank(source, content.Start, block.Span.Start)
+                || !StripSourceLines.IsBlank(source, block.Span.End, content.End))
+            {
+                return false;
+            }
+
+            source = string.Concat(source.AsSpan(0, section.Start), source.AsSpan(section.End));
         }
 
-        var body = new StringBuilder(document.Source);
-        foreach (var edit in entries.Edits.OrderByDescending(edit => edit.Start))
-        {
-            body.Remove(edit.Start, edit.End - edit.Start);
-        }
-
-        var lines = body.ToString(bodyStart, body.Length - bodyStart)
+        var lines = source[bodyStart..]
             .Split('\n')
             .Select(line => line.TrimEnd())
             .Where(line => line.Length > 0)

@@ -80,13 +80,18 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
 
         var deleted = removalSet.Removals.Where(removal => removal.After is null)
             .Select(removal => removal.Path).ToHashSet(StringComparer.Ordinal);
+        // The entrypoints part deletes every entrypoint that is still planned to stay, managed ones included.
+        var entrypoints = request.Includes(StripPart.Entrypoints)
+            ? documents.Where(document => !deleted.Contains(document.Path) && StripDocumentShapes.IsEntrypoint(layout, document.Path)).ToArray()
+            : [];
+        deleted.UnionWith(entrypoints.Select(document => document.Path));
         // Strip leaves managed files alone so the installed Framework keeps working. Uninstall strips the edited ones it keeps.
         var remaining = documents.Where(document => !deleted.Contains(document.Path)
             && (request.Command == StripCommandKind.Uninstall || !read.Ownership.Document.HasManagedPath(document.Path))).ToArray();
         // Flatten is for categories, subcategories and custom routes, whose files the user owns. Strip never edits a
         // managed file, so flattening around one would leave Open Forge's own navigation pointing at moved files.
-        // Uninstall removes ownership itself, so nothing it flattens stays managed.
-        if (folder is not null && request.Command == StripCommandKind.Strip && ManagedBelow(layout, read, folder) is { } managedPath)
+        // Entrypoints this run deletes no longer count. Uninstall removes ownership itself, so nothing it flattens stays managed.
+        if (folder is not null && request.Command == StripCommandKind.Strip && ManagedBelow(layout, read, folder, deleted) is { } managedPath)
         {
             return Stop(request, CliSemanticStatus.Blocked, StripFindingCode.FlattenManaged,
                 $"{folder} holds {managedPath}, which Open Forge manages. Flatten a category, subcategory or custom route instead. Nothing was changed.",
@@ -111,6 +116,11 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
             lines.Add(removal.After is { } after
                 ? PlannedLine.Rewrite(removal.Path, removal.Reason, [StripRewritePart.ManagedSection], removal.Before, after)
                 : PlannedLine.Delete(removal.Path, removal.Reason, removal.Before));
+        }
+
+        foreach (var entrypoint in entrypoints)
+        {
+            lines.Add(PlannedLine.Delete(entrypoint.Path, StripPlanReason.Strip, entrypoint.Snapshot, [StripRewritePart.Entrypoints]));
         }
 
         var editor = new StripDocumentEditor();
@@ -149,7 +159,8 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
             .ToArray();
 
         // The runtime folder is the last step: it goes only when it holds nothing but the lease's own files.
-        var kept = removalSet.Kept;
+        // An edited managed entrypoint that uninstall would keep is deleted by the entrypoints part instead.
+        var kept = removalSet.Kept.RemoveAll(file => deleted.Contains(file.Path));
         var runtimeFindings = ImmutableArray<StripFinding>.Empty;
         StripPlanEntry? runtime = null;
         if (removalSet.RemovesRuntimeFolder)
@@ -178,7 +189,7 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
         AddEffects(lines, effects, EffectStage.StateDelete);
         var findings = inventory.Linked
             .Select(path => StripResultFactory.Info(StripFindingCode.LinkedFileSkipped, $"'{path}' is a link and was left unchanged.", path))
-            .Concat(removalSet.Findings)
+            .Concat(removalSet.Findings.Where(finding => finding.Code != StripFindingCode.EditedKept || finding.Path is null || !deleted.Contains(finding.Path)))
             .Concat(runtimeFindings)
             .ToImmutableArray();
         return new StripPlanBuild(null, new StripPlan
@@ -208,9 +219,9 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
         }
     }
 
-    private static string? ManagedBelow(WorkspaceLayout layout, WorkspaceLayoutRead read, string folder)
+    private static string? ManagedBelow(WorkspaceLayout layout, WorkspaceLayoutRead read, string folder, IReadOnlySet<string> deleted)
         => read.Ownership.Document.ManagedPaths().Select(owned => owned.Path)
-            .Where(path => path.StartsWith(folder + "/", StringComparison.Ordinal)
+            .Where(path => path.StartsWith(folder + "/", StringComparison.Ordinal) && !deleted.Contains(path)
                 && File.Exists(Path.Combine(layout.Workspace.LexicalRoot, path.Replace('/', Path.DirectorySeparatorChar))))
             .Order(StringComparer.Ordinal)
             .FirstOrDefault();
@@ -254,8 +265,8 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
     {
         internal bool IsOwnershipLock => Entry.Path.EndsWith("/" + WorkspaceLayoutNames.OwnershipFileName, StringComparison.Ordinal);
 
-        internal static PlannedLine Delete(string path, StripPlanReason reason, FileStateSnapshot before)
-            => new(new StripPlanEntry { Action = StripPlanAction.Delete, Path = path, Reason = reason, Before = before.ContentHash },
+        internal static PlannedLine Delete(string path, StripPlanReason reason, FileStateSnapshot before, ImmutableArray<StripRewritePart> parts = default)
+            => new(new StripPlanEntry { Action = StripPlanAction.Delete, Path = path, Reason = reason, Parts = parts.IsDefault ? [] : parts, Before = before.ContentHash },
                 [new(reason == StripPlanReason.State ? EffectStage.StateDelete : EffectStage.Delete, PlannedFileChange.Delete(before.Expectation), before)]);
 
         internal static PlannedLine Rewrite(string path, StripPlanReason reason, ImmutableArray<StripRewritePart> parts, FileStateSnapshot before, ImmutableArray<byte> after)

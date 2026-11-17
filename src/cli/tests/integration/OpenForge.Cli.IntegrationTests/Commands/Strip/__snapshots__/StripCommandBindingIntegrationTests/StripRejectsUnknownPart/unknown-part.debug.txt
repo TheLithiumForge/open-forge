@@ -1,7 +1,7 @@
-Cannot strip: 'LINKS' is not a part. Use metadata, entries or links.
+Cannot strip: 'LINKS' is not a part. Use metadata, frontmatter, entrypoints or links.
 Workspace: <workspace>
   Error  <workspace>  Input is invalid [strip.invalid-input]
-         Cannot strip: 'LINKS' is not a part. Use metadata, entries or links.
+         Cannot strip: 'LINKS' is not a part. Use metadata, frontmatter, entrypoints or links.
          use open-forge strip --help
          open-forge strip --help
          Correct the named input and retry.

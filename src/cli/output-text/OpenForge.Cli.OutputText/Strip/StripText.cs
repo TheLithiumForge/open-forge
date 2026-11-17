@@ -5,7 +5,7 @@ internal static class StripText
     internal static string HelpSyntax() => "open-forge strip [<part>...] [--flatten <folder>] [--dry-run] [--automatic]";
     internal static string HelpExamples() => """
         open-forge strip links --dry-run
-        open-forge strip metadata,entries --automatic
+        open-forge strip metadata,entrypoints --automatic
         open-forge strip --flatten docs --dry-run --format json
         """;
     internal static string HelpBehavior() => """
@@ -17,8 +17,8 @@ internal static class StripText
         Recovery data is kept until every change verifies, and an interrupted
         run reports it.
         """;
-    internal static string HelpParts() => "metadata removes Open Forge frontmatter keys and keeps other keys and the body. entries removes the generated Entries section and keeps text you wrote there. links turns links to documents into their text, and keeps external links, images, links to other files, code, comment links and Entries lists.";
-    internal static string HelpFlatten() => "Use it on a category, subcategory or custom route. A folder that holds any file Open Forge manages is refused. Entrypoints and SKILL.md files stay where they are, and kept links are rewritten so they still work. A name two files would share stops the run before any write.";
+    internal static string HelpParts() => "metadata removes Open Forge frontmatter keys and keeps other keys and the body. frontmatter removes the whole frontmatter block and wins over metadata. entrypoints deletes the entrypoint files, with their Entries lists and any text you wrote in them. links turns links to documents into their text and removes the whole comment around an @open-forge or @rune comment link. External links, images, links to other files and code stay. Source code is never read.";
+    internal static string HelpFlatten() => "Use it on a category, subcategory or custom route. A folder that holds any file Open Forge manages is refused, unless entrypoints deletes that file in the same run. SKILL.md files stay where they are, and so do entrypoints that are not deleted. Kept links are rewritten so they still work. A name two files would share stops the run before any write.";
     internal static IReadOnlyList<(string Label, string? Description)> HelpRelated()
         => [("open-forge uninstall --help", "Remove Open Forge and strip what stays"), ("open-forge index --help", "Refresh generated navigation")];
 

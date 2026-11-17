@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Inline;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
+using OpenForge.Cli.Core.Framework.Sources.References.Shared.Comments;
 using OpenForge.Cli.Core.Framework.Sources.Shared.Destinations;
 
 namespace OpenForge.Cli.Core.Commands.Stripping.Shared.Documents;
@@ -22,8 +23,9 @@ internal sealed record StripLinkContext
 }
 
 /// <summary>
-/// Turns links to documents into their text and rebases kept links whose source or
-/// target moved. The strip Interface contract's links part and flatten define both.
+/// Turns links to documents into their text, removes the comments that hold comment links, and
+/// rebases kept links whose source or target moved. The strip Interface contract's links part and
+/// flatten define all three.
 /// </summary>
 internal static class StripLinkEdits
 {
@@ -33,11 +35,21 @@ internal static class StripLinkEdits
     internal static StripDocumentEdits Read(StripLinkContext context, MarkdownDocumentFacts facts)
     {
         var edits = new List<StripTextEdit>();
-        var navigation = facts.GeneratedRegion.EntriesBlock is { Exists: true } block ? block.Span : null;
         var definitionUses = new Dictionary<int, DefinitionUse>();
         var rebasedDefinitions = new HashSet<int>();
         foreach (var link in SourceAuthoredLinkReader.Read(context.Path, facts))
         {
+            if (link.IsComment && context.StripLinks)
+            {
+                if (CommentRemoval(facts.Source, link.Span) is not { } comment)
+                {
+                    return StripDocumentEdits.Refuse($"The comment at character {link.Span.Start} has no closing {SourceCommentLinkReader.HtmlClose}.");
+                }
+
+                edits.Add(comment);
+                continue;
+            }
+
             if (link.IsComment)
             {
                 AddRebase(context, facts.Source, link.Link, isComment: true, edits, rebasedDefinitions);
@@ -63,8 +75,7 @@ internal static class StripLinkEdits
                 use.Total++;
             }
 
-            var generated = navigation is not null && link.Span.Start >= navigation.Start && link.Span.End <= navigation.End;
-            if (context.StripLinks && !generated && IsDocumentLink(context, link.RawDestination))
+            if (context.StripLinks && IsDocumentLink(context, link.RawDestination))
             {
                 if (link.Link.LabelSpan is not { } label)
                 {
@@ -97,6 +108,24 @@ internal static class StripLinkEdits
         }
 
         return new StripDocumentEdits(edits);
+    }
+
+    // A comment link goes with the whole comment that holds it. A comment alone on its lines takes those lines with it.
+    private static StripTextEdit? CommentRemoval(string source, MarkdownTextSpan link)
+    {
+        var start = source.LastIndexOf(SourceCommentLinkReader.HtmlOpen, link.Start, StringComparison.Ordinal);
+        var close = source.IndexOf(SourceCommentLinkReader.HtmlClose, link.Start, StringComparison.Ordinal);
+        if (start < 0 || close < 0)
+        {
+            return null;
+        }
+
+        var end = close + SourceCommentLinkReader.HtmlClose.Length;
+        var lineStart = StripSourceLines.LineStart(source, start);
+        var lineEnd = StripSourceLines.NextLineStart(source, end);
+        return StripSourceLines.IsBlank(source, lineStart, start) && StripSourceLines.IsBlank(source, end, lineEnd)
+            ? new StripTextEdit(lineStart, lineEnd, string.Empty, StripRewritePart.Links)
+            : new StripTextEdit(start, end, string.Empty, StripRewritePart.Links);
     }
 
     // A reference definition may put its title on the next line. That line goes with the definition.

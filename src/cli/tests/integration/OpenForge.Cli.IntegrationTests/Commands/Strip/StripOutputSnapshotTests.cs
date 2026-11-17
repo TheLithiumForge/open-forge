@@ -23,6 +23,20 @@ public sealed class StripOutputSnapshotTests
         Renderers().MatchDetails(result, "preview");
     }
 
+    // frontmatter, entrypoints and links in one run: a deleted entrypoint, whole frontmatter blocks and a comment link.
+    [Fact(DisplayName = "Strip previews with frontmatter, entrypoints and links keep their text and JSON plan at every detail level"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
+    public async Task PreviewParts()
+    {
+        using var workspace = Seed("strip-output-parts");
+        workspace.Write(Folder + "/game/_game.md", "---\nopen-forge:\n  description: Game\n  tags: [Docs]\n---\n# Game\n\n## Entries\n\n- [Rules](rules.md) - #Docs\n");
+        workspace.Write(Folder + "/game/moves.md", "---\ntitle: Moves\n---\n# Moves\n\n<!-- @open-forge ./rules.md defines the board -->\n");
+
+        var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [StripPart.Frontmatter, StripPart.Entrypoints, StripPart.Links], Folder, dryRun: true));
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Renderers().MatchDetails(result, "parts");
+    }
+
     [Fact(DisplayName = "Strip collision reports keep their text and JSON at every detail level"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
     public async Task Collision()
     {

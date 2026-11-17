@@ -11,13 +11,13 @@ The [Interface Contract](interface.md) defines the parts, the document set and f
 
 ## Plan Before Effects
 
-Read the workspace layout once. Invalid or unavailable settings stop the run as `strip.workspace-unavailable`. So does an unreadable ownership lock, because strip then cannot tell which files Open Forge manages. Enumerate the documents below the inventory roots without following links, and read each one as strict UTF-8. Parse each document through the shared Markdown and YAML readers. Strip adds no second parser. It uses the parser's frontmatter, generated-region and link spans and edits only those spans.
+Read the workspace layout once. Invalid or unavailable settings stop the run as `strip.workspace-unavailable`. So does an unreadable ownership lock, because strip then cannot tell which files Open Forge manages. Enumerate the documents below the inventory roots without following links, and read each one as strict UTF-8. Parse each document through the shared Markdown and YAML readers. Strip adds no second parser. It uses the parser's frontmatter and link spans and edits only those spans, or the comment that holds a comment link.
 
 Form every edit for every document before the first effect. Edits never overlap, and an edit inside a removed span is dropped. A document that cannot be edited safely blocks the whole plan before any write. Resolve link destinations through the shared local-destination rules, against each document's current location, then compute flattened spellings from the new locations.
 
 ## Determinism
 
-The same workspace bytes and options give the same plan and the same bytes. Documents are visited in ordinal path order. Parts apply in the fixed order `metadata`, `entries`, `links`, then flatten relinks. Plan entries are ordered by path, with folder removals last and deepest first. No time, randomness, environment or file-system enumeration order reaches the plan or the written bytes.
+The same workspace bytes and options give the same plan and the same bytes. Documents are visited in ordinal path order. Parts apply in the fixed order `frontmatter` or `metadata`, then `entrypoints`, then `links`, then flatten relinks. Plan entries are ordered by path, with folder removals last and deepest first. No time, randomness, environment or file-system enumeration order reaches the plan or the written bytes.
 
 ## One Complete Change
 
@@ -29,4 +29,4 @@ A preview, a refusal and a verified no-op take no lock and create no runtime sta
 
 ## Required Evidence
 
-Cover each part alone and combined, root and `open-forge:` frontmatter, foreign keys, CRLF bodies, a frontmatter block without other keys, Entries sections with and without user text, inline and reference links, fragment-only, folder, image, external and code-span links, comment links, flatten moves, relinks and collisions. Include the eval harness's cases as Integration fixtures that compare exact bytes, copied into the test project with a note that records their origin. Cover a flatten folder that holds only a managed entrypoint above user documents, which strip refuses, and a user route with an unowned scaffold entrypoint, which strip flattens. Verify dry-run parity, no writes on preview or refusal, changed files under the lease, interruption and repeated runs that reach a no-op.
+Cover each part alone and combined, root and `open-forge:` frontmatter, foreign keys, CRLF bodies, a frontmatter block without other keys, whole frontmatter removal with and without `metadata`, entrypoints with and without user text, managed and unowned, inline and reference links, links in `Entries` lists, fragment-only, folder, image, external and code-span links, comment links alone on their line and inline, flatten moves, relinks and collisions. Include the eval harness's cases as Integration fixtures that compare exact bytes, copied into the test project with a note that records their origin. Cover a flatten folder that holds only a managed entrypoint above user documents, which strip refuses, the same folder with `entrypoints`, which strip flattens, and a user route with an unowned scaffold entrypoint, which strip flattens. Verify dry-run parity, no writes on preview or refusal, changed files under the lease, interruption and repeated runs that reach a no-op.

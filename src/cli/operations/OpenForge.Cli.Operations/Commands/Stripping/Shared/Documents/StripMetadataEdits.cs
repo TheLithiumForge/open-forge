@@ -55,8 +55,7 @@ internal static class StripMetadataEdits
 
         if (removed.Count == entries.Count)
         {
-            var start = facts.Source.Length > 0 && facts.Source[0] == '﻿' ? 1 : block.Start;
-            return new StripDocumentEdits([new StripTextEdit(start, bodyStart, string.Empty, StripRewritePart.Metadata)]);
+            return new StripDocumentEdits([StripFrontmatterEdits.WholeBlock(facts.Source, block.Start, bodyStart, StripRewritePart.Metadata)]);
         }
 
         var edits = new List<StripTextEdit>();

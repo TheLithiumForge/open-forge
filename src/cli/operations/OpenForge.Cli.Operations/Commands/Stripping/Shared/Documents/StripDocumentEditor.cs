@@ -81,14 +81,14 @@ internal sealed class StripDocumentEditor
         StripLinkContext links,
         MarkdownDocumentFacts facts)
     {
-        if (request.Includes(StripPart.Metadata))
+        // frontmatter removes the whole block, so it wins over metadata.
+        if (request.Includes(StripPart.Frontmatter))
+        {
+            yield return StripFrontmatterEdits.Read(document.Path, facts);
+        }
+        else if (request.Includes(StripPart.Metadata))
         {
             yield return StripMetadataEdits.Read(document.Path, facts);
-        }
-
-        if (request.Includes(StripPart.Entries))
-        {
-            yield return StripEntriesEdits.Read(facts);
         }
 
         yield return StripLinkEdits.Read(links, facts);

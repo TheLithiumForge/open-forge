@@ -25,7 +25,8 @@ internal enum StripPlanReason
 internal enum StripRewritePart
 {
     Metadata,
-    Entries,
+    Frontmatter,
+    Entrypoints,
     Links,
     Relink,
     ManagedSection,

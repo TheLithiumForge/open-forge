@@ -1,0 +1,15 @@
+Would change 5 files.
+Workspace: <workspace>
+  rewrite          .agents/docs/README.md  (frontmatter, links)
+      before 1c415c08b68fa57123daf17720ae5fa0af2f52a63fedbfff4b8cfd1af2fec198  after c6f045a371eb0c43d64965ff7c7cdeb9793926ec07113775afd1ae6ed7830e45
+  delete           .agents/docs/game/_game.md  (entrypoints)
+      before cc6af30c0cea4c01815ef10cc3939e59c9f68c0dc55558e3b29bde2412e8312e  after -
+  move             .agents/docs/game/moves.md -> .agents/docs/moves.md  (frontmatter, links)
+      before 9808b16a8e443baa45e76c413090423e42da0200e2265a93d41c053f3518c350  after 2d52b84edeadbf5c95e289e76256d7459c571148e95e3ee67277d4fcb34f2f47
+  move             .agents/docs/game/rules.md -> .agents/docs/rules.md  (frontmatter, links)
+      before cdafc9dc11867b8cd4acca9c167acd3688d70450aaa56645ed8742cdf78d5cd1  after d1d6b2445ff35da75677ec776cbe4060f49472f74bcba0cbe921700a7bd98298
+  delete-directory .agents/docs/game  (empty-folder)
+No files were changed.
+1 file deleted, 1 file rewritten, 2 files moved, 1 folder deleted.
+  Apply this plan.
+Next: open-forge strip frontmatter entrypoints links --flatten .agents/docs --workspace <workspace> --automatic

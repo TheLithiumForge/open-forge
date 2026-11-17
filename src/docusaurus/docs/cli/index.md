@@ -99,7 +99,15 @@ References lists these links, Context checks them during requested link expansio
 
 ## Take Open Forge back out
 
-`uninstall` removes the files Open Forge installed and still recognizes, its sections in `AGENTS.md` and `CLAUDE.md`, route scaffolds and its state, ending with `.open-forge-state/`. Your files stay, and so do managed files you edited. Running it again once Open Forge is gone changes nothing. Add `--strip metadata,entries,links` to end with plain Markdown, or `--flatten docs` to put the documents in one folder. Flatten is for categories, subcategories and custom routes. `strip --flatten` refuses a folder that holds any file Open Forge manages, while `uninstall --flatten` removes or strips those files first. Run `strip` on its own to drop one part while Open Forge stays. See [uninstall](/guides/cli#uninstall) and [strip](/guides/cli#strip).
+`uninstall` removes the files Open Forge installed and still recognizes, its sections in `AGENTS.md` and `CLAUDE.md`, route scaffolds and its state, ending with `.open-forge-state/`. Your files stay, and so do managed files you edited. Running it again once Open Forge is gone changes nothing. Add `--strip` with `metadata`, `frontmatter`, `entrypoints` or `links` to end with plain Markdown, or `--flatten docs` to put the documents in one folder. Flatten is for categories, subcategories and custom routes. `strip --flatten` refuses a folder that holds any file Open Forge manages, unless `entrypoints` deletes it in the same run, while `uninstall --flatten` removes or strips those files first. Run `strip` on its own to drop one part while Open Forge stays. See [uninstall](/guides/cli#uninstall) and [strip](/guides/cli#strip).
+
+The evals use three stages of the same routed documents:
+
+| Stage                | Command                                                                  |
+| -------------------- | ------------------------------------------------------------------------ |
+| Organized Open Forge | None. Keep the normal install.                                           |
+| Organized docs       | `open-forge uninstall --strip metadata,entrypoints`                      |
+| Unorganized docs     | `open-forge uninstall --strip metadata,entrypoints,links --flatten docs` |
 
 ## Everyday habits
 

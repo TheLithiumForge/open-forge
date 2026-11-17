@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Commands.Stripping.Models.Request;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
 using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.IntegrationTests.Commands.Stripping;
@@ -27,7 +28,8 @@ public sealed class StripDocumentBoundaryIntegrationTests
         { "---\nopen-forge: [unclosed\n---\n# Note\n", StrippingDefinitions.PartName(StripPart.Metadata) },
         { "---\nopen-forge:\n  description: A\nopen-forge:\n  description: B\n---\n# Note\n", StrippingDefinitions.PartName(StripPart.Metadata) },
         { "---\n{description: Note, title: Keep}\n---\n# Note\n", StrippingDefinitions.PartName(StripPart.Metadata) },
-        { "# Note\n\n## Entries\n\n- [A](a.md) - A\n\n## Entries\n\n- [B](b.md) - B\n", StrippingDefinitions.PartName(StripPart.Entries) },
+        { "---\ntitle: Note\n# Note\n", StrippingDefinitions.PartName(StripPart.Frontmatter) },
+        { "# Note\n\n<!-- @open-forge ./other.md explains this\n", StrippingDefinitions.PartName(StripPart.Links) },
     };
 
     // The failure cases of the harness's frontmatter.test.ts at 6edb7de66. Strip refuses where the bytes cannot be
@@ -41,26 +43,84 @@ public sealed class StripDocumentBoundaryIntegrationTests
         { [255], true },
     };
 
-    [Fact(DisplayName = "Strip entries alone removes the generated Entries and keeps metadata and links"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
-    public async Task EntriesAlone()
+    [Fact(DisplayName = "Strip entrypoints alone deletes every entrypoint, managed ones included, and keeps the loader, metadata and links"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
+    public async Task EntrypointsAlone()
     {
-        using var workspace = StripIntegrationWorkspace.Create("strip-entries-alone");
+        using var workspace = StripIntegrationWorkspace.Create("strip-entrypoints-alone");
         await workspace.InstallAsync();
         workspace.Write(Docs + "/rules/rules.md", "---\nopen-forge:\n  description: Rules\n  tags: [Game]\n---\n# Rules\n\nBack to the [docs](../_docs.md).\n");
         await workspace.IncludeAsync(Docs);
         Assert.Equal(CliSemanticStatus.Complete, (await workspace.RunAsync([IndexDefinitions.CommandIdentity])).Status);
         var catalogue = Docs + "/_" + Docs + ".md";
+        workspace.Write(catalogue, workspace.Read(catalogue) + "\nNotes the user wrote.\n");
+        var managed = MemoryCategory + "/" + Path.GetFileName(Assert.Single(Directory.GetFiles(workspace.Combine(MemoryCategory))));
+        var loader = WorkspaceLayout.DefaultMainRoot + "/" + WorkspaceLayoutNames.LoaderFileName;
         var rules = workspace.Read(Docs + "/rules/rules.md");
 
-        var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [StripPart.Entries]));
+        var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [StripPart.Entrypoints]));
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
-        Assert.NotEmpty(result.Plan);
-        Assert.All(result.Plan, entry => Assert.Equal([StripRewritePart.Entries], entry.Parts));
-        var facts = new MarkdownDocumentParser().Parse(workspace.Read(catalogue));
-        Assert.Equal(MarkdownGeneratedRegionState.Absent, facts.GeneratedRegion.State);
-        Assert.Equal(MarkdownFrontmatterState.Complete, facts.Frontmatter.State);
+        Assert.All(result.Plan.Where(entry => entry.Action != StripPlanAction.DeleteDirectory), entry =>
+            Assert.Equal((StripPlanAction.Delete, StripPlanReason.Strip, StripRewritePart.Entrypoints), (entry.Action, entry.Reason, Assert.Single(entry.Parts))));
+        Assert.Contains(result.Plan, entry => entry.Path == catalogue);
+        Assert.Contains(result.Plan, entry => entry.Path == managed);
+        Assert.False(workspace.Exists(catalogue));
+        Assert.False(workspace.Exists(managed));
+        Assert.True(workspace.Exists(loader));
         Assert.Equal(rules, workspace.Read(Docs + "/rules/rules.md"));
+    }
+
+    // Entrypoints the same run deletes no longer make flatten refuse the folder that holds them.
+    [Fact(DisplayName = "Strip entrypoints with flatten flattens a Framework category whose only managed file is its entrypoint"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
+    public async Task FlattenWithEntrypoints()
+    {
+        using var workspace = StripIntegrationWorkspace.Create("strip-flatten-entrypoints");
+        await workspace.InstallAsync();
+        var entrypoint = MemoryCategory + "/" + Path.GetFileName(Assert.Single(Directory.GetFiles(workspace.Combine(MemoryCategory))));
+        workspace.Write(MemoryCategory + "/team/note.md", "# Note\n");
+
+        var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [StripPart.Entrypoints], MemoryCategory));
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.False(workspace.Exists(entrypoint));
+        Assert.Equal("# Note\n", workspace.Read(MemoryCategory + "/note.md"));
+        Assert.False(workspace.Exists(MemoryCategory + "/team"));
+    }
+
+    [Fact(DisplayName = "Strip frontmatter removes the whole block with foreign keys, wins over metadata and keeps a SKILL.md block"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
+    public async Task FrontmatterRemovesTheWholeBlock()
+    {
+        using var workspace = StripIntegrationWorkspace.Create("strip-frontmatter");
+        var skill = WorkspaceLayout.NativeSkillsPath + "/notes/" + SourceFormClassifier.NativeSkillFileName;
+        const string SkillDocument = "---\nname: notes\ndescription: Notes\n---\n# Notes\n";
+        workspace.Write(Note, "\uFEFF---\r\ntitle: \"Public\"\r\nopen-forge:\r\n  description: Note\r\n---\r\n# Note\r\n");
+        workspace.Write(Notes + "/broken.md", "---\nname: [\n---\n# Broken\n");
+        workspace.Write(skill, SkillDocument);
+
+        var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [StripPart.Metadata, StripPart.Frontmatter]));
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.All(result.Plan, entry => Assert.Equal(StripRewritePart.Frontmatter, Assert.Single(entry.Parts)));
+        Assert.Equal(Encoding.UTF8.GetBytes("\uFEFF# Note\r\n"), workspace.ReadBytes(Note));
+        Assert.Equal("# Broken\n", workspace.Read(Notes + "/broken.md"));
+        Assert.Equal(SkillDocument, workspace.Read(skill));
+    }
+
+    // Links between documents go everywhere, generated Entries lists included, and so does the whole comment around a
+    // comment link. A comment alone on its lines takes those lines with it.
+    [Fact(DisplayName = "Strip links removes links in Entries lists and the whole comment around each comment link"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
+    public async Task LinksRemoveEntriesListsAndComments()
+    {
+        using var workspace = StripIntegrationWorkspace.Create("strip-links-comments");
+        workspace.Write(Notes + "/other.md", "# Other\n");
+        workspace.Write(Notes + "/_notes.md", "# Notes\n\n## Entries\n\n- [Other](other.md) - #Docs\n");
+        workspace.Write(Note, "# Note\n\n<!-- @open-forge ./other.md explains this -->\nKept text <!-- @rune other.md defines it --> stays.\n<!--\n  @open-forge ./other.md first\n  @rune ./other.md second\n-->\nEnd.\n");
+
+        var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [StripPart.Links]));
+
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal("# Notes\n\n## Entries\n\n- Other - #Docs\n", workspace.Read(Notes + "/_notes.md"));
+        Assert.Equal("# Note\n\nKept text  stays.\nEnd.\n", workspace.Read(Note));
     }
 
     [Fact(DisplayName = "Strip links removes a link to a folder, which reads as its entrypoint, and keeps a link to another file"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]

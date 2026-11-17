@@ -13,8 +13,8 @@ Set up and manage:
   install    Install the bundled Framework, or change your built-in setup.
   update     Update files Open Forge manages to the version bundled in this CLI.
   uninstall  Remove Open Forge from this workspace and keep the files you wrote.
-  strip      Strip Open Forge metadata, generated Entries or links from routed
-             documents, or flatten them into one folder.
+  strip      Strip Open Forge metadata, frontmatter, entrypoints or links from
+             routed documents, or flatten them into one folder.
   remove     Remove one exact path, route, Extension, or Library and remember
              supported exclusions.
   extension  Manage optional packages of agent rules and context.

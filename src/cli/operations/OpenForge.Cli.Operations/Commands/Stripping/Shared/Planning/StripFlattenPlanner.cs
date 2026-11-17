@@ -54,8 +54,7 @@ internal static class StripFlattenPlanner
     }
 
     private static bool StaysInPlace(WorkspaceLayout layout, string document)
-        => SourceFormClassifier.TryClassify(layout, document, out var form)
-            && (form == SourceDocumentForm.Skill || SourceFormClassifier.IsEntrypoint(form));
+        => StripDocumentShapes.IsEntrypoint(layout, document) || SourceFormClassifier.Matches(layout, document, SourceDocumentForm.Skill);
 
     private static IEnumerable<string> ReadDirectFiles(WorkspaceLayout layout, string folder)
     {

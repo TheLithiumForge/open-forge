@@ -1,12 +1,12 @@
-  Strip Open Forge metadata, generated Entries or links from routed documents,
-  or flatten them into one folder.
+  Strip Open Forge metadata, frontmatter, entrypoints or links from routed
+  documents, or flatten them into one folder.
 
 Usage:
   open-forge strip [<part>...] [--flatten <folder>] [--dry-run] [--automatic]
 
 Examples:
   open-forge strip links --dry-run
-  open-forge strip metadata,entries --automatic
+  open-forge strip metadata,entrypoints --automatic
   open-forge strip --flatten docs --dry-run --format json
 
 Behavior:
@@ -19,8 +19,8 @@ Behavior:
   run reports it.
 
 Arguments:
-  <part>  Select metadata, entries or links. Separate several with spaces or
-          commas.
+  <part>  Select metadata, frontmatter, entrypoints or links. Separate several
+          with spaces or commas.
 
 Options:
   --flatten <folder>  Move documents below this folder's subfolders into the
@@ -34,14 +34,17 @@ Global options: --workspace, --format, --detail, --detail-filter, --help,
 
 Details:
   Parts: metadata removes Open Forge frontmatter keys and keeps other keys and
-  the body. entries removes the generated Entries section and keeps text you
-  wrote there. links turns links to documents into their text, and keeps
-  external links, images, links to other files, code, comment links and Entries
-  lists.
+  the body. frontmatter removes the whole frontmatter block and wins over
+  metadata. entrypoints deletes the entrypoint files, with their Entries lists
+  and any text you wrote in them. links turns links to documents into their text
+  and removes the whole comment around an @open-forge or @rune comment link.
+  External links, images, links to other files and code stay. Source code is
+  never read.
   Flatten: Use it on a category, subcategory or custom route. A folder that
-  holds any file Open Forge manages is refused. Entrypoints and SKILL.md files
-  stay where they are, and kept links are rewritten so they still work. A name
-  two files would share stops the run before any write.
+  holds any file Open Forge manages is refused, unless entrypoints deletes that
+  file in the same run. SKILL.md files stay where they are, and so do
+  entrypoints that are not deleted. Kept links are rewritten so they still work.
+  A name two files would share stops the run before any write.
 
 Automation:
   --format json: one minified schema-3 JSON result on stdout for every status.

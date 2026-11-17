@@ -39,7 +39,8 @@ internal static class StrippingDefinitions
         => part switch
         {
             StripPart.Metadata => "metadata",
-            StripPart.Entries => "entries",
+            StripPart.Frontmatter => "frontmatter",
+            StripPart.Entrypoints => "entrypoints",
             StripPart.Links => "links",
             _ => throw new ArgumentOutOfRangeException(nameof(part), part, "The strip part is not defined."),
         };

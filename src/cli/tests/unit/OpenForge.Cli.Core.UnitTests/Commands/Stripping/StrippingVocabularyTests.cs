@@ -13,10 +13,11 @@ public sealed class StrippingVocabularyTests
     {
         var links = StrippingDefinitions.PartName(StripPart.Links);
         var metadata = StrippingDefinitions.PartName(StripPart.Metadata);
-        var entries = StrippingDefinitions.PartName(StripPart.Entries);
+        var frontmatter = StrippingDefinitions.PartName(StripPart.Frontmatter);
+        var entrypoints = StrippingDefinitions.PartName(StripPart.Entrypoints);
 
-        Assert.True(StripPartGrammar.TryRead([$"{links}{StrippingDefinitions.PartSeparator}{metadata}", links, entries], out var parts));
-        Assert.Equal([StripPart.Metadata, StripPart.Entries, StripPart.Links], parts);
+        Assert.True(StripPartGrammar.TryRead([$"{links}{StrippingDefinitions.PartSeparator}{entrypoints}", links, frontmatter, metadata], out var parts));
+        Assert.Equal([StripPart.Metadata, StripPart.Frontmatter, StripPart.Entrypoints, StripPart.Links], parts);
         Assert.True(StripPartGrammar.TryRead([], out var none));
         Assert.Empty(none);
     }
@@ -63,13 +64,15 @@ public sealed class StrippingVocabularyTests
         AssertSpecified<StripPart>(StrippingDefinitions.PartName, new()
         {
             [StripPart.Metadata] = "metadata",
-            [StripPart.Entries] = "entries",
+            [StripPart.Frontmatter] = "frontmatter",
+            [StripPart.Entrypoints] = "entrypoints",
             [StripPart.Links] = "links",
         });
         AssertSpecified<StripRewritePart>(StripWireVocabulary.RewritePartName, new()
         {
             [StripRewritePart.Metadata] = "metadata",
-            [StripRewritePart.Entries] = "entries",
+            [StripRewritePart.Frontmatter] = "frontmatter",
+            [StripRewritePart.Entrypoints] = "entrypoints",
             [StripRewritePart.Links] = "links",
             [StripRewritePart.Relink] = "relink",
             [StripRewritePart.ManagedSection] = "managed-section",

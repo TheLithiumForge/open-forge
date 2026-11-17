@@ -33,7 +33,7 @@ public sealed class StripCommandBindingIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, preview.Status);
         Assert.Equal(before, workspace.SnapshotHashes());
         var applied = await workspace.RunAsync([StripDefinitions.CommandIdentity, StrippingDefinitions.PartName(StripPart.Metadata),
-            StrippingDefinitions.PartName(StripPart.Entries), StripDefinitions.Flatten.Name, CurrentDirectoryPrefix + Folder, StripDefinitions.Automatic.Name]);
+            StrippingDefinitions.PartName(StripPart.Entrypoints), StripDefinitions.Flatten.Name, CurrentDirectoryPrefix + Folder, StripDefinitions.Automatic.Name]);
 
         Assert.Equal(CliSemanticStatus.Complete, applied.Status);
         Assert.False(workspace.Exists(Moved));
@@ -72,7 +72,7 @@ public sealed class StripCommandBindingIntegrationTests
         var before = workspace.SnapshotHashes();
 
         var preview = await workspace.RunAsync([UninstallDefinitions.CommandIdentity,
-            UninstallDefinitions.Strip.Name, StrippingDefinitions.PartName(StripPart.Entries),
+            UninstallDefinitions.Strip.Name, StrippingDefinitions.PartName(StripPart.Entrypoints),
             UninstallDefinitions.Strip.Name, StrippingDefinitions.PartName(StripPart.Links),
             UninstallDefinitions.RemoveEdited.Name, CurrentDirectoryPrefix + directives, UninstallDefinitions.DryRun.Name]);
         Assert.Equal(CliSemanticStatus.Complete, preview.Status);

@@ -45,7 +45,6 @@ public sealed class StripHarnessParityIntegrationTests
         workspace.Write(Note, string.Join('\n',
             "Code `[x](rules.md)` stays, and so does ![chart](chart.png).",
             "The [app](../../src/app.ts) stays linked, [**bold rules**](rules.md \"Rules\") and [the rules][r] lose theirs.",
-            "<!-- @open-forge ./rules.md explains this -->",
             "~~~~",
             "```",
             "[fenced](rules.md)",
@@ -60,7 +59,6 @@ public sealed class StripHarnessParityIntegrationTests
         Assert.Equal(string.Join('\n',
             "Code `[x](rules.md)` stays, and so does ![chart](chart.png).",
             "The [app](../../src/app.ts) stays linked, **bold rules** and the rules lose theirs.",
-            "<!-- @open-forge ./rules.md explains this -->",
             "~~~~",
             "```",
             "[fenced](rules.md)",
@@ -97,21 +95,6 @@ public sealed class StripHarnessParityIntegrationTests
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Equal("---\r\ntitle: \"Public note\"\r\ncustom:\r\n  flags: [true, false]\r\n---\r\n# Note\r\nBody.\r\n", workspace.Read(Note));
         Assert.Equal("---\nowner: team\n---\n# Rules\n", workspace.Read(Other));
-    }
-
-    [Fact(DisplayName = "Strip entries removes a generated section and keeps a section the user wrote in"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
-    public async Task EntriesKeepUserText()
-    {
-        using var workspace = StripIntegrationWorkspace.Create("strip-entries");
-        workspace.Write(Root + "/notes/_notes.md", "# Notes\n\nIntro.\n\n## Entries\n\n- [Rules](rules.md) - #Docs\n");
-        workspace.Write(Root + "/guide/_guide.md", "# Guide\n\n## Entries\n\nRead these first.\n\n- [Rules](../notes/rules.md) - #Docs\n");
-        workspace.Write(Other, "# Rules\n");
-
-        var result = await workspace.StripAsync(workspace.Request(StripCommandKind.Strip, [StripPart.Entries, StripPart.Links]));
-
-        Assert.Equal(CliSemanticStatus.Complete, result.Status);
-        Assert.Equal("# Notes\n\nIntro.\n", workspace.Read(Root + "/notes/_notes.md"));
-        Assert.Equal("# Guide\n\n## Entries\n\nRead these first.\n\n", workspace.Read(Root + "/guide/_guide.md"));
     }
 
     [Fact(DisplayName = "Strip flatten moves documents and rewrites kept links to their new places"), Trait("Feature", "strip"), Trait("Evidence", "Integration")]
