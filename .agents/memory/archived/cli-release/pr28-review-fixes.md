@@ -10,7 +10,7 @@ PR 28 fixes are delivery corrections that make interpreter resolution and first-
 
 The maintainer requested A1, A2, A3 and A5 on 2026-11-13 after reviewing `638610d02e49e98e836c9c81aa42d26bd52ac03a`. A4 stays unchanged under the maintainer's separate-issue direction. This receipt replaces the temporary working checkpoint because local implementation and verification are complete. The [distribution contract](../../crystallized/documents/cli/distribution.md) defines the resulting behavior.
 
-Status: local fixes and focused checks complete. CI and publication are pending.
+Status: local fixes and focused checks complete. The [single PyPI wheel](pr28-single-pypi-wheel.md) later removed A1 along with the three-kind layout.
 
 ## Findings
 

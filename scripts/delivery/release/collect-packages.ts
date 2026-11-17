@@ -10,7 +10,7 @@ import { committedVersion } from "../version.ts";
 import { sourceIdentity } from "../source.ts";
 import { inspectPackageContents } from "../package-contents.ts";
 import { resetOutput } from "../output.ts";
-import { expectedHostWheels } from "../pypi/validate-wheel.ts";
+import { expectedHostWheel } from "../pypi/validate-wheel.ts";
 import { PythonPackage } from "../pypi/wheel-model.ts";
 import { aliasManifest } from "../npm/package-manifests.ts";
 
@@ -35,8 +35,8 @@ export function collectPackages(input: string, output: string, sha: string, vers
     assert.ok(Array.isArray(files) && files.length === HostArtifactCount, "Incomplete packaged artifacts.");
     let mainFound = false;
     let aliasFound = false;
-    const expectedWheels = expectedHostWheels(directory, version, platform.runtime, targets);
-    const wheelsFound = new Set<string>();
+    const expectedWheel = expectedHostWheel(directory, version, platform.runtime);
+    let wheelFound = false;
     let platformFound = false;
     let archiveFound = false;
     for (const value of files) {
@@ -70,15 +70,10 @@ export function collectPackages(input: string, output: string, sha: string, vers
           assert.equal(contents.files.find((file) => file.path === `bin/${platform.nativeFileName}`)?.sha256, manifest["nativeSha256"], "Packed native identity mismatch.");
         }
       } else if (path.endsWith(PythonPackage.suffix)) {
-        assert.ok(expectedWheels.has(path), "Unexpected wheel in host artifacts.");
-        assert.equal(wheelsFound.has(path), false, "Repeated host wheel.");
-        wheelsFound.add(path);
-        assert.deepEqual(readFileSync(join(directory, path)), expectedWheels.get(path), "Wheel differs from the staged native release.");
-        const earlier = selected.get(path);
-        if (earlier !== undefined) {
-          assert.equal(earlier.sha256, value.sha256, "Universal wheel contents differ across platforms.");
-          continue;
-        }
+        assert.equal(path, expectedWheel.name, "Unexpected wheel in host artifacts.");
+        assert.equal(wheelFound, false, "Repeated host wheel.");
+        wheelFound = true;
+        assert.deepEqual(readFileSync(join(directory, path)), expectedWheel.bytes, "Wheel differs from the staged native release.");
       } else {
         assert.equal(path, `open-forge-${version}-${platform.runtime}.tar.gz`);
         assert.equal(archiveFound, false);
@@ -89,7 +84,7 @@ export function collectPackages(input: string, output: string, sha: string, vers
       assert.equal(selected.has(path), false, "Repeated release artifact.");
       selected.set(path, { source: join(directory, path), sha256: value.sha256 });
     }
-    assert.ok(mainFound && aliasFound && platformFound && archiveFound && wheelsFound.size === expectedWheels.size, "Incomplete platform package graph.");
+    assert.ok(mainFound && aliasFound && platformFound && archiveFound && wheelFound, "Incomplete platform package graph.");
   }
   mkdirSync(output, { recursive: true });
   const checksums: string[] = [];

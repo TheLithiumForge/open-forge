@@ -15,7 +15,7 @@ import { packNpmPackages } from "./npm/pack-packages.ts";
 import { testInstalledNative } from "./npm/__tests__/installed-native.ts";
 import { runStage } from "./stage.ts";
 import { recordWrapper } from "./npm/wrapper-artifact.ts";
-import { hostWheels } from "./pypi/wheel.ts";
+import { hostWheel } from "./pypi/wheel.ts";
 import { smokeAliases } from "./aliases/smoke.ts";
 
 export function pack(root: string, rid: SupportedRuntime, skipTests = false, targets: readonly SupportedRuntime[] = AllTargets): void {
@@ -47,8 +47,8 @@ export function pack(root: string, rid: SupportedRuntime, skipTests = false, tar
       compiledLauncher: join(directory, "build/launcher"),
     }),
   );
-  const wheels = hostWheels(manifest.version, rid, readFileSync(packages.stagedNative), readFileSync(join(root, "LICENSE")), targets);
-  for (const [name, bytes] of wheels) writeFileSync(join(output, name), bytes);
+  const wheel = hostWheel(manifest.version, rid, readFileSync(packages.stagedNative), readFileSync(join(root, "LICENSE")));
+  writeFileSync(join(output, wheel.name), wheel.bytes);
   if (!skipTests)
     runStage("Test installed npm package", () =>
       testInstalledNative({
@@ -60,7 +60,7 @@ export function pack(root: string, rid: SupportedRuntime, skipTests = false, tar
       }),
     );
   if (!skipTests) runStage("Test installed alias", () => smokeAliases(output, rid, manifest.version, false));
-  const paths = [archive, basename(packages.mainTarball), basename(packages.platformTarball), basename(packages.aliasTarball), ...wheels.keys()];
+  const paths = [archive, basename(packages.mainTarball), basename(packages.platformTarball), basename(packages.aliasTarball), wheel.name];
   const files = paths.map((path) => ({ path, sha256: hashArtifact(output, path) }));
   writeFileSync(join(output, "SHA256SUMS"), files.map((file) => `${file.sha256}  ${basename(file.path)}\n`).join(""));
   readBuilt(root, rid, !skipTests);

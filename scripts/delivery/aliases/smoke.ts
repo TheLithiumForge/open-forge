@@ -6,7 +6,7 @@ import { join, resolve } from "node:path";
 import { AliasPackageName, MainPackageName, PlatformPackages, type SupportedRuntime } from "../package-model.ts";
 import { LauncherPath } from "../npm/package-manifests.ts";
 import { IsolatedNpm } from "../npm/__tests__/isolated-npm.ts";
-import { smokePythonPackages } from "../pypi/smoke.ts";
+import { smokePythonPackage } from "../pypi/smoke.ts";
 
 export function smokeAliases(directory: string, runtime: SupportedRuntime, version: string, includeWheel = true): void {
   const root = mkdtempSync(join(tmpdir(), "open-forge-alias-smoke-"));
@@ -31,7 +31,7 @@ export function smokeAliases(directory: string, runtime: SupportedRuntime, versi
     assert.equal(run(process.execPath, [join(alias, LauncherPath), "--version"]), version);
     process.stdout.write(`Alias smoke passed: ${AliasPackageName}@${version} delegates to ${MainPackageName}.\n`);
     if (!includeWheel) return;
-    const wheel = smokePythonPackages(root, runtime, version, environment, directory);
+    const wheel = smokePythonPackage(root, runtime, version, environment, directory);
     writeFileSync(join(directory, "alias-smoke.json"), `${JSON.stringify({ runtime, version, alias: "passed", wheel }, null, 2)}\n`);
   } finally {
     rmSync(root, { recursive: true, force: true });

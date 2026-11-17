@@ -136,15 +136,7 @@ jobs:
           name: pypi-${{ needs.select.outputs.sha }}
           path: artifacts/pypi
           digest-mismatch: error
-      - name: Publish PyPI platform packages
+      - name: Publish the PyPI wheels
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: artifacts/pypi/platform/
-      - name: Publish PyPI entry package
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: artifacts/pypi/entry/
-      - name: Publish PyPI alias
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: artifacts/pypi/alias/
+          packages-dir: artifacts/pypi/

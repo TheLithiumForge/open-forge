@@ -7,11 +7,10 @@ import { packNpmPackages } from "../../npm/pack-packages.ts";
 import { compileLauncher } from "../../npm/stage.ts";
 import { resetOutput } from "../../output.ts";
 import { repositoryRoot } from "../../repository.ts";
-import { AllTargets } from "../../targets.ts";
 import { committedVersion } from "../../version.ts";
-import { hostWheels } from "../wheel.ts";
+import { hostWheel } from "../wheel.ts";
 
-// Explicit host-only installation proof using an existing executable. Other targets are inert selection fixtures.
+// Explicit host-only installation proof using an existing executable.
 const native = process.argv[2];
 assert.ok(native && process.argv.length === 3, "Provide one existing matching-version host executable.");
 const runtime = hostRuntime();
@@ -28,15 +27,6 @@ const packed = packNpmPackages({
   nativeArtifact: resolve(native),
   compiledLauncher: launcher,
 });
-const license = readFileSync(join(repositoryRoot, "LICENSE"));
-const wheels = new Map<string, Buffer>();
-for (const target of AllTargets) {
-  const bytes = target === runtime ? readFileSync(packed.stagedNative) : Buffer.from(`owned inert non-host ${target} selection fixture`);
-  for (const [name, wheel] of hostWheels(version, target, bytes, license)) {
-    const earlier = wheels.get(name);
-    if (earlier !== undefined) assert.deepEqual(wheel, earlier);
-    wheels.set(name, wheel);
-  }
-}
-for (const [name, bytes] of wheels) writeFileSync(join(output, name), bytes);
+const wheel = hostWheel(version, runtime, readFileSync(packed.stagedNative), readFileSync(join(repositoryRoot, "LICENSE")));
+writeFileSync(join(output, wheel.name), wheel.bytes);
 smokeAliases(output, runtime, version);

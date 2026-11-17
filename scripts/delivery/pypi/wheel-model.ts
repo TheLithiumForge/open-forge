@@ -1,5 +1,7 @@
-import type { SupportedRuntime } from "../package-model.ts";
-import { pythonModule } from "./package-model.ts";
+import { AliasPackageName, PlatformPackages, type SupportedRuntime } from "../package-model.ts";
+
+// PyPI has no scopes, so the one distribution takes the unscoped npm alias name.
+export const PythonPackageName = AliasPackageName;
 
 export const PythonPackage = {
   suffix: ".whl",
@@ -8,47 +10,46 @@ export const PythonPackage = {
   metadata: "METADATA",
   wheel: "WHEEL",
   record: "RECORD",
-  entryPoints: "entry_points.txt",
-  init: "__init__.py",
   license: "licenses/LICENSE",
   licenseFile: "LICENSE",
-  universal: "any",
+  // Installers copy `<name>-<version>.data/scripts/` onto the environment's scripts directory, which is on PATH.
+  scripts: "scripts",
 } as const;
 
 export const WheelField = {
   name: "Name",
   version: "Version",
-  requires: "Requires-Dist",
   python: "Requires-Python",
   license: "License-File",
   pure: "Root-Is-Purelib",
   tag: "Tag",
 } as const;
-export const PythonConsole = { section: "console_scripts", callable: "main" } as const;
 
 // Match the existing ubuntu-24.04 and macos-15 native build hosts.
 export const WheelPlatforms = {
   "win-x64": "win_amd64",
-  // The ARM64 executable is data, launched out of process on ARM64 hardware by either interpreter.
-  "win-arm64": "win_amd64.win_arm64",
+  "win-arm64": "win_arm64",
   "osx-x64": "macosx_15_0_x86_64",
   "osx-arm64": "macosx_15_0_arm64",
   "linux-x64": "manylinux_2_39_x86_64",
   "linux-arm64": "manylinux_2_39_aarch64",
 } as const satisfies Record<SupportedRuntime, string>;
 
-export function wheelTag(runtime?: SupportedRuntime): string {
-  return `${PythonPackage.tag}-${runtime === undefined ? PythonPackage.universal : WheelPlatforms[runtime]}`;
+// Wheel file and directory names use the normalized distribution name.
+const wheelPrefix = (version: string) => `${PythonPackageName.replaceAll("-", "_")}-${version}`;
+
+export function wheelTag(runtime: SupportedRuntime): string {
+  return `${PythonPackage.tag}-${WheelPlatforms[runtime]}`;
 }
 
-export function wheelTags(runtime?: SupportedRuntime): string[] {
-  return (runtime === undefined ? [PythonPackage.universal] : WheelPlatforms[runtime].split(".")).map((platform) => `${PythonPackage.tag}-${platform}`);
+export function wheelName(version: string, runtime: SupportedRuntime): string {
+  return `${wheelPrefix(version)}-${wheelTag(runtime)}${PythonPackage.suffix}`;
 }
 
-export function wheelName(version: string, name: string, runtime?: SupportedRuntime): string {
-  return `${pythonModule(name)}-${version}-${wheelTag(runtime)}${PythonPackage.suffix}`;
+export function wheelInfo(version: string): string {
+  return `${wheelPrefix(version)}.dist-info`;
 }
 
-export function wheelInfo(version: string, name: string): string {
-  return `${pythonModule(name)}-${version}.dist-info`;
+export function wheelScript(version: string, runtime: SupportedRuntime): string {
+  return `${wheelPrefix(version)}.data/${PythonPackage.scripts}/${PlatformPackages[runtime].nativeFileName}`;
 }

@@ -41,5 +41,6 @@ descendants here preserve origin, reasoning, dissent, and evidence only.
 - [Issue 24 package alias implementation, local gates and Windows installation smoke receipt](issue24-package-aliases.md) - #Memory #Archived #Contextual #Historical #CLI #Delivery
 - [Issue 24 three-kind PyPI package layout and local verification receipt](issue24-pypi-layout.md) - #Memory #Archived #Contextual #Historical #CLI #Delivery
 - [PR 28 resolver, channel recovery and semantic test corrections with focused verification](pr28-review-fixes.md) - #Memory #Archived #Contextual #Historical #CLI #Delivery #Review
+- [PR 28 lean revision that replaces the three-kind PyPI layout with one platform-tagged open-forge wheel per target, with file-mode evidence](pr28-single-pypi-wheel.md) - #Memory #Archived #Contextual #Historical #CLI #Delivery #Review
 - [Historical gates, tasks, dependencies, validation, and stop states from the removed first C# CLI implementation program](release-plan-2026-08-21.md) - #Memory #Archived #Contextual #Historical #CLI #Release #Program #Gate #Plan
 - [Historical CLI release review records retained after accepted units left active review](review/_review.md) - #Memory #Archived #Contextual #Historical #CLI #Release #Review #Council

@@ -9,7 +9,7 @@ The PyPI layout is a generated package graph that mirrors npm's platform, entry 
 
 The maintainer replaced the original single-project wheel design on 2026-11-12. The [distribution contract](../../crystallized/documents/cli/distribution.md#alias-and-pypi) defines the replacement. Work continues from `7726be221` in `feature/package-aliases`.
 
-Status: implementation complete with local focused verification. CI qualification and publication are pending.
+Status: superseded on 2026-11-17 by the [single PyPI wheel](pr28-single-pypi-wheel.md). The three-kind layout was never published.
 
 This record came from the active replacement checkpoint. It is archived because the local implementation is complete. The [earlier receipt](issue24-package-aliases.md) keeps the first design and its prior full-suite failures as history. It does not describe the replacement package graph.
 

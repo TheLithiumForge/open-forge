@@ -148,11 +148,9 @@ pipx install --pip-args=--pre open-forge
 open-forge --version
 ```
 
-To run it with uv, use `uvx --prerelease allow open-forge --version`. The prefixed name also works with `pipx install --pip-args=--pre thelithiumforge-open-forge` or `uvx --prerelease allow --from thelithiumforge-open-forge open-forge --version`. `--from` selects the package while `open-forge` selects the command. Stable releases work with `pipx install open-forge` and `uvx open-forge`.
+To run it with uv, use `uvx --prerelease allow open-forge --version`. Stable releases work with `pipx install open-forge` and `uvx open-forge`.
 
-PyPI has the same three package kinds as npm. The pure `open-forge` alias pins `thelithiumforge-open-forge` at the same version. That pure entry package provides the launcher and selects exactly one `thelithiumforge-open-forge-<target>` package through environment markers. Only the platform wheel contains the native executable. Both entry names provide `open-forge`, so install one or the other.
-
-The platform wheels contain the same executables as npm. Installation performs no source build or separate binary download. Wheels cover Windows, macOS and Linux on x64 and ARM64. Linux needs glibc 2.39 or later. macOS needs macOS 15 or later.
+PyPI has one wheel per platform, and pip or uv picks the one that matches your system. Each wheel holds the same native executable as npm and puts it straight on your PATH, so Python doesn't start when you run `open-forge`. Installation performs no source build or separate binary download. Wheels cover Windows, macOS and Linux on x64 and ARM64. Linux needs glibc 2.39 or later. macOS needs macOS 15 or later.
 
 ### From a GitHub release
 

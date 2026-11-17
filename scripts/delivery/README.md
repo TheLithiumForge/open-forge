@@ -228,14 +228,14 @@ restore npm channels or undo downloaded files.
 The maintainer configures this once before enabling uploads:
 
 1. Create a GitHub environment named `pypi` in `TheLithiumForge/open-forge`. Set its release protections as needed.
-2. In PyPI publishing settings, add a [pending trusted publisher](https://docs.pypi.org/trusted-publishers/creating-a-project-through-oidc/) for each of the eight projects. These are `open-forge`, `thelithiumforge-open-forge` and the six platform names generated from the [npm package model](package-model.ts) by removing `@` and replacing `/` with `-`. Use GitHub owner `TheLithiumForge`, repository `open-forge`, workflow `release.yml` and environment `pypi` for every project. For an existing project you control, add the publisher in that project's publishing settings.
+2. In PyPI publishing settings, add a [pending trusted publisher](https://docs.pypi.org/trusted-publishers/creating-a-project-through-oidc/) for the one project `open-forge`. Use GitHub owner `TheLithiumForge`, repository `open-forge`, workflow `release.yml` and environment `pypi`. Once the project exists, manage the publisher in its own publishing settings.
 3. Set the GitHub repository Actions variable `PUBLISH_PYPI` to `true`. It defaults off when absent. An `all` release then publishes wheels after the npm and GitHub jobs succeed.
 
 The PyPI job uses `id-token: write` and the [PyPA publishing action](https://docs.pypi.org/trusted-publishers/using-a-publisher/). It uses no long-lived PyPI token. `github` and `npm` destinations keep their existing scope. Clear `PUBLISH_PYPI` to disable the PyPI job.
 
-`pack` creates the npm alias and three Python wheels. The native wheel takes the same staged executable as npm and has no console script. The pure `thelithiumforge-open-forge` entry wheel selects one exact-version native dependency through environment markers. The pure `open-forge` alias pins that entry package and points to its launcher. Both universal wheels use `py3-none-any`.
+`pack` creates the npm alias and one `open-forge` wheel tagged for the host platform. The wheel holds the same staged executable as npm at `open_forge-<version>.data/scripts/`, which installers copy onto the environment's PATH. The ZIP entry gives the executable mode `0755`, which pip reads to mark the installed file executable on Linux and macOS. The wheel has no dependencies and no Python code.
 
-Collection checks each host's three wheels against those bytes and metadata, then keeps one matching copy of each universal wheel. It records their hashes in `release.json`. `release:pypi` verifies those hashes before copying wheels into `artifacts/pypi/platform`, `entry` and `alias`. It stays offline. The OIDC job uploads these groups in that order. Every project needs the same trusted publisher configuration. [PyPI supports one publisher for several projects](https://docs.pypi.org/trusted-publishers/internals/).
+Collection checks each host's wheel against that host's portable archive and records its hash in `release.json`. `release:pypi` verifies those hashes before copying the wheels into `artifacts/pypi`. It stays offline. The OIDC job uploads them in one step.
 
 The publication checkpoint includes wheels when `--pypi` or `RELEASE_PYPI=true` is set. Cross-service uploads are separate effects. A failed PyPI job leaves earlier npm and GitHub uploads present. Re-run the failed job after checking PyPI's state. The action rejects existing files, so a partial PyPI upload needs maintainer recovery.
 
@@ -245,17 +245,17 @@ To check local packages on their matching native host, run:
 npm run smoke:aliases -- --from artifacts/delivery/win-x64/packages
 ```
 
-The smoke installs the three local npm tarballs offline in a temporary prefix and invokes the alias bin. In a clean venv, it installs only the PyPI alias requirement using `--no-index --find-links`. Pip resolves the entry wheel and exactly one platform wheel. The smoke checks that graph and runs `open-forge --version`. It repeats the check with the prefixed entry name in another clean venv. If Python is unavailable, it reports that the wheel check didn't run. It removes its temporary installs. `pack` checks the npm alias without requiring Python. Python is needed only for execution evidence, not wheel generation.
+The smoke installs the three local npm tarballs offline in a temporary prefix and invokes the alias bin. In a clean venv, it installs the local wheel with `--no-index --find-links` and runs the installed `open-forge --version`. If Python is unavailable, it reports that the wheel check didn't run. It removes its temporary installs. `pack` checks the npm alias without requiring Python. Python is needed only for execution evidence, not wheel generation.
 
-To exercise selection with all six platform wheels available and an existing matching-version host executable, run the tracked fixture preparation from an npm environment:
+To build the local packages from an existing matching-version host executable instead of a native build, run the tracked fixture preparation from an npm environment:
 
 ```sh
 npm exec --offline --call "node scripts/delivery/pypi/__tests__/smoke-local.ts artifacts/alias-smoke-source/package/bin/open-forge.exe"
 ```
 
-This Windows example reuses a previously extracted executable. The other five platform payloads are inert selection fixtures. It checks this host's installation and dependency selection. CI qualifies real native payloads on all six hosts.
+This Windows example reuses a previously extracted executable. It checks this host's installation only. CI qualifies real native payloads on all six hosts.
 
-After both new channels are published, run `npm run smoke:public -- --version <npm-version> --aliases` to check the alias and PyPI console command too. The default public smoke checks only the scoped npm package, so it still works for older releases. No workflow runs the new public checks before publication.
+After both new channels are published, run `npm run smoke:public -- --version <npm-version> --aliases` to check the alias and the PyPI command too. The default public smoke checks only the scoped npm package, so it still works for older releases. No workflow runs the new public checks before publication.
 
 ## Version and clean up
 

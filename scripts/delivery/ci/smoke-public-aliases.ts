@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { AliasPackageName, MainPackageName } from "../package-model.ts";
 import { LauncherPath } from "../npm/package-manifests.ts";
 import { npmInvocation, ProcessExit } from "../process.ts";
-import { smokePythonPackages } from "../pypi/smoke.ts";
+import { smokePythonPackage } from "../pypi/smoke.ts";
 import { hostRuntime } from "../layout.ts";
 import { capture } from "./smoke-process.ts";
 
@@ -23,5 +23,5 @@ export function smokePublicAliases(root: string, version: string, environment: N
   assert.ok(typeof scoped === "object" && scoped !== null && "version" in scoped);
   assert.equal(scoped.version, version);
   assert.equal(run(process.execPath, [join(modules, AliasPackageName, LauncherPath), "--version"]), version);
-  smokePythonPackages(root, hostRuntime(), version, environment);
+  smokePythonPackage(root, hostRuntime(), version, environment);
 }
