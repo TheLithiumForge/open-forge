@@ -11,6 +11,10 @@ For example, `FindUniverseResolver.cs` points to the Find source-universe contra
 
 Status: implementation complete, CI pending.
 
+## Lean Version
+
+The maintainer asked to remove everything issue 21 did not need. The lean branch `feature/comment-links-lean` keeps the draft commits and removes the legacy ID-anchor findings, the archived `.ts.txt` source copies, the whole-file content match labelled as a Git rename and the hand-written discovery skip list. Discovery now reuses the Route Inspect workspace file list. The shipped Skill section uses only `@open-forge` examples and says `@rune` is also recognised. Later sections record the draft and keep their original counts.
+
 ## Changes
 
 The feature recognizes `@open-forge` and `@rune` across common comment delimiters. Plain targets start at the repository root. `./` and `../` start next to the containing file. Markdown HTML comments and ordinary Markdown links share fragment checks.

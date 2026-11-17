@@ -2567,7 +2567,7 @@ physical aliases.
 
 ### Comment links
 
-A comment link connects code and docs with `@open-forge <path> <any other text>`. `@rune <path> <text>` works the same way. Put the marker first in the comment or on a line inside a block comment. Text after the target explains the relationship.
+A comment link connects code and docs with `@open-forge <path> <any other text>`. The `@rune` marker is also recognised. Put the marker first in the comment or on a line inside a block comment. Text after the target explains the relationship.
 
 Plain paths start at the repository root. Paths starting with `./` or `../` start next to the file holding the comment. Inside comments, `./` means next to that file. In CLI operands, `./` keeps its repository-root meaning.
 
@@ -2582,7 +2582,7 @@ Illustrative:
 Illustrative:
 
 ```md
-<!-- @rune src/Order.cs#Order.Save implements this rule -->
+<!-- @open-forge src/Order.cs#Order.Save implements this rule -->
 ```
 
 The target is the first word after the marker. Encode spaces in filenames. Markdown targets use heading slugs. Code targets use lexical symbols or line ranges. Delimiters follow the file's comment syntax, including trailing comments. Common comment styles include `//`, `///`, `#`, `--`, `;`, `'`, `%`, block comments and HTML comments. In Markdown, use HTML comments outside code spans and fences. Ordinary Markdown links still work.
