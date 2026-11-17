@@ -15,7 +15,7 @@ Status: PR 25 corrections verified locally.
 The maintainer committed and pushed the earlier work as `c41e95b1b`. The PR 25
 review requested three corrections:
 
-- A1 - Context keeps valid code-file links as complete observations without selecting their bodies. Invalid ranges and symbols keep separate findings. Regression cases cover plain files, valid fragments, invalid fragments and authored overwrite locations.
+- A1 - Context keeps valid code-file links as complete observations without selecting their bodies. Invalid ranges and symbols keep separate findings. Two Context cases, one valid symbol and one out-of-range line, show the composition. The 29 unit cases cover classification. The maintainer accepted dropping the Context overwrite-location cases.
 - A2 - References puts authored link coordinates in `subject.location`. The code-fragment regression directly checks both new finding codes.
 - A3 - Context and References give each line or symbol finding a manual correction with its authored destination and physical source location. When these are the only findings, the next step is a manual sentence. References keeps these actions visible at every detail level.
 
@@ -25,7 +25,7 @@ CI. Current verification receipts are under `artifacts/issue22/pr25/`.
 
 The managed builds pass with zero warnings and errors. All 17 affected Integration cases and both affected EndToEnd cases pass with zero skips or failures. Both .NET formatting checks and the documentation site build pass. No timeout flakes occurred. One fixture setup error was corrected before the final passing run.
 
-We accepted 135 reviewed Imprint snapshots. These include 64 new Context captures, eight code-fragment References captures, six existing broken-link References captures, two help pages, 54 Status metric captures and one custom-root payload capture. The Status changes reflect the 274-byte Skill paragraph change, token rounding and startup-share ratios. The default-layout byte fixture changes only that paragraph. Both CLI Skill copies match.
+We accepted 89 reviewed Imprint snapshots. These include 18 Context captures (narrowed from 64 in the lean version), eight code-fragment References captures, six existing broken-link References captures, two help pages, 54 Status metric captures and one custom-root payload capture. The Status changes reflect the 274-byte Skill paragraph change, token rounding and startup-share ratios. The default-layout byte fixture changes only that paragraph. Both CLI Skill copies match.
 
 Index preview and apply completed without findings or effects. The new contract link and this checkpoint's outgoing references checked without findings. No broken links from the earlier audit were edited. Full suites and native builds were left to CI under the updated lane rules.
 
