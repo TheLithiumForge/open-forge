@@ -1,0 +1,783 @@
+diff --git a/.agents/memory/crystallized/documents/cli/contracts/shared/tool-records/behavior.md b/.agents/memory/crystallized/documents/cli/contracts/shared/tool-records/behavior.md
+--- a/.agents/memory/crystallized/documents/cli/contracts/shared/tool-records/behavior.md
++++ b/.agents/memory/crystallized/documents/cli/contracts/shared/tool-records/behavior.md
+@@ -38,21 +38,58 @@
+ For a set, managed file or block migration, change only a matching recorded value or hash.
+ A new set still requires absence.
+ Anything else is drift and stays unchanged.
+-When a profile drops an addition, use its removal rule.
++When a profile drops an addition, plan its guarded removal before the new profile's changes.
++Use the prior receipt order for removals and the new recipe order for additions.
++B returns removal observations with current and desired values, disposition and conflicts.
++Remove takes that read-only plan and revalidates each observation before effects.
+ Don't restore an earlier repository value.
+ 
+ ## Native settings
+ 
+-Read the stored native setting, keeping an inherited environment override separate.
+-For CodeGraph telemetry, read the tool's status with its telemetry override variables removed for that probe only.
++Read the native setting through its authored source, keeping inherited environment overrides separate.
++Prefer `StoredValue` when authored.
++Otherwise use declared `ReadArguments`, `ReadEnvironment` and `ValueParserId` only through `InstalledInvocation`.
++That read target comes from verified installed detection, not a future planned write invocation.
++A command read also requires authored positive `ReadTimeout` and `ReadMaximumOutputBytes`.
++An absent read environment means an empty overlay.
++If neither source is available, block preflight.
++An authored stored-reader failure blocks without falling back to a command.
++Keep the read declarations optional so native-command changes can use either supported source.
++For CodeGraph telemetry, read `${nativeHome}/.codegraph/telemetry.json` through the declared stored-value parser.
++An absent file or an object without `enabled` uses the documented on default.
++For a present Boolean setting, validate only JSON token kinds required by the native format.
++On requires a string `machine_id`. Off permits a string or null `machine_id`.
++Never extract, compare, log or return identity text.
++Unreadable files, invalid JSON, non-object roots, a wrong setting type or rejected member kinds block before effects.
++CodeGraph V1 uses this stored reader before installation and for later verification.
++This read needs no installed executable and doesn't invoke native status.
++Keep only presence and the on/off setting in the observation.
++Don't probe identity values or queues.
+ Normal tool invocations keep their environment.
+ Record the stored previous on/off value in machine state.
++Write through the resolved native `telemetry off` command and verify the stored setting again.
++Keep the original previous value on reapply.
+ Disclose that telemetry off deletes the upstream identity and unsent queues.
+ Project Remove keeps the account setting because other projects can rely on it.
+ Report the kept setting and print the native command to change it back.
+ Changing the setting can't restore deleted telemetry history.
+ Add no cross-project native-setting registry.
+ If previous state is unavailable, block before effects.
++
++### Command reads
++
++The shared `CodeGraphTelemetryStatusParserId` is `codegraph-telemetry-status-v1`.
++Its declared arguments are `["--no-color", "telemetry", "status"]`.
++Its read overlay removes `DO_NOT_TRACK` and `CODEGRAPH_TELEMETRY` and sets `CODEGRAPH_NO_DOWNLOAD=1`.
++These changes apply only to that child read.
++The parser accepts exactly one complete `Telemetry: enabled (<reason>)` or `Telemetry: disabled (<reason>)` line after line-ending and ANSI handling.
++Accept only `your saved choice` or `default` as the reason.
++Map enabled to on and disabled to off.
++The shared definitions name the parser ID, prefix, values, reasons and environment keys.
++Ignore other lines without extracting identity or queue data.
++An unknown parser, missing or duplicate setting line, unknown value or reason, failed process or truncated output blocks the read.
++Preserve the caller's normal environment for writes.
++CodeGraph V1 keeps this command-read metadata while its stored reader stays preferred.
+ 
+ ## Backups
+ 
+@@ -61,7 +98,9 @@
+ Git can't recover uncommitted bytes.
+ An occupied backup destination blocks replacement.
+ Keep one original backup across sequential edits to the same file.
+-After successful verification, discard only this operation's unchanged backup.
++Services return pending backup completions to D without discarding backups.
++After final effect verification and record publication, D discards only this operation's unchanged backups.
++Use each target's latest expected hash when completing one original backup shared across stages.
+ On failure, keep it and print guarded manual restoration instructions.
+ Tools don't add a Repair action or depend on the existing workspace lock or recovery mechanism.
+ 
+@@ -81,8 +120,15 @@
+ 
+ ## Publication
+ 
+-After each verified addition, save its actual receipt in the lock and any native setting facts in machine state.
+-A later failure keeps completed receipts and reports unfinished work.
++After each verified removal or addition, save the complete remaining receipt set and native-setting facts before the next effect.
++D passes the full current receipt set in each stage request, even when the stage contains one observation.
++A result starts from that input set and changes only verified receipts.
++Completed and removed IDs describe only this call.
++A failure keeps untouched and unverified receipts and reports unfinished work.
++Keep account-setting facts when dropping a project native-command receipt.
++C writes with its latest file expectations and D reads fresh expectations after publication.
++A record-write failure stops the operation and keeps pending backups.
++Report effects that verified but couldn't be published without inventing a receipt.
+ An interruption between an effect and its receipt doesn't authorize guessing or deleting that unrecorded value.
+ Report that gap for manual checking.
+ Don't add a Tool journal, lease or recovery folder.
+diff --git a/.agents/memory/crystallized/documents/cli/contracts/shared/tool-records/interface.md b/.agents/memory/crystallized/documents/cli/contracts/shared/tool-records/interface.md
+--- a/.agents/memory/crystallized/documents/cli/contracts/shared/tool-records/interface.md
++++ b/.agents/memory/crystallized/documents/cli/contracts/shared/tool-records/interface.md
+@@ -79,10 +79,13 @@
+ Native setup outputs stay under upstream control and aren't rewritten as Open Forge addition receipts.
+ 
+ Bare Install uses each exact lock version.
++The [RD1 channel rule](../../tool/behavior.md#channel-choice) keeps the lock channel as a recorded fact.
+ A declared tool without a lock entry gets the latest version supported by its declaration.
+ Named Install or Update without a version gets latest support.
+ The optional digest detects profile changes. It isn't an executable pin.
+-Its fixed UTF-8 JSON projection covers profile ID, range, minimum versions, setup and uninstall vectors, declared effects and config recipes with template hashes.
++Its fixed UTF-8 JSON projection covers profile ID, range, minimum versions, setup and uninstall vectors, environment overlays, process bounds, native inventory declarations, possible outputs, declared effects and config recipes with template hashes.
++Include the authored native home policy, command-read arguments, environment, parser ID and bounds, stored-value reader declarations, missing-value defaults and effective-ignore conditions.
++Hash authored token strings and resource bytes before expansion.
+ Use declared array order and ordinal object-key order for authored JSON values.
+ Exclude machine paths, observed values and timestamps.
+ 
+@@ -96,10 +99,25 @@
+ The physical path stays in machine state so readers can check the binding.
+ 
+ PATH records keep the exact chosen files and the prior and applied PATH entry or marked block.
+-Native-setting records keep the previous setting and allow-listed manual change arguments per workspace.
++Native-setting records keep the previous setting, resolved absolute `NativeHomePath` and allow-listed manual change arguments per workspace.
++Match facts by tool ID, change ID and resolved native home using the existing physical-path comparison.
++A changed home or a missing binding can't reuse an old previous value.
++Read the newly resolved home before any setting write.
++Keep each retained fact bound to its recorded home and identify that home in manual instructions.
++This remains workspace-keyed machine state and adds no cross-project registry.
+ Project Remove keeps account-wide settings and reports those commands instead of running them.
+ A missing or unreadable native previous value blocks that change.
+ This doesn't create an executable-version reference registry.
++
++## Result sets
++
++Config apply and removal results carry the complete remaining receipt set for that tool.
++Include untouched, unstarted, conflicting and intentionally kept receipts.
++Completed and removed change IDs are per-call deltas.
++Native-setting lists are complete for that tool and keep the original previous value through reapply.
++C replaces that tool's receipt set with the returned complete set and keeps other tools unchanged.
++An empty complete set removes all of that tool's project receipts.
++A successful no-op keeps its existing receipts.
+ 
+ ## Publication
+ 
+diff --git a/.agents/memory/crystallized/documents/cli/contracts/tool/behavior.md b/.agents/memory/crystallized/documents/cli/contracts/tool/behavior.md
+--- a/.agents/memory/crystallized/documents/cli/contracts/tool/behavior.md
++++ b/.agents/memory/crystallized/documents/cli/contracts/tool/behavior.md
+@@ -41,6 +41,9 @@
+ Check each manager's runtime, version and global-bin PATH readiness.
+ A catalogue entry can require one client.
+ Ask about multiple usable choices. The common Interface defines the `--yes` fallback.
++Review RD1: bare Install pins the lock's exact version and then uses this normal channel order.
++The recorded lock channel is an installation fact, not an implicit channel override.
++Only named `--channel` overrides channel choice.
+ Keep the manager responsible for an existing installation and never create a second install.
+ A failed transfer doesn't silently switch channels.
+ 
+@@ -76,7 +79,8 @@
+ Open Forge writes no replacement MCP entries or Codex TOML sections.
+ It adds no tool Skill or managed-block line.
+ 
+-Back up declared changed files before invoking native setup.
++Use the [native output plan](../../technical-designs/tool-setup.md#native-outputs) for possible destinations and available native inventory.
++Back up its concrete targets before invoking native setup.
+ Run a chosen native uninstall before removing Open Forge additions.
+ Codebase Memory's account-wide uninstall needs the live confirmation defined by the common Interface.
+ With `--yes` or without a terminal, skip that uninstall and remove only Open Forge's project additions.
+diff --git a/.agents/memory/crystallized/documents/cli/contracts/tool/interface.md b/.agents/memory/crystallized/documents/cli/contracts/tool/interface.md
+--- a/.agents/memory/crystallized/documents/cli/contracts/tool/interface.md
++++ b/.agents/memory/crystallized/documents/cli/contracts/tool/interface.md
+@@ -57,7 +57,8 @@
+ 
+ Use the existing schema-3 envelope, statuses, exits, detail levels and streams from [Result coordinates](../shared/result-coordinates/interface.md).
+ The command identity is `tool <leaf>`.
+-Every leaf has `data.tools`, an ordinal ID array, even for one tool.
++Every leaf has `data.tools`, an array ordered by tool ID, even for one tool.
++Each entry carries the leaf's tool facts, including Inspect facts.
+ Writers add `preview`, `plan` and `outcomes`.
+ Plans show exact versions where known, channels, managers and requirements, commands, scopes, native installer writes, Open Forge additions, telemetry, downloads, launchers, PATH choices, backups and unfinished work.
+ Say when dry-run needs network access to resolve latest.
+diff --git a/.agents/memory/crystallized/documents/cli/technical-designs/tool-setup-lanes.md b/.agents/memory/crystallized/documents/cli/technical-designs/tool-setup-lanes.md
+--- a/.agents/memory/crystallized/documents/cli/technical-designs/tool-setup-lanes.md
++++ b/.agents/memory/crystallized/documents/cli/technical-designs/tool-setup-lanes.md
+@@ -39,7 +39,10 @@
+ The mastermind checks and integrates that contract before dependent work.
+ Workers use agreed fakes at their typed interfaces until implementations merge.
+ Channel requests carry their workspace and install entry, so registry config and package identity stay with the plan.
+-Config requests carry the resolved invocation for native commands.
++Config requests carry the resolved recipe context and planned invocation for native writes.
++The [shared planning design](tool-setup.md#shared-planning) defines the shared inputs.
++A implements channels and hosts. B implements config, templates, setup planning and backups. C implements native inventory parsing, codecs and observations. D sequences writers and completes backups. F later wires Root.
++After this contract lands, D corrects its selector so bare Install pins only the lock version under RD1.
+ B implements the frozen backup interface and profile digest method for D.
+ C returns file SHA-256 expectations, with null for absence, for its own expected-state writes.
+ Each worker reads the complete C# catalogue, design and style Directives independently.
+@@ -64,7 +67,9 @@
+ A alone edits root shared Tool host capabilities.
+ C alone edits Settings and Ownership codecs. B returns typed addition records and never writes their JSON files.
+ D uses C's record service and B's config service.
+-D applies one planned config change at a time and publishes its verified receipt through C before starting the next change.
++D applies one planned removal or config change at a time and publishes the complete remaining receipt set through C before starting the next change.
++A, B and C return pending backup completions to D.
++D completes them only after final verification and publication, or keeps them after failure.
+ The integrator alone edits central command registration and shared models.
+ No lane implements a substitute for a frozen interface.
+ 
+diff --git a/.agents/memory/crystallized/documents/cli/technical-designs/tool-setup.md b/.agents/memory/crystallized/documents/cli/technical-designs/tool-setup.md
+--- a/.agents/memory/crystallized/documents/cli/technical-designs/tool-setup.md
++++ b/.agents/memory/crystallized/documents/cli/technical-designs/tool-setup.md
+@@ -28,6 +28,7 @@
+ The [Tool Interface](../contracts/tool/interface.md) defines `id@version`.
+ Named Install and Update with a bare ID select latest support.
+ Bare Install uses exact lock versions and uses latest support only for a declaration without a lock.
++The [RD1 channel rule](../contracts/tool/behavior.md#channel-choice) keeps normal channel choice after that version selection.
+ Initial profiles are CodeGraph `1.6.x` from `1.6.2` and Codebase Memory `0.12.x` from `0.12.1`.
+ Their compatibility ranges keep the major.minor meaning and their minimum reviewed patches limit selectable releases.
+ Keep older supported profiles and exact pins as the catalogue grows.
+@@ -176,6 +177,121 @@
+ Rendering and OutputText supply presentation.
+ The frozen interfaces are in `Framework/Tools/Models/Services/ToolServiceContracts.cs`.
+ No command or service behavior is implemented in this phase.
++
++### Shared planning
++
++A channel request includes the Open Forge home.
++A successful resolution includes its executable invocation, command path, runtime, native install directory, ordered process commands, download and extraction destinations and launchers.
++Install takes that resolution and executes the checked plan.
++A handles package-manager paths and supply ordering.
++D uses those facts for reporting and native setup.
++For reused CBM, the native install directory contains its verified existing command.
++Setup `--dir` points there without creating another installation.
++
++Planning checks files and backup feasibility without creating backups.
++A missing future executable isn't invoked.
++Whole-batch preflight checks every available requirement before effects.
++Later native discovery or execution can still fail.
++Report that effect failure and completed receipts without claiming that a first-install description predicts every native outcome.
++
++### Recipe values
++
++The [recipe definitions](../../../../../../src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Recipes/ToolRecipeContext.cs) define the shared context and token spellings.
++Context paths are resolved absolute host paths.
++`MainRoot` is a workspace-relative slash path without a trailing slash.
++E.g. `context` produces `context/memory/archived/**`.
++Client root keys match `[a-z][a-z0-9-]*` and name resolved roots provided by Root or native output.
++
++Expand tokens once in setup, preview and inventory arguments, environment values, effect and output paths, JSON string values, block content and strict UTF-8 managed-file content.
++Keep JSON member names, JSON Pointers, markers, resource IDs and environment keys literal.
++`${client:<id>}` selects one declared client root.
++`${previous}` is valid only in a manual native-setting command and expands to the recorded setting.
++`ToolRecipeDefinitions.DollarEscapeToken` defines `$$` as one literal dollar.
++A single dollar outside a token stays literal.
++E.g. with `MainRoot` set to `context`, `$$${mainRoot}` produces `$context`, while `$cash` stays `$cash`.
++Unknown tokens, missing roots, malformed tokens and invalid paths block planning.
++Inserted values aren't expanded again.
++Expansion adds no config-edit kind.
++A null environment value removes that key.
++The process host starts from Root's injected base environment, then applies the overlay.
++Keep the first native previous-value observation when replanning file changes after native setup.
++A changed stored setting blocks revalidation instead of becoming an inferred previous value.
++
++A managed-file resource ID is its exact manifest logical name in the Framework assembly.
++B hashes its original bytes for the profile digest and expands its content for apply.
++V1's entries need no new managed-file resource or packaging rule.
++
++### Native outputs
++
++B implements read-only `IToolSetupService.PlanAsync`.
++A setup spec declares possible outputs and can declare one bounded native inventory command.
++With an installed invocation, use its inventory command, otherwise its declared dry run.
++Without an installed invocation, describe the command and possible destinations.
++Dry-run output is descriptive and isn't parsed for paths.
++
++C implements `IToolNativePlanReader` for CBM's `agent.install.plan.v1` format.
++Require exit zero, bounded complete stdout, the declared type, typed arrays, `writes_started=false` and `network_after_install=false`.
++Keep stderr separate and never execute `next_safe_command`.
++Collect config, instruction, Skill, agent and prompt file arrays and hook paths.
++Add declared profile, legacy-cleanup and malformed-JSON backup destinations omitted by native inventory.
++A supplement's optional client ID matches the complete native detected-client set.
++Without native inventory, show it as conditional potential output and keep the detected-client set unavailable.
++Install and uninstall have separate declarations. An install plan isn't an uninstall inventory.
++Keep native discovery and the full client set.
++Declarations cover possible writes without selecting clients or reproducing discovery.
++
++An exact backup output names a possible file, including an absent file.
++An existing-pattern output matches existing wildcard components using `*` and `?` within slash-separated segments.
++Keep an exact final filename even when it is absent inside a matched existing directory.
++E.g. `profiles/*/mcp.json` includes a missing `mcp.json` in an existing profile.
++It covers profile folders and legacy names without recursive `**`.
++Check resolved native paths and client roots through physical containment.
++Deduplicate concrete backup targets with host path comparison.
++Keep SHA-256 expectations, using null for absence.
++Check occupied sibling backups during planning.
++Revalidate and take backups immediately before native writes.
++Report-only outputs also describe native empty-directory cleanup without backing up arbitrary trees.
++They describe telemetry and native cache effects without reading identity or queues.
++If inventory names a destination outside the reviewed possible set, stop before native setup and report it.
++
++A marked block can declare an effective-ignore condition.
++B checks Git's effective data coverage during preflight, after native output and immediately before apply.
++Existing root rules or an internal ignore can satisfy it.
++Add the block only when coverage is absent.
++When its recorded block already supplies coverage, keep that receipt and return no change.
++Don't create an index to obtain coverage.
++
++### Runtime targets
++
++Host wrapper Node requirements stay in the channel runtime requirement.
++Target requirements also cover bundled runtimes.
++CodeGraph's bundled Node needs Linux kernel 4.18, glibc 2.28 and libstdc++ 6.0.25.
++CBM's unspecified numeric floors stay unspecified.
++Assets declare bundled runtime version, executable, application entry and runtime arguments relative to the extraction root.
++A resolves these declarations without filename heuristics.
++Keep upstream release launchers for normal direct execution.
++
++### Root hosts
++
++Root can receive complete Tool homes, client roots, base process environment and process, download and PATH hosts through composition inputs.
++Use supplied inputs throughout detection, planning and effects.
++Each profile declares its native home policy.
++For CodeGraph's `Node` policy, Windows uses `USERPROFILE` and other systems use `HOME`.
++When that variable is absent, resolve the OS-user home with the same native rule.
++CBM's `HomeThenUserProfile` policy uses the first nonempty `HOME`, then `USERPROFILE`.
++If the native home can't be resolved, block preflight.
++Resolve these policies from the injected base environment without changing normal child environment.
++An injected `NativeHomePath` overrides policy resolution for owned journeys.
++The journey provides child environment that makes the native tool use that same home.
++Root doesn't rewrite normal child environment to force a resolved home.
++Resolve production known folders once in Root.
++Changing a child environment doesn't relocate .NET Windows known folders.
++`TestDataHome` covers legacy stores and isn't a Tool home resolver.
++
++Test live CBM account-uninstall consent and native-first ordering with an injected process host.
++The real Windows journey uses `--yes` project-only removal.
++Upstream confirmed uninstall writes persistent user PATH, so it stays outside that real journey.
++These inputs add no command flag or production test mode.
+ 
+ ## Decisions
+ 
+diff --git a/.agents/memory/crystallized/documents/maintenance/tools.md b/.agents/memory/crystallized/documents/maintenance/tools.md
+--- a/.agents/memory/crystallized/documents/maintenance/tools.md
++++ b/.agents/memory/crystallized/documents/maintenance/tools.md
+@@ -29,7 +29,7 @@
+ 5. Pin each direct asset's SHA-256 or verified attestation. CodeGraph uses published SHA256SUMS. Reject digest mismatches.
+ 6. For private Node, verify signed SHASUMS256, skip archive link entries before the link-rejecting extractor and use Node's own npm CLI script.
+ 7. Detect and test npm-family clients, project-lockfile preference, Yarn Modern exclusion and manager-global-bin readiness.
+-8. Record native setup and uninstall commands, dry-run support and project or account effects. Keep native MCP names, hooks, permissions, blocks and Skills.
++8. Record native setup and uninstall commands, dry-run support and project or account effects. Review possible output declarations against native inventory, profile and legacy paths. Keep native MCP names, hooks, permissions, blocks and Skills.
+ 9. Check JSON union and absent-only set, marked blocks, absent-only files and native account settings against their additive removal rules.
+ 10. Verify exact lock versions, channels and added items, keys, markers and hashes. Keep native previous values in machine state.
+ 11. Test absolute launchers, private runtime compatibility, PATH choices and unattended instructions. Never edit real user PATH or shell profiles in journeys.
+@@ -96,7 +96,7 @@
+ Don't add an Open Forge Skill or line.
+ 
+ Telemetry off is account-wide and deletes the upstream identity and unsent queues.
+-Read the stored setting through the native status command with telemetry overrides removed for that probe.
++Use the [stored-setting read](../cli/contracts/shared/tool-records/behavior.md#native-settings) before installation and for later verification.
+ Keep the caller's normal environment and report any override separately.
+ Machine state records only the previous setting, not telemetry identity or queues.
+ 
+diff --git a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Catalogue/ToolSetupSpec.cs b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Catalogue/ToolSetupSpec.cs
+--- a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Catalogue/ToolSetupSpec.cs
++++ b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Catalogue/ToolSetupSpec.cs
+@@ -1,3 +1,5 @@
++using OpenForge.Cli.Core.Framework.Tools.Models.Channels;
++
+ namespace OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
+ 
+ internal enum ToolEffectScope { Workspace, Account }
+@@ -20,4 +22,29 @@
+     public required IReadOnlyDictionary<string, string?> Environment { get; init; }
+     public required IReadOnlyList<ToolDeclaredEffect> Effects { get; init; }
+     public required TimeSpan Timeout { get; init; }
++    public required int MaximumOutputBytes { get; init; }
++    public ToolNativePlanSpec? NativePlan { get; init; }
++    public required IReadOnlyList<ToolNativeOutputSpec> PossibleOutputs { get; init; }
+ }
++
++internal enum ToolNativePlanParser { CbmInstallPlanV1 }
++internal enum ToolNativeOutputMatch { Exact, ExistingPattern }
++internal enum ToolNativeOutputPurpose { Backup, ReportOnly }
++
++internal sealed record ToolNativePlanSpec
++{
++    public required IReadOnlyList<string> Arguments { get; init; }
++    public required ToolNativePlanParser Parser { get; init; }
++    public required TimeSpan Timeout { get; init; }
++    public required int MaximumOutputBytes { get; init; }
++}
++
++internal sealed record ToolNativeOutputSpec
++{
++    public required string PathTemplate { get; init; }
++    public required ToolEffectScope Scope { get; init; }
++    public required ToolNativeOutputMatch Match { get; init; }
++    public required ToolNativeOutputPurpose Purpose { get; init; }
++    public ToolOperatingSystem? OperatingSystem { get; init; }
++    public string? ClientId { get; init; }
++}
+diff --git a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Catalogue/ToolVersionProfile.cs b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Catalogue/ToolVersionProfile.cs
+--- a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Catalogue/ToolVersionProfile.cs
++++ b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Catalogue/ToolVersionProfile.cs
+@@ -1,6 +1,8 @@
+ using OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
+ 
+ namespace OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
++
++internal enum ToolNativeHomePolicy { Node, HomeThenUserProfile }
+ 
+ internal sealed record ToolVersionProfile
+ {
+@@ -9,6 +11,7 @@
+     public required IReadOnlyList<string> TestedVersions { get; init; }
+     public required string MinimumOpenForgeVersion { get; init; }
+     public required string MinimumToolVersion { get; init; }
++    public required ToolNativeHomePolicy NativeHomePolicy { get; init; }
+     public required ToolSetupSpec Setup { get; init; }
+     public required ToolSetupSpec Uninstall { get; init; }
+     public required IReadOnlyList<ToolConfigChange> Changes { get; init; }
+diff --git a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Channels/ToolChannelRequirements.cs b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Channels/ToolChannelRequirements.cs
+--- a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Channels/ToolChannelRequirements.cs
++++ b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Channels/ToolChannelRequirements.cs
+@@ -11,6 +11,8 @@
+     public ToolLinuxLibc? LinuxLibc { get; init; }
+     public string? MinimumOperatingSystemVersion { get; init; }
+     public string? MinimumLibcVersion { get; init; }
++    public string? MinimumLinuxKernelVersion { get; init; }
++    public string? MinimumLibStdCppVersion { get; init; }
+ }
+ 
+ internal sealed record ToolRuntimeRequirement(string Runtime, string VersionRange);
+diff --git a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Channels/ToolReleaseAsset.cs b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Channels/ToolReleaseAsset.cs
+--- a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Channels/ToolReleaseAsset.cs
++++ b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Channels/ToolReleaseAsset.cs
+@@ -19,5 +19,15 @@
+     public required ToolArchiveKind Archive { get; init; }
+     public required int StripComponents { get; init; }
+     public required string EntryRelativePath { get; init; }
++    public ToolBundledRuntimeSpec? BundledRuntime { get; init; }
+     public required long MaximumBytes { get; init; }
+ }
++
++internal sealed record ToolBundledRuntimeSpec
++{
++    public required string Runtime { get; init; }
++    public required string Version { get; init; }
++    public required string RuntimeRelativePath { get; init; }
++    public required string EntryRelativePath { get; init; }
++    public required IReadOnlyList<string> Arguments { get; init; }
++}
+diff --git a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Configuration/ToolMarkedBlockChange.cs b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Configuration/ToolMarkedBlockChange.cs
+--- a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Configuration/ToolMarkedBlockChange.cs
++++ b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Configuration/ToolMarkedBlockChange.cs
+@@ -6,4 +6,7 @@
+     public required string StartMarker { get; init; }
+     public required string EndMarker { get; init; }
+     public required string ContentTemplate { get; init; }
++    public ToolEffectiveIgnoreCondition? WhenNotIgnored { get; init; }
+ }
++
++internal sealed record ToolEffectiveIgnoreCondition(string WorkspaceRelativePath);
+diff --git a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Configuration/ToolNativeConfigChange.cs b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Configuration/ToolNativeConfigChange.cs
+--- a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Configuration/ToolNativeConfigChange.cs
++++ b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Configuration/ToolNativeConfigChange.cs
+@@ -1,12 +1,41 @@
+ namespace OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
++
++internal enum ToolNativeStoredValueParser { CodeGraphTelemetryV1 }
++
++internal sealed record ToolNativeStoredValueSpec
++{
++    public required string PathTemplate { get; init; }
++    public required ToolNativeStoredValueParser Parser { get; init; }
++    public required string MissingValue { get; init; }
++    public required int MaximumBytes { get; init; }
++}
++
++internal static class ToolNativeConfigDefinitions
++{
++    internal const string CodeGraphTelemetryAllowListId = "codegraph-telemetry";
++    internal const string CodeGraphTelemetryStatusParserId = "codegraph-telemetry-status-v1";
++    internal const string TelemetryStatusPrefix = "Telemetry: ";
++    internal const string EnabledStatus = "enabled";
++    internal const string DisabledStatus = "disabled";
++    internal const string SavedChoiceReason = "your saved choice";
++    internal const string DefaultReason = "default";
++    internal const string DoNotTrackVariable = "DO_NOT_TRACK";
++    internal const string CodeGraphTelemetryVariable = "CODEGRAPH_TELEMETRY";
++    internal const string CodeGraphNoDownloadVariable = "CODEGRAPH_NO_DOWNLOAD";
++    internal const string EnabledValue = "on";
++    internal const string DisabledValue = "off";
++}
+ 
+ internal sealed record ToolNativeConfigChange : ToolConfigChange
+ {
+     public required string AllowListId { get; init; }
+     public required IReadOnlyList<string> ApplyArguments { get; init; }
+-    public required IReadOnlyList<string> ReadArguments { get; init; }
+-    public required IReadOnlyDictionary<string, string?> ReadEnvironment { get; init; }
+-    public required string ValueParserId { get; init; }
++    public IReadOnlyList<string>? ReadArguments { get; init; }
++    public IReadOnlyDictionary<string, string?>? ReadEnvironment { get; init; }
++    public string? ValueParserId { get; init; }
++    public TimeSpan? ReadTimeout { get; init; }
++    public int? ReadMaximumOutputBytes { get; init; }
++    public ToolNativeStoredValueSpec? StoredValue { get; init; }
+     public required string DesiredValue { get; init; }
+     public required IReadOnlyList<string> ManualRestoreArgumentsTemplate { get; init; }
+ }
+diff --git a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Recipes/ToolRecipeContext.cs b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Recipes/ToolRecipeContext.cs
+new file mode 100644
+--- /dev/null
++++ b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Recipes/ToolRecipeContext.cs
+@@ -0,0 +1,25 @@
++namespace OpenForge.Cli.Core.Framework.Tools.Models.Recipes;
++
++internal sealed record ToolRecipeContext
++{
++    public required string WorkspacePath { get; init; }
++    public required string HomePath { get; init; }
++    public required string BinPath { get; init; }
++    public required string NativeHomePath { get; init; }
++    public required string NativeInstallDirectory { get; init; }
++    public required string MainRoot { get; init; }
++    public required IReadOnlyDictionary<string, string> ClientRoots { get; init; }
++}
++
++internal static class ToolRecipeDefinitions
++{
++    internal const string DollarEscapeToken = "$$";
++    internal const string WorkspaceToken = "${workspace}";
++    internal const string HomeToken = "${openForgeHome}";
++    internal const string BinToken = "${bin}";
++    internal const string NativeHomeToken = "${nativeHome}";
++    internal const string NativeInstallDirectoryToken = "${nativeInstallDirectory}";
++    internal const string MainRootToken = "${mainRoot}";
++    internal const string ClientTokenPrefix = "${client:";
++    internal const string PreviousValueToken = "${previous}";
++}
+diff --git a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Records/ToolNativeSettingRecord.cs b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Records/ToolNativeSettingRecord.cs
+--- a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Records/ToolNativeSettingRecord.cs
++++ b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Records/ToolNativeSettingRecord.cs
+@@ -4,6 +4,7 @@
+ {
+     public required string ToolId { get; init; }
+     public required string ChangeId { get; init; }
++    public required string NativeHomePath { get; init; }
+     public required ToolRecordedValue Previous { get; init; }
+     public required ToolRecordedValue Applied { get; init; }
+     public required IReadOnlyList<string> ManualRestoreArguments { get; init; }
+diff --git a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolChannelModels.cs b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolChannelModels.cs
+--- a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolChannelModels.cs
++++ b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolChannelModels.cs
+@@ -20,6 +20,7 @@
+ {
+     public required ToolCatalogueEntry Entry { get; init; }
+     public required string WorkspacePath { get; init; }
++    public required string HomePath { get; init; }
+     public required ToolVersionSelection Selection { get; init; }
+     public required ToolDetectionResult Existing { get; init; }
+     public required ToolTarget Target { get; init; }
+@@ -38,11 +39,31 @@
+     public required string ChannelId { get; init; }
+     public required string Version { get; init; }
+     public required bool ReuseExisting { get; init; }
++    public required ToolChannelExecutionPlan Execution { get; init; }
+     public ToolPackageManagerFacts? PackageManager { get; init; }
+     public ToolPrivateNodeSpec? PrivateNode { get; init; }
+     public ToolReleaseAsset? Asset { get; init; }
+     public required IReadOnlyList<ToolDeclaredEffect> Effects { get; init; }
+ }
+ 
+-internal sealed record ToolChannelInstallRequest(ToolCatalogueEntry Entry, ToolChannelResolution Resolution, string HomePath, string WorkspacePath);
+-internal sealed record ToolChannelInstallResult(ToolMachineState? State, IReadOnlyList<string> CompletedEffects, string? Failure);
++internal sealed record ToolChannelExecutionPlan
++{
++    public required string HomePath { get; init; }
++    public required string WorkspacePath { get; init; }
++    public required string BinPath { get; init; }
++    public required string NativeInstallDirectory { get; init; }
++    public required string CommandPath { get; init; }
++    public required ToolCommandTarget Invocation { get; init; }
++    public string? ToolPath { get; init; }
++    public string? RuntimePath { get; init; }
++    public required IReadOnlyList<ToolDownloadRequest> Downloads { get; init; }
++    public required IReadOnlyList<ToolExtractionRequest> Extractions { get; init; }
++    public required IReadOnlyList<ToolProcessRequest> Commands { get; init; }
++    public required IReadOnlyList<ToolLauncherSpec> Launchers { get; init; }
++}
++
++internal sealed record ToolChannelInstallRequest(ToolChannelResolution Plan);
++internal sealed record ToolChannelInstallResult(ToolMachineState? State, IReadOnlyList<string> CompletedEffects, string? Failure)
++{
++    public required IReadOnlyList<ToolBackupCompletionRequest> PendingBackups { get; init; }
++}
+diff --git a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolConfigModels.cs b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolConfigModels.cs
+--- a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolConfigModels.cs
++++ b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolConfigModels.cs
+@@ -1,6 +1,7 @@
+ using OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
+ using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
+ using OpenForge.Cli.Core.Framework.Tools.Models.Records;
++using OpenForge.Cli.Core.Framework.Tools.Models.Recipes;
+ 
+ namespace OpenForge.Cli.Core.Framework.Tools.Models.Services;
+ 
+@@ -9,10 +10,10 @@
+ internal sealed record ToolConfigRequest
+ {
+     public required string ToolId { get; init; }
+-    public required string WorkspacePath { get; init; }
+-    public required string MainRoot { get; init; }
++    public required ToolRecipeContext Context { get; init; }
+     public required string ProfileDigest { get; init; }
+     public ToolCommandTarget? Invocation { get; init; }
++    public ToolCommandTarget? InstalledInvocation { get; init; }
+     public required IReadOnlyList<ToolConfigChange> Changes { get; init; }
+     public required IReadOnlyList<ToolAppliedChange> AppliedChanges { get; init; }
+     public required IReadOnlyList<ToolNativeSettingRecord> NativeSettings { get; init; }
+@@ -27,11 +28,26 @@
+     public string? Conflict { get; init; }
+ }
+ 
+-internal sealed record ToolConfigPlan(ToolConfigRequest Request, IReadOnlyList<ToolConfigObservation> Changes);
++internal sealed record ToolConfigRemovalObservation
++{
++    public required ToolAppliedChange Addition { get; init; }
++    public required ToolRecordedValue Current { get; init; }
++    public required ToolRecordedValue Desired { get; init; }
++    public required ToolChangeDisposition Disposition { get; init; }
++    public string? Conflict { get; init; }
++}
++
++internal sealed record ToolConfigPlan(
++    ToolConfigRequest Request,
++    IReadOnlyList<ToolConfigObservation> Changes,
++    IReadOnlyList<ToolConfigRemovalObservation> Removals);
+ 
+ internal sealed record ToolConfigApplyResult
+ {
+-    public required IReadOnlyList<ToolAppliedChange> Additions { get; init; }
++    public required IReadOnlyList<ToolAppliedChange> RemainingAdditions { get; init; }
++    public required IReadOnlyList<string> CompletedChanges { get; init; }
++    public required IReadOnlyList<string> RemovedChanges { get; init; }
++    public required IReadOnlyList<ToolBackupCompletionRequest> PendingBackups { get; init; }
+     public required IReadOnlyList<ToolNativeSettingRecord> NativeSettings { get; init; }
+     public required IReadOnlyList<string> Unfinished { get; init; }
+     public string? Failure { get; init; }
+@@ -40,15 +56,21 @@
+ internal sealed record ToolConfigRemoveRequest
+ {
+     public required string ToolId { get; init; }
+-    public required string WorkspacePath { get; init; }
++    public required ToolRecipeContext Context { get; init; }
+     public required ToolLockRecord Lock { get; init; }
+     public required IReadOnlyList<ToolNativeSettingRecord> NativeSettings { get; init; }
+ }
+ 
++internal sealed record ToolConfigRemovePlan(
++    ToolConfigRemoveRequest Request,
++    IReadOnlyList<ToolConfigRemovalObservation> Changes);
++
+ internal sealed record ToolConfigRemoveResult
+ {
+     public required IReadOnlyList<string> RemovedChanges { get; init; }
+-    public required IReadOnlyList<ToolAppliedChange> KeptAdditions { get; init; }
++    public required IReadOnlyList<ToolAppliedChange> RemainingAdditions { get; init; }
++    public required IReadOnlyList<ToolBackupCompletionRequest> PendingBackups { get; init; }
++    public required IReadOnlyList<string> Unfinished { get; init; }
+     public required IReadOnlyList<ToolNativeSettingRecord> KeptNativeSettings { get; init; }
+     public string? Failure { get; init; }
+ }
+diff --git a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolRecordModels.cs b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolRecordModels.cs
+--- a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolRecordModels.cs
++++ b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolRecordModels.cs
+@@ -33,4 +33,7 @@
+     public ToolPathState? Path { get; init; }
+ }
+ 
+-internal sealed record ToolRecordWriteResult(IReadOnlyList<string> WrittenPaths, IReadOnlyList<string> Unfinished, string? Failure);
++internal sealed record ToolRecordWriteResult(IReadOnlyList<string> WrittenPaths, IReadOnlyList<string> Unfinished, string? Failure)
++{
++    public required IReadOnlyList<ToolBackupCompletionRequest> PendingBackups { get; init; }
++}
+diff --git a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolServiceContracts.cs b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolServiceContracts.cs
+--- a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolServiceContracts.cs
++++ b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolServiceContracts.cs
+@@ -33,7 +33,18 @@
+     string ComputeProfileDigest(ToolVersionProfile profile);
+     Task<ToolConfigPlan> PlanAsync(ToolConfigRequest request, CancellationToken cancellationToken);
+     Task<ToolConfigApplyResult> ApplyAsync(ToolConfigPlan plan, CancellationToken cancellationToken);
+-    Task<ToolConfigRemoveResult> RemoveAsync(ToolConfigRemoveRequest request, CancellationToken cancellationToken);
++    Task<ToolConfigRemovePlan> PlanRemoveAsync(ToolConfigRemoveRequest request, CancellationToken cancellationToken);
++    Task<ToolConfigRemoveResult> RemoveAsync(ToolConfigRemovePlan plan, CancellationToken cancellationToken);
++}
++
++internal interface IToolSetupService
++{
++    Task<ToolSetupPlan> PlanAsync(ToolSetupRequest request, CancellationToken cancellationToken);
++}
++
++internal interface IToolNativePlanReader
++{
++    ToolNativePlanObservation Read(ToolNativePlanParser parser, ToolProcessResult result);
+ }
+ 
+ internal interface IToolBackupService
+diff --git a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolSetupModels.cs b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolSetupModels.cs
+--- a/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolSetupModels.cs
++++ b/src/cli/framework/OpenForge.Cli.Framework/Framework/Tools/Models/Services/ToolSetupModels.cs
+@@ -1,5 +1,6 @@
+ using OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
+ using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
++using OpenForge.Cli.Core.Framework.Tools.Models.Recipes;
+ 
+ namespace OpenForge.Cli.Core.Framework.Tools.Models.Services;
+ 
+@@ -7,8 +8,28 @@
+ {
+     public required ToolSetupSpec Setup { get; init; }
+     public required ToolCommandTarget Invocation { get; init; }
+-    public required string WorkspacePath { get; init; }
+-    public required bool DescribeOnly { get; init; }
++    public ToolCommandTarget? InstalledInvocation { get; init; }
++    public required ToolRecipeContext Context { get; init; }
++}
++
++internal enum ToolNativePreviewKind { Description, Plan, DryRun }
++
++internal sealed record ToolResolvedNativeOutput(
++    string PathPattern,
++    ToolEffectScope Scope,
++    ToolNativeOutputMatch Match,
++    ToolNativeOutputPurpose Purpose,
++    string? ClientId);
++
++internal sealed record ToolSetupPlan
++{
++    public required ToolSetupRequest Request { get; init; }
++    public required ToolProcessRequest Command { get; init; }
++    public required ToolNativePreviewKind PreviewKind { get; init; }
++    public IReadOnlyList<string>? DetectedClients { get; init; }
++    public required IReadOnlyList<ToolResolvedNativeOutput> PossibleOutputs { get; init; }
++    public required IReadOnlyDictionary<string, string?> ExpectedFileSha256 { get; init; }
++    public required IReadOnlyList<string> Problems { get; init; }
+ }
+ 
+ internal sealed record ToolSetupResult
+@@ -17,3 +38,10 @@
+     public required bool Verified { get; init; }
+     public required IReadOnlyList<string> Unfinished { get; init; }
+ }
++
++internal sealed record ToolNativePlanObservation
++{
++    public required IReadOnlyList<string> DetectedClients { get; init; }
++    public required IReadOnlyList<string> Paths { get; init; }
++    public required IReadOnlyList<string> Problems { get; init; }
++}
+diff --git a/src/cli/root/OpenForge.Cli/Composition/Models/CliCompositionInputs.cs b/src/cli/root/OpenForge.Cli/Composition/Models/CliCompositionInputs.cs
+--- a/src/cli/root/OpenForge.Cli/Composition/Models/CliCompositionInputs.cs
++++ b/src/cli/root/OpenForge.Cli/Composition/Models/CliCompositionInputs.cs
+@@ -15,5 +15,6 @@
+ 
+     public WorkspaceLockStoreRoot? LockStoreRoot { get; init; }
+     public CliTerminal? Terminal { get; init; }
++    public CliToolHostInputs? Tools { get; init; }
+     public bool StandardErrorColor { get; init; }
+ }
+diff --git a/src/cli/root/OpenForge.Cli/Composition/Models/CliToolHostInputs.cs b/src/cli/root/OpenForge.Cli/Composition/Models/CliToolHostInputs.cs
+new file mode 100644
+--- /dev/null
++++ b/src/cli/root/OpenForge.Cli/Composition/Models/CliToolHostInputs.cs
+@@ -0,0 +1,14 @@
++using OpenForge.Cli.Core.Framework.Tools.Models.Services;
++
++namespace OpenForge.Cli.Composition.Models;
++
++internal sealed record CliToolHostInputs
++{
++    public required string HomePath { get; init; }
++    public string? NativeHomePath { get; init; }
++    public required IReadOnlyDictionary<string, string> ClientRoots { get; init; }
++    public required IReadOnlyDictionary<string, string> ProcessEnvironment { get; init; }
++    public required IToolProcessHost Processes { get; init; }
++    public required IToolDownloadHost Downloads { get; init; }
++    public required IToolPathHost Path { get; init; }
++}

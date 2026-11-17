@@ -240,7 +240,7 @@ The presets install these folders:
 
 - Minimal - the loader, the guide for people, the marked host sections, Directives and Crystallized Memory.
 - Essentials - Minimal plus Patterns, Skills, and Working and Emerging Memory.
-- Full Core - every built-in folder. It gives you 20 Markdown files, including the guide for people and four supporting CLI guides that open when needed.
+- Full Core - every built-in folder. It gives you 21 Markdown files, including the guide for people and five supporting CLI guides that open when needed.
 - Custom - the folders you pick.
 
 No preset installs optional Extensions. Every folder is optional. Memory states need Memory, but they don't need each other. Extensions declare their own dependencies.
@@ -273,6 +273,7 @@ CLAUDE.md                         <- the same entry for tools that read CLAUDE.m
     routes.md                     <- route maintenance
     packages.md                   <- Framework and packages
     common.md                     <- shared options and results
+    tools.md                      <- developer tool setup
   templates/_templates.md         <- copy-ready starting files
   maps/_maps.md                   <- pointers to important local and external sources
   memory/
@@ -386,14 +387,14 @@ Essentials also keeps new Working records out of normal Git commits and leaves `
 
 The Framework has two parts. Core defines routing, loading and a few reusable content roles. Memory keeps useful context as the work evolves. Each Core category answers one question:
 
-| Category                                                       | Question it answers                                                         |
-| -------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| [Directives](src/open-forge/.agents/directives/_directives.md) | What behavior is required in this scope?                                    |
-| [Guidance](src/open-forge/.agents/guidance/_guidance.md)       | What approach is recommended, and when does it fit?                         |
-| [Patterns](src/open-forge/.agents/patterns/_patterns.md)       | What reusable shape makes related work easy to create and inspect?          |
-| [Skills](src/open-forge/.agents/skills/_skills.md)             | Which specialized capability would help with this work?                     |
+| Category                                                       | Question it answers                                                        |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| [Directives](src/open-forge/.agents/directives/_directives.md) | What behavior is required in this scope?                                   |
+| [Guidance](src/open-forge/.agents/guidance/_guidance.md)       | What approach is recommended, and when does it fit?                        |
+| [Patterns](src/open-forge/.agents/patterns/_patterns.md)       | What reusable shape makes related work easy to create and inspect?         |
+| [Skills](src/open-forge/.agents/skills/_skills.md)             | Which specialized capability would help with this work?                    |
 | [Templates](src/open-forge/.agents/templates/_templates.md)    | What starting content can be copied, adapted and maintained independently? |
-| [Maps](src/open-forge/.agents/maps/_maps.md)                   | Where is a useful local or external source, and when should it be used?     |
+| [Maps](src/open-forge/.agents/maps/_maps.md)                   | Where is a useful local or external source, and when should it be used?    |
 
 A Pattern shows what related work should look like: a concrete example, tree, table, diagram or annotated outline you can hold against real code or files. Its notes say when it applies, which parts are required, optional or repeatable, and which names, values and orders are fixed or illustrative. The [Patterns entrypoint](src/open-forge/.agents/patterns/_patterns.md) has the full rules, including how a review reports justified adaptations.
 
@@ -445,14 +446,14 @@ The fields do different jobs:
 
 These tags have defined behavior:
 
-| Tag                           | Meaning                                                                                                                      |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `LoadNow`                     | Read the linked file when its loaded parent lists it                                                                         |
-| `KeepInMind`                  | Read it when its parent loads, then again at task start or resume, after context restoration and before handoff or closeout  |
-| `Contextual`                  | Treat the content as useful context, not accepted truth, unless an applicable source accepts it                              |
-| `CurrentTruth`                | Identify accepted current state within its stated scope                                                                      |
-| `Evergreen`                   | Keep the content aligned with the current state it represents                                                                |
-| `Core`, `Memory`, `Extension` | Identify the part of the Framework or package the content relates to                                                         |
+| Tag                           | Meaning                                                                                                                     |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `LoadNow`                     | Read the linked file when its loaded parent lists it                                                                        |
+| `KeepInMind`                  | Read it when its parent loads, then again at task start or resume, after context restoration and before handoff or closeout |
+| `Contextual`                  | Treat the content as useful context, not accepted truth, unless an applicable source accepts it                             |
+| `CurrentTruth`                | Identify accepted current state within its stated scope                                                                     |
+| `Evergreen`                   | Keep the content aligned with the current state it represents                                                               |
+| `Core`, `Memory`, `Extension` | Identify the part of the Framework or package the content relates to                                                        |
 
 Tags don't make content a source of truth. Loading tags act only through a parent that is already loaded, so they can't pull in a scope nobody selected. Any other tag is yours to describe your own subjects, and it adds no loading behavior.
 
@@ -473,6 +474,7 @@ The CLI speeds up the repetitive parts, such as finding context, keeping navigat
 | Check that everything still fits             | `open-forge status`, `open-forge doctor`           | Broken links and stale navigation show up before they mislead an agent            |
 | Pick up a new Framework version              | `open-forge update --dry-run`                      | Every file it would replace is listed, so local edits are never replaced silently |
 | Remove a default for good                    | `open-forge remove <path> --dry-run`               | Later updates respect the removal                                                 |
+| Set up developer tools for the project       | `open-forge tool install codegraph --dry-run`      | Teammates restore the same versions, and Open Forge adds only its declared config |
 
 Commands that change files offer `--dry-run`, so you see the plan before anything is written. These flags come up most often:
 
@@ -500,18 +502,18 @@ Follow the links, edit the files, and keep each `Entries` list in step with the 
 
 Extensions are optional packages of content you can install and then adapt. The [first-party catalogue](src/extensions/README.md) has the full details and dependencies:
 
-| Package                   | What it's for                                                                                           |
-| ------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Core Templates            | Starting files for your own Directives, Guidance, Patterns, Skills, Templates, Maps and Memory records  |
-| Collaboration             | Exploring ideas, comparing alternatives and clarifying decisions through discussion                     |
-| Project Documents         | Vision, architecture, principles and other current project documentation                                |
-| Planning                  | Ideas, analysis, decisions, tasks, plans, backlogs and checkpoints                                      |
-| Flows and Scenarios       | User journeys, expected outcomes and records of what happened when they were tried                      |
-| Observations and Handoffs | Saving observations and leaving a clear snapshot for whoever resumes the work                           |
-| Development               | Implementing, debugging and reviewing with the project's existing tools                                 |
-| Task Coordination         | Coordinating related tasks, their dependencies and the combined result                                  |
-| Workflow Support          | Finding and following installed workflows through the `use-workflow` Skill                              |
-| Development Toolkit       | Installing Project Documents, Planning, Flows and Scenarios, and Development together                   |
+| Package                   | What it's for                                                                                          |
+| ------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Core Templates            | Starting files for your own Directives, Guidance, Patterns, Skills, Templates, Maps and Memory records |
+| Collaboration             | Exploring ideas, comparing alternatives and clarifying decisions through discussion                    |
+| Project Documents         | Vision, architecture, principles and other current project documentation                               |
+| Planning                  | Ideas, analysis, decisions, tasks, plans, backlogs and checkpoints                                     |
+| Flows and Scenarios       | User journeys, expected outcomes and records of what happened when they were tried                     |
+| Observations and Handoffs | Saving observations and leaving a clear snapshot for whoever resumes the work                          |
+| Development               | Implementing, debugging and reviewing with the project's existing tools                                |
+| Task Coordination         | Coordinating related tasks, their dependencies and the combined result                                 |
+| Workflow Support          | Finding and following installed workflows through the `use-workflow` Skill                             |
+| Development Toolkit       | Installing Project Documents, Planning, Flows and Scenarios, and Development together                  |
 
 Each package helps an agent do something it wouldn't reliably do on its own: a method that changes the outcome, a record that keeps what would otherwise be lost, or a starter that makes the right shape obvious. The packages are split the way people choose them, so you install what helps and nothing else.
 
@@ -569,7 +571,7 @@ This repository uses Open Forge to build Open Forge, so its own documents double
 
 ## Roadmap
 
-Markdown and the CLI are where Open Forge starts. Directions for later include vector search and plugins such as code search.
+Markdown and the CLI are where Open Forge starts. The CLI already sets up code-graph tools such as CodeGraph and Codebase Memory. Directions for later include vector search and further plugins.
 
 ## Changelog
 

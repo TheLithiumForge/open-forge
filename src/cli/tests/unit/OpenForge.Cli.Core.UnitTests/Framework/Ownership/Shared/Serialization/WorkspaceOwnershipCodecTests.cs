@@ -106,7 +106,7 @@ public sealed class WorkspaceOwnershipCodecTests
     [Trait("Boundary", "Output")]
     [Theory(DisplayName = "An unrecognised schema version is still read")]
     [InlineData(0)]
-    [InlineData(2)]
+    [InlineData(WorkspaceOwnershipDefinitions.SchemaVersion + 1)]
     [InlineData(99)]
     public void ReadsUnrecognisedSchemaVersion(int version)
     {
@@ -225,7 +225,7 @@ public sealed class WorkspaceOwnershipCodecTests
             WorkspaceOwnershipCodec.Write(WorkspaceOwnershipDocument.Empty));
 
         Assert.Contains(WorkspaceOwnershipDefinitions.SchemaUrl, json, StringComparison.Ordinal);
-        Assert.Contains("\"schemaVersion\": 1", json, StringComparison.Ordinal);
+        Assert.Contains($"\"{WorkspaceOwnershipDefinitions.SchemaVersionProperty}\": {WorkspaceOwnershipDefinitions.SchemaVersion}", json, StringComparison.Ordinal);
         Assert.True(
             json.IndexOf("$schema", StringComparison.Ordinal)
                 < json.IndexOf("schemaVersion", StringComparison.Ordinal),

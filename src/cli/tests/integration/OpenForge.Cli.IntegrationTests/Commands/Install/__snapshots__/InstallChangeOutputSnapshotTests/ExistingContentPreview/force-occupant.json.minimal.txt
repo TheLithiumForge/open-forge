@@ -255,6 +255,14 @@
       "owner": null
     },
     {
+      "path": ".agents/skills/open-forge-cli/references/tools.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": null,
+      "owner": null
+    },
+    {
       "path": ".agents/templates/_templates.md",
       "kind": "file",
       "action": "created",
@@ -296,7 +304,7 @@
     }
   ],
   "counts": {
-    "filesCreated": 18,
+    "filesCreated": 19,
     "directoriesCreated": 12,
     "sectionsAdded": 0,
     "filesReplaced": 1
@@ -308,7 +316,7 @@
     "automatic": true,
     "classification": "safe-absence",
     "footprint": {
-      "files": 18,
+      "files": 19,
       "directories": 12,
       "sections": 2
     },

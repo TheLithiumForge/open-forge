@@ -23,3 +23,4 @@ Completed Tasks, earlier execution checkpoints and superseded analyses are in [A
 - [Current selection and order of open work after the public beta](plan.md) - #LoadNow #Memory #Working #CLI #Plan #Contextual #Active
 - [Current CLI task selection and retained task ownership](project-control.md) - #LoadNow #Memory #Working #CLI #Task #Contextual #Active
 - [Unfinished CLI tasks and on-demand follow-ups](tasks/_tasks.md) - #Memory #Working #CLI #Task #Contextual #Active
+- [Task 90 worker packets and implementation evidence](tool-setup/_tool-setup.md) - #Memory #Working #Contextual

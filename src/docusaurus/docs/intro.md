@@ -91,7 +91,7 @@ Open Forge shares context at three levels. A workspace keeps agent context in it
 
 ## What you install
 
-Full Core gives you 20 Markdown files, including a guide for people and four supporting CLI guides that are opened when needed. Minimal includes Directives and Crystallized Memory. Essentials adds Patterns, Skills, Emerging and Working Memory. Custom follows your selection.
+Full Core gives you 21 Markdown files, including a guide for people and five supporting CLI guides that are opened when needed. Minimal includes Directives and Crystallized Memory. Essentials adds Patterns, Skills, Emerging and Working Memory. Custom follows your selection.
 
 Essentials keeps new Working records out of normal Git commits and leaves `_working.md` eligible for sharing. Already tracked files stay tracked. Generated `Entries` omit private contents. You can find and read local records with the CLI or your normal file tools. [Installation](getting-started/installation.md#choose-the-installed-routes) covers the exact choices.
 
@@ -114,6 +114,7 @@ CLAUDE.md                         <- the same entry for tools that read CLAUDE.m
     routes.md                     <- route maintenance
     packages.md                   <- Framework and packages
     common.md                     <- shared options and results
+    tools.md                      <- developer tool setup
   templates/_templates.md         <- copy-ready starting files
   maps/_maps.md                   <- pointers to important local and external sources
   memory/

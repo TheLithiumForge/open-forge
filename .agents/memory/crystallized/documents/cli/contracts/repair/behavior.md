@@ -7,6 +7,12 @@ open-forge:
 
 # Repair Behavior Contract
 
+## Tool recovery
+
+Tool failures report sibling backups and guarded manual restoration instructions.
+Repair gains no Tool action, lease or recovery record.
+The round-2 [Tool contracts](../tool/_tool.md) define native reapply and removal.
+
 Authored relinks also cover [comment links](../shared/source-references/interface.md#comment-links). Change only the target word. Relinks write a repository-root path. Existing selection, protection, dry-run, revalidation, recovery and verification apply to these edits. Legacy IDs require a chosen path. Weak move or heading suggestions require selection.
 
 ## Workspace Layout

@@ -35,11 +35,12 @@ examples need no preview. Mutation examples show a preview before application.
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Learn Open Forge concepts     | [help](#help)                                                                                                                                                                                                                            |
 | Read and discover context     | [status](#status), [context](#context), [find](#find), [references](#references), [route list](#route-list), [route inspect](#route-inspect)                                                                                             |
-| Add and organize knowledge    | [route init](#route-init), [route create](#route-create), [route include](#route-include), [route exclude](#route-exclude), [route update](#route-update), [route move](#route-move), [route remove](#route-remove)                                                                                        |
+| Add and organize knowledge    | [route init](#route-init), [route create](#route-create), [route include](#route-include), [route exclude](#route-exclude), [route update](#route-update), [route move](#route-move), [route remove](#route-remove)                      |
 | Check and repair              | [index](#index), [doctor](#doctor), [repair](#repair), [cleanup](#cleanup)                                                                                                                                                               |
 | Manage the Framework          | [install](#install), [update](#update), [remove](#remove)                                                                                                                                                                                |
 | Manage Extensions             | [extension list](#extension-list), [extension inspect](#extension-inspect), [extension create](#extension-create), [extension install](#extension-install), [extension update](#extension-update), [extension remove](#extension-remove) |
 | Share files through Libraries | [library list](#library-list), [library inspect](#library-inspect), [library attach](#library-attach), [library sync](#library-sync), [library detach](#library-detach)                                                                  |
+| Set up developer tools        | [tool list](#tool-commands), [tool inspect](#tool-commands), [tool status](#tool-commands), [tool install](#tool-commands), [tool update](#tool-commands), [tool remove](#tool-commands)                                                 |
 
 ## Start with the everyday commands
 
@@ -285,7 +286,9 @@ bundles. Review the bundles before you run them. Open Forge never reads this
 folder as content, never includes or installs into it, and keeps it when the
 Framework is removed.
 
-A sandbox only needs write access to the workspace. The open file handle is the
+Framework and route writers need only write access to the workspace. Tool commands
+also write the Open Forge home (`~/.open-forge` or `OPENFORGE_TOOL_HOME`), run native
+setup that writes its own home, and can use the network for downloads. The open file handle is the
 lock, so the operating system releases it when the command exits, even after a
 crash. The file stays behind and its contents do not matter. Never delete it to
 release a lock. Dry runs, prompts, refusals, read-only commands and verified
@@ -293,14 +296,14 @@ no-ops create nothing in this folder.
 
 When a command cannot take the lock, it changes nothing and says why:
 
-| Cause | Message |
-| --- | --- |
-| Busy | `Another Open Forge command holds the lock at <path>. Nothing was changed.` |
-| Access denied | `Cannot open the lock at <path>: access denied. Nothing was changed.` |
-| Unsupported | `Cannot lock <path>: this filesystem does not support file locks. Nothing was changed.` |
-| Invalid target | `Cannot use <path> as the lock: it is not an ordinary file. Nothing was changed.` |
-| I/O error | `Cannot open the lock at <path>. Nothing was changed.` |
-| Cancelled | `Cancelled before taking the lock at <path>. Nothing was changed.` |
+| Cause          | Message                                                                                 |
+| -------------- | --------------------------------------------------------------------------------------- |
+| Busy           | `Another Open Forge command holds the lock at <path>. Nothing was changed.`             |
+| Access denied  | `Cannot open the lock at <path>: access denied. Nothing was changed.`                   |
+| Unsupported    | `Cannot lock <path>: this filesystem does not support file locks. Nothing was changed.` |
+| Invalid target | `Cannot use <path> as the lock: it is not an ordinary file. Nothing was changed.`       |
+| I/O error      | `Cannot open the lock at <path>. Nothing was changed.`                                  |
+| Cancelled      | `Cancelled before taking the lock at <path>. Nothing was changed.`                      |
 
 Only a busy lock means another command is running. Retry when it finishes.
 
@@ -374,6 +377,10 @@ that needs diagnosis.
 #### Next step
 
 Use [`doctor`](#doctor) when the summary names a fact that needs diagnosis.
+
+When settings declare tools, Status also checks them: a missing declared tool, a version outside support,
+a difference from the lock and changed project additions each add a warning with a next step, such as
+`open-forge tool install`. Without declared tools, Status skips these checks. See [Tools](#tools).
 
 ### `context`
 
@@ -729,15 +736,15 @@ The directory must be inside the workspace without overlapping the main root, fi
 
 Use exact source references with the filename, such as `./docs/_docs.md` and `./docs/testing.md`. Registration creates no short ID or alias. The spelling stays literal, while discovery and command admission depend on registration or retained inclusion.
 
-| Command | Within a registered outside route |
-| --- | --- |
-| `route create` | Create a Markdown leaf and necessary descendant chains below an existing recognized anchor |
-| `route init` | Initialize or restore a generic canonical entrypoint chain, stopping at the registered directory |
-| `route update` | Change eligible existing metadata or complete an eligible empty body |
-| `index` | Maintain listed roots by default, or an explicitly selected unlisted tree |
-| `repair` | Maintain only the affected closure of selected proven repairs |
-| `route move` | Move an eligible leaf or descendant category within the same registration |
-| `route remove` | Remove eligible descendants and record literal file/directory exclusions without deregistering |
+| Command        | Within a registered outside route                                                                |
+| -------------- | ------------------------------------------------------------------------------------------------ |
+| `route create` | Create a Markdown leaf and necessary descendant chains below an existing recognized anchor       |
+| `route init`   | Initialize or restore a generic canonical entrypoint chain, stopping at the registered directory |
+| `route update` | Change eligible existing metadata or complete an eligible empty body                             |
+| `index`        | Maintain listed roots by default, or an explicitly selected unlisted tree                        |
+| `repair`       | Maintain only the affected closure of selected proven repairs                                    |
+| `route move`   | Move an eligible leaf or descendant category within the same registration                        |
+| `route remove` | Remove eligible descendants and record literal file/directory exclusions without deregistering   |
 
 For example, after registration:
 
@@ -1337,6 +1344,9 @@ Follow the reported next action, using [`repair`](#repair) for supported link co
 
 If Git times out, Doctor says renamed files could not be proven and retries the complete request. It marks reference coverage incomplete and postpones missing-target findings instead of telling you to remove the links. Other unavailable Git evidence still permits recorded-metadata proof and independent diagnosis. Printed commands retain an explicit `--workspace`, including commands embedded in edit instructions.
 
+Doctor reports the same Tool checks as `tool.declared-missing`, `tool.drift`, `tool.unsupported` and
+`tool.observation-unavailable` findings, each with a Tool command as its next step. See [Tools](#tools).
+
 ### `repair`
 
 Apply selected local-link corrections or supported recovery of leftover Library state.
@@ -1464,7 +1474,7 @@ open-forge install --configure --frontmatter root --automatic
 
 | Option                                              | What it does                                                                                                                                        |
 | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--main-root <folder>` | Choose a new or existing context folder at first installation, defaulting to `.agents`. Existing installations cannot change roots. |
+| `--main-root <folder>`                              | Choose a new or existing context folder at first installation, defaulting to `.agents`. Existing installations cannot change roots.                 |
 | `--configure`                                       | Revisit route choices or the frontmatter form in an installed workspace                                                                             |
 | `--preset <minimal\|essentials\|full-core\|custom>` | Select built-in routes without the preset question                                                                                                  |
 | `--frontmatter <root\|scoped>`                      | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
@@ -1535,12 +1545,12 @@ Status names a custom context folder. Status and Install expose `data.layout` wi
 
 ##### Setup choices
 
-| Preset       | Supplied defaults                                                                                                                                           |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Preset       | Supplied defaults                                                                                                                                                           |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `minimal`    | Directives and Crystallized Memory, with the Memory catalogue, plus the loader, the guide at `<mainRoot>/README.md` and the managed sections in `AGENTS.md` and `CLAUDE.md` |
-| `essentials` | Everything in Minimal, plus Patterns, Skills and Emerging Memory, and Working Memory with private contents and a shared entrypoint                          |
-| `full-core`  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                                          |
-| `custom`     | The current concrete selection in an existing workspace, or Essentials in a fresh one, with selected row overrides                                          |
+| `essentials` | Everything in Minimal, plus Patterns, Skills and Emerging Memory, and Working Memory with private contents and a shared entrypoint                                          |
+| `full-core`  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                                                          |
+| `custom`     | The current concrete selection in an existing workspace, or Essentials in a fresh one, with selected row overrides                                                          |
 
 Essentials omits Guidance, Maps, Templates, and Archived Memory. Full Core
 includes the base categories, not optional Extensions or an agent runtime.
@@ -1941,7 +1951,7 @@ Removal records exclusions in `.agents/open-forge.json`:
 
 | Setting              | Keeps removed                                            |
 | -------------------- | -------------------------------------------------------- |
-| `removedCategories`  | Root categories in the selected layout                          |
+| `removedCategories`  | Root categories in the selected layout                   |
 | `removedFiles`       | Exact workspace-relative file destinations               |
 | `removedDirectories` | Directories and every descendant, including future files |
 | `removedExtensions`  | Packages, including requests through dependencies        |
@@ -2514,6 +2524,244 @@ Detach releases corresponding Library-owned Git-ignore rules and preserves autho
 
 Use [`library list`](#library-list) and check that the source folder remains intact.
 
+## Tools
+
+Tool setup installs published developer tools, runs their native setup and records Open Forge's project additions.
+For example, you can install CodeGraph in one project, commit its exact lock and restore that version on a teammate's machine.
+The profiles require Open Forge `0.9.0-beta.19` or newer.
+
+Start by reading the entry, then preview and apply the install:
+
+```sh
+open-forge tool list
+open-forge tool inspect codegraph
+open-forge tool install codegraph@1.6.2 --channel github-release --dry-run
+open-forge tool install codegraph@1.6.2 --channel github-release --yes
+open-forge tool status codegraph
+```
+
+The install resolves `1.6.2`, runs native local Claude and Codex setup and records the project additions.
+Status compares the installed version with the project lock.
+Read [native effects](#tool-native-effects) before applying setup to an account shared by several projects.
+For a walkthrough from installation to direct tool use, see [Tool setup](https://thelithiumforge.github.io/open-forge/docs/cli/tools).
+
+### Tool commands
+
+The six commands are:
+
+| Command                                  | Job                                                               |
+| ---------------------------------------- | ----------------------------------------------------------------- |
+| `open-forge tool list`                   | List catalogue entries and project declarations                   |
+| `open-forge tool inspect <id>`           | Show channels, requirements, native outputs and machine facts     |
+| `open-forge tool status [id]`            | Check exact versions, project additions, native settings and PATH |
+| `open-forge tool install [id[@version]]` | Install and run native setup, then add project configuration      |
+| `open-forge tool update [id[@version]]`  | Update declared tools within supported versions                   |
+| `open-forge tool remove <id>`            | Remove project additions and offer native uninstall               |
+
+List, Inspect and Status change no files.
+Inspect can report an unavailable installation before you install it.
+Status without an ID checks declared or locked tools.
+Install, Update and Remove require a workspace directory.
+
+### Tool selectors
+
+Install and Update take these selectors:
+
+| Selector          | Result                          |
+| ----------------- | ------------------------------- |
+| `codegraph`       | Latest supported exact version  |
+| `codegraph@1.6`   | Latest supported patch in `1.6` |
+| `codegraph@1.6.2` | That exact stable SemVer        |
+
+The initial profiles cover CodeGraph `1.6.x` from `1.6.2` and Codebase Memory `0.12.x` from `0.12.1`.
+CLI selectors don't accept `1.6.x`, dist-tags or npm range expressions.
+The `.x` form belongs to the supported range stored in settings.
+
+Without an ID, Install restores exact lock versions.
+If a declaration has no lock, it resolves within the declared range.
+Without an ID, Update chooses newest support for declared tools.
+A named Update requires a declaration or lock.
+
+Install and Update accept `--channel <channel>` only with a named selector.
+Use Inspect to see the advertised channels.
+CodeGraph advertises `npm` and `github-release`.
+Codebase Memory advertises `github-release`.
+Without an override, Open Forge tries a supported existing installation, a compatible package manager, private Node for an npm tool or a verified release archive, in that order.
+The lock's recorded channel doesn't force a teammate to use that channel.
+
+### Tool options
+
+Install, Update and Remove share these options:
+
+| Option                | Effect                                       |
+| --------------------- | -------------------------------------------- |
+| `--dry-run`           | Check and show the plan without applying it  |
+| `--yes`               | Accept the shown plan and downloads          |
+| `--allow-path <path>` | Grant the shown project path before applying |
+
+A dry run shows exact versions where known, commands, downloads, files, backups and additions.
+It uses the declared native preview when the tool is already available.
+Latest-version lookup can use the network, and the result says when it does.
+Open Forge's own project files, such as `codegraph.json`, need destination permission as in other commands.
+A blocked plan names each missing path and the command to rerun with `--allow-path`.
+
+PATH edits and shared file deletion need separate live choices.
+`--yes` leaves those actions unchosen.
+For Codebase Memory, it never runs the system-wide uninstaller and prints its command instead.
+A command without `--yes` needs a terminal to accept its main plan.
+The normal global options, including `--workspace`, `--format json` and `--detail`, apply.
+Without `--yes` or a terminal, the plan lists the files to delete so you can do it yourself.
+Each tool's own files live in `~/.open-forge/tools/<id>/<version>/`, and `bin/` holds only Open Forge's launchers. Update places the new version beside the old one. A live confirmation deletes the replaced version folder. Otherwise the result lists it so you can delete it yourself.
+Remove never edits PATH. After the last tool with a launcher in Open Forge's bin, it prints the PATH entry or marked shell block to remove, also with `--yes` or without a terminal.
+
+### Tool native effects
+
+The upstream installer controls native MCP entries, hooks, permissions, instruction blocks and Skills.
+Open Forge keeps that setup and adds only the changes listed below.
+Inspect and dry run show possible native outputs before setup.
+Actual files depend on native client discovery and existing configuration.
+
+CodeGraph runs `install --yes --location local --target claude,codex`.
+It configures local Claude MCP, its prompt hook and permissions and local Codex MCP and instructions.
+Codex needs to trust the project before it enables project configuration.
+Native setup doesn't build the project index.
+Run `codegraph init` from the project to build it.
+
+Open Forge turns CodeGraph's stored account telemetry off through its native command.
+That command deletes the upstream identity and unsent queues.
+Status reports stored state separately from inherited `DO_NOT_TRACK` and `CODEGRAPH_TELEMETRY` overrides.
+Version detection sets `CODEGRAPH_NO_DOWNLOAD=1`.
+Open Forge unions the archive exclude into `codegraph.json` and adds a marked `.gitignore` block only when effective Git rules don't already cover the index.
+CodeGraph's native `.codegraph/.gitignore` is a separate file written when it initializes the index.
+
+Codebase Memory runs `install --yes --skip-binary --dir <Open Forge bin>` after verified placement.
+It uses default account-wide client discovery.
+Its native setup can add global MCP entries, Skills, tiered agents, hooks and instructions for discovered clients.
+Its watcher defaults stay `auto_index=false`, `auto_watch=true` and `watcher_enabled=true`.
+Open Forge adds the archive exclude in a marked `.cbmignore` block.
+
+Both archive excludes follow the workspace's context folder.
+For the default `.agents`, they exclude `.agents/memory/archived/`.
+Open Forge adds no per-tool usage Skill, guidance line or replacement MCP entry.
+
+### Tool paths
+
+Open Forge places launchers and native executables in `~/.open-forge/bin`, or `%USERPROFILE%\.open-forge\bin` on Windows.
+Set `OPENFORGE_TOOL_HOME` to an absolute folder to use it instead of `~/.open-forge` on every system, like `CARGO_HOME`.
+A relative value blocks Tool commands rather than falling back to your profile.
+Tool files and private runtimes live beside that folder under `tools` and `runtimes`.
+Private Node stays out of `bin`.
+CodeGraph's npm wrapper needs Node 20 or newer.
+The release archive includes its runtime.
+
+Status and Inspect show the Open Forge bin and any selected manager's global-bin PATH readiness.
+If bin is missing, choose "Add it for me" or "I'll do it myself" in a terminal.
+For manual setup, follow the exact PATH instructions printed by the command.
+Restart terminals and agent apps after changing PATH, then run Status again.
+
+The installed tools run directly:
+
+```sh
+codegraph --version
+codegraph init
+codegraph query greeting
+codebase-memory-mcp --version
+```
+
+CodeGraph `1.6.2` reports `1.6.2` and `init` builds the index in the current project.
+Native Windows MCP hosts differ in how they launch `.cmd` files.
+Open Forge keeps the upstream MCP configuration unchanged.
+
+### Tool records
+
+Commit `.agents/open-forge.json` and `.agents/open-forge.lock.json`.
+These paths stay fixed when you use a custom context root.
+Settings declare supported ranges.
+The lock records exact versions, channels and additive receipts.
+A teammate runs this command to restore those exact versions with normal channel choice:
+
+```sh
+open-forge tool install --dry-run
+open-forge tool install --yes
+```
+
+Machine paths, previous native account settings and PATH history stay in per-user state.
+Tool commands add no lease, journal or recovery bundle under `.open-forge-state/`.
+Run tool operations one at a time.
+
+### Tool removal
+
+Preview project removal, then apply it:
+
+```sh
+open-forge tool remove codegraph --dry-run
+open-forge tool remove codegraph --yes
+```
+
+CodeGraph's native uninstall removes its local Claude and Codex setup.
+Its CLI and project index stay available.
+Open Forge removes its recorded archive union and conditional ignore block while keeping unrelated content.
+
+Codebase Memory removal is local: the declaration, lock entry, project additions and, if you choose, Open Forge's own launcher and tool files.
+Its own uninstaller removes it system-wide: the binary in its versioned tool folder and all agent entries. On Windows it also removes that folder from your user PATH if it is there. Open Forge never adds it, and Open Forge's bin stays on PATH.
+After the local removal, an interactive Remove asks whether to run it. The default answer is no.
+With `--yes`, no terminal or a declined question, Remove never runs it and prints the native command:
+
+```sh
+open-forge tool remove codebase-memory --yes --format json
+```
+
+The checked Windows `0.12.1` journey returns `status: completed` and exit 0.
+The native executable, Codex setup, native settings and index stay unchanged.
+The project `.cbmignore` returns to its original content.
+
+Every project Remove keeps account-wide settings, including CodeGraph telemetry off.
+The result reports those settings and prints their manual change commands, such as `codegraph telemetry on`.
+These kept effects alone don't make project removal incomplete.
+Shared binary deletion needs its own live choice. PATH stays as it is, and the last removal prints the step to take bin off PATH.
+
+Git keeps unchanged tracked originals.
+Existing uncommitted files can need sibling backups.
+On a conflict or partial failure, read the reported completed steps and backups before retrying.
+Open Forge doesn't roll changes back automatically.
+
+### Tool JSON
+
+Tool results use schema 3 with `data.tools`.
+Read `status`, findings and the exit code before using the data.
+For example, this command returns the installed CodeGraph facts:
+
+```sh
+open-forge tool status codegraph --format json
+```
+
+These selected fields come from the successful Windows journey:
+
+```json
+{
+  "schemaVersion": 3,
+  "command": "tool status",
+  "status": "completed",
+  "data": {
+    "tools": [
+      {
+        "id": "codegraph",
+        "lockedVersion": "1.6.2",
+        "detectedVersion": "1.6.2",
+        "channel": "github-release",
+        "state": "current",
+        "machineState": "available",
+        "nativeRecordState": "available",
+        "binReadiness": "ready"
+      }
+    ]
+  }
+}
+```
+
+Write results also include the plan, whether it was a preview and completed or unfinished steps.
+They report possible native outputs separately from operation outcomes.
+
 ## Source references
 
 Source operands accept these forms:
@@ -2590,7 +2838,6 @@ The target is the first word after the marker. Encode spaces in filenames. Markd
 References lists comment links in both directions and accepts exact code paths. Context checks them when you request link expansion. Doctor reports missing targets, failed fragments and older ID-style anchors. A legacy finding suggests a file path when the ID resolves. Comment links need no IDs or frontmatter. Generated and vendored files are skipped.
 
 Doctor and Repair suggest moved targets using Git history, heading changes, matching section content and a unique heading slug, in that order. Weak suggestions require selection. Preview `repair --relink` before applying a chosen target. Repair changes only the target word and keeps the marker, comment delimiters and explanation. Relinks write an encoded repository-root path. For example, selecting `docs/new guide.md#rule` writes `docs/new%20guide.md#rule`. Repair keeps Git rename, heading-diff, old section-content and weak unique-slug evidence distinct in its choices.
-
 
 ## .gitignore fallback rules
 

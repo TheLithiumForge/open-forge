@@ -48,7 +48,7 @@ Startup context
   May load again later:  unavailable files, unavailable tokens
 All routed files: unavailable files, unavailable tokens (startup is unavailable)
 Routes: unavailable root categories, unavailable Entries sections current
-Framework files: 19 current
+Framework files: 20 current
 Framework files
   .agents/README.md                                      current
   .agents/directives/_directives.md                      current
@@ -67,6 +67,7 @@ Framework files
   .agents/skills/open-forge-cli/references/discovery.md  current
   .agents/skills/open-forge-cli/references/packages.md   current
   .agents/skills/open-forge-cli/references/routes.md     current
+  .agents/skills/open-forge-cli/references/tools.md      current
   .agents/templates/_templates.md                        current
   AGENTS.md                                              current
   CLAUDE.md                                              current
@@ -95,6 +96,6 @@ Recovery data: none
   current Entries sections: Filesystem access was denied.
   stale Entries sections: Filesystem access was denied.
   missing Entries sections: Filesystem access was denied.
-19 current Framework files, 9 warnings.
+20 current Framework files, 9 warnings.
   Update the Framework files that need attention.
 Next: open-forge update

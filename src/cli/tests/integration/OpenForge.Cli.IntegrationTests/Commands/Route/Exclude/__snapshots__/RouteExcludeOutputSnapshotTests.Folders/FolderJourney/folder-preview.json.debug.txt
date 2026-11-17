@@ -31,8 +31,8 @@
       "outcome": "planned",
       "reason": null,
       "owner": null,
-      "before": "{\n  \"schemaVersion\": 5,\n  \"other\": true,\n  \"outsideRoutes\": [\n    \"project/team notes\"\n  ],\n  \"$schema\": \"https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json\"\n}",
-      "after": "{\n  \"schemaVersion\": 5,\n  \"other\": true,\n  \"outsideRoutes\": [],\n  \"$schema\": \"https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v5/open-forge.schema.json\"\n}"
+      "before": "{\n  \"schemaVersion\": 6,\n  \"other\": true,\n  \"outsideRoutes\": [\n    \"project/team notes\"\n  ],\n  \"$schema\": \"https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v6/open-forge.schema.json\"\n}",
+      "after": "{\n  \"schemaVersion\": 6,\n  \"other\": true,\n  \"outsideRoutes\": [],\n  \"$schema\": \"https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v6/open-forge.schema.json\"\n}"
     }
   ],
   "counts": {

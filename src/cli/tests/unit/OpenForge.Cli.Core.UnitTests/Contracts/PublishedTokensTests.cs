@@ -72,6 +72,16 @@ using OpenForge.Cli.Core.Presentation.Doctor.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering;
 using OpenForge.Cli.Core.Presentation.Status.Shared.Rendering;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Commands.Tool;
+using OpenForge.Cli.Core.Commands.Tool.Models.Read;
+using OpenForge.Cli.Core.Commands.Tool.Shared.Observation;
+using OpenForge.Cli.Core.Commands.Tool.Status;
+using OpenForge.Cli.Core.Framework.Tools.Catalogue;
+using OpenForge.Cli.Core.Framework.Tools.Catalogue.Shared.CodeGraph;
+using OpenForge.Cli.Core.Framework.Tools.Models.Launchers;
+using OpenForge.Cli.Core.Framework.Tools.Models.Records;
+using OpenForge.Cli.Core.Framework.Tools.Shared.PackageManagers;
+using OpenForge.Cli.Core.Framework.Tools.Shared.Observation.Models;
 using OpenForge.Cli.TestSupport.Contracts;
 
 namespace OpenForge.Cli.Core.UnitTests.Contracts;
@@ -369,6 +379,23 @@ public sealed class PublishedTokensTests
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ReferencesData.Incoming)), PublishedTokens.ReferencesData.Incoming);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ReferencesData.Outgoing)), PublishedTokens.ReferencesData.Outgoing);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ReferencesDataOutgoing.ResolvedPath)), PublishedTokens.ReferencesData.ResolvedPath);
+        Assert.Equal(ToolDefinitions.Group.Name, PublishedTokens.Tool.Command);
+        Assert.Equal(ToolStatusDefinitions.CommandName, PublishedTokens.Tool.Status);
+        Assert.Equal(ToolRecordDefinitions.ToolsProperty, PublishedTokens.Tool.Tools);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ToolReadPayload.Tools)), PublishedTokens.Tool.Tools);
+        Assert.Equal(ToolRecordDefinitions.VersionProperty, PublishedTokens.Tool.Version);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ToolReadTool.State)), PublishedTokens.Tool.State);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ToolReadTool.DetectedVersion)), PublishedTokens.Tool.DetectedVersion);
+        Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(ToolReadTool.BinReadiness)), PublishedTokens.Tool.BinReadiness);
+        Assert.Equal(ToolReadProjection.Name(ToolObservationState.Missing), PublishedTokens.Tool.Missing);
+        Assert.Equal(ToolReadProjection.Name(ToolObservationState.Unsupported), PublishedTokens.Tool.Unsupported);
+        Assert.Equal(ToolReadProjection.Name(ToolPathReadiness.Ready), PublishedTokens.Tool.Ready);
+        Assert.Equal(CodeGraphDefinitions.Id, PublishedTokens.Tool.CodeGraphId);
+        Assert.Equal(ToolReadProjection.Range(CodeGraphCatalogueEntry.Create().Profiles[0].Range), PublishedTokens.Tool.CodeGraphRange);
+        Assert.Equal(ToolRecordDefinitions.HomeOverrideVariable, PublishedTokens.Tool.HomeVariable);
+        Assert.Equal(ToolNpmPackageReader.ModulesDirectory, PublishedTokens.Tool.NpmModulesDirectory);
+        Assert.Equal(ToolNpmPackageReader.ManifestName, PublishedTokens.Tool.NpmManifest);
+        Assert.Equal(ToolNpmPackageReader.NodeRuntime, PublishedTokens.Tool.NodeCommand);
         Assert.Equal(CliJsonFields.Id, PublishedTokens.Json.Id);
 #pragma warning restore xUnit2000
     }

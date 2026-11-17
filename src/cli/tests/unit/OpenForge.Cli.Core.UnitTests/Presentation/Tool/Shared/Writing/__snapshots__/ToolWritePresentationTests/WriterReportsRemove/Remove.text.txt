@@ -1,0 +1,26 @@
+Planned tool remove for 1 tool.
+Workspace: <workspace>
+  synthetic.ignore  deleted
+synthetic-tool@1.2.3 (synthetic-channel)
+Previous version: 1.2.3
+Native home: <native-home>
+Account: Synthetic account uninstall. <native-home>/agents.json
+Requirement: synthetic-runtime >=1
+Minimum tool version: 1.2.3
+Minimum Open Forge version: 1.0.0
+Path: <home>/bin/synthetic-tool
+Backup target: <native-home>/agents.json
+synthetic-ignore: marked-block synthetic.ignore  Remove Synthetic project exclusion.
+Kept account setting synthetic-setting at <native-home>: off. Its manual change command is shown below.
+manual-native-uninstall: '<tool>' uninstall --synthetic
+Working directory: <workspace>
+manual-native-setting: '<tool>' synthetic-restore on
+Working directory: <workspace>
+Profile: synthetic-profile
+Profile digest: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+synthetic-tool: native skipped
+Open Forge bin: <home>/bin
+PATH: missing
+synthetic manual PATH instruction
+Restart terminals and agent apps after changing PATH. Restarted apps haven't been verified.
+1 tool.

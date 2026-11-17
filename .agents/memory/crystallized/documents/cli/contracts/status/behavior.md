@@ -7,6 +7,18 @@ open-forge:
 
 # Status Behavior Contract
 
+Status is a command that reads workspace facts and reports measurements.
+
+## Tool checks
+
+The round-2 Tool checks report missing declared tools, unsupported detected versions, exact lock differences, additive config drift and unavailable native machine facts.
+A missing tool offers `open-forge tool install`.
+Check the tools that settings declare or the lock records. A lock entry without its declaration is drift.
+When neither settings nor the lock name tools, skip Tool checks before resolving the Tool home or reading machine state.
+Use the same bounded probes as Tool Status, including CodeGraph's no-download probe environment.
+These checks don't configure tools, create Tool state or acquire a Tool lease.
+The [Tool contracts](../tool/_tool.md) define the read operations.
+
 ## Workspace Layout
 
 Distribute one layout observation to source, route and lifecycle contributors. Retain the layout when valid settings supply it. If settings cannot supply it, keep every domain and report layout-dependent domains unavailable with the settings cause.

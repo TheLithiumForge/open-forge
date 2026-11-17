@@ -1,0 +1,7 @@
+Catalogue tools.
+synthetic  Synthetic tool  3.2.x  catalogue
+Origin: third-party
+Upstream: https://example.invalid/tool
+Licence: synthetic
+Channels: synthetic-npm, synthetic-release
+Supported profiles: 3.2.x

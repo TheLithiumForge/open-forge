@@ -1,0 +1,47 @@
+  Install published tools and manage their native setup.
+
+Usage:
+  open-forge tool <command> [options]
+
+Examples:
+  open-forge tool list
+  open-forge tool inspect codegraph
+  open-forge tool install codegraph@1.6 --dry-run
+
+Behavior:
+  List the catalogue, then inspect a tool's channels, native effects and
+  requirements.
+  Install and Update run the tool's native setup and add the declared Open Forge
+  changes.
+  Status checks this machine and project. Remove cleans up the recorded project
+  additions.
+
+Commands:
+  list                    List supported tools and their setup profiles.
+  inspect <id>            Show a tool's channels, native effects and machine
+                          facts.
+  status <id>             Check tool versions, project additions and PATH
+                          readiness.
+  install <id[@version]>  Install tools, run native setup and add project
+                          configuration.
+  update <id[@version]>   Update declared tools within supported versions.
+  remove <id>             Remove project additions and offer native uninstall.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  tool list            List supported tools and their setup profiles.
+  tool inspect --help  Show a tool's channels, native effects and machine facts.
+  tool status          Check tool versions, project additions and PATH
+                       readiness.
+  tool install --help  Install tools, run native setup and add project
+                       configuration.
+  tool update --help   Update declared tools within supported versions.
+  tool remove --help   Remove project additions and offer native uninstall.

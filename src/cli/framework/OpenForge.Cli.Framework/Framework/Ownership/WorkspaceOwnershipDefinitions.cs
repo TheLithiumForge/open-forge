@@ -26,14 +26,14 @@ internal static class WorkspaceOwnershipDefinitions
     /// never a reason to refuse, because the lock is rebuilt best-effort when it
     /// cannot be trusted.
     /// </summary>
-    internal const int SchemaVersion = 1;
+    internal const int SchemaVersion = 2;
 
     /// <summary>
     /// The schema an editor uses when somebody opens the generated file to see
     /// what the tool claims it owns. The CLI never fetches it.
     /// </summary>
     internal const string SchemaUrl =
-        "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v1/open-forge.lock.schema.json";
+        "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v2/open-forge.lock.schema.json";
 
     internal const string SchemaProperty = "$schema";
     internal const string SchemaVersionProperty = "schemaVersion";

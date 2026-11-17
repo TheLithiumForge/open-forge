@@ -40,12 +40,15 @@ Frontmatter: root -> scoped
   .agents/skills/open-forge-cli/references/routes.md
     metadata would move under open-forge:; source:
     .agents/skills/open-forge-cli/references/routes.md
+  .agents/skills/open-forge-cli/references/tools.md
+    metadata would move under open-forge:; source:
+    .agents/skills/open-forge-cli/references/tools.md
   .agents/templates/_templates.md
     metadata would move under open-forge:; source:
     .agents/templates/_templates.md
-  Would update 16 existing files.
+  Would update 17 existing files.
   Bundled Framework fingerprint:
-  <sha256> (20 assets).
+  <sha256> (21 assets).
   No ownership record change was requested.
   No recovery bundle was created.
   Verification was not requested.

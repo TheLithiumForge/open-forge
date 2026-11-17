@@ -16,6 +16,10 @@ internal static class DoctorDefinitions
     internal static string ReadFindingKind(DoctorFindingKind kind)
         => kind switch
         {
+            DoctorFindingKind.ToolDeclaredMissing => "tool.declared-missing",
+            DoctorFindingKind.ToolDrift => "tool.drift",
+            DoctorFindingKind.ToolUnsupported => "tool.unsupported",
+            DoctorFindingKind.ToolObservationUnavailable => "tool.observation-unavailable",
             DoctorFindingKind.WorkspaceUnavailable => "workspace.unavailable",
             DoctorFindingKind.WorkspaceNotDirectory => "workspace.not-directory",
             DoctorFindingKind.WorkspaceAgentsMissing => "workspace.agents-missing",

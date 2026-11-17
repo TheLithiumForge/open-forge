@@ -1,0 +1,34 @@
+Cannot start tool install.
+Workspace: <workspace>
+  Error  synthetic-tool  The running Open Forge version is below the profile's required version or cannot be compared. [tool-install.open-forge-version-unsupported]
+         The running Open Forge version is below the profile's required version or cannot be compared.
+  synthetic/settings.json  rewritten
+Workspace path grant synthetic/project/**: completed. This settings edit is separate from tool consent.
+Saved grant settings: synthetic/settings.json
+Latest-version resolution used the network.
+synthetic-tool@1.2.4 (synthetic-channel)
+Previous version: 1.2.3
+Native home: <native-home>
+This replaces an account-wide installation used by other projects.
+Account: Synthetic account setup. <native-home>/agents.json
+Requirement: synthetic-runtime >=1
+Minimum tool version: 1.2.3
+Minimum Open Forge version: 1.0.0
+Download: https://example.invalid/synthetic.zip -> <home>/synthetic.zip SHA-256 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+Path: <home>/bin/synthetic-tool
+Backup target: <native-home>/agents.json
+synthetic-native: native-command   NoChange Synthetic native setting.
+Stored native setting: off
+Effective native setting from CODEGRAPH_TELEMETRY: on.
+native: '<tool>' install --synthetic
+Working directory: <workspace>
+Environment: remove SYNTHETIC_OVERLAY
+Profile: synthetic-profile
+Profile digest: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+synthetic-tool: native not-started
+Open Forge bin: <home>/bin
+PATH: missing
+synthetic manual PATH instruction
+Kept backup synthetic/settings.json.bak. Before restoring it to synthetic/settings.json, check that the current file still matches cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.
+Restart terminals and agent apps after changing PATH. Restarted apps haven't been verified.
+1 tool, 1 errors.

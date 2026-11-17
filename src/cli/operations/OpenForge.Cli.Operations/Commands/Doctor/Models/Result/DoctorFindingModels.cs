@@ -133,6 +133,10 @@ internal enum DoctorFindingKind
     ExtensionOwnershipCollision,
     ExtensionBridgeRegistration,
     ReferenceTargetRenamed,
+    ToolDeclaredMissing,
+    ToolDrift,
+    ToolUnsupported,
+    ToolObservationUnavailable,
 }
 
 internal sealed record DoctorFinding

@@ -40,6 +40,7 @@ internal sealed class InstallOperationWorkspace : IDisposable
         ".agents/skills/open-forge-cli/references/discovery.md",
         ".agents/skills/open-forge-cli/references/packages.md",
         ".agents/skills/open-forge-cli/references/routes.md",
+        ".agents/skills/open-forge-cli/references/tools.md",
         ".agents/templates/_templates.md",
     ];
 

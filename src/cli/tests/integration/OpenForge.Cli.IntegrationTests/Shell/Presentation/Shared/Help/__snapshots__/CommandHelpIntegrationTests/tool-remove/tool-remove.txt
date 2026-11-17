@@ -1,0 +1,52 @@
+  Remove project additions and offer native uninstall.
+
+Usage:
+  open-forge tool remove <id> [options]
+
+Examples:
+  open-forge tool remove codegraph --dry-run
+  open-forge tool remove codegraph --yes
+  open-forge tool remove codebase-memory --yes
+
+Behavior:
+  Removes the project's declaration, lock entry and recorded Open Forge
+  additions. CodeGraph's own project uninstall runs first.
+  Codebase Memory removal stays local. Afterwards an interactive run asks
+  whether to run its own uninstaller, which removes
+  it system-wide from its versioned tool folder and every agent app. Open
+  Forge's bin stays on PATH. The default keeps it.
+  With --yes or no terminal, that uninstaller never runs and its command is
+  printed.
+  Project removal keeps account settings, including telemetry off, and prints
+  manual change commands.
+  Shared file deletion needs a separate live choice. Remove never edits PATH.
+  After the last tool in bin, it prints the PATH entry or marked shell block to
+  remove. Changes aren't rolled back automatically.
+
+Arguments:
+  <id>  The declared or locked tool ID.
+
+Options:
+  --yes                Accept the shown removal plan. Skip PATH edits, shared
+                       deletion and account-wide uninstall.
+  --dry-run            Show the checked plan without applying changes.
+  --allow-path <path>  Permit writing to this workspace-relative path, recording
+                       it in .agents/open-forge.json.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  tool list            List supported tools and their setup profiles.
+  tool inspect --help  Show a tool's channels, native effects and machine facts.
+  tool status          Check tool versions, project additions and PATH
+                       readiness.
+  tool install --help  Install tools, run native setup and add project
+                       configuration.
+  tool update --help   Update declared tools within supported versions.

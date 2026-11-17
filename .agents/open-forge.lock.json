@@ -1,6 +1,6 @@
 {
-  "$schema": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v1/open-forge.lock.schema.json",
-  "schemaVersion": 1,
+  "$schema": "https://raw.githubusercontent.com/TheLithiumForge/open-forge/main/schemas/v2/open-forge.lock.schema.json",
+  "schemaVersion": 2,
   "framework": {
     "source": {
       "id": "embedded-framework"
@@ -189,5 +189,6 @@
       "regions": []
     }
   ],
-  "libraries": []
+  "libraries": [],
+  "tools": {}
 }
