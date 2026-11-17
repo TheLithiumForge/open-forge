@@ -210,7 +210,8 @@ internal sealed class ToolWriteRemovalScenario : IDisposable
             {
                 scenario.Events.Add("native");
                 Uninstalls.Add(request);
-                Assert.True(File.Exists(scenario.Files.Combine(ProjectFile)));
+                // G9: a system-wide uninstaller runs only after the project's own additions are removed.
+                Assert.False(File.Exists(scenario.Files.Combine(ProjectFile)));
                 if (!FailUninstall) await File.WriteAllBytesAsync(scenario.NativeOutput, After, cancellationToken);
             }
             return new()

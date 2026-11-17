@@ -1,5 +1,5 @@
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Request;
-using OpenForge.Cli.Core.Commands.Tool.Shared.Writing.Binding;
+using OpenForge.Cli.Core.Commands.Tool.Models.Help;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Result;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering.Models;
 using OpenForge.Cli.Core.Presentation.Tool.Shared.Help;
@@ -20,6 +20,6 @@ internal static class ToolInstallPresentation
         Examples = ToolInstallText.Examples(),
         Behavior = ToolInstallText.Behavior(),
         Details = [],
-        RelatedCommands = ToolHelpSections.Related(ToolWriteBinding.Name(ToolWriteKind.Install)),
+        RelatedCommands = ToolHelpSections.Related(ToolLeafDefinitions.WriteName(ToolWriteKind.Install)),
     });
 }

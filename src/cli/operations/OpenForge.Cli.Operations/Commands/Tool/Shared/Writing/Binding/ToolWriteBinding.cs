@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Commands.Tool.Models.Help;
 using System.CommandLine;
 using OpenForge.Cli.Core.Commands.Shared;
 using OpenForge.Cli.Core.Commands.Tool.Models.Writing.Binding;
@@ -72,13 +73,7 @@ internal static class ToolWriteBinding
             Operation = operation,
         };
 
-    internal static string Name(ToolWriteKind kind) => kind switch
-    {
-        ToolWriteKind.Install => "install",
-        ToolWriteKind.Update => "update",
-        ToolWriteKind.Remove => "remove",
-        _ => throw new ArgumentOutOfRangeException(nameof(kind)),
-    };
+    internal static string Name(ToolWriteKind kind) => ToolLeafDefinitions.WriteName(kind);
 
     internal static async ValueTask<ToolWriteResult> InvokeAsync<TLeaf>(
         ToolWriteRequest request, CancellationToken cancellationToken,
@@ -106,11 +101,5 @@ internal static class ToolWriteBinding
             => ToolWriteResults.Invalid(request.Kind, new(code, status, request.Spec?.Id), request.Workspace, request.Preview);
     }
 
-    internal static string Description(ToolWriteKind kind) => kind switch
-    {
-        ToolWriteKind.Install => "Install tools, run native setup and add project configuration.",
-        ToolWriteKind.Update => "Update declared tools within supported versions.",
-        ToolWriteKind.Remove => "Remove project additions and offer native uninstall.",
-        _ => throw new ArgumentOutOfRangeException(nameof(kind)),
-    };
+    internal static string Description(ToolWriteKind kind) => ToolLeafDefinitions.WritePurpose(kind);
 }
