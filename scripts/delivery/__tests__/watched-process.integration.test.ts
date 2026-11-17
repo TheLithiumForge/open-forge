@@ -13,11 +13,29 @@ const Fixture = fileURLToPath(new URL("fixtures/stalled-suite.ts", import.meta.u
 const Driver = fileURLToPath(new URL("fixtures/watched-driver.ts", import.meta.url));
 const ExitStatus = 3;
 
+// A killed process stays a zombie until its new parent reaps it, and on some Linux hosts that parent never does.
+// Signal 0 still reaches a zombie, so on Linux the process state decides, and a zombie or dead process has stopped.
+const ProcessDirectory = "/proc";
+const ProcessStatusFile = "stat";
+const StoppedStates: ReadonlySet<string> = new Set(["Z", "X"]);
+
+/** Reads the one-letter state from /proc/<pid>/stat, whose command name in parentheses may itself contain spaces. */
+function processState(status: string): string {
+  const commandEnd = status.lastIndexOf(")");
+  return status.slice(commandEnd + 2, commandEnd + 3);
+}
+
 function alive(pid: number): boolean {
   try {
     process.kill(pid, 0);
-    return true;
   } catch {
+    return false;
+  }
+  if (process.platform !== "linux") return true;
+  try {
+    return !StoppedStates.has(processState(readFileSync(join(ProcessDirectory, String(pid), ProcessStatusFile), "utf8")));
+  } catch {
+    // The process was reaped between the two checks.
     return false;
   }
 }
