@@ -10,6 +10,12 @@ internal sealed class ToolProcessHost : IToolProcessHost
 {
     internal const string CodeGraphHostPpidVariable = "CODEGRAPH_HOST_PPID";
     internal static readonly TimeSpan CleanupTimeout = TimeSpan.FromSeconds(5);
+    // Linux and macOS refuse to execute a file that any process still holds open for writing (ETXTBSY, errno 26 on both).
+    // Setup extracts a binary or private Node and then runs it, and a fork on another thread during that write keeps the
+    // inherited descriptor until the child's own exec. Only that brief refusal is retried.
+    internal const int TextFileBusyError = 26;
+    internal const int StartAttempts = 5;
+    internal static readonly TimeSpan StartRetryDelay = TimeSpan.FromMilliseconds(50);
     private readonly IReadOnlyDictionary<string, string?> _environment;
     private readonly ToolCatalogue? _catalogue;
     internal ToolProcessHost(IReadOnlyDictionary<string, string?>? environment = null, ToolCatalogue? catalogue = null)
@@ -56,7 +62,7 @@ internal sealed class ToolProcessHost : IToolProcessHost
             && (!start.Environment.TryGetValue(CodeGraphHostPpidVariable, out var hostPid) || string.IsNullOrEmpty(hostPid))
             && new ToolCommandResolver(_environment, _catalogue).IsCodeGraphBundle(request))
             start.Environment[CodeGraphHostPpidVariable] = Environment.ProcessId.ToString(System.Globalization.CultureInfo.InvariantCulture);
-        using var process = new Process { StartInfo = start };
+        Process? process = null;
         using var output = new MemoryStream();
         using var error = new MemoryStream();
         long budget = request.MaximumOutputBytes;
@@ -66,7 +72,7 @@ internal sealed class ToolProcessHost : IToolProcessHost
         try
         {
             stopping.Token.ThrowIfCancellationRequested();
-            process.Start();
+            process = await StartAsync(start, stopping.Token).ConfigureAwait(false);
             var stdout = DrainAsync(process.StandardOutput.BaseStream, output);
             var stderr = DrainAsync(process.StandardError.BaseStream, error);
             var execution = Task.WhenAll(process.WaitForExitAsync(stopping.Token), stdout, stderr);
@@ -112,6 +118,10 @@ internal sealed class ToolProcessHost : IToolProcessHost
         {
             failure ??= "The tool process couldn't be started or read.";
         }
+        finally
+        {
+            process?.Dispose();
+        }
         if (exceeded) failure ??= "The tool process exceeded its output limit.";
         return new()
         {
@@ -136,6 +146,21 @@ internal sealed class ToolProcessHost : IToolProcessHost
                     exceeded = true;
                     await stopping.CancelAsync().ConfigureAwait(false);
                 }
+            }
+        }
+    }
+
+    private static async Task<Process> StartAsync(ProcessStartInfo start, CancellationToken cancellationToken)
+    {
+        for (var attempt = 1; ; attempt++)
+        {
+            try
+            {
+                return Process.Start(start) ?? throw new InvalidOperationException("The tool process didn't start.");
+            }
+            catch (Win32Exception exception) when (!OperatingSystem.IsWindows() && exception.NativeErrorCode == TextFileBusyError && attempt < StartAttempts)
+            {
+                await Task.Delay(StartRetryDelay * attempt, cancellationToken).ConfigureAwait(false);
             }
         }
     }
