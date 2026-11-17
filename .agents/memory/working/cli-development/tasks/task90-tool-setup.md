@@ -6,7 +6,7 @@ open-forge:
 
 # Task 90: Lean tool setup
 
-Status: Spec rewritten on 17 November 2026 on `feature/tool-setup-lean`. Implementation follows in the same branch. Draft PR #32 keeps the fuller round-2 work as a parked record.
+Status: Spec in `f84711f9b` and implementation in `b8046c0a7` on `feature/tool-setup-lean`, 18 November 2026. Focused local evidence passed. Hosted CI and maintainer review remain. Draft PR #32 keeps the fuller round-2 work as a parked record.
 
 ## Outcome
 
@@ -33,3 +33,5 @@ The maintainer approved the lean plan the same day with these choices:
 ## Evidence
 
 Focused local evidence is the build, `check:dotnet:whitespace`, `check:dotnet:style` and filtered runs of the regenerated snapshot classes. CI runs the full suites.
+
+The managed Windows run on 18 November 2026 passed 789 of 801 selected Integration tests, with 12 skipped, across the Tool, help, Install, Status, Update, Route Include and Exclude, Distribution, Settings, Architecture and Cleanup classes. It also passed 729 of 729 selected Unit tests across Settings, Recovery, Tools and shared Presentation. The docs site typecheck and build passed. Native AOT and EndToEnd weren't run locally.
