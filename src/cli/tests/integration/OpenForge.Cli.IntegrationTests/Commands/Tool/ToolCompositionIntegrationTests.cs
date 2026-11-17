@@ -136,11 +136,17 @@ public sealed class ToolCompositionIntegrationTests
         var records = await fixture.RecordService().ReadAsync(new(fixture.Workspace, fixture.Home), TestContext.Current.CancellationToken);
         var machine = records.Machine[ToolCompositionFixture.FirstId];
         Assert.True(machine.PlacedByOpenForge);
-        var launcher = Assert.Single(machine.Launchers);
-        Core.Framework.Tools.Shared.Records.ToolRecordPaths.Check(fixture.Home, launcher.LauncherPath);
-        Core.Framework.Tools.Shared.Records.ToolRecordPaths.Check(fixture.Home, launcher.EntryPath);
-        Assert.Equal(ToolCompositionFixture.DownloadBytes, File.ReadAllBytes(launcher.LauncherPath));
-        Assert.Equal(ToolCompositionFixture.DownloadBytes, File.ReadAllBytes(launcher.EntryPath));
+        // G10: the downloaded binary stays in its versioned tool folder, and bin gets launchers that point at it.
+        Assert.NotEmpty(machine.Launchers);
+        Assert.All(machine.Launchers, launcher =>
+        {
+            Core.Framework.Tools.Shared.Records.ToolRecordPaths.Check(fixture.Home, launcher.LauncherPath);
+            Core.Framework.Tools.Shared.Records.ToolRecordPaths.Check(fixture.Home, launcher.EntryPath);
+            Assert.Equal(Core.Framework.Tools.Shared.Supply.ToolSupplyPaths.Bin(fixture.Home), Path.GetDirectoryName(launcher.LauncherPath));
+            Assert.Equal(machine.ToolPath, Path.GetDirectoryName(launcher.EntryPath));
+            Assert.Equal(Core.Framework.Tools.Shared.Launchers.ToolLauncherWriter.Render(launcher), File.ReadAllBytes(launcher.LauncherPath));
+            Assert.Equal(ToolCompositionFixture.DownloadBytes, File.ReadAllBytes(launcher.EntryPath));
+        });
         Assert.Contains(machine.Integrity, item => item.Kind == ToolVerificationKind.PinnedSha256);
         Assert.Equal(ToolCompositionFixture.Version, records.Portable?.Lock[ToolCompositionFixture.FirstId].Version);
         Assert.Equal(0, fixture.PathEffects);

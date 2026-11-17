@@ -1,3 +1,5 @@
+using OpenForge.Cli.Core.Framework.Tools.Shared.Supply;
+using OpenForge.Cli.Core.Framework.Tools.Shared.Launchers;
 using OpenForge.Cli.Core.Framework.Tools.Models.Catalogue;
 using OpenForge.Cli.Core.Framework.Tools.Models.Channels;
 using OpenForge.Cli.Core.Framework.Tools.Models.Configuration;
@@ -181,10 +183,21 @@ public sealed class ToolChannelServiceTests
         Assert.NotNull(result.State);
         Assert.Equal(ToolChannelFixture.Version, result.State.Version);
         Assert.True(File.Exists(result.State.CommandPath));
-        Assert.True(Assert.Single(result.PendingBackups).Verified);
+        Assert.Equal(planned.Resolution.Execution.Launchers.Count, result.PendingBackups.Count);
+        Assert.All(result.PendingBackups, backup => Assert.True(backup.Verified));
         Assert.Equal(0, fixture.Backups.Completed);
         Assert.Equal(1, fixture.Downloads.Calls);
         Assert.True(result.State.PlacedByOpenForge);
+        // G10: the binary stays in its versioned tool folder, and bin holds only launchers that point at it.
+        var tool = ToolSupplyPaths.Tool(fixture.Home, result.State.ToolId, result.State.Version);
+        Assert.Equal(tool, result.State.ToolPath);
+        Assert.Equal(tool, planned.Resolution.Execution.NativeInstallDirectory);
+        Assert.All(result.State.Launchers, launcher =>
+        {
+            Assert.Equal(ToolSupplyPaths.Bin(fixture.Home), System.IO.Path.GetDirectoryName(launcher.LauncherPath));
+            Assert.Equal(tool, System.IO.Path.GetDirectoryName(launcher.EntryPath));
+            Assert.Equal(ToolLauncherWriter.Render(launcher), File.ReadAllBytes(launcher.LauncherPath));
+        });
     }
 
     [Fact(DisplayName = "A failed chosen download doesn't invoke another channel or manager")]
@@ -308,7 +321,7 @@ public sealed class ToolChannelServiceTests
         var download = Assert.Single(plan.Execution.Downloads);
         Assert.Equal(download.DestinationPath, Assert.Single(result.CompletedEffects));
         Assert.True(File.Exists(download.DestinationPath));
-        Assert.False(File.Exists(Assert.Single(plan.Execution.Launchers).LauncherPath));
+        Assert.All(plan.Execution.Launchers, launcher => Assert.False(File.Exists(launcher.LauncherPath)));
         Assert.Empty(result.PendingBackups);
         Assert.Empty(fixture.Processes.Requests);
     }
@@ -350,14 +363,17 @@ public sealed class ToolChannelServiceTests
         [
             Assert.Single(plan.Execution.Downloads).DestinationPath,
             Assert.Single(plan.Execution.Extractions).DestinationPath,
-            Assert.Single(plan.Execution.Launchers).LauncherPath,
+            .. plan.Execution.Launchers.Select(launcher => launcher.LauncherPath),
         ];
         Assert.Equal(completed, result.CompletedEffects);
-        var backup = Assert.Single(result.PendingBackups);
-        Assert.True(backup.Verified);
-        Assert.Same(Assert.Single(fixture.Backups.Results), backup.Backup);
-        Assert.NotNull(backup.ExpectedAppliedSha256);
-        Assert.True(File.Exists(backup.Backup.TargetPath));
+        Assert.Equal(plan.Execution.Launchers.Count, result.PendingBackups.Count);
+        Assert.Equal(fixture.Backups.Results, result.PendingBackups.Select(backup => backup.Backup));
+        Assert.All(result.PendingBackups, backup =>
+        {
+            Assert.True(backup.Verified);
+            Assert.NotNull(backup.ExpectedAppliedSha256);
+            Assert.True(File.Exists(backup.Backup.TargetPath));
+        });
         Assert.Same(plan.Execution.Commands[^1], Assert.Single(fixture.Processes.Requests));
         Assert.Empty(result.Runtimes);
         Assert.Equal(0, fixture.Backups.Completed);
@@ -369,7 +385,7 @@ public sealed class ToolChannelServiceTests
     {
         using var fixture = new ToolChannelFixture();
         var plan = await ReleasePlan(fixture);
-        var first = Assert.Single(plan.Execution.Launchers);
+        var first = plan.Execution.Launchers[0];
         var second = first with { LauncherPath = System.IO.Path.Combine(plan.Execution.BinPath, "second-sample.exe") };
         plan = plan with { Execution = plan.Execution with { Launchers = [first, second] } };
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(Token);

@@ -66,7 +66,7 @@ public sealed class ToolWriteRemovePlanningTests
         Assert.Equal(3, Assert.Single(result.Data.Tools).Effects.Count);
     }
 
-    [Theory(DisplayName = "Live account choice prepares the original request before native-first execution")]
+    [Theory(DisplayName = "Live account choice after project cleanup prepares the original uninstall request")]
     [InlineData(false)]
     [InlineData(true)]
     public async Task ConfirmedPreparationUsesOriginalDeclarations(bool failPreparation)
@@ -87,28 +87,30 @@ public sealed class ToolWriteRemovePlanningTests
         Assert.Equal(ToolWriteConsentKind.AccountUninstall, question.Kind);
         Assert.Contains(question.Effects, effect => effect.Kind == ToolDeclaredEffectKind.PathChange.ToString());
         Assert.Contains(question.Effects, effect => effect.Kind == ToolDeclaredEffectKind.SharedFileDeletion.ToString());
+        // G9: the project's own additions go first, then the question, then native preparation.
+        Assert.True(fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.ConfigRemove)
+            < fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.OptionalPrompt));
         Assert.True(fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.OptionalPrompt)
             < fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.NativePreparation));
+        Assert.False(fixture.Records.Portable!.Lock.ContainsKey(ToolWriteOperationFixture.Id));
         if (failPreparation)
         {
             Assert.Equal(CliSemanticStatus.Blocked, result.Status);
             Assert.Contains(result.Findings, finding => finding.Code == ToolWriteFindingCode.NativePlanBlocked);
             Assert.Empty(fixture.Processes);
-            Assert.DoesNotContain(fixture.Calls, call => call.Call == ToolWriteCall.ConfigRemove);
-            Assert.True(fixture.Records.Portable!.Lock.ContainsKey(ToolWriteOperationFixture.Id));
         }
         else
         {
             Assert.Equal(CliSemanticStatus.Complete, result.Status);
             Assert.Single(fixture.Processes);
-            Assert.True(fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.Native)
-                < fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.ConfigRemove));
+            Assert.True(fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.NativePreparation)
+                < fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.Native));
             Assert.DoesNotContain(Assert.Single(result.Data.Tools).Commands, command => command.Purpose == ToolWriteProjection.ManualNativeUninstallPurpose);
         }
     }
 
-    [Fact(DisplayName = "Confirmed native removal failure keeps project receipts and cleanup unstarted")]
-    public async Task NativeFailureStopsProjectCleanup()
+    [Fact(DisplayName = "Confirmed native removal failure after project cleanup fails the run and keeps its backups pending")]
+    public async Task NativeFailureAfterProjectCleanup()
     {
         var fixture = Fixture();
         fixture.Terminal = true;
@@ -117,11 +119,12 @@ public sealed class ToolWriteRemovePlanningTests
         var result = await fixture.Create().ExecuteAsync(fixture.Request(ToolWriteKind.Remove, yes: false), CancellationToken.None);
 
         Assert.Equal(CliSemanticStatus.Failed, result.Status);
-        Assert.True(fixture.Records.Portable!.Lock.ContainsKey(ToolWriteOperationFixture.Id));
-        Assert.DoesNotContain(fixture.Calls, call => call.Call == ToolWriteCall.ConfigRemove);
+        Assert.False(fixture.Records.Portable!.Lock.ContainsKey(ToolWriteOperationFixture.Id));
+        Assert.True(fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.ConfigRemove)
+            < fixture.Calls.FindIndex(call => call.Call == ToolWriteCall.Native));
         Assert.Empty(fixture.CompletedBackups);
         Assert.Contains(result.Data.Outcomes, outcome => outcome.Stage == ToolWriteStages.Native && outcome.State == ToolWriteStages.Failed);
-        Assert.Contains(result.Data.Outcomes, outcome => outcome.Stage == ToolWriteStages.Config && outcome.State == ToolWriteStages.NotStarted);
+        Assert.Contains(result.Data.Outcomes, outcome => outcome.Stage == ToolWriteStages.Config && outcome.State == ToolWriteStages.Completed);
     }
 
     private static ToolWriteOperationFixture Fixture()
