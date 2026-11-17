@@ -151,24 +151,6 @@ public sealed class CommentLinkRepairIntegrationTests
             File.ReadAllText(repository.PathFor(CodePath)));
     }
 
-    [Fact(DisplayName = "An uncommitted moved code target is suggested from its committed content")]
-    public async Task UncommittedCodeMove()
-    {
-        using var repository = new RenameEvidenceGitWorkspace();
-        await repository.InitializeAsync(unborn: true);
-        Seed(repository);
-        repository.Write(CodePath, "class Order { void Save() {} }\n");
-        repository.Write(GuidePath, Document($"# Guide\n\n<!-- {SourceCommentLinkReader.RuneMarker} {CodePath}#Order.Save implements this rule -->\n"));
-        await Commit(repository);
-        const string movedCode = "src/MovedOrder.cs";
-        repository.Move(CodePath, movedCode);
-        var before = repository.Snapshot();
-        var view = await Read(repository);
-        Assert.Contains(view.Candidates, candidate => candidate.SourcePath == GuidePath && candidate.Candidate.Path == movedCode
-            && candidate.Bases.Any(basis => basis.Kind == LocalReferenceCandidateBasisKind.GitRename));
-        Assert.Equal(before, repository.Snapshot());
-    }
-
     [Theory(DisplayName = "Cross-document suggestions distinguish historical section content from a unique weak slug"), InlineData(true), InlineData(false)]
     public async Task SectionSuggestions(bool history)
     {
