@@ -232,15 +232,10 @@ checkpoint prints the complete plan and waits 60 seconds before either
 destination. Cancelling during that wait uploads nothing. During npm
 publication, SIGINT or SIGTERM stops further uploads and tag changes after the
 current effect settles and reports partial results with a non-zero exit.
-Channel restoration uses the previous release's package graph. `--from` reads
-a previous collected `release.json` offline. `--registry` reads the previous
-wrapper dependencies and alias-version presence from npm. A preview without
-either source stops before registry contact. `--apply` also permits that lookup
-and changes only the previous graph's packages after checking every destination
-version. An alias absent from that graph never blocks restoration. Its candidate
-tag removals are shown for separate review and never run through `--apply`.
-Before removing a new alias's tags, check that the bad release introduced it and
-that those tags still point to the bad version. Before any npm upload, the shared
+Channel restoration previews commands for all eight packages and applies them
+only with `--apply`, after checking every previous version. A package without
+the previous version, such as an alias the bad release introduced, is skipped
+and named, so its tags can be checked by hand. Before any npm upload, the shared
 publisher queries every selected exact version. An existing version emits a
 warning and is skipped without retagging when its identity matches. Existing
 wrappers must have exactly the selected dependencies; a mismatch rejects before

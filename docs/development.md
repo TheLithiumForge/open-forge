@@ -421,14 +421,11 @@ settle. It reports published, interrupted and unstarted packages and exits
 non-zero. Earlier uploads remain published.
 
 To restore public npm channels, preview
-`npx forge release:restore-channels --version <bad> --to <previous> --registry`.
+`npx forge release:restore-channels --version <bad> --to <previous>`.
 It defaults to `latest` plus the bad version's prerelease channel. Use
 `--channels <tags>` to choose tags and `--apply` to apply the plan after checking
-that the previous version exists for every package in its recorded graph.
-`--registry` reads that graph from npm. For an offline preview, use
-`--from <previous-release-directory>` with the previous collected `release.json`.
-Tags for an alias absent from the previous graph are printed for separate review
-and never changed by `--apply`. It never unpublishes
+the previous version of all eight packages. Packages without that version, such
+as an alias the bad release introduced, are skipped and named. It never unpublishes
 or deprecates versions. GitHub release changes are manual. The [delivery guide](../scripts/delivery/README.md#reuse-builds-and-cancel-publication)
 describes cancellation and recovery at both destinations.
 

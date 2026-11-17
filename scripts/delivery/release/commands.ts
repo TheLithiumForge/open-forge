@@ -26,18 +26,14 @@ export const releaseCommands = {
   },
   "release:restore-channels": {
     script: "release/restore-channels.ts",
-    description: "Restore npm channels using the previous release's actual package graph.",
-    options: [DeliveryOption.version, DeliveryOption.to, "channels", DeliveryOption.from, DeliveryOption.registry, "apply"],
-    usage: "release:restore-channels --version <bad> --to <previous> [--from <previous-release-directory> | --registry] [--channels <tags>] [--apply]",
+    description: "Preview or apply npm channel recovery for all eight packages.",
+    options: [DeliveryOption.version, DeliveryOption.to, "channels", "apply"],
+    usage: "release:restore-channels --version <bad> --to <previous> [--channels <tags>] [--apply]",
     details: [
-      "--from reads the previous collected release.json offline. --registry reads the previous wrapper dependencies and alias presence from npm. Preview without either source stops offline.",
-      "--apply allows registry reads and checks every package in that previous graph before changing any channel. Tags of a newly introduced alias are printed for separate review and never applied automatically.",
-      "Defaults to latest plus the bad version's prerelease channel. Never unpublishes or deprecates a version.",
+      "Prints npm dist-tag commands offline. Defaults to latest plus the bad version's prerelease channel.",
+      "--apply checks the previous version of every package before changing any channel, then skips packages without it, such as an alias the bad release introduced. Requires npm credentials. Never unpublishes or deprecates a version.",
     ],
-    examples: [
-      "release:restore-channels --version 0.9.0-beta.11 --to 0.9.0-beta.10 --registry",
-      "release:restore-channels --version 1.0.1 --to 1.0.0 --from artifacts/previous-release --channels latest",
-    ],
+    examples: ["release:restore-channels --version 0.9.0-beta.11 --to 0.9.0-beta.10", "release:restore-channels --version 1.0.1 --to 1.0.0 --channels latest"],
   },
   "release:collect": {
     script: "release/collect-packages.ts",

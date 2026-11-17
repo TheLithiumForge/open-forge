@@ -19,6 +19,10 @@ Status: local implementation and delivery checks complete. CI qualification and 
 - **ZIP writer kept.** Node has deflate and CRC-32 but no ZIP writer. The alternatives are a new npm dependency or a Python script, which the TypeScript-only rule excludes. The writer is about 70 lines and fixes timestamps, order and Unix modes. The ZIP reader was a test oracle only, so it is removed. Tests now check the entry list that the writer receives.
 - **Removed with the old layout.** Entry-point generation, environment markers, the PyPI name model, the resolver fixture and its integration test, the launcher-preferring Python discovery and its test.
 
+## Channel Recovery
+
+A separate commit removes the two-source rollback check from review finding A2, pending the maintainer's confirmation. `release:restore-channels` again lists all eight packages, checks every previous version before any change, then skips and names packages without it. That covers the first alias release, where `open-forge@<previous>` doesn't exist. The `--from` and `--registry` sources, the previous-graph readers and the printed alias tag removals are gone.
+
 ## File Modes
 
 The writer stores Unix mode `0o100755` for the executable and `0o100644` for metadata, with "version made by" set to Unix.
