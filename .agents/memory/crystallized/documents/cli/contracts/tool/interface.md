@@ -1,88 +1,54 @@
 ---
 open-forge:
-  description: Define tool specs, yes consent and shared result coordinates
+  description: Define tool IDs, consent and shared result coordinates
   tags: [Memory, Document, CLI, Tool, CurrentTruth]
 ---
 
 # Tool interface
 
-Tool is a command group that installs published tools and adds configuration.
-For example, a teammate runs bare Install to get the exact versions in the committed lock.
+Tool interface is the shared input, consent and report shape of the three tool commands.
+For example, `tool install codegraph --dry-run` shows the exact commands and file changes without running anything.
 
-Status: Round-2 design decided on 14 November 2026.
+Status: Lean design decided on 17 November 2026.
 
 ## Inputs
 
-The six leaves are defined by the [group](_tool.md).
+The three leaves are defined by the [group](_tool.md).
 All leaves accept the existing [global flags](../shared/global-flags/interface.md).
-Writer leaves accept `--yes`, `--dry-run` and repeated `--allow-path <path>`.
-Install and Update also accept `--channel <channel>` for a named tool spec.
-There is no Tool `--automatic`, `--allow-download` or value-taking `--version`.
-The global version flag keeps its existing meaning.
+Install and Remove also accept `--yes` and `--dry-run`.
 
-A tool spec is `id` or `id@version`.
-IDs are exact catalogue keys, not paths or source IDs.
-The V1 version selector accepts `major.minor` or an exact stable SemVer.
-Settings and catalogue profiles keep the `major.minor.x` range notation.
-A bare ID selects the latest supported version.
-An explicit selector must match an available supported profile and its minimum tool version.
-Unknown IDs or channels, empty selectors, prereleases, extra operands and repeated singleton values are invalid input.
-Registry tags and other npm range operators aren't part of this V1 selector grammar.
+A tool ID is an exact catalogue key, such as `codegraph` or `codebase-memory`.
+An unknown ID, an empty ID or an extra operand is invalid input.
+There is no version selector. Each catalogue entry has one tested version.
 Repeated Boolean flags are idempotent.
-
-Bare Install and Update select declared IDs in ordinal order.
-Bare Install uses the exact version in each lock entry.
-If a declared tool has no lock entry, it selects the latest version supported by its declared range.
-Bare Update selects the newest supported version for each declaration.
-A channel override requires a named spec.
 
 ## Consent
 
-Show the plan before asking or applying.
-`--yes` accepts that plan, including downloads, native setup and declared account-wide effects.
-It chooses npm when manager selection is unresolved and npm is usable, then the first usable client in the fixed npm, pnpm, Yarn Classic, bun order.
-A single usable project-lockfile preference wins before that fallback.
-Without `--yes`, ask when several compatible managers are possible.
-If neither a live terminal nor `--yes` is available, apply performs no effects and reports the shared confirmation family: `<Command> needs confirmation, and this session cannot ask.` It has the `invalid-input` status and exit 4. A declined plan is `cancelled`, exit 130.
+Nothing runs without consent, and every command is shown exactly before it runs.
+Install shows its plan and asks `Continue? [y/N]`. The default answer is no.
+`--yes` accepts that plan.
+Remove applies Open Forge's own changes without a plan question, then asks about the tool's own uninstall. That question defaults to no, and `--yes` takes the default.
 
-Even with `--yes`, unattended execution never changes PATH or deletes shared tool files or runtimes.
-Print exact instructions and keep those optional actions unselected: the files to delete, and the PATH entry or marked block to remove.
-Codebase Memory Remove is local by default. Its own uninstaller removes it system-wide: the binary in its versioned tool folder, all agent entries and, on Windows, that folder's user PATH entry if there is one. It never removes Open Forge's bin from PATH.
-Ask about it only after the local removal, in a live interactive run, naming those effects. The default answer is no, and `--yes` never runs it.
-With `--yes`, without a terminal or after declining, print the exact native uninstall command.
-Keep account-wide native settings on every project Remove and print the native command to change them back.
-The [recorded choices](../../technical-designs/tool-setup-lanes.md#recorded-choices) explain this guarded native-uninstall case.
+`--format json` never prompts.
+If Install needs consent and neither a live terminal nor `--yes` is available, it runs nothing and reports the shared confirmation family: `<Command> needs confirmation, and this session cannot ask.` It has the `invalid-input` status and exit 4.
+A declined plan is `cancelled`, exit 130.
+`--dry-run` shows the same plan, asks nothing and changes nothing.
 
 ## Reports
 
 Use the existing schema-3 envelope, statuses, exits, detail levels and streams from [Result coordinates](../shared/result-coordinates/interface.md).
 The command identity is `tool <leaf>`.
-Every leaf has `data.tools`, an array ordered by tool ID, even for one tool.
-Each entry carries the leaf's tool facts, including Inspect facts.
-Writers add `preview`, `plan` and `outcomes`.
-Plans show exact versions where known, channels, managers and requirements, commands, scopes, native installer writes, Open Forge additions, telemetry, downloads, launchers, PATH choices, backups and unfinished work.
-Say when dry-run needs network access to resolve latest.
+Every leaf reports `data.tools`, an array in catalogue order.
+List groups its rows by category in text and carries the category on each JSON entry.
+Install and Remove report `preview` and, for each tool, its ordered steps with their command, plain effect and outcome, and Open Forge's file changes with their path, plain purpose and outcome.
+A failed step adds its exit code, the tail of its output and a plain next step.
 Text and JSON consume the same facts.
-
-Status and Inspect always show bin and current PATH membership.
-Show the selected manager's global-bin path and readiness separately.
-An unchecked restarted terminal or agent app isn't reported as verified.
-Absolute machine paths appear only in reports and machine state.
 
 ## Results
 
-The aggregate gives cancellation priority once invocation starts.
+Cancellation has priority once invocation starts.
 Otherwise precedence is invalid input, blocked, failed, incomplete, completed with warnings and completed.
 Use the exact shared status spellings and exits.
-Before a bare writer starts effects, preflight every tool.
-If one is blocked, perform no effects.
-Once effects start, stop at the first failure and report completed and unstarted work separately.
+Install checks every required package manager or runner before it runs anything. If one is missing, it runs nothing.
+Once effects start, stop at the first failure and report completed and not-started work separately.
 No result promises package-manager rollback.
-
-## Limits
-
-There is one active version per tool per machine.
-Before replacing a shared installation, disclose the account-wide effect.
-Tools run through direct commands.
-V1 adds no Open Forge tool Skill, per-tool managed-block line, Run, Choose, Configure or role assignment.
-Upstream MCP names, hooks, permissions, instruction blocks and Skills stay as the upstream installer writes them.

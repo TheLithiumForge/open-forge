@@ -89,17 +89,6 @@ against an actor outside it. A stronger later threat model requires a new
 Architecture decision covering platform, portability, Native AOT, maintenance,
 and evidence costs.
 
-## Tool setup
-
-The [Tool setup design](technical-designs/tool-setup.md) defines the round-2 catalogue and frozen Framework service interfaces.
-Operations keeps command requests, plans, --yes consent and results.
-Root hosts process, transfer and platform PATH capabilities.
-Tools run directly through their own commands after setup.
-Tool writers don't use workspace leases or recovery state, because Open Forge commands don't run concurrently by design.
-The committed lock holds additive change records. Native previous account values and paths stay in user state.
-The Tool leaves are implemented on this model.
-Root checks native client paths before effects. The design's [native config reader](technical-designs/tool-setup.md#native-config-reader) records the bounded read-only format adapter and its replacement condition.
-
 ## Layer Model
 
 The CLI has four layers. Each answers exactly one question, and the question is
@@ -304,6 +293,13 @@ The root host passes standard input, writers, prompt capability, environment
 facts, and cancellation explicitly. It constructs native interaction from
 ordinary .NET stream and redirection facts; the libraries never cache ambient console
 state.
+
+## Tool setup
+
+The [Tool setup design](technical-designs/tool-setup.md) defines the tool catalogue and its placement.
+The Framework owns the catalogue and integration edits. Operations owns the three Tool commands.
+Root hosts the process runner. Tools run their own install, setup and uninstall commands.
+Open Forge's own file edits use the shared write path. The settings `tools` list is the only record.
 
 ## Link Fragments
 

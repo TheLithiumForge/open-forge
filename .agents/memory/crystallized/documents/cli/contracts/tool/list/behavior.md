@@ -1,32 +1,19 @@
 ---
 open-forge:
-  description: Define Tool list checks and effects
+  description: Define what Tool list reads
   tags: [Memory, Document, CLI, Tool, CurrentTruth]
 ---
 
 # Tool list behavior
 
-Tool list behavior is the flow that lists catalogue tools and declarations.
-CodeGraph and Codebase Memory appear in ID order. Rune has no V1 row.
+Tool list behavior is the read-only flow behind `tool list`.
+For example, it runs `codegraph --version` to show the installed version.
 
-Status: Round-2 design decided on 14 November 2026.
+Status: Lean design decided on 17 November 2026.
 
 ## Flow
 
-Read the compiled catalogue and readable settings. Don't invoke native probes or network queries. Keep independently readable rows if workspace facts are unavailable.
-Use the [common Behavior](../behavior.md) for detection, channels, native setup and additive effects.
-Keep syntax and reports in the [Interface](interface.md).
-
-## Results
-
-Use the common status precedence and shared schema-3 exits.
-Keep actual effects, conflicts and unstarted work separate.
-Dry-run changes no Tool configuration or records.
-
-## Conformance
-
-Required cases cover:
-
-- Catalogue rows, no workspace, unknown fields, unreadable settings and stable ordering.
-- Stable ordering and unchanged unrelated data.
-- Shared text and JSON facts and global flags.
+Read the project settings and each tool's integration files. Run each tool's detection command. Report the result.
+List writes nothing and runs no install, setup or uninstall command.
+Unreadable settings or integration files don't stop the list. The list adds a warning that names the file, shows the affected state as not configured or not integrated, and reports `incomplete`.
+Use the [common Behavior](../behavior.md) for detection and integration state.

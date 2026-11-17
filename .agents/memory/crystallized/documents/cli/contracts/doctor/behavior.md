@@ -7,18 +7,6 @@ open-forge:
 
 # Doctor Behavior Contract
 
-Doctor is a command that diagnoses workspace issues and gives next steps.
-
-## Tool checks
-
-The round-2 Tool checks report missing declared tools, unsupported detected versions, exact lock differences, additive config drift and unavailable native machine facts.
-A missing tool offers `open-forge tool install`.
-Check the tools that settings declare or the lock records. A lock entry without its declaration is drift.
-When neither settings nor the lock name tools, skip Tool checks before resolving the Tool home or reading machine state.
-Use the same bounded probes as Tool Status, including CodeGraph's no-download probe environment.
-These checks don't configure tools, create Tool state or acquire a Tool lease.
-The [Tool contracts](../tool/_tool.md) define the read operations.
-
 The local-reference domain includes [comment links](../shared/source-references/interface.md#comment-links). It reports missing targets, failed fragments and legacy ID targets with exact source locations. Moved-target suggestions keep their Git evidence and confidence separate from weak matches.
 
 An unrecognized authored settings version produces one informational

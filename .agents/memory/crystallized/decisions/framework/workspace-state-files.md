@@ -8,11 +8,9 @@ open-forge:
 
 ## Context
 
-Tool setup extends settings with supported ranges and the lock with exact installed versions, channels and additive change records.
-The [Tool records contract](../../documents/cli/contracts/shared/tool-records/interface.md) defines these additions.
-Repository configuration keeps no prior-value records.
-Native previous account settings, channels' local paths, launchers and PATH history stay in per-user machine state.
-Tools create no new workspace state folder and don't use the existing workspace lease or recovery mechanism.
+Tool setup adds one key to the authored settings: a `tools` list of the tool IDs a project uses.
+It adds nothing to the lock, machine state or `.open-forge-state/`.
+The [Tool setup design](../../documents/cli/technical-designs/tool-setup.md) defines it.
 
 A workspace accumulated four files under one naming convention:
 a generated lifecycle record (17 KB of baselines),

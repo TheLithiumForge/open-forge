@@ -6,13 +6,13 @@ open-forge:
 
 # Tool list
 
-Tool list is an operation that lists catalogue tools and declarations.
-For example, codeGraph and Codebase Memory appear in ID order. Rune has no V1 row.
+Tool list is a command that shows the supported tools by category, with each one's install method and state.
+For example, a teammate runs it to see that CodeGraph is configured for the project but not installed on their machine.
 
-Status: Round-2 design decided on 14 November 2026.
+Status: Lean design decided on 17 November 2026.
 
-The [Interface](interface.md) defines inputs and reports.
-The [Behavior](behavior.md) defines execution.
+The [Interface](interface.md) defines syntax and the report.
+The [Behavior](behavior.md) defines what it reads.
 
 ## Axioms
 
@@ -20,5 +20,5 @@ The [Behavior](behavior.md) defines execution.
 
 ## Entries
 
-- [Define Tool list checks and effects](behavior.md) - #Memory #Document #CLI #Tool #CurrentTruth
-- [List catalogue tools and project declarations](interface.md) - #Memory #Document #CLI #Tool #CurrentTruth
+- [Define what Tool list reads](behavior.md) - #Memory #Document #CLI #Tool #CurrentTruth
+- [Show supported tools by category with their install method and state](interface.md) - #Memory #Document #CLI #Tool #CurrentTruth
