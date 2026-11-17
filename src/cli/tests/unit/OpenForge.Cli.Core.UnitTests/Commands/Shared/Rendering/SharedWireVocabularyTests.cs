@@ -25,7 +25,7 @@ public sealed class SharedWireVocabularyTests
         CommandOutputSnapshot.MatchSnapshot(string.Join("\n", Enum.GetValues<RecoveryStoreKind>().Select(kind =>
             $"{kind}: {RecoveryWireVocabulary.StoreKind(kind)}")), "recovery-store-kinds");
         Assert.Equal(
-            ["framework", "extension", "index", "route", "repair", "library", "workspace"],
+            ["framework", "extension", "index", "route", "repair", "library", "workspace", "tool"],
             Enum.GetValues<RecoveryBundleProducer>().Select(RecoveryWireVocabulary.Producer));
         Assert.Equal(
             ["install", "index", "create", "init", "move", "update", "remove", "repair", "attach", "sync", "detach", "include", "exclude"],
