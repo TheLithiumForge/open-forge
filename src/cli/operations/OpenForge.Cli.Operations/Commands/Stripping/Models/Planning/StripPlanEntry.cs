@@ -31,15 +31,6 @@ internal enum StripRewritePart
     ManagedSection,
 }
 
-internal enum StripEffectState
-{
-    Planned,
-    NotStarted,
-    Done,
-    Unknown,
-    Failed,
-}
-
 /// <summary>One reviewed plan line. Paths are canonical workspace-relative paths.</summary>
 internal sealed record StripPlanEntry
 {
@@ -56,8 +47,6 @@ internal sealed record StripPlanEntry
     public string? Before { get; init; }
 
     public string? After { get; init; }
-
-    public StripEffectState State { get; init; } = StripEffectState.Planned;
 
     internal bool SameAs(StripPlanEntry other)
         => Action == other.Action && Path == other.Path && To == other.To && Reason == other.Reason

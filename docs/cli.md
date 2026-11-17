@@ -1920,7 +1920,7 @@ Uninstall deletes the Framework and Extension files that still match what Open
 Forge installed. It removes Open Forge's own sections in `AGENTS.md` and
 `CLAUDE.md` and keeps your text there. A host with nothing else left is deleted.
 It also deletes route scaffolds, meaning entrypoints that hold nothing but what
-Open Forge wrote for a route, then `.agents/open-forge.json`,
+Open Forge writes for a route, whoever wrote them, then `.agents/open-forge.json`,
 `.agents/open-forge.lock.json` and folders left empty. The plan's last step
 removes `.open-forge-state/`. It stays when it holds recovery data, a link or
 cannot be read, and the result says why.
@@ -1930,7 +1930,8 @@ Name one with `--remove-edited` to remove it anyway. Git-ignore rules stay.
 Detach Libraries before uninstalling.
 
 The same workspace and options give the same bytes. A file that changed after
-the plan stops the run, and an interrupted run keeps its recovery bundle. Once
+the plan stops the run. A run that stops part way says how many changes it made
+and keeps its recovery bundle. Once
 the ownership records are gone, a second run reports `Nothing to do.` The
 [Uninstall contract](../.agents/memory/crystallized/documents/cli/contracts/uninstall/_uninstall.md)
 defines the complete boundary.

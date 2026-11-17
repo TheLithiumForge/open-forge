@@ -7,6 +7,18 @@ using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 
 namespace OpenForge.Cli.Core.Commands.Stripping.Models.Result;
 
+/// <summary>
+/// What happened to the plan as a whole. A run that stops part way reports how many changes it made in its
+/// finding and keeps its recovery bundle, so no entry carries its own outcome.
+/// </summary>
+internal enum StripRunOutcome
+{
+    Planned,
+    NotStarted,
+    Unknown,
+    Done,
+}
+
 /// <summary>The one result strip and uninstall both return, so their reports share one shape.</summary>
 internal sealed record StripResult : ICliCommandResult
 {
@@ -39,6 +51,8 @@ internal sealed record StripResult : ICliCommandResult
     internal ImmutableArray<StripCollision> Collisions { get; init; } = [];
 
     internal ImmutableArray<StripFinding> Findings { get; init; } = [];
+
+    internal StripRunOutcome Outcome { get; init; } = StripRunOutcome.Planned;
 
     internal bool Verified { get; init; }
 

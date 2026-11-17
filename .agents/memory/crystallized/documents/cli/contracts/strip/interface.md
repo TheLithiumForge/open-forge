@@ -115,7 +115,7 @@ The command is `strip` in the shared schema-3 report. Every plan entry is an eff
 
 `reason` says why an entry exists. Strip's own values are `strip` for a document rewritten in place, `flatten` for a moved document and `empty-folder` for a folder the plan leaves empty. [`uninstall`](../uninstall/interface.md#results) adds its own values.
 
-`outcome` is `planned` in a preview and `done`, `not-started`, `unknown` or `failed` after applying. `parts` names what changed in a rewrite or move: `metadata`, `entries`, `links`, `relink` for flatten link updates, and `managed-section` for uninstall's root hosts. Text output lists the effects. Full detail adds the hashes. Counts use singular labels for one, such as `1 file moved`.
+`outcome` is the run's, the same for every entry: `planned` in a preview, `done` once every effect verified, `not-started` when the run stopped before its first effect and `unknown` when it stopped after effects started. A stopped run's finding says how many changes it made, and its recovery bundle holds the prior bytes. `parts` names what changed in a rewrite or move: `metadata`, `entries`, `links`, `relink` for flatten link updates, and `managed-section` for uninstall's root hosts. Text output lists the effects. Full detail adds the hashes. Counts use singular labels for one, such as `1 file moved`.
 
 ## Errors And Boundaries
 

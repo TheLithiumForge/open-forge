@@ -224,7 +224,7 @@ public sealed class UninstallBoundaryIntegrationTests
         var planned = preview.Plan[^1];
         Assert.Equal((StripPlanAction.DeleteDirectory, StripRuntimeFolder.Path, StripPlanReason.State), (planned.Action, planned.Path, planned.Reason));
         Assert.Equal(CliSemanticStatus.Complete, applied.Status);
-        Assert.Equal(StripEffectState.Done, applied.Plan[^1].State);
+        Assert.Equal((StripRunOutcome.Done, StripRuntimeFolder.Path), (applied.Outcome, applied.Plan[^1].Path));
         Assert.False(workspace.Exists(StripRuntimeFolder.Path));
     }
 

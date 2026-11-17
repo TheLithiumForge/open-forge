@@ -9,7 +9,7 @@ open-forge:
 
 ## Purpose
 
-`uninstall` removes the Framework and Extension files Open Forge installed and still recognizes, its managed sections in `AGENTS.md` and `CLAUDE.md`, the route scaffolds it wrote and its state. Files the user wrote stay. Managed files the user edited stay too, unless the user names them. With [`--strip`](../strip/interface.md#parts) and [`--flatten`](../strip/interface.md#--flatten-folder) it also turns the remaining documents into plain Markdown, so one command builds an eval comparison setup from a full Open Forge workspace.
+`uninstall` removes the Framework and Extension files Open Forge installed and still recognizes, its managed sections in `AGENTS.md` and `CLAUDE.md`, route scaffolds and its state. Files the user wrote stay. Managed files the user edited stay too, unless the user names them. With [`--strip`](../strip/interface.md#parts) and [`--flatten`](../strip/interface.md#--flatten-folder) it also turns the remaining documents into plain Markdown, so one command builds an eval comparison setup from a full Open Forge workspace.
 
 The sibling [Behavior Contract](behavior.md) defines planning and application. [Issue 19](https://github.com/TheLithiumForge/open-forge/issues/19) records the request.
 
@@ -42,11 +42,11 @@ Uninstall compares each owned target with the running CLI's payload, using the s
 
 - **Framework and Extension files** that still match their payload are deleted. A file shared by several packages goes once.
 - **Managed sections** in `AGENTS.md` and `CLAUDE.md` that still match their payload are removed, together with the blank lines that separated them from the user's text. The user's own text in those files stays. When nothing else is left, the file is deleted.
-- **Route scaffolds** are entrypoints Open Forge wrote for a route, such as `docs/_docs.md` from `route include`. See [Route Scaffolds](#route-scaffolds).
+- **Route scaffolds** are entrypoints that hold nothing but what Open Forge writes for a route, such as `docs/_docs.md` from `route include`. See [Route Scaffolds](#route-scaffolds).
 - **State** is `.agents/open-forge.lock.json`, `.agents/open-forge.json` and the runtime folder `.open-forge-state/`. The runtime folder is the plan's last entry and goes when it holds only its lock and ignore files. When it holds recovery data, is or holds a link, or cannot be read, it stays and the result reports `uninstall.runtime-retained` with the real reason. Retained recovery data adds the `cleanup` next action.
 - **Folders** left empty by these deletions are removed, deepest first. A folder that still holds any file stays.
 
-Only ownership records make a file Open Forge's. Without them uninstall removes nothing, even a file whose bytes match the payload or the scaffold shape. Missing targets need no effect. A target that cannot be read or compared is `uninstall.target-unavailable` and blocks the run, because uninstall cannot tell whether the user edited it.
+Only ownership records make a file Open Forge's, with one exception: while they exist, an unowned entrypoint with the [route scaffold](#route-scaffolds) shape counts as installed. Without them uninstall removes nothing, even a file whose bytes match the payload or the scaffold shape. Missing targets need no effect. A target that cannot be read or compared is `uninstall.target-unavailable` and blocks the run, because uninstall cannot tell whether the user edited it.
 
 ## What Stays
 
@@ -122,7 +122,8 @@ The maintainer accepted these answers to the issue's questions:
 
 - **State removal is a plan step.** `.open-forge-state/` is the plan's last entry, shown by `--dry-run` and reported in the effects. When it must stay, that is a `kept` entry with its reason.
 - **Files changed during apply** stop the run as `target-changed-during-apply` with the `doctor` next action. A change found before effects start stays `target-changed`.
-- **A second run is idempotent.** Once the ownership records are gone, uninstall changes nothing. Matching bytes never establish ownership.
+- **A second run is idempotent.** Once the ownership records are gone, uninstall changes nothing. Matching bytes never establish ownership, except for route scaffolds below.
+- **Route scaffolds count as installed files.** While ownership records exist, uninstall removes an unowned entrypoint that matches the scaffold shape above, whoever wrote it.
 - **Edited managed files stay by default.** Uninstall never asks about them one by one. `--remove-edited <path>` names each one to remove.
 - **Managed sections go, user text stays.** Uninstall removes only Open Forge's own sections in `AGENTS.md` and `CLAUDE.md`, keeps the user's text and deletes a host only when nothing else is left.
 - **`strip` is its own command,** and its parts are also options on `uninstall`.
@@ -131,6 +132,5 @@ The maintainer accepted these answers to the issue's questions:
 
 These defaults are recorded for the maintainer to confirm:
 
-- **Route scaffolds count as installed files.** Uninstall removes an unowned entrypoint only when it matches the scaffold shape above.
 - **Libraries block.** A later pass may detach them as part of uninstall.
 - **Git-ignore sections stay** in this pass.

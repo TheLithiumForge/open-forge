@@ -52,7 +52,8 @@ public sealed class UninstallIntegrationTests
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.Empty(result.Kept);
-        Assert.Contains(result.Plan, entry => entry.Path == Directives && entry.Action == StripPlanAction.Delete && entry.State == StripEffectState.Done);
+        Assert.Equal(StripRunOutcome.Done, result.Outcome);
+        Assert.Contains(result.Plan, entry => entry.Path == Directives && entry.Action == StripPlanAction.Delete);
         Assert.False(workspace.Exists(Directives));
         Assert.Equal(NoteBytes, workspace.Read(Note));
     }
@@ -92,7 +93,7 @@ public sealed class UninstallIntegrationTests
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);
         Assert.NotEmpty(result.Plan);
-        Assert.All(result.Plan, entry => Assert.Equal(StripEffectState.Planned, entry.State));
+        Assert.Equal(StripRunOutcome.Planned, result.Outcome);
         Assert.Equal(before, workspace.SnapshotHashes());
     }
 

@@ -31,7 +31,7 @@ internal static class StripReportSelector
                 : null,
             Workspace = result.WorkspacePath is { } workspace ? new CliWorkspaceEcho(workspace, result.WorkspaceExplicit) : null,
             Findings = [.. result.Findings.Select(finding => Finding(result, finding))],
-            Effects = [.. result.Plan.SelectMany(entry => Effects(entry, full))],
+            Effects = [.. result.Plan.SelectMany(entry => Effects(entry, EffectOutcome(result.Outcome), full))],
             Counts = Counts(result),
             Recovery = new CliRecovery(result.RecoveryPath, result.Recovery switch
             {
@@ -56,7 +56,7 @@ internal static class StripReportSelector
                     Parts = [.. entry.Parts.Select(StripWireVocabulary.RewritePartName)],
                     Before = entry.Before,
                     After = entry.After,
-                    Outcome = OutcomeName(entry.State),
+                    Outcome = OutcomeName(result.Outcome),
                 })],
                 Kept = [.. result.Kept.Select(kept => new StripDataKept(kept.Path, StripWireVocabulary.KeptReasonName(kept.Reason)))],
                 Collisions = [.. result.Collisions.Select(collision => new StripDataCollision(collision.Path, collision.Sources))],
@@ -144,17 +144,19 @@ internal static class StripReportSelector
         return actions.Count > 0 ? CliResolution.TargetedOperation : CliResolution.ManualDecision;
     }
 
-    private static IEnumerable<CliEffect> Effects(StripPlanEntry entry, bool full)
-    {
-        var outcome = entry.State switch
+    // Every entry shares the run's outcome. A stopped run says how many changes it made in its finding.
+    private static CliEffectOutcome EffectOutcome(StripRunOutcome outcome)
+        => outcome switch
         {
-            StripEffectState.Planned => CliEffectOutcome.Planned,
-            StripEffectState.NotStarted => CliEffectOutcome.NotStarted,
-            StripEffectState.Done => CliEffectOutcome.Done,
-            StripEffectState.Unknown => CliEffectOutcome.Unknown,
-            StripEffectState.Failed => CliEffectOutcome.Failed,
-            _ => throw new ArgumentOutOfRangeException(nameof(entry), entry.State, "The strip effect state is not defined."),
+            StripRunOutcome.Planned => CliEffectOutcome.Planned,
+            StripRunOutcome.NotStarted => CliEffectOutcome.NotStarted,
+            StripRunOutcome.Unknown => CliEffectOutcome.Unknown,
+            StripRunOutcome.Done => CliEffectOutcome.Done,
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome), outcome, "The strip run outcome is not defined."),
         };
+
+    private static IEnumerable<CliEffect> Effects(StripPlanEntry entry, CliEffectOutcome outcome, bool full)
+    {
         var reason = StripWireVocabulary.ReasonName(entry.Reason);
         switch (entry.Action)
         {
@@ -198,14 +200,13 @@ internal static class StripReportSelector
         ];
     }
 
-    private static string OutcomeName(StripEffectState state)
-        => state switch
+    private static string OutcomeName(StripRunOutcome outcome)
+        => outcome switch
         {
-            StripEffectState.Planned => "planned",
-            StripEffectState.NotStarted => "not-started",
-            StripEffectState.Done => "done",
-            StripEffectState.Unknown => "unknown",
-            StripEffectState.Failed => "failed",
-            _ => throw new ArgumentOutOfRangeException(nameof(state), state, "The strip effect state is not defined."),
+            StripRunOutcome.Planned => "planned",
+            StripRunOutcome.NotStarted => "not-started",
+            StripRunOutcome.Unknown => "unknown",
+            StripRunOutcome.Done => "done",
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome), outcome, "The strip run outcome is not defined."),
         };
 }

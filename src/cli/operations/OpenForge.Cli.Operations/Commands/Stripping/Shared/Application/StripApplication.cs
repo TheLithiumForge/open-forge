@@ -29,14 +29,7 @@ namespace OpenForge.Cli.Core.Commands.Stripping.Shared.Application;
 /// Applies one reviewed strip plan under the workspace lease. The strip Behavior
 /// contract defines the revalidation, effect order, recovery and verification.
 /// </summary>
-/// <remarks>
-/// <paramref name="effectApplied"/> observes each verified effect by its one-based position. Production passes
-/// nothing. Integration evidence uses it to interrupt a run after a known effect, which no real boundary can time.
-/// </remarks>
-internal sealed class StripApplication(
-    PhysicalPathResolver resolver,
-    WorkspaceLockStoreRoot? lockStoreRoot,
-    Func<int, ValueTask>? effectApplied = null)
+internal sealed class StripApplication(PhysicalPathResolver resolver, WorkspaceLockStoreRoot? lockStoreRoot)
 {
     internal async ValueTask<StripResult> ApplyAsync(
         StripPlan plan,
@@ -51,7 +44,7 @@ internal sealed class StripApplication(
         var title = StrippingDefinitions.CommandTitle(plan.Request.Command);
         var total = plan.EffectCount;
         var applied = 0;
-        var result = StripResultFactory.Preview(plan) with { Plan = [.. plan.Entries.Select(entry => entry with { State = StripEffectState.NotStarted })] };
+        var result = StripResultFactory.Preview(plan) with { Outcome = StripRunOutcome.NotStarted };
         RecoveryBundlePreparation? preparation = null;
         try
         {
@@ -114,25 +107,18 @@ internal sealed class StripApplication(
                     var check = await validator.ValidateAsync(plan.Request.Workspace, effect.Change.Expectation, token).ConfigureAwait(false);
                     if (check.State != FileExpectationValidationState.Matched || check.Actual is null)
                     {
-                        return ChangedBeforeEffect(plan, Mark(result, effect.Entry, StripEffectState.NotStarted), path, applied, total);
+                        return ChangedBeforeEffect(plan, result, path, applied, total);
                     }
 
-                    result = Mark(result, effect.Entry, StripEffectState.Unknown);
+                    result = result with { Outcome = StripRunOutcome.Unknown };
                     var receipt = await fileApplier.ApplyAsync(lease, effect.Change, check,
                         targets[index].RequiresRecovery ? preparation : null, token).ConfigureAwait(false);
                     if (receipt.EffectState != FilesystemEffectState.Applied || receipt.VerificationState != FilesystemVerificationState.Verified)
                     {
-                        result = Mark(result, effect.Entry, receipt.EffectState == FilesystemEffectState.NotStarted ? StripEffectState.NotStarted : StripEffectState.Failed);
                         return Failed(plan, result, StripFindingCode.WriteFailed, WriteFailed(path, applied, total, result.RecoveryPath), path);
                     }
 
                     applied++;
-                    if (plan.Files.Skip(index + 1).All(next => next.Entry != effect.Entry))
-                    {
-                        result = Mark(result, effect.Entry, StripEffectState.Done);
-                    }
-
-                    await Observe(applied).ConfigureAwait(false);
                     token.ThrowIfCancellationRequested();
                 }
 
@@ -144,30 +130,28 @@ internal sealed class StripApplication(
                     var check = await validator.ValidateAsync(plan.Request.Workspace, deletion.Expectation, token).ConfigureAwait(false);
                     if (check.State != FileExpectationValidationState.Matched || check.Actual is null)
                     {
-                        return ChangedBeforeEffect(plan, Mark(result, directory.Entry, StripEffectState.NotStarted), path, applied, total);
+                        return ChangedBeforeEffect(plan, result, path, applied, total);
                     }
 
+                    result = result with { Outcome = StripRunOutcome.Unknown };
                     var receipt = await directoryApplier.ApplyAsync(lease, deletion, check, token).ConfigureAwait(false);
                     if (receipt.State.Disposition != DirectoryDeletionDisposition.Removed)
                     {
-                        return Failed(plan, Mark(result, directory.Entry, StripEffectState.Failed), StripFindingCode.WriteFailed,
-                            WriteFailed(path, applied, total, result.RecoveryPath), path);
+                        return Failed(plan, result, StripFindingCode.WriteFailed, WriteFailed(path, applied, total, result.RecoveryPath), path);
                     }
 
                     applied++;
-                    result = Mark(result, directory.Entry, StripEffectState.Done);
-                    await Observe(applied).ConfigureAwait(false);
                     token.ThrowIfCancellationRequested();
                 }
 
-                result = result with { Verified = true };
+                result = result with { Outcome = StripRunOutcome.Done, Verified = true };
                 if (preparation is not null)
                 {
                     result = await RemoveRecoveryAsync(result, lease, preparation, token).ConfigureAwait(false);
                 }
             }
 
-            return plan.RuntimeFolderEntry is { } runtime ? await RemoveRuntimeFolderAsync(plan, result, runtime, total).ConfigureAwait(false) : WithKeptNext(plan, result);
+            return plan.RuntimeFolderEntry is { } runtime ? RemoveRuntimeFolder(plan, result, runtime) : WithKeptNext(plan, result);
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested)
         {
@@ -183,10 +167,9 @@ internal sealed class StripApplication(
         }
     }
 
-    private ValueTask Observe(int applied) => effectApplied?.Invoke(applied) ?? ValueTask.CompletedTask;
-
     // The runtime folder holds the lease's lock file, so its removal runs once the lease is released and is verified by its absence.
-    private async ValueTask<StripResult> RemoveRuntimeFolderAsync(StripPlan plan, StripResult result, int entry, int total)
+    // A folder that must stay leaves the plan and is listed as kept with its reason.
+    private static StripResult RemoveRuntimeFolder(StripPlan plan, StripResult result, int entry)
     {
         if (result.Status != CliSemanticStatus.Complete)
         {
@@ -196,15 +179,15 @@ internal sealed class StripApplication(
         var removal = StripRuntimeFolder.TryRemove(plan.Request.Workspace);
         if (removal.State is StripRuntimeFolderState.Absent or StripRuntimeFolderState.Removable)
         {
-            await Observe(total).ConfigureAwait(false);
-            return WithKeptNext(plan, Mark(result, entry, StripEffectState.Done));
+            return WithKeptNext(plan, result);
         }
 
         var recoveryData = removal.State == StripRuntimeFolderState.HoldsRecoveryData;
-        return Mark(result, entry, recoveryData ? StripEffectState.NotStarted : StripEffectState.Failed) with
+        return result with
         {
             Status = CliSemanticStatus.Attention,
-            Verified = recoveryData && result.Verified,
+            Plan = result.Plan.RemoveAt(entry),
+            Kept = [.. result.Kept, new StripKeptFile(StripRuntimeFolder.Path, StripRuntimeFolder.KeptReason(removal))],
             Findings = [StripResultFactory.Warning(StripFindingCode.RuntimeRetained, StripRuntimeFolder.Retained(removal), StripRuntimeFolder.Path), .. result.Findings],
             Next = recoveryData ? ReviewRecovery() : new CliNextAction(CommandLines.Doctor, "Check the workspace."),
         };
@@ -258,9 +241,6 @@ internal sealed class StripApplication(
 
         return index < current.Entries.Length ? current.Entries[index].Path : null;
     }
-
-    private static StripResult Mark(StripResult result, int entry, StripEffectState state)
-        => result with { Plan = result.Plan.SetItem(entry, result.Plan[entry] with { State = state }) };
 
     private static StripResult Changed(StripPlan plan, StripResult result, string cause, string? path = null)
         => Stop(plan, result, CliSemanticStatus.Blocked, StripResultFactory.Error(StripFindingCode.TargetChanged, cause, path));
