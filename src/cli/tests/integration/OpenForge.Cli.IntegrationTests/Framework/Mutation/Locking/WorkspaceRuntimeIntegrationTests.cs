@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using OpenForge.Cli.Core.Commands.Index;
 using OpenForge.Cli.Core.Framework.Mutation.Locking;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
@@ -22,32 +21,20 @@ public sealed class WorkspaceRuntimeIntegrationTests
     [Fact(DisplayName = "Runtime initialization creates the ignore file before the sentinel")]
     public async Task IgnoreCreationPrecedesSentinel()
     {
+        // A file watcher cannot prove creation order: macOS FSEvents batches and reorders its events. Instead the
+        // sentinel's place is taken, so acquisition stops when it reaches the sentinel, and by then the complete
+        // ignore file must already exist. Creating the sentinel first would stop before the ignore file was made.
         using var temporary = TemporaryWorkspace.Create("runtime-creation-order");
         using var store = WorkspaceLockTestStore.Create("runtime-creation-order-store");
         var workspace = Workspace(temporary);
-        var runtime = Directory.CreateDirectory(WorkspaceRuntimePaths.DirectoryPath(workspace));
-        var created = new ConcurrentQueue<string>();
-        var sentinelSeen = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        using var watcher = new FileSystemWatcher(runtime.FullName)
-        {
-            NotifyFilter = NotifyFilters.FileName,
-        };
-        watcher.Created += (_, change) =>
-        {
-            created.Enqueue(change.FullPath);
-            if (change.FullPath == WorkspaceRuntimePaths.LockPath(workspace))
-            {
-                sentinelSeen.TrySetResult();
-            }
-        };
-        watcher.Error += (_, error) => sentinelSeen.TrySetException(error.GetException());
-        watcher.EnableRaisingEvents = true;
+        var sentinel = temporary.CreateDirectory(Path.GetRelativePath(temporary.Path, WorkspaceRuntimePaths.LockPath(workspace)));
 
         var result = await store.AcquireAsync(Request(workspace), TestContext.Current.CancellationToken);
-        await using var lease = Assert.IsType<WorkspaceLockLease>(result.Lease);
-        await sentinelSeen.Task.WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
-        watcher.EnableRaisingEvents = false;
-        Assert.Equal(WorkspaceRuntimePaths.IgnorePath(workspace), created.First());
+
+        Assert.Equal(WorkspaceLockFailureKind.InvalidTarget, result.LockFailure?.Kind);
+        Assert.Equal(sentinel, result.LockFailure?.Path);
+        Assert.True(Directory.Exists(sentinel));
+        Assert.Equal(WorkspaceRuntimeBootstrap.IgnoreContent, File.ReadAllText(WorkspaceRuntimePaths.IgnorePath(workspace)));
     }
 
     [Fact(DisplayName = "Local ownership contends across legacy homes and physical aliases but permits another worktree")]
