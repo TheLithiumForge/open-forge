@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 3,
+  "command": "references",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "./src/Order.cs",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "incoming": null,
+    "outgoing": 1,
+    "sourcesScanned": null
+  },
+  "limitations": [],
+  "data": {
+    "source": {
+      "id": "./src/Order.cs",
+      "path": "src/Order.cs"
+    },
+    "direction": "out",
+    "outgoing": [
+      {
+        "location": ":1:4",
+        "destination": ".agents/docs/guide.md#rules",
+        "resolvedPath": ".agents/docs/guide.md",
+        "state": "complete",
+        "layer": "base"
+      }
+    ],
+    "coverage": {
+      "outgoing": "complete"
+    }
+  },
+  "recovery": null,
+  "next": null
+}

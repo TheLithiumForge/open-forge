@@ -154,8 +154,7 @@ internal static class LocalReferenceDoctorInspector
             yield break;
         }
         var candidates = candidateScanComplete
-            && (target.Resolution is SourceLinkTargetResolution.Missing or SourceLinkTargetResolution.FragmentMissing
-                || observation.Facts.Finding?.Code == SourceLinkDestinationFindingCode.LegacyAnchor)
+            && target.Resolution is SourceLinkTargetResolution.Missing or SourceLinkTargetResolution.FragmentMissing
             ? LocalReferenceDoctorCandidateProjector.Project(observation, observations)
             : null;
         var descriptor = LocalReferenceDoctorDescriptorReader.Read(observation);

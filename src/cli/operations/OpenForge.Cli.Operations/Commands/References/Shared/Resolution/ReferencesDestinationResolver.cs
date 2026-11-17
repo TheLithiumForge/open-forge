@@ -148,7 +148,6 @@ internal sealed class ReferencesDestinationResolver
             SourceLinkDestinationFindingCode.FragmentMissing => ReferencesFindingCode.FragmentMissing,
             SourceLinkDestinationFindingCode.LineOutOfRange => ReferencesFindingCode.LineOutOfRange,
             SourceLinkDestinationFindingCode.SymbolMissing => ReferencesFindingCode.SymbolMissing,
-            SourceLinkDestinationFindingCode.LegacyAnchor => ReferencesFindingCode.LegacyAnchor,
             _ => throw new ArgumentOutOfRangeException(nameof(value), value, "The shared link finding code is not defined."),
         };
 }

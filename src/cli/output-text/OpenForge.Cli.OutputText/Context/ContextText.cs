@@ -282,6 +282,4 @@ internal static class ContextText
 
     // @OpenForgeText context.fragment.title-link-symbol-is-missing
     internal static string TitleLinkSymbolIsMissing() => "Link symbol is missing";
-    // @OpenForgeText context.comment.legacy-anchor
-    internal static string LegacyAnchor() => "This comment uses a legacy source ID. Choose a file path.";
 }

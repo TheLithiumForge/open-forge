@@ -229,6 +229,4 @@ internal static class ReferencesText
 
     // @OpenForgeText references.fragment.title-symbol-was-not-found
     internal static string TitleSymbolWasNotFound() => "Symbol was not found";
-    // @OpenForgeText references.comment.legacy-anchor
-    internal static string LegacyAnchor() => "This comment uses a legacy source ID. Choose a file path.";
 }

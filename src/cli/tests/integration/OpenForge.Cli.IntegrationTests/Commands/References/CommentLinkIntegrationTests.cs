@@ -85,19 +85,6 @@ public sealed class CommentLinkIntegrationTests
         Assert.Equal([GuidePath, "src/near.cs"], result.Outgoing?.Occurrences.Select(item => item.Target.Path));
     }
 
-    [Fact(DisplayName = "Legacy comment IDs report a finding and a real suggested path")]
-    public async Task LegacyId()
-    {
-        using var workspace = TemporaryWorkspace.Create("comment-legacy");
-        workspace.WriteText(GuidePath, "# Guide\n");
-        workspace.WriteText(CodePath, $"// {SourceCommentLinkReader.RuneMarker} guide old annotation\n");
-        var result = await Read(workspace, $"./{CodePath}", ReferencesDirection.Out);
-
-        var finding = Assert.Single(result.Findings, finding => finding.Code == ReferencesFindingCode.LegacyAnchor);
-        Assert.Equal(GuidePath, Assert.Single(finding.Candidates).Path);
-        Assert.Equal(CliSemanticStatus.Attention, result.Status);
-    }
-
     [Fact(DisplayName = "Comment paths cannot leave the selected workspace")]
     public async Task WorkspaceEscape()
     {

@@ -7,7 +7,7 @@ open-forge:
 
 # Repair Behavior Contract
 
-Authored relinks also cover [comment links](../shared/source-references/interface.md#comment-links). Change only the target word. Relinks write a repository-root path. Existing selection, protection, dry-run, revalidation, recovery and verification apply to these edits. Legacy IDs require a chosen path. Weak move or heading suggestions require selection.
+Authored relinks also cover [comment links](../shared/source-references/interface.md#comment-links). Change only the target word. Relinks write a repository-root path. Existing selection, protection, dry-run, revalidation, recovery and verification apply to these edits. Weak move or heading suggestions require selection.
 
 ## Workspace Layout
 

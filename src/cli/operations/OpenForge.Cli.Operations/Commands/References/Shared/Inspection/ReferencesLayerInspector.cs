@@ -196,7 +196,6 @@ internal sealed class ReferencesLayerInspector
             or ReferencesFindingCode.FragmentMissing
             or ReferencesFindingCode.LineOutOfRange
             or ReferencesFindingCode.SymbolMissing
-            or ReferencesFindingCode.LegacyAnchor
             or ReferencesFindingCode.TargetUnsafe
             or ReferencesFindingCode.TargetAmbiguous
             or ReferencesFindingCode.TargetUnreadable

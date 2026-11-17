@@ -31,12 +31,6 @@ internal static class SourceLinkSuggestionReader
             .SelectMany(item => item.Document.Sections.Select(section => (item.Path, item.Id, item.Document, Section: section))).ToArray();
         foreach (var reference in references)
         {
-            if (reference.Facts.Finding?.Code == SourceLinkDestinationFindingCode.LegacyAnchor)
-            {
-                foreach (var target in reference.Facts.Finding.Candidates)
-                    Add(target, reference.Facts.Fragment, LocalReferenceCandidateBasisKind.LiteralContent, "legacy ID path");
-                continue;
-            }
             if (reference.Facts.Target.Resolution is not (SourceLinkTargetResolution.Missing or SourceLinkTargetResolution.FragmentMissing)) continue;
             var entry = history.Entries.FirstOrDefault(entry => entry.SourcePath == reference.SourcePath && entry.Destination == reference.Destination);
             if (entry?.MovedPath is { } moved)

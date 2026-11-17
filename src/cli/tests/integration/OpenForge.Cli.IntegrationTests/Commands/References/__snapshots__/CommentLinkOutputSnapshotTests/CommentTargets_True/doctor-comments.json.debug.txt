@@ -1,73 +1,18 @@
 {
   "schemaVersion": 3,
   "command": "doctor",
-  "status": "completed-with-warnings",
-  "detail": "full",
+  "status": "completed",
+  "detail": "debug",
   "filter": null,
   "workspace": {
     "path": "<workspace>",
     "selectedBy": "current-directory"
   },
   "summary": {
-    "headline": "No errors. 1 warning and 3 info findings were recorded.",
-    "kind": "warnings"
+    "headline": "No problems found. 3 info findings were recorded.",
+    "kind": "done"
   },
   "findings": [
-    {
-      "severity": "warning",
-      "code": "reference.legacy-anchor",
-      "title": "This comment uses a legacy source ID. Choose a file path.",
-      "message": "This comment uses a legacy source ID. Choose a file path.",
-      "subject": {
-        "kind": "source",
-        "path": "src/Order.cs",
-        "id": "docs/reference",
-        "location": {
-          "line": 2,
-          "column": 4
-        }
-      },
-      "category": "Links",
-      "resolution": "manual-decision",
-      "actions": [
-        {
-          "kind": "sentence",
-          "command": "This comment uses a legacy source ID. Choose a file path.",
-          "reason": "This comment uses a legacy source ID. Choose a file path."
-        }
-      ],
-      "candidates": [
-        {
-          "subject": {
-            "kind": "file",
-            "path": ".agents/docs/reference.md",
-            "id": "docs/reference",
-            "location": null
-          },
-          "reasons": [
-            "content match"
-          ]
-        }
-      ],
-      "evidence": [
-        {
-          "label": "authored value",
-          "value": "docs/reference"
-        },
-        {
-          "label": "state",
-          "value": "malformed"
-        }
-      ],
-      "provenance": {
-        "source": "local links",
-        "path": "src/Order.cs",
-        "location": {
-          "line": 2,
-          "column": 4
-        }
-      }
-    },
     {
       "severity": "info",
       "code": "library.ownership-observation",
@@ -155,9 +100,9 @@
     "checks": 6,
     "checksComplete": 6,
     "errors": 0,
-    "warnings": 1,
+    "warnings": 0,
     "infos": 3,
-    "linksChecked": 6,
+    "linksChecked": 5,
     "linksValid": 5,
     "externalLinksNotChecked": 0,
     "imageLinks": 0,
@@ -241,7 +186,7 @@
         "coverage": "complete",
         "counts": {
           "errors": 0,
-          "warnings": 1,
+          "warnings": 0,
           "infos": 0
         },
         "limitations": [],
@@ -249,7 +194,7 @@
           "safeExact": 0,
           "guidedChoice": 0,
           "targetedOperation": 0,
-          "manualDecision": 1,
+          "manualDecision": 0,
           "blockedRepair": 0
         }
       },
@@ -290,9 +235,5 @@
     ]
   },
   "recovery": null,
-  "next": {
-    "kind": "sentence",
-    "command": "This comment uses a legacy source ID. Choose a file path.",
-    "reason": "This comment uses a legacy source ID. Choose a file path."
-  }
+  "next": null
 }

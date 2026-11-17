@@ -737,6 +737,4 @@ internal static class DoctorText
 
     // @OpenForgeText doctor.fragment.symbol-missing
     internal static string SymbolMissing(string destination) => $"A dotted symbol part in {destination} was not found as an identifier token in the file.";
-    // @OpenForgeText doctor.comment.legacy-anchor
-    internal static string LegacyAnchor() => "This comment uses a legacy source ID. Choose a file path.";
 }
