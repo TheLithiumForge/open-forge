@@ -63,7 +63,7 @@ a persistent reverse index, diagnose a workspace, or repair a reference.
 
 ### Accepted Authored Reference Forms
 
-Shared [comment links](../shared/source-references/interface.md#comment-links) also produce authored occurrences. Both markers work in code comments and Markdown HTML comments. The default incoming scan adds eligible comment-bearing workspace files. Exact `./path` operands can select code files. Generated and vendored files are skipped by comment discovery.
+Shared [comment links](../shared/source-references/interface.md#comment-links) also produce authored occurrences. Both markers work in code comments and Markdown HTML comments. The default incoming scan adds eligible comment-bearing workspace files. Exact `./path` operands can select code files. Comment discovery skips files that Git ignores and files marked as generated.
 
 Markdown reference extraction reports non-image link nodes produced by the already
 accepted fixed CommonMark/Markdig parser. The accepted forms are:
