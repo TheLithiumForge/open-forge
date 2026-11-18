@@ -5,7 +5,7 @@ using OpenForge.Cli.Core.Commands.Stripping.Models.Application;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
 using OpenForge.Cli.Core.Commands.Stripping.Shared.Application;
 using OpenForge.Cli.Core.Commands.Stripping.Shared.Documents;
-using OpenForge.Cli.Core.Commands.Stripping;
+using OpenForge.Cli.Core.Commands.Stripping.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.Shared.Paths;
 using OpenForge.Cli.Core.Framework.Mutation.Models.Filesystem.Files;
@@ -15,11 +15,12 @@ using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Shell.Definitions;
 
-namespace OpenForge.Cli.Core.Commands.Stripping.Shared.Planning;
+namespace OpenForge.Cli.Core.Commands.Stripping;
 
 /// <summary>
 /// Forms the one deterministic plain-docs plan uninstall and export share: uninstall's selection, then the
-/// parts, then flatten. The plain-docs Behavior contract defines the order of reads, edits and effects.
+/// parts, then flatten. It is the family's public planning entry, because uninstall and export both call it.
+/// The plain-docs Behavior contract defines the order of reads, edits and effects.
 /// </summary>
 internal sealed class StripPlanBuilder(PhysicalPathResolver resolver)
 {

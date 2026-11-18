@@ -2,7 +2,6 @@ using OpenForge.Cli.Core.Commands.Stripping.Models.Planning;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Request;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
 using OpenForge.Cli.Core.Commands.Stripping.Shared.Application;
-using OpenForge.Cli.Core.Commands.Stripping.Shared.Planning;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Mutation.Locking.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
