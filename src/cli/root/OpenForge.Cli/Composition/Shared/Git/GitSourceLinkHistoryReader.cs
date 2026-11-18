@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using OpenForge.Cli.Composition.Shared.Git.Models;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Models.References;
 
@@ -16,9 +17,11 @@ internal sealed class GitSourceLinkHistoryReader(Action<ProcessStartInfo>? confi
         var entries = new List<SourceLinkHistoryEntry>();
         try
         {
-            var prefixRead = await Run(["rev-parse", "--show-prefix"]);
-            if (prefixRead.ExitCode != 0) return new(entries);
-            var prefix = prefixRead.Output.TrimEnd('\r', '\n');
+            // One rev-parse call answers the work-tree check and the prefix.
+            var probe = GitWorkTreeCheck.Read(await _deadline.RunAsync(deadline =>
+                _git.RunAsync(request.Workspace.PhysicalRoot, [.. GitWorkTreeCheck.Arguments, "--show-prefix"], deadline), token).ConfigureAwait(false));
+            if (probe is not { State: GitWorkTreeState.Inside, ExitCode: 0 } || probe.Lines.Count < 2) return new(entries);
+            var prefix = probe.Lines[1];
             var broken = request.References.Where(reference => reference.Facts.Target.Path is not null
                 && reference.Facts.Target.Resolution is SourceLinkTargetResolution.Missing or SourceLinkTargetResolution.FragmentMissing).ToArray();
             // Each Git fact is read once and reused: blame per source file, the name-status diff per commit,
