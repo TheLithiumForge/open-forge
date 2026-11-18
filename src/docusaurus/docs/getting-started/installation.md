@@ -148,7 +148,7 @@ sha256sum --check --ignore-missing SHA256SUMS
 tar -xzf open-forge-<version>-linux-x64.tar.gz
 ```
 
-The archive holds a single `open-forge` executable (`open-forge.exe` on Windows) and its license. Put it on your `PATH`, or keep it in your repository (for example as `tools/open-forge`) and run it as `./tools/open-forge`.
+The archive holds a single `open-forge` executable (`open-forge.exe` on Windows), its license and `THIRD-PARTY-NOTICES.txt` with the licenses of the code built into it. Put it on your `PATH`, or keep it in your repository (for example as `tools/open-forge`) and run it as `./tools/open-forge`.
 
 ### From source
 

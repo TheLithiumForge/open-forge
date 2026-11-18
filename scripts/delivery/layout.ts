@@ -18,6 +18,8 @@ export const CliAssembly = "OpenForge.Cli";
 export const CliExecutable = "open-forge";
 export const WindowsExecutableSuffix = ".exe";
 export const ArchiveSuffix = ".tar.gz";
+/** Licenses of the third-party code compiled into the native executable. It ships next to LICENSE wherever the executable does. */
+export const ThirdPartyNotices = "THIRD-PARTY-NOTICES.txt";
 
 /** Test projects that build:native publishes as native executables. Each runs as its own test:built suite. */
 export const NativeTestSuites = [

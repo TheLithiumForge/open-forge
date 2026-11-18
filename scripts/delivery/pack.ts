@@ -8,7 +8,7 @@ import { reportFailure, run } from "./process.ts";
 import { readOptions } from "./options.ts";
 import { repositoryRoot } from "./repository.ts";
 import { committedVersion } from "./version.ts";
-import { deliveryDirectory, hostRuntime, nativeDirectory } from "./layout.ts";
+import { deliveryDirectory, hostRuntime, nativeDirectory, ThirdPartyNotices } from "./layout.ts";
 import { hashArtifact } from "./manifest.ts";
 import { removeOutputs, resetOutput } from "./output.ts";
 import { packNpmPackages } from "./npm/pack-packages.ts";
@@ -31,8 +31,9 @@ export function pack(root: string, rid: SupportedRuntime, skipTests = false, tar
   copyFileSync(join(root, native), join(portable, platform.nativeFileName));
   chmodSync(join(portable, platform.nativeFileName), 0o755);
   copyFileSync(join(root, "LICENSE"), join(portable, "LICENSE"));
+  copyFileSync(join(root, ThirdPartyNotices), join(portable, ThirdPartyNotices));
   const archive = `open-forge-${manifest.version}-${rid}.tar.gz`;
-  run("tar", ["-czf", join(output, archive), "-C", portable, platform.nativeFileName, "LICENSE"], root);
+  run("tar", ["-czf", join(output, archive), "-C", portable, platform.nativeFileName, "LICENSE", ThirdPartyNotices], root);
   const packages = runStage("Create npm tarballs", () =>
     packNpmPackages({
       repositoryRoot: root,

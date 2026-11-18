@@ -1,7 +1,7 @@
-import { nativeDirectory, downloadDirectory, DownloadContent, CliAssembly, CliExecutable, WindowsExecutableSuffix, ArchiveSuffix } from "../layout.ts";
+import { nativeDirectory, downloadDirectory, DownloadContent, CliAssembly, CliExecutable, WindowsExecutableSuffix, ArchiveSuffix, ThirdPartyNotices } from "../layout.ts";
 import { PlatformPackages, type SupportedRuntime } from "../package-model.ts";
 
-export const BundleFile = { license: "LICENSE", readme: "README.txt", checksums: "SHA256SUMS" } as const;
+export const BundleFile = { license: "LICENSE", notices: ThirdPartyNotices, readme: "README.txt", checksums: "SHA256SUMS" } as const;
 export const BundleMode = 0o755;
 export const BundleHash = { algorithm: "sha256", encoding: "hex" } as const;
 export const TarExecutable = "tar";

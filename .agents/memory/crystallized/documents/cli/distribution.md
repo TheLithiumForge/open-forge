@@ -40,7 +40,7 @@ The main package uses exact synchronized optional dependencies on the platforms
 selected for that version, with all six as the default. They are not peer dependencies. Every staged public manifest
 uses the same release or development version. The main package alone owns the
 `open-forge` executable mapping. Each platform package contains only its
-manifest, license, and native executable.
+manifest, license, third-party notices, and native executable.
 
 The maintainer accepted ARM64 alongside x64 on Linux, macOS, and Windows on
 2026-09-09. Qualification of that graph is recorded below. Additional operating
@@ -87,7 +87,7 @@ and qualification. Dirty local builds remain distinguishable from release
 candidates. Tests and packaging reject missing or mismatched artifacts and
 preserve the native payload bytes.
 
-Portable archives contain the native executable and license for one supported
+Portable archives contain the native executable, license, and third-party notices for one supported
 OS/architecture. They need no npm installation. npm tarballs contain the thin
 launcher and appropriate native package. All local outputs remain under ignored
 artifacts; explicit native and wrapper publication commands consume validated
@@ -97,7 +97,7 @@ tarballs independently, while the pipeline coordinates complete releases.
 
 Package-owned tooling stages the main package plus the selected host packages
 from exact native artifacts into caller-owned ignored artifact roots. Staging
-compiles the launcher closure, copies the supplied native artifact and license,
+compiles the launcher closure, copies the supplied native artifact, license, and third-party notices,
 emits the exact synchronized manifests, and does not publish or contact a
 registry.
 

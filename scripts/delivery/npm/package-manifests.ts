@@ -1,5 +1,6 @@
 import { MainPackageName, PlatformPackages, type SupportedRuntime } from "../package-model.ts";
 import { validateVersion } from "../version.ts";
+import { ThirdPartyNotices } from "../layout.ts";
 
 import { AllTargets, targetDependencies } from "../targets.ts";
 
@@ -41,6 +42,6 @@ export function nativeManifest(runtime: SupportedRuntime, version: string) {
     os: [platform.nodePlatform],
     cpu: [platform.nodeArchitecture],
     ...(platform.nodePlatform === "linux" ? { libc: "glibc" } : {}),
-    files: ["bin", "LICENSE"],
+    files: ["bin", "LICENSE", ThirdPartyNotices],
   };
 }

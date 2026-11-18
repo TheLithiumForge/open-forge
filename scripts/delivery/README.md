@@ -60,7 +60,7 @@ and fails if required packages are unavailable. Builds restore by default;
 | `ci:reuse`                 | On a direct push, reuse another branch's Build for the same commit.          |
 | `release:checkpoint`       | Print the publication plan and wait 60 seconds before uploads.               |
 | `release:restore-channels` | Preview or apply npm channel recovery for all seven packages.                |
-| `ci:bundle`                | Archive the published CLI for `--rid` with its license and checksum.         |
+| `ci:bundle`                | Archive the published CLI for `--rid` with its licenses and checksum.        |
 | `ci:checks`                | Run the Build workflow's shared setup and verification.                      |
 | `ci:job`                   | Run one Build matrix job for `--rid` with the workflow's logs.               |
 | `docs:build`               | Install, type-check and build the documentation site.                        |
@@ -130,7 +130,7 @@ On each selected host, build/test/pack its native package, then preview its
 independent upload with `npx forge publish:native --tag preview --dry-run`.
 Publish all listed native packages at the same version before the wrapper.
 The wrapper provides the `open-forge` npm command; native packages contain the
-executable payload. Both include the license.
+executable payload. Both include the license, and native packages also include the third-party notices.
 
 `--dry-run` validates local artifacts and prints a plan without registry
 contact. **Removing it uploads to the configured npm registry.** Actual upload
@@ -255,7 +255,7 @@ builds and packs replace their own output directories.
 The GitHub Actions **Build** workflow produces a `binary-<RID>` artifact for each
 platform whose native build succeeds. Open the workflow run, choose the artifact
 for your platform, then extract its portable archive. It contains `open-forge`
-(`open-forge.exe` on Windows), the license and a development-build notice.
+(`open-forge.exe` on Windows), the license, the third-party notices and a development-build notice.
 The download also includes a SHA-256 checksum. Artifacts remain available for
 14 days; creating them does not publish a release or an npm package.
 

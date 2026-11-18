@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { FullGitShaPattern } from "./source-identity.ts";
+import { ThirdPartyNotices } from "./layout.ts";
 
 export function sourceIdentity(root: string): { sha: string; dirty: boolean; changes: string } {
   const git = (args: readonly string[]) => execFileSync("git", args, { cwd: root, encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
@@ -26,6 +27,7 @@ export function sourceIdentity(root: string): { sha: string; dirty: boolean; cha
     "package-lock.json",
     "tsconfig.json",
     "LICENSE",
+    ThirdPartyNotices,
   ];
   const diff = git(["diff", "HEAD", "--binary", "--", ...inputs]);
   const untracked = git(["ls-files", "--others", "--exclude-standard", "-z", "--", ...inputs])

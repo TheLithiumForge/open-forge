@@ -6,6 +6,7 @@ import { hashArtifact } from "../manifest.ts";
 import { MainPackageName, type SupportedRuntime } from "../package-model.ts";
 import { inspectPackageContents } from "../package-contents.ts";
 import { validateOutput } from "../output.ts";
+import { ThirdPartyNotices } from "../layout.ts";
 
 import { AllTargets, targetDependencies } from "../targets.ts";
 
@@ -39,12 +40,18 @@ export function readPublicationPackage(
   const contents = inspectPackageContents(join(root, directory), file.path);
   assert.equal(contents.name, name);
   assert.equal(contents.version, version);
-  const licenseHash = createHash("sha256")
-    .update(readFileSync(join(root, "LICENSE")))
-    .digest("hex");
-  assert.equal(contents.files.find((entry) => entry.path === "LICENSE")?.sha256, licenseHash, "Package license does not match the source.");
+  const packedHash = (path: string) => contents.files.find((entry) => entry.path === path)?.sha256;
+  assert.equal(packedHash("LICENSE"), sourceHash(root, "LICENSE"), "Package license does not match the source.");
   if (name === MainPackageName) {
     assert.deepEqual(contents.optionalDependencies, targetDependencies(version, targets));
+  } else {
+    assert.equal(packedHash(ThirdPartyNotices), sourceHash(root, ThirdPartyNotices), "Package third-party notices do not match the source.");
   }
   return { name, version, tarball, sha256: file.sha256, dirty, ...(name === MainPackageName ? { optionalDependencies: targetDependencies(version, targets) } : {}) };
+}
+
+function sourceHash(root: string, path: string): string {
+  return createHash("sha256")
+    .update(readFileSync(join(root, path)))
+    .digest("hex");
 }

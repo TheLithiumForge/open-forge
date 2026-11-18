@@ -23,6 +23,7 @@ try {
     copyFileSync(join(repositoryRoot, names.source), executable);
     chmodSync(executable, BundleMode);
     copyFileSync(join(repositoryRoot, BundleFile.license), join(content, BundleFile.license));
+    copyFileSync(join(repositoryRoot, BundleFile.notices), join(content, BundleFile.notices));
     writeFileSync(join(content, BundleFile.readme), bundleReadme(rid));
     run(TarExecutable, [TarArgument.createGzip, names.archive, TarArgument.directory, names.content, TarArgument.content], repositoryRoot);
     const hash = createHash(BundleHash.algorithm)

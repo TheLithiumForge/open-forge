@@ -13,6 +13,7 @@ import { collectPackages } from "../collect-packages.ts";
 import { readReleasePublications } from "../release-publications.ts";
 
 import { AllTargets } from "../../targets.ts";
+import { ThirdPartyNotices } from "../../layout.ts";
 
 const repository = fileURLToPath(new URL("../../../../", import.meta.url));
 const version = "0.1.0-beta.1";
@@ -29,6 +30,7 @@ for (const targets of [AllTargets, ["osx-x64", "win-x64"]] as const)
     const releaseDirectory = "artifacts/release";
     const output = join(root, releaseDirectory);
     copyFileSync(join(repository, "LICENSE"), join(root, "LICENSE"));
+    copyFileSync(join(repository, ThirdPartyNotices), join(root, ThirdPartyNotices));
     for (const platform of targets.map((target) => PlatformPackages[target])) {
       const directory = join(input, `package-${platform.runtime}`);
       const portable = join(root, `portable-${platform.runtime}`);
@@ -37,6 +39,7 @@ for (const targets of [AllTargets, ["osx-x64", "win-x64"]] as const)
       const native = join(portable, platform.nativeFileName);
       writeFileSync(native, `inert owned ${platform.runtime} native fixture`);
       copyFileSync(join(repository, "LICENSE"), join(portable, "LICENSE"));
+      copyFileSync(join(repository, ThirdPartyNotices), join(portable, ThirdPartyNotices));
       const staged = stagePackages({
         repositoryRoot: repository,
         artifactsRoot: join(root, "stage"),
@@ -50,7 +53,7 @@ for (const targets of [AllTargets, ["osx-x64", "win-x64"]] as const)
       const target = npm.pack(staged.platformPackageDirectory, join(root, "packs", platform.runtime, "target"));
       for (const pack of [main, target]) copyFileSync(pack.path, join(directory, pack.path.split(/[\\/]/u).at(-1) ?? "missing"));
       const archive = `open-forge-${version}-${platform.runtime}.tar.gz`;
-      execFileSync("tar", ["-czf", join(directory, archive), "-C", portable, platform.nativeFileName, "LICENSE"]);
+      execFileSync("tar", ["-czf", join(directory, archive), "-C", portable, platform.nativeFileName, "LICENSE", ThirdPartyNotices]);
       const files = readdirSync(directory).map((path) => ({ path, sha256: hashArtifact(directory, path) }));
       writeFileSync(
         join(directory, "package.json"),
@@ -69,6 +72,9 @@ for (const targets of [AllTargets, ["osx-x64", "win-x64"]] as const)
     );
     assert.throws(() => readReleasePublications(root, releaseDirectory, { ...source, sha: "b".repeat(40) }, version), /Release source mismatch/u);
     assert.throws(() => readReleasePublications(root, releaseDirectory, source, "0.1.0-beta.2"), /Release version mismatch/u);
+    writeFileSync(join(root, ThirdPartyNotices), "changed notices");
+    assert.throws(() => readReleasePublications(root, releaseDirectory, source, version), /third-party notices/u);
+    copyFileSync(join(repository, ThirdPartyNotices), join(root, ThirdPartyNotices));
     const publisher = new URL("../../npm/publish-packages.ts", import.meta.url).href;
     const preview = spawnSync(
       process.execPath,

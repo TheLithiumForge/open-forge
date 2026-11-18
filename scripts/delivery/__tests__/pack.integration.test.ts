@@ -7,7 +7,8 @@ import { test } from "node:test";
 import { pack } from "../pack.ts";
 import { createManifest } from "../manifest.ts";
 import { sourceIdentity } from "../source.ts";
-import { deliveryDirectory, DevelopmentPublish, hostRuntime, nativeDirectory, suites } from "../layout.ts";
+import { ArchiveSuffix, deliveryDirectory, DevelopmentPublish, hostRuntime, nativeDirectory, suites, ThirdPartyNotices } from "../layout.ts";
+import { MainPackageName, PlatformPackages } from "../package-model.ts";
 import { inspectPackageContents } from "../package-contents.ts";
 import { readPublication } from "../npm/publication.ts";
 
@@ -24,9 +25,10 @@ test("skip-tests packs an unqualified build without execution, preserves integri
   write("package.json", JSON.stringify({ version, private: true }));
   write("LICENSE", "owned fixture license\n");
   write("README.md", "# Fixture readme\n");
+  write(ThirdPartyNotices, "owned fixture notices\n");
   const git = (args: string[]) => execFileSync("git", args, { cwd: root, stdio: "pipe" });
   git(["init", "--quiet"]);
-  git(["add", "package.json", "LICENSE", "README.md"]);
+  git(["add", "package.json", "LICENSE", "README.md", ThirdPartyNotices]);
   git(["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false", "commit", "--quiet", "-m", "Fixture"]);
   const rid = hostRuntime();
   const delivery = deliveryDirectory(rid);
@@ -50,8 +52,19 @@ test("skip-tests packs an unqualified build without execution, preserves integri
   for (const tarball of readdirSync(output).filter((name) => name.endsWith(".tgz"))) {
     const contents = inspectPackageContents(output, tarball);
     assert.ok(contents.files.some((file) => file.path === "LICENSE"));
+    assert.equal(
+      contents.files.some((file) => file.path === ThirdPartyNotices),
+      contents.name !== MainPackageName,
+      "Only the platform package carries the native executable and its notices.",
+    );
     assert.equal(contents.version, version);
   }
+  const archive = metadata.files.map((file: { path: string }) => file.path).find((path: string) => path.endsWith(ArchiveSuffix));
+  const archived = execFileSync("tar", ["-tzf", join(output, archive)], { encoding: "utf8" })
+    .split(/\r?\n/u)
+    .filter(Boolean)
+    .sort();
+  assert.deepEqual(archived, [PlatformPackages[rid].nativeFileName, "LICENSE", ThirdPartyNotices].sort());
   // Simulate later .NET qualification: skipped npm installation still blocks native publication.
   const reports = `${delivery}/reports`;
   const passedReport = {

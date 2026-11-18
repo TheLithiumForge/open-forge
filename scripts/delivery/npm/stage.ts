@@ -7,6 +7,7 @@ import { stageWrapperPackage } from "./wrapper-stage.ts";
 
 import { PlatformPackages, type SupportedRuntime } from "../package-model.ts";
 import { FullGitShaPattern } from "../source-identity.ts";
+import { ThirdPartyNotices } from "../layout.ts";
 
 export type StageVersion = { kind: "release"; value: string } | { kind: "local"; sha: string };
 
@@ -48,6 +49,7 @@ export function stagePackages(request: StageRequest): StagedPackages {
   stageWrapperPackage(request.repositoryRoot, mainPackageDirectory, version, launcherDirectory, request.targets);
   copyExecutable(request.nativeArtifact, join(platformBinDirectory, platformPackage.nativeFileName));
   copyFileSync(join(request.repositoryRoot, "LICENSE"), join(platformPackageDirectory, "LICENSE"));
+  copyFileSync(join(request.repositoryRoot, ThirdPartyNotices), join(platformPackageDirectory, ThirdPartyNotices));
 
   writeManifest(join(platformPackageDirectory, "package.json"), nativeManifest(request.runtime, version));
 

@@ -208,7 +208,7 @@ npm run dist -- --skip-tests --plan          # inspect without executing
 ```
 
 `--skip-tests` bypasses .NET qualification and the npm installation/invocation
-test. It does not bypass source, artifact-hash or license checks. The native
+test. It does not bypass source, artifact-hash, license or notices checks. The native
 build still compiles the test executables. Packages record `tested: false`.
 Native publication and complete release collection reject them. To qualify
 later, run `npm run test:built` and `npm run pack` without the flag.
@@ -249,7 +249,7 @@ npm run publish:native -- --tag preview --dry-run
 ```
 
 Both publishers validate the existing tarball against its source, version,
-hash and license. The dry run is entirely local and does not invoke npm publish
+hash and license, and a native package also against the third-party notices. The dry run is entirely local and does not invoke npm publish
 or inspect credentials. Removing `--dry-run` explicitly uploads that one public
 npm package using the configured registry and account. An actual upload requires
 committed matching source. A dirty trial can still preview its selection.
