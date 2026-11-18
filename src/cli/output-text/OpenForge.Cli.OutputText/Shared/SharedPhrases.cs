@@ -4,6 +4,10 @@ namespace OpenForge.Cli.OutputText.Shared;
 
 internal static class SharedPhrases
 {
+    // @OpenForgeText shared.phrase.fix-link-by-hand
+    internal static string FormatFixLinkByHand(string destination, string location)
+        => $"Fix {destination} by hand at {location}.";
+
     // @OpenForgeText shared.phrase.linked-folder-missing
     internal static string LinkedFolderMissing(string destination)
         => $"The linked folder was not found: {destination}.";

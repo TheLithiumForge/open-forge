@@ -338,7 +338,8 @@ internal sealed partial class RouteMoveReferenceScanner(
             return null;
         }
 
-        if (facts.Target.Resolution == SourceLinkTargetResolution.FragmentMissing)
+        if (facts.Target.Resolution is SourceLinkTargetResolution.FragmentMissing
+            or SourceLinkTargetResolution.LineOutOfRange or SourceLinkTargetResolution.SymbolMissing)
         {
             var collision = ReadCurrentTargetCollision(input, facts);
             return collision is null

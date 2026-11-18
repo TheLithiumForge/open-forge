@@ -136,6 +136,8 @@ internal sealed record ReferencesFinding
 
     internal string? Subject { get; }
 
+    internal string? RawDestination { get; init; }
+
     internal string Cause { get; }
 
     internal SourceUniverseSelectorRole? SelectorRole { get; }

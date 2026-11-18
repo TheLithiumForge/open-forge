@@ -15,6 +15,8 @@ internal enum ContextLinkResolution
     Complete,
     Missing,
     FragmentMissing,
+    LineOutOfRange,
+    SymbolMissing,
     CaseMismatch,
     Malformed,
     Absolute,
@@ -39,6 +41,7 @@ internal enum ContextLinkDisposition
     AlreadySelected,
     Cycle,
     ExternalUnchecked,
+    FileChecked,
     Unresolved,
 }
 
@@ -133,6 +136,7 @@ internal sealed record ContextLink
                 or ContextLinkDisposition.AlreadySelected
                 or ContextLinkDisposition.Cycle => ContextLinkFollowState.Followed,
             ContextLinkDisposition.ExternalUnchecked
+                or ContextLinkDisposition.FileChecked
                 or ContextLinkDisposition.Unresolved => ContextLinkFollowState.NotFollowed,
             _ => throw new ArgumentOutOfRangeException(nameof(Disposition), Disposition, "The Context link disposition is not defined."),
         };

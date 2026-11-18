@@ -266,6 +266,8 @@ internal sealed class ReferencesOperation
                                 && TargetMatchesSource(targetFacts.Target, logicalSource, sourceSession.Catalogue)
                                 && targetFacts.Target.Resolution is ReferencesTargetResolution.Complete
                                     or ReferencesTargetResolution.FragmentMissing
+                                    or ReferencesTargetResolution.LineOutOfRange
+                                    or ReferencesTargetResolution.SymbolMissing
                                     or ReferencesTargetResolution.Unreadable
                                     or ReferencesTargetResolution.EncodingUnsupported)
                             {
@@ -481,6 +483,7 @@ internal sealed class ReferencesOperation
                 new ReferencesFindingInput(finding.Code, finding.Cause)
                 {
                     Direction = authored.Direction,
+                    RawDestination = authored.RawDestination,
                     Source = ToSourceIdentity(authored.Source),
                     Layer = authored.Layer,
                     Path = authored.CanonicalPath,

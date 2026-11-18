@@ -74,6 +74,8 @@ internal static class ContextDefinitions
             ContextFindingCode.MarkdownUnavailable => new(Code: "context.markdown-unavailable", Status: CliSemanticStatus.Incomplete),
             ContextFindingCode.TargetMissing => new(Code: "context.target-missing", Status: CliSemanticStatus.Incomplete),
             ContextFindingCode.FragmentMissing => new(Code: "context.fragment-missing", Status: CliSemanticStatus.Incomplete),
+            ContextFindingCode.LineOutOfRange => new(Code: "context.line-out-of-range", Status: CliSemanticStatus.Incomplete),
+            ContextFindingCode.SymbolMissing => new(Code: "context.symbol-missing", Status: CliSemanticStatus.Incomplete),
             ContextFindingCode.LinkEncodingInvalid => new(Code: "context.link-encoding-invalid", Status: CliSemanticStatus.Incomplete),
             ContextFindingCode.TargetUnreadable => new(Code: "context.target-unreadable", Status: CliSemanticStatus.Incomplete),
             ContextFindingCode.SectionAmbiguous => new(Code: "context.section-ambiguous", Status: CliSemanticStatus.Incomplete),

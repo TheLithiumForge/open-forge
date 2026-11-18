@@ -478,6 +478,16 @@ internal sealed class SourceLinkDestinationResolver
             };
         }
 
+        var fragmentKind = SourceLinkFileFragmentReader.Classify(canonicalPath, decodedFragment);
+        if (fragmentKind is SourceLinkFragmentKind.LineRange or SourceLinkFragmentKind.Symbol)
+        {
+            var failure = SourceLinkFileFragmentReader.ReadFailure(read.Value, target, rawFragment,
+                decodedFragment ?? throw new InvalidOperationException("A file fragment requires decoded text."));
+            return failure ?? (identityCandidates.Length > 1
+                ? SourceLinkTargetIdentityReader.ReadCollision(target, identityCandidates, rawFragment)
+                : new SourceLinkDestinationFacts { Fragment = rawFragment, Target = target, Finding = null });
+        }
+
         MarkdownDocumentFacts targetDocument;
         try
         {

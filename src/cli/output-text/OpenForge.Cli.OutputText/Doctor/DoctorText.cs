@@ -714,5 +714,15 @@ internal static class DoctorText
         ];
     // @OpenForgeText doctor.help.details-1
     internal static string HelpChecksDetails()
-        => "Inspect recovery data, routes, references, managed Framework files, and managed Extensions.";
+        => "Inspect recovery data, routes, references, managed Framework files, and managed Extensions. Markdown fragments select headings. Other files accept existing line ranges such as #L1-L3 or lexical symbols such as #Type.Member.";
+    // @OpenForgeText doctor.fragment.title-linked-line-range-is-out-of-range
+    internal static string TitleLinkedLineRangeIsOutOfRange() => "Linked line range is out of range";
+
+    // @OpenForgeText doctor.fragment.title-linked-symbol-was-not-found
+    internal static string TitleLinkedSymbolWasNotFound() => "Linked symbol was not found";
+    // @OpenForgeText doctor.fragment.line-range-out-of-range
+    internal static string LineRangeOutOfRange(string destination) => $"The line range in {destination} is outside the file or is reversed.";
+
+    // @OpenForgeText doctor.fragment.symbol-missing
+    internal static string SymbolMissing(string destination) => $"A dotted symbol part in {destination} was not found as an identifier token in the file.";
 }

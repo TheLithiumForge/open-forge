@@ -666,6 +666,12 @@ Link expansion:
 
 Cycles and duplicate links do not change the semantic status by themselves.
 
+Contained non-Markdown files use the shared file and fragment checks. A valid
+file link stays in `links` with resolution `complete` and `followed: false`.
+Its body stays outside selected Markdown content. This does not reduce
+completeness. Invalid line ranges and missing symbols keep their separate
+findings.
+
 Links in code fences or unsupported syntax that conceals links are not graph
 edges.
 
@@ -858,16 +864,18 @@ Choose the first applicable action:
 1. Invalid link depth or missing `--for` value: `open-forge context --help`.
 2. Known missing startup loader: `open-forge install --dry-run`.
 3. Invalid source: `open-forge route list --depth all`.
-4. Unavailable closure, source, link or projection facts, including invalid
+4. Only line-range or symbol findings: a sentence naming the authored destination
+   and source location to fix by hand. Each such finding also carries that sentence.
+5. Unavailable closure, source, link or projection facts, including invalid
    `applyTo` metadata: `open-forge doctor`.
-5. Pending `applyTo` conditions: `open-forge context [<source-reference>...] --for <path>`.
+6. Pending `applyTo` conditions: `open-forge context [<source-reference>...] --for <path>`.
    Keep every explicitly requested source reference in request order, quote it
    for the supported shell, and preserve the request's other options.
    For `context rules`, suggest `open-forge context rules --for <path>`.
    With no selected sources, suggest `open-forge context --for <path>`.
    Supply the files you are working on so `applyTo` conditions can be evaluated.
-6. Case mismatch: `open-forge repair --automatic`.
-7. Otherwise, no next action.
+7. Case mismatch: `open-forge repair --automatic`.
+8. Otherwise, no next action.
 
 A closure failure keeps priority when pending conditions are also present.
 Detail and severity filtering do not change the selected action.
@@ -906,6 +914,8 @@ The findings catalogue below is the command's finite error and warning vocabular
 | context.invalid-encoding       | warning  | local                 | [`context.phrase.is-not-valid-utf-8-so-it-was-not-included`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.invalid-encoding`).                                               | fix the file                                                                                                                                    |
 | context.markdown-unavailable   | warning  | local                 | [`context.phrase.could-not-be-parsed-as-markdown-so-its-was-not-produced`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.markdown-unavailable`).                             | `open-forge doctor`                                                                                                                             |
 | context.target-missing         | warning  | local                 | [`context.phrase.the-link-at-points-to-which-does-not-exist-it-was-not-followed`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.target-missing`).                            | `open-forge doctor`                                                                                                                             |
+| context.line-out-of-range      | warning  | local                 | [wording](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs) | fix by hand                                                                                                                                     |
+| context.symbol-missing         | warning  | local                 | [wording](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs) | fix by hand                                                                                                                                     |
 | context.fragment-missing       | warning  | local                 | [`context.phrase.the-link-at-points-to-which-has-no-heading-it-was-not-followed`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.fragment-missing`).                          | `open-forge doctor`                                                                                                                             |
 | context.link-encoding-invalid  | warning  | local                 | [`context.phrase.the-link-at-has-an-encoding-that-cannot-be-resolved-it-was-not-followed`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.link-encoding-invalid`).            | fix by hand                                                                                                                                     |
 | context.target-unreadable      | warning  | local                 | [`context.phrase.the-link-at-points-to-which-could-not-be-read-it-was-not-followed`](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Context/ContextPhrases.cs); [selection](../../../../../../../src/cli/rendering/OpenForge.Cli.Rendering/Presentation/Context/Shared/Wording/ContextWording.cs); [independent forms](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Presentation/Invariants/Fixtures/ContractMessageTemplates.json) (`context.target-unreadable`).                      | none                                                                                                                                            |

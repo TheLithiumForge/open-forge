@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 3,
+  "command": "doctor",
+  "status": "completed-with-warnings",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "No errors. 2 warnings and 3 info findings were recorded.",
+    "kind": "warnings"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "reference.symbol-missing",
+      "title": "Linked symbol was not found",
+      "message": "A dotted symbol part in ../../Code.cs#Type.Missing was not found as an identifier token in the file.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/docs/guide.md",
+        "id": "../../Code.cs#Type.Missing",
+        "location": {
+          "line": 11,
+          "column": 1
+        }
+      },
+      "category": "Links",
+      "resolution": "manual-decision",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Correct this link in .agents/docs/guide.md at line 11, column 1 through the owner of Code.cs.",
+          "reason": "Correct this link in .agents/docs/guide.md at line 11, column 1 through the owner of Code.cs."
+        }
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "reference.line-out-of-range",
+      "title": "Linked line range is out of range",
+      "message": "The line range in ../../Code.cs#L4-L5 is outside the file or is reversed.",
+      "subject": {
+        "kind": "source",
+        "path": ".agents/docs/guide.md",
+        "id": "../../Code.cs#L4-L5",
+        "location": {
+          "line": 12,
+          "column": 1
+        }
+      },
+      "category": "Links",
+      "resolution": "manual-decision",
+      "actions": [
+        {
+          "kind": "sentence",
+          "command": "Correct this link in .agents/docs/guide.md at line 12, column 1 through the owner of Code.cs.",
+          "reason": "Correct this link in .agents/docs/guide.md at line 12, column 1 through the owner of Code.cs."
+        }
+      ]
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "checks": 6,
+    "checksComplete": 6,
+    "errors": 0,
+    "warnings": 2,
+    "infos": 3,
+    "linksChecked": 9,
+    "linksValid": 7,
+    "externalLinksNotChecked": 0,
+    "imageLinks": 0,
+    "routesChecked": 3,
+    "frameworkFiles": 0,
+    "extensionsInstalled": 0,
+    "librariesRegistered": null
+  },
+  "limitations": [],
+  "data": {
+    "categories": [
+      {
+        "name": "Workspace",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 1
+        },
+        "limitations": []
+      },
+      {
+        "name": "Recovery data",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "limitations": []
+      },
+      {
+        "name": "Routes and Entries",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "limitations": []
+      },
+      {
+        "name": "Links",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 2,
+          "infos": 0
+        },
+        "limitations": []
+      },
+      {
+        "name": "Framework files",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 1
+        },
+        "limitations": []
+      },
+      {
+        "name": "Extensions",
+        "coverage": "complete",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 1
+        },
+        "limitations": []
+      }
+    ]
+  },
+  "recovery": null,
+  "next": {
+    "kind": "sentence",
+    "command": "Correct this link in .agents/docs/guide.md at line 12, column 1 through the owner of Code.cs.",
+    "reason": "Correct this link in .agents/docs/guide.md at line 12, column 1 through the owner of Code.cs."
+  }
+}

@@ -19,6 +19,8 @@ internal enum ReferencesTargetResolution
     Complete,
     Missing,
     FragmentMissing,
+    LineOutOfRange,
+    SymbolMissing,
     Malformed,
     Absolute,
     Query,

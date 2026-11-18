@@ -20,7 +20,8 @@ Global options: --workspace, --format, --detail, --detail-filter, --help,
 
 Details:
   Checks: Inspect recovery data, routes, references, managed Framework files,
-  and managed Extensions.
+  and managed Extensions. Markdown fragments select headings. Other files accept
+  existing line ranges such as #L1-L3 or lexical symbols such as #Type.Member.
 
 Automation:
   --format json: one minified schema-3 JSON result on stdout for every status.

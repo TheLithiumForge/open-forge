@@ -8,6 +8,7 @@ using OpenForge.Cli.Core.Presentation.References.Shared.Selection;
 using OpenForge.Cli.Core.Presentation.Shared.Selection.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Rendering.Models;
 using OpenForge.Cli.Core.Shell.Definitions;
+using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 using OpenForge.Cli.Core.Shell.Presentation.Models;
 
 namespace OpenForge.Cli.Core.Presentation.References;
@@ -29,13 +30,14 @@ internal static class ReferencesPresentation
         Shape = CliCommandShape.Data,
         SelectText = static selected => selected with
         {
-            // The headline is the source path when there are rows, so the listed findings must
-            // not repeat a row-state fact the `out` row already prints inline. This trims text
-            // only: the report, and therefore JSON, keeps every finding at every level.
-            TextFindings = selected.TextFindings.Where(finding => selected.Selection.Detail >= CliDetail.Full
+            // Minimal text can use the outgoing row for a row-state fact without an action.
+            // Standard and higher detail keep every finding in the same order as JSON.
+            TextFindings = selected.TextFindings.Where(finding => selected.Selection.Detail >= CliDetail.Standard
+                    || finding.Actions.Count > 0
                     || !ReferencesWireVocabulary.IsRowState(finding.Code))
                 .Select(finding => finding.Code == "references.invalid-direction" ? finding with { Message = string.Empty } : finding).ToArray(),
             TextCounts = [],
+            ShowNextReason = selected.Report.Next?.Kind != CliNextActionKind.Sentence,
         },
     };
 

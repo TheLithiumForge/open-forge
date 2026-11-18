@@ -1,6 +1,6 @@
 .agents/docs/guide.md
 Workspace: <workspace>
-  Warning  .agents/docs/guide.md  Link target is missing [references.target-missing]
+  Warning  .agents/docs/guide.md:8:1  Link target is missing [references.target-missing]
          .agents/docs/guide.md:8:1  missing
   out  :8:1   missing.md -> .agents/docs/missing.md   missing   base
 0 in, 1 out

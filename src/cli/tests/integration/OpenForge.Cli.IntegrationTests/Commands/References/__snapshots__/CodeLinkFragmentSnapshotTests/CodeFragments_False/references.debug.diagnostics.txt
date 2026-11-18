@@ -1,0 +1,6 @@
+status=completed-with-warnings
+incoming=0
+outgoing=6
+scanned=0
+The linked line range is outside the target file's lines or is reversed.
+At least one dotted symbol part is not an identifier token in the target file.

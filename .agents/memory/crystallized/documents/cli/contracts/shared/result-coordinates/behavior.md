@@ -13,6 +13,12 @@ Project layout facts from the operation’s retained observation or intended Ins
 
 Keep outside exact references distinct from canonical workspace-relative paths. Registration, loading, availability, ownership and permission are independent facts. Publish only the command-owned fields defined by its Interface Contract, without adding a shared field or inferring missing observations from inventory.
 
+## Fragment Locations
+
+Keep authored link locations unchanged when a target fragment selects lines or
+a symbol. Form the command's finding code from the target-kind check, as
+[Fragment Findings](interface.md#fragment-findings) defines.
+
 ## Status And Authority
 
 This is the accepted current Behavior Contract for forming the shared public
