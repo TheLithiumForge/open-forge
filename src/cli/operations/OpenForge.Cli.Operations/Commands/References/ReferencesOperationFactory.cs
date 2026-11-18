@@ -6,6 +6,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Selection;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Observation;
@@ -14,7 +15,7 @@ namespace OpenForge.Cli.Core.Commands.References;
 
 internal static class ReferencesOperationFactory
 {
-    internal static ReferencesOperation Create()
+    internal static ReferencesOperation Create(SourceCommentFileListRead? listCommentFiles = null)
     {
         var physicalPathResolverImplementation = new PhysicalPathResolver();
         var sourceSessionReader = new SourceReadSessionReader(physicalPathResolverImplementation);
@@ -29,7 +30,8 @@ internal static class ReferencesOperationFactory
             layoutRead: new WorkspaceLayoutReader(physicalPathResolverImplementation).ReadAsync,
             sourceSessionRead: sourceSessionReader.ReadIncludedAsync,
             sourceReferenceResolver: sourceReferenceResolver,
-            universeFilterResolver: universeFilterResolver);
+            universeFilterResolver: universeFilterResolver,
+            listCommentFiles: listCommentFiles);
         var layerInspector = new ReferencesLayerInspector(
             layerReader: layerReader,
             markdownParser: markdownParser);

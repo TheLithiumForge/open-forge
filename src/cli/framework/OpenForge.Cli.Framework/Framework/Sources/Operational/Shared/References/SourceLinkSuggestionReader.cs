@@ -31,20 +31,10 @@ internal static class SourceLinkSuggestionReader
             .SelectMany(item => item.Document.Sections.Select(section => (item.Path, item.Id, item.Document, Section: section))).ToArray();
         foreach (var reference in references)
         {
-            if (reference.Facts.Finding?.Code == SourceLinkDestinationFindingCode.LegacyAnchor)
-            {
-                foreach (var target in reference.Facts.Finding.Candidates)
-                    Add(target, reference.Facts.Fragment, LocalReferenceCandidateBasisKind.LiteralContent, "legacy ID path");
-                continue;
-            }
             if (reference.Facts.Target.Resolution is not (SourceLinkTargetResolution.Missing or SourceLinkTargetResolution.FragmentMissing)) continue;
             var entry = history.Entries.FirstOrDefault(entry => entry.SourcePath == reference.SourcePath && entry.Destination == reference.Destination);
             if (entry?.MovedPath is { } moved)
                 Add(new() { Id = null, Path = moved }, reference.Facts.Fragment, LocalReferenceCandidateBasisKind.GitRename, $"Git rename from {entry.Commit}");
-            if (entry?.PreviousText is { } previousFile)
-                foreach (var file in files.Where(file => file.Key != reference.Facts.Target.Path && file.Value == previousFile))
-                    Add(new() { Id = null, Path = file.Key }, reference.Facts.Fragment,
-                        LocalReferenceCandidateBasisKind.GitRename, $"Git committed content SHA256 {Hash(previousFile)} from {entry.Commit}");
             if (reference.Facts.Fragment is not { } fragment || reference.Facts.Target.Path is not { } targetPath
                 || !Path.GetExtension(targetPath).Equals(SourceFormClassifier.MarkdownExtension, StringComparison.OrdinalIgnoreCase)) continue;
             var decoded = Uri.UnescapeDataString(fragment);

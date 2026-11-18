@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 3,
+  "command": "doctor",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "No problems found. 3 info findings were recorded.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {
+    "checks": 6,
+    "checksComplete": 6,
+    "errors": 0,
+    "warnings": 0,
+    "infos": 3,
+    "linksChecked": 5,
+    "linksValid": 5,
+    "externalLinksNotChecked": 0,
+    "imageLinks": 0,
+    "routesChecked": 3,
+    "frameworkFiles": 0,
+    "extensionsInstalled": 0,
+    "librariesRegistered": null
+  },
+  "limitations": [],
+  "data": {},
+  "recovery": null,
+  "next": null
+}

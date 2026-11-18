@@ -10,3 +10,6 @@ internal sealed record SourceCommentScan(
 {
     internal IReadOnlyDictionary<string, string> TextFiles { get; init; } = new Dictionary<string, string>(StringComparer.Ordinal);
 }
+
+/// <summary>Lists workspace-relative files for comment discovery, or returns null when the list is unavailable.</summary>
+internal delegate ValueTask<IReadOnlyList<string>?> SourceCommentFileListRead(string workspaceRoot, CancellationToken cancellationToken);

@@ -38,7 +38,8 @@ internal sealed class LocalReferenceOperationalContributor(
     RouteSourceInspector sourceInspector,
     SourceLinkDestinationResolver destinationResolver,
     LocalReferenceCandidateReader candidateReader,
-    SourceLinkHistoryRead? historyRead = null) : ILocalReferenceOperationalContributor
+    SourceLinkHistoryRead? historyRead = null,
+    SourceCommentFileListRead? listCommentFiles = null) : ILocalReferenceOperationalContributor
 {
     internal async ValueTask<LocalReferenceDoctorView> ReadDoctorAsync(CliWorkspace workspace, CancellationToken cancellationToken, RouteDoctorView? routes = null)
     {
@@ -108,7 +109,7 @@ internal sealed class LocalReferenceOperationalContributor(
         {
             if (layer.Text is { } text) retainedText.TryAdd(layer.Path, text);
         }
-        var comments = await SourceCommentSourceReader.ReadAsync(readSession, cancellationToken, retainedText).ConfigureAwait(false);
+        var comments = await SourceCommentSourceReader.ReadAsync(readSession, cancellationToken, retainedText, listCommentFiles).ConfigureAwait(false);
         var commentSession = SourceCommentSourceReader.Extend(readSession, comments);
         foreach (var source in comments.Sources)
         {

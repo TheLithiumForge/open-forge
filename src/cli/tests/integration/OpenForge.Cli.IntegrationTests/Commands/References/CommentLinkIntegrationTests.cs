@@ -1,4 +1,7 @@
+using OpenForge.Cli.Composition.Shared.CommentLinks;
 using OpenForge.Cli.Core.Commands.References;
+using OpenForge.Cli.Core.Framework.Libraries.Shared.GitIgnore;
+using OpenForge.Cli.IntegrationTests.Framework.Sources.Operational.Shared.RenameEvidence;
 using OpenForge.Cli.Core.Commands.References.Models.Request;
 using OpenForge.Cli.Core.Commands.References.Models.Result;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
@@ -85,17 +88,22 @@ public sealed class CommentLinkIntegrationTests
         Assert.Equal([GuidePath, "src/near.cs"], result.Outgoing?.Occurrences.Select(item => item.Target.Path));
     }
 
-    [Fact(DisplayName = "Legacy comment IDs report a finding and a real suggested path")]
-    public async Task LegacyId()
+    [Fact(DisplayName = "Comment discovery skips files that Git ignores")]
+    public async Task GitIgnoredFiles()
     {
-        using var workspace = TemporaryWorkspace.Create("comment-legacy");
-        workspace.WriteText(GuidePath, "# Guide\n");
-        workspace.WriteText(CodePath, $"// {SourceCommentLinkReader.RuneMarker} guide old annotation\n");
-        var result = await Read(workspace, $"./{CodePath}", ReferencesDirection.Out);
+        using var repository = new RenameEvidenceGitWorkspace();
+        await repository.InitializeAsync(unborn: true);
+        const string ignoredDirectory = "ignored";
+        var comment = $"// {SourceCommentLinkReader.OpenForgeMarker} {GuidePath} explains this choice\n";
+        repository.Write(GuidePath, "# Guide\n");
+        repository.Write(LibraryGitIgnoreSection.Path, $"{ignoredDirectory}/\n");
+        repository.Write(CodePath, comment);
+        repository.Write($"{ignoredDirectory}/{CodePath}", comment);
+        var result = await ReferencesOperationFactory.Create(CommentLinkFileList.ReadAsync).ExecuteAsync(
+            new(repository.Workspace, "guide", ReferencesDirection.In, []), TestContext.Current.CancellationToken);
 
-        var finding = Assert.Single(result.Findings, finding => finding.Code == ReferencesFindingCode.LegacyAnchor);
-        Assert.Equal(GuidePath, Assert.Single(finding.Candidates).Path);
-        Assert.Equal(CliSemanticStatus.Attention, result.Status);
+        Assert.Equal(CliSemanticStatus.Complete, result.Status);
+        Assert.Equal(CodePath, Assert.Single(result.Incoming?.Occurrences ?? []).Source.Path);
     }
 
     [Fact(DisplayName = "Comment paths cannot leave the selected workspace")]

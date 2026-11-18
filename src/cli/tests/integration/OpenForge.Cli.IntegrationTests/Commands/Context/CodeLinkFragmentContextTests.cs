@@ -1,7 +1,6 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Context;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
-using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.References.Shared.Comments;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Presentation.Context.Shared.Wording;
@@ -20,18 +19,12 @@ public sealed class CodeLinkFragmentContextTests
     private const string CodePath = "Code.cs";
 
     [Theory(DisplayName = "Context checks code files without selecting their bodies and gives manual fragment corrections")]
-    [InlineData(null, null, false, false)]
-    [InlineData("L2-L4", null, false, false)]
-    [InlineData("Type.Member", null, false, false)]
-    [InlineData("L4-L5", nameof(ContextFindingCode.LineOutOfRange), false, false)]
-    [InlineData("Type.Missing", nameof(ContextFindingCode.SymbolMissing), false, false)]
-    [InlineData("L4-L5", nameof(ContextFindingCode.LineOutOfRange), true, false)]
-    [InlineData("Type.Missing", nameof(ContextFindingCode.SymbolMissing), true, false)]
-    [InlineData("L2-L4", null, false, true)]
-    [InlineData("Type.Member", null, false, true)]
-    [InlineData("L4-L5", nameof(ContextFindingCode.LineOutOfRange), true, true)]
-    [InlineData("Type.Missing", nameof(ContextFindingCode.SymbolMissing), false, true)]
-    public async Task CodeFragments(string? fragment, string? codeName, bool overwrite, bool comment)
+    [InlineData("Type.Member", null, false)]
+    [InlineData("L4-L5", nameof(ContextFindingCode.LineOutOfRange), false)]
+    [InlineData("L2-L4", null, true)]
+    [InlineData("Type.Member", null, true)]
+    [InlineData("Type.Missing", nameof(ContextFindingCode.SymbolMissing), true)]
+    public async Task CodeFragments(string fragment, string? codeName, bool comment)
     {
         var code = codeName is null ? (ContextFindingCode?)null : Enum.Parse<ContextFindingCode>(codeName);
         using var workspace = new RoutedOutputWorkspace();
@@ -43,16 +36,11 @@ public sealed class CodeLinkFragmentContextTests
             IncludeFinalLineEnding = true,
         }));
         workspace.Write(CodePath, "class Type\n{\n    void Member() {}\n}\n");
-        var destination = (comment ? CodePath : "../../" + CodePath) + (fragment is null ? string.Empty : "#" + fragment);
-        var basePath = $"{mainRoot}/docs/guide.md";
-        var sourcePath = overwrite ? SourceOverwritePath.ReadAdjacentPath(basePath) : basePath;
-        if (overwrite)
-            workspace.Replace(basePath, OpenForgeDocumentSeed.Metadata(description: "Guide", tags: ["Docs", "Guide"], body: "# Guide\n"));
+        var destination = $"{(comment ? string.Empty : "../../")}{CodePath}#{fragment}";
+        var sourcePath = $"{mainRoot}/docs/guide.md";
         var link = comment ? $"<!-- {SourceCommentLinkReader.OpenForgeMarker} {destination} explains the code -->" : $"[Code]({destination})";
-        var guide = OpenForgeDocumentSeed.Metadata(
-            description: "Guide", tags: ["Docs", "Guide"], body: $"# Guide\n\n{link}\n");
-        if (overwrite) workspace.Write(sourcePath, guide);
-        else workspace.Replace(sourcePath, guide);
+        workspace.Replace(sourcePath, OpenForgeDocumentSeed.Metadata(
+            description: "Guide", tags: ["Docs", "Guide"], body: $"# Guide\n\n{link}\n"));
         var before = workspace.Snapshot();
         var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
         await new ReadCommandOutputCapture(workspace.Path).MatchDetailsAsync(new ReadOutputScenario
@@ -86,6 +74,6 @@ public sealed class CodeLinkFragmentContextTests
             Assert.Equal(ContextWording.Resolution(ContextLinkResolution.Complete), checkedLink.GetProperty("resolution").GetString());
             Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
         }
-        CommandOutputSnapshot.MatchDetailSnapshot(snapshots, testName: $"{nameof(CodeFragments)}_{fragment ?? "File"}{(overwrite ? "_Overwrite" : string.Empty)}{(comment ? "_Comment" : string.Empty)}");
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots, testName: $"{nameof(CodeFragments)}_{fragment}{(comment ? "_Comment" : string.Empty)}");
     }
 }

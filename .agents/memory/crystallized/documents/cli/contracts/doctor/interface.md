@@ -7,7 +7,7 @@ open-forge:
 
 # Doctor Interface Contract
 
-The local-reference domain also checks [comment links](../shared/source-references/interface.md#comment-links) in eligible workspace files. Missing paths and fragments keep their existing finding kinds. `reference.legacy-anchor` reports an older ID-style target with suggested file paths when available. Git file moves, heading changes, section content matches and unique slugs retain separate evidence for review.
+The local-reference domain also checks [comment links](../shared/source-references/interface.md#comment-links) in eligible workspace files. Missing paths and fragments keep their existing finding kinds. Git file moves, heading changes, section content matches and unique slugs retain separate evidence for review.
 
 ## Workspace Layout
 
@@ -964,7 +964,6 @@ is not a finding.
 | reference.target-missing           | warning  | guided-choice   | Broken link                              | `The linked file was not found: <destination>.` then candidates or `No possible target was found.` | `open-forge repair` when candidates exist; else fix by hand |
 | reference.line-out-of-range        | warning  | manual-decision | Linked line range is out of range        | [wording](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Doctor/DoctorText.cs); [snapshot](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/References/__snapshots__/CodeLinkFragmentSnapshotTests/CodeFragments_True/doctor.json.full.txt) | fix by hand                                                 |
 | reference.symbol-missing           | warning  | manual-decision | Linked symbol was not found              | [wording](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Doctor/DoctorText.cs); [snapshot](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/References/__snapshots__/CodeLinkFragmentSnapshotTests/CodeFragments_True/doctor.json.full.txt) | fix by hand                                                 |
-| reference.legacy-anchor | warning | manual-decision | This comment uses a legacy source ID. Choose a file path. | [wording](../../../../../../../src/cli/output-text/OpenForge.Cli.OutputText/Doctor/DoctorText.cs); [snapshot](../../../../../../../src/cli/tests/integration/OpenForge.Cli.IntegrationTests/Commands/References/__snapshots__/CommentLinkOutputSnapshotTests/CommentFindings_True/doctor-comments.json.full.txt) | choose a file path |
 | reference.fragment-missing         | warning  | guided-choice   | Linked heading was not found             | `<file> has no heading <#fragment>.` then candidates                                               | `open-forge repair` or fix by hand                          |
 | reference.fragment-unverified      | warning  | blocked-repair  | Linked heading could not be checked      | `<file> could not be parsed, so <#fragment> was not checked.`                                      | `open-forge doctor` after fixing the file                   |
 | reference.destination-malformed    | warning  | manual-decision | Link destination is invalid              | `<destination> is not a link Open Forge can check.`                                                | fix by hand                                                 |

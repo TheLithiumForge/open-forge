@@ -32,7 +32,6 @@ internal enum ContextFindingCode
     FragmentMissing,
     LineOutOfRange,
     SymbolMissing,
-    LegacyAnchor,
     LinkEncodingInvalid,
     TargetUnreadable,
     SectionAmbiguous,

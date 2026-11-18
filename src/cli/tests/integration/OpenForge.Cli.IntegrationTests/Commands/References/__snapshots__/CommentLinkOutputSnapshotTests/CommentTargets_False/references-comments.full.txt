@@ -1,0 +1,4 @@
+./src/Order.cs
+Workspace: <workspace>
+  out  :1:4   .agents/docs/guide.md#rules -> .agents/docs/guide.md   base
+0 in, 1 out

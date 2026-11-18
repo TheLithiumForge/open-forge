@@ -36,7 +36,6 @@ internal static class ReferencesWireVocabulary
         ReferencesFindingCode.FragmentMissing => "references.fragment-missing",
         ReferencesFindingCode.LineOutOfRange => "references.line-out-of-range",
         ReferencesFindingCode.SymbolMissing => "references.symbol-missing",
-        ReferencesFindingCode.LegacyAnchor => "references.legacy-anchor",
         ReferencesFindingCode.TargetUnsafe => "references.target-unsafe",
         ReferencesFindingCode.TargetAmbiguous => "references.target-ambiguous",
         ReferencesFindingCode.TargetUnreadable => "references.target-unreadable",

@@ -2568,7 +2568,7 @@ physical aliases.
 
 ### Comment links
 
-A comment link connects code and docs with `@open-forge <path> <any other text>`. `@rune <path> <text>` works the same way. Put the marker first in the comment or on a line inside a block comment. Text after the target explains the relationship.
+A comment link connects code and docs with `@open-forge <path> <any other text>`. The `@rune` marker is also recognised. Put the marker first in the comment or on a line inside a block comment. Text after the target explains the relationship.
 
 Plain paths start at the repository root. Paths starting with `./` or `../` start next to the file holding the comment. Inside comments, `./` means next to that file. In CLI operands, `./` keeps its repository-root meaning.
 
@@ -2583,12 +2583,12 @@ Illustrative:
 Illustrative:
 
 ```md
-<!-- @rune src/Order.cs#Order.Save implements this rule -->
+<!-- @open-forge src/Order.cs#Order.Save implements this rule -->
 ```
 
 The target is the first word after the marker. Encode spaces in filenames. Markdown targets use heading slugs. Code targets use lexical symbols or line ranges. Delimiters follow the file's comment syntax, including trailing comments. Common comment styles include `//`, `///`, `#`, `--`, `;`, `'`, `%`, block comments and HTML comments. In Markdown, use HTML comments outside code spans and fences. Ordinary Markdown links still work.
 
-References lists comment links in both directions and accepts exact code paths. Context checks them when you request link expansion. Doctor reports missing targets, failed fragments and older ID-style anchors. A legacy finding suggests a file path when the ID resolves. Comment links need no IDs or frontmatter. Generated and vendored files are skipped.
+References lists comment links in both directions and accepts exact code paths. Context checks them when you request link expansion. Doctor reports missing targets and failed fragments. Comment links need no IDs or frontmatter. Files that Git ignores and files marked as generated are skipped.
 
 Doctor and Repair suggest moved targets using Git history, heading changes, matching section content and a unique heading slug, in that order. Weak suggestions require selection. Preview `repair --relink` before applying a chosen target. Repair changes only the target word and keeps the marker, comment delimiters and explanation. Relinks write an encoded repository-root path. For example, selecting `docs/new guide.md#rule` writes `docs/new%20guide.md#rule`. Repair keeps Git rename, heading-diff, old section-content and weak unique-slug evidence distinct in its choices.
 

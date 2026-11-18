@@ -4,6 +4,7 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Identity;
 using OpenForge.Cli.Core.Framework.Sources.Models.Inventory;
 using OpenForge.Cli.Core.Framework.Sources.Models.Reading;
+using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.Models.Selection;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.Selection;
@@ -18,12 +19,14 @@ internal sealed class ReferencesSourceResolver
     private readonly SourceReadSessionRead _sourceSessionRead;
     private readonly SourceReferenceResolver _sourceReferenceResolver;
     private readonly SourceUniverseFilterResolver _universeFilterResolver;
+    private readonly SourceCommentFileListRead? _listCommentFiles;
 
     internal ReferencesSourceResolver(
         Func<CliWorkspace, CancellationToken, ValueTask<WorkspaceLayoutRead>> layoutRead,
         SourceReadSessionRead sourceSessionRead,
         SourceReferenceResolver sourceReferenceResolver,
-        SourceUniverseFilterResolver universeFilterResolver)
+        SourceUniverseFilterResolver universeFilterResolver,
+        SourceCommentFileListRead? listCommentFiles = null)
     {
         _layoutRead = layoutRead;
         ArgumentNullException.ThrowIfNull(sourceSessionRead);
@@ -32,6 +35,7 @@ internal sealed class ReferencesSourceResolver
         _sourceSessionRead = sourceSessionRead;
         _sourceReferenceResolver = sourceReferenceResolver;
         _universeFilterResolver = universeFilterResolver;
+        _listCommentFiles = listCommentFiles;
     }
 
     internal async ValueTask<SourceReadSession> ReadAsync(
@@ -43,7 +47,7 @@ internal sealed class ReferencesSourceResolver
         var layout = observation.Layout ?? throw new InvalidOperationException("The workspace layout is unavailable.");
         var session = await _sourceSessionRead(layout, cancellationToken).ConfigureAwait(false);
         if (!includeCommentSources) return session;
-        var comments = await SourceCommentSourceReader.ReadAsync(session, cancellationToken).ConfigureAwait(false);
+        var comments = await SourceCommentSourceReader.ReadAsync(session, cancellationToken, listFiles: _listCommentFiles).ConfigureAwait(false);
         return SourceCommentSourceReader.Extend(session, comments);
     }
 
