@@ -1,4 +1,4 @@
-using OpenForge.Cli.Core.Commands.Tool;
+using OpenForge.Cli.Core.Commands.Tool.Models;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Tools;
 using OpenForge.Cli.Core.Framework.Tools.Catalogue;
@@ -18,111 +18,109 @@ public sealed class ToolInstallOutputSnapshotTests
     [Fact(DisplayName = "Dry run shows the exact commands and Open Forge's changes and runs or changes nothing")]
     public async Task Preview()
     {
-        using var fixture = new ToolCommandFixture();
-        var before = fixture.Files();
+        using var result = await ToolOutputCapture.MatchAsync(new("dry-run", ToolCommandFixture.Install(CodeGraphEntry.Id, DryRun)));
 
-        var text = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id, DryRun));
-        var json = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id, [DryRun, .. ToolCommandFixture.Json]));
-
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), text.ExitCode);
-        Assert.Equal(before, fixture.Files());
-        Assert.Empty(fixture.Processes.Effects);
-        ToolCommandFixture.Match(text.Output, "dry-run");
-        ToolCommandFixture.Match(json.Output, "dry-run.json");
+        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), result.Run.ExitCode);
+        Assert.Equal(result.Before, result.Fixture.Files());
+        Assert.Empty(result.Fixture.Processes.Effects);
     }
 
     [Fact(DisplayName = "Install with --yes runs install then setup and adds the archive exclusion and the settings entry")]
     public async Task InstallsAndConfigures()
     {
-        using var fixture = new ToolCommandFixture();
+        using var result = await ToolOutputCapture.MatchAsync(new("installed", ToolCommandFixture.Install(CodeGraphEntry.Id, Yes)));
+        var fixture = result.Fixture;
 
-        var run = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id, Yes));
-
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), run.ExitCode);
+        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), result.Run.ExitCode);
         Assert.Equal([.. fixture.CodeGraph.Install.Commands.Select(command => command.Text), .. fixture.CodeGraph.Setup!.Commands.Select(command => command.Text)],
             fixture.Processes.Effects);
         AssertIntegrated(fixture, fixture.CodeGraph, ToolIntegrationState.Present);
         Assert.Equal([fixture.CodeGraph.Id], fixture.ConfiguredTools());
-        ToolCommandFixture.Match(run.Output, "installed");
     }
 
     [Fact(DisplayName = "An installed tool skips its install command, still runs setup and names the detected version")]
     public async Task AlreadyInstalled()
     {
-        using var fixture = new ToolCommandFixture();
-        fixture.Processes.Installed(fixture.CodeGraph);
+        static Task Installed(ToolCommandFixture fixture)
+        {
+            fixture.Processes.Installed(fixture.CodeGraph);
+            return Task.CompletedTask;
+        }
 
-        var preview = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id, DryRun));
-        var run = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id, Yes));
+        using var preview = await ToolOutputCapture.MatchAsync(new("already-installed-dry-run", ToolCommandFixture.Install(CodeGraphEntry.Id, DryRun))
+        {
+            Arrange = Installed,
+        });
+        using var result = await ToolOutputCapture.MatchAsync(new("already-installed", ToolCommandFixture.Install(CodeGraphEntry.Id, Yes))
+        {
+            Arrange = Installed,
+        });
 
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), run.ExitCode);
-        Assert.Equal(fixture.CodeGraph.Setup!.Commands.Select(command => command.Text), fixture.Processes.Effects);
-        ToolCommandFixture.Match(preview.Output, "already-installed.dry-run");
-        ToolCommandFixture.Match(run.Output, "already-installed");
+        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), result.Run.ExitCode);
+        Assert.Equal(result.Fixture.CodeGraph.Setup!.Commands.Select(command => command.Text), result.Fixture.Processes.Effects);
     }
 
     [Fact(DisplayName = "A missing package manager blocks before anything runs and says what to install")]
     public async Task MissingPackageManager()
     {
-        using var fixture = new ToolCommandFixture();
-        fixture.Processes.Missing(ToolDefinitions.Probe(ToolRequirement.Npm));
-        var before = fixture.Files();
+        using var result = await ToolOutputCapture.MatchAsync(new("missing-npm", ToolCommandFixture.Install(CodeGraphEntry.Id, Yes))
+        {
+            Arrange = static fixture =>
+            {
+                fixture.Processes.Missing(ToolDefinitions.Probe(ToolRequirement.Npm));
+                return Task.CompletedTask;
+            },
+        });
 
-        var text = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id, Yes));
-        var json = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id, [Yes, .. ToolCommandFixture.Json]));
-
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Blocked), text.ExitCode);
-        Assert.Equal(before, fixture.Files());
-        Assert.Empty(fixture.Processes.Effects);
-        ToolCommandFixture.Match(text.Output, "missing-npm");
-        ToolCommandFixture.Match(json.Output, "missing-npm.json");
+        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Blocked), result.Run.ExitCode);
+        Assert.Equal(result.Before, result.Fixture.Files());
+        Assert.Empty(result.Fixture.Processes.Effects);
     }
 
     [Fact(DisplayName = "A failed setup command reports its exit code, output and next step and leaves the files unchanged")]
     public async Task FailedCommand()
     {
-        using var fixture = new ToolCommandFixture();
-        fixture.Processes.Fail(fixture.CodeGraph.Setup!.Commands[0]);
-        var before = fixture.Files();
+        using var result = await ToolOutputCapture.MatchAsync(new("failed-setup", ToolCommandFixture.Install(CodeGraphEntry.Id, Yes))
+        {
+            Arrange = static fixture =>
+            {
+                fixture.Processes.Fail(fixture.CodeGraph.Setup!.Commands[0]);
+                return Task.CompletedTask;
+            },
+        });
 
-        var text = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id, Yes));
-
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Failed), text.ExitCode);
-        Assert.Equal(before, fixture.Files());
-        ToolCommandFixture.Match(text.Output, "failed-setup");
+        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Failed), result.Run.ExitCode);
+        Assert.Equal(result.Before, result.Fixture.Files());
     }
 
     [Fact(DisplayName = "Without --yes and a terminal Install runs nothing and asks for confirmation")]
     public async Task ConfirmationRequired()
     {
-        using var fixture = new ToolCommandFixture();
+        using var result = await ToolOutputCapture.MatchAsync(new("confirmation-required", ToolCommandFixture.Install(CodeGraphEntry.Id)));
 
-        var text = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id));
-        var json = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id, ToolCommandFixture.Json));
-
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Invalid), text.ExitCode);
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Invalid), json.ExitCode);
-        Assert.Empty(fixture.Processes.Effects);
-        ToolCommandFixture.Match(text.Output, "confirmation-required");
+        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Invalid), result.Run.ExitCode);
+        Assert.Empty(result.Fixture.Processes.Effects);
     }
 
     [Fact(DisplayName = "An interactive plan shows the commands and changes, then runs only on yes")]
     public async Task InteractivePlan()
     {
-        using var fixture = new ToolCommandFixture();
-        var before = fixture.Files();
+        using var declined = await ToolOutputCapture.MatchAsync(new("plan-declined", ToolCommandFixture.Install(CodeGraphEntry.Id))
+        {
+            Answers = Environment.NewLine,
+        });
+        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Interrupted), declined.Run.ExitCode);
+        Assert.Equal(declined.Before, declined.Fixture.Files());
+        Assert.Empty(declined.Fixture.Processes.Effects);
+        ToolOutputCapture.MatchPrompt(declined.Run.Prompts, "plan-prompt", nameof(ToolInstallOutputSnapshotTests));
 
-        var declined = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id), Environment.NewLine);
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Interrupted), declined.ExitCode);
-        Assert.Equal(before, fixture.Files());
-        Assert.Empty(fixture.Processes.Effects);
+        using var accepted = await ToolOutputCapture.MatchAsync(new("plan-accepted", ToolCommandFixture.Install(CodeGraphEntry.Id))
+        {
+            Answers = "y" + Environment.NewLine,
+        });
 
-        var accepted = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id), "y" + Environment.NewLine);
-
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), accepted.ExitCode);
-        AssertIntegrated(fixture, fixture.CodeGraph, ToolIntegrationState.Present);
-        ToolCommandFixture.Match(declined.Prompts, "plan.prompt");
-        ToolCommandFixture.Match(accepted.Output, "plan.accepted");
+        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), accepted.Run.ExitCode);
+        AssertIntegrated(accepted.Fixture, accepted.Fixture.CodeGraph, ToolIntegrationState.Present);
     }
 
     [Fact(DisplayName = "Codebase Memory's plan shows its own installer for each platform and its marked block")]
@@ -130,89 +128,89 @@ public sealed class ToolInstallOutputSnapshotTests
     {
         foreach (var platform in Enum.GetValues<ToolPlatform>())
         {
-            using var fixture = new ToolCommandFixture(platform);
-            var text = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodebaseMemory.Id, DryRun));
-            Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), text.ExitCode);
-            ToolCommandFixture.Match(text.Output, $"script.{platform.ToString().ToLowerInvariant()}");
+            using var result = await ToolOutputCapture.MatchAsync(
+                new($"script-{platform.ToString().ToLowerInvariant()}", ToolCommandFixture.Install(CodebaseMemoryEntry.Id, DryRun))
+                {
+                    Create = () => new ToolCommandFixture(platform),
+                });
+            Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), result.Run.ExitCode);
         }
     }
 
     [Fact(DisplayName = "Codebase Memory installs through its script and adds its marked block")]
     public async Task ScriptInstallRuns()
     {
-        using var fixture = new ToolCommandFixture();
+        using var result = await ToolOutputCapture.MatchAsync(new("script-installed", ToolCommandFixture.Install(CodebaseMemoryEntry.Id, Yes)));
+        var fixture = result.Fixture;
 
-        var run = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodebaseMemory.Id, Yes));
-
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), run.ExitCode);
+        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), result.Run.ExitCode);
         Assert.Equal(fixture.CodebaseMemory.Install.Commands.Select(command => command.Text), fixture.Processes.Effects);
         AssertIntegrated(fixture, fixture.CodebaseMemory, ToolIntegrationState.Present);
-        ToolCommandFixture.Match(run.Output, "script-installed");
     }
 
     [Fact(DisplayName = "Bare install reports when the project has no tools and runs nothing")]
     public async Task BareWithoutTools()
     {
-        using var fixture = new ToolCommandFixture();
+        using var result = await ToolOutputCapture.MatchAsync(new("bare-none", ToolCommandFixture.Install(null, Yes)));
 
-        var run = await fixture.RunAsync(ToolCommandFixture.Install(null, Yes));
-
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), run.ExitCode);
-        Assert.Empty(fixture.Processes.Effects);
-        ToolCommandFixture.Match(run.Output, "bare.none");
+        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), result.Run.ExitCode);
+        Assert.Empty(result.Fixture.Processes.Effects);
     }
 
     [Fact(DisplayName = "Bare install installs only the configured tools that are missing and never reruns setup")]
     public async Task BareInstallsMissing()
     {
-        using var fixture = new ToolCommandFixture();
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete),
-            (await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id, Yes))).ExitCode);
-        var configured = fixture.Files();
-        fixture.Processes.Commands.Clear();
+        static async Task Configured(ToolCommandFixture fixture)
+            => Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete),
+                (await fixture.RunAsync(ToolCommandFixture.Install(CodeGraphEntry.Id, Yes))).ExitCode);
 
-        var preview = await fixture.RunAsync(ToolCommandFixture.Install(null, DryRun));
-        var run = await fixture.RunAsync(ToolCommandFixture.Install(null, Yes));
+        using var preview = await ToolOutputCapture.MatchAsync(new("bare-dry-run", ToolCommandFixture.Install(null, DryRun)) { Arrange = Configured });
+        using var result = await ToolOutputCapture.MatchAsync(new("bare-installed", ToolCommandFixture.Install(null, Yes)) { Arrange = Configured });
+        using var nothing = await ToolOutputCapture.MatchAsync(new("bare-nothing-missing", ToolCommandFixture.Install(null, Yes))
+        {
+            Arrange = static async fixture =>
+            {
+                await Configured(fixture);
+                fixture.Processes.Installed(fixture.CodeGraph);
+            },
+        });
 
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), run.ExitCode);
-        Assert.Equal(fixture.CodeGraph.Install.Commands.Select(command => command.Text), fixture.Processes.Effects);
-        Assert.Equal(configured, fixture.Files());
-        ToolCommandFixture.Match(preview.Output, "bare.dry-run");
-        ToolCommandFixture.Match(run.Output, "bare.installed");
-
-        fixture.Processes.Installed(fixture.CodeGraph);
-        var nothing = await fixture.RunAsync(ToolCommandFixture.Install(null, Yes));
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), nothing.ExitCode);
-        ToolCommandFixture.Match(nothing.Output, "bare.nothing-missing");
+        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), result.Run.ExitCode);
+        Assert.Equal(result.Fixture.CodeGraph.Install.Commands.Select(command => command.Text), result.Fixture.Processes.Effects);
+        Assert.Equal(result.Before, result.Fixture.Files());
+        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Complete), nothing.Run.ExitCode);
+        Assert.Empty(nothing.Fixture.Processes.Effects);
     }
 
     [Fact(DisplayName = "A malformed integration file blocks Install and stays unchanged")]
     public async Task IntegrationConflict()
     {
-        using var fixture = new ToolCommandFixture();
-        fixture.Write(CodeGraphEntry.ConfigurationPath, "[");
-        var before = fixture.Files();
+        using var result = await ToolOutputCapture.MatchAsync(new("conflict", ToolCommandFixture.Install(CodeGraphEntry.Id, Yes))
+        {
+            Arrange = static fixture =>
+            {
+                fixture.Write(CodeGraphEntry.ConfigurationPath, "[");
+                return Task.CompletedTask;
+            },
+        });
 
-        var run = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id, Yes));
-
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Blocked), run.ExitCode);
-        Assert.Equal(before, fixture.Files());
-        Assert.Empty(fixture.Processes.Effects);
-        Assert.Empty(fixture.ConfiguredTools());
-        ToolCommandFixture.Match(run.Output, "conflict");
+        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Blocked), result.Run.ExitCode);
+        Assert.Equal(result.Before, result.Fixture.Files());
+        Assert.Empty(result.Fixture.Processes.Effects);
+        Assert.Empty(result.Fixture.ConfiguredTools());
     }
 
     [Fact(DisplayName = "A folder without Open Forge blocks Install before anything runs")]
     public async Task WithoutOpenForge()
     {
-        using var fixture = new ToolCommandFixture(openForge: false);
+        using var result = await ToolOutputCapture.MatchAsync(new("without-open-forge", ToolCommandFixture.Install(CodeGraphEntry.Id, Yes))
+        {
+            Create = static () => new ToolCommandFixture(openForge: false),
+        });
 
-        var run = await fixture.RunAsync(ToolCommandFixture.Install(fixture.CodeGraph.Id, Yes));
-
-        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Blocked), run.ExitCode);
-        Assert.Empty(fixture.Processes.Effects);
-        Assert.Empty(fixture.Files());
-        ToolCommandFixture.Match(run.Output, "without-open-forge");
+        Assert.Equal(ToolCommandFixture.Exit(CliSemanticStatus.Blocked), result.Run.ExitCode);
+        Assert.Empty(result.Fixture.Processes.Effects);
+        Assert.Empty(result.Fixture.Files());
     }
 
     internal static void AssertIntegrated(ToolCommandFixture fixture, ToolEntry entry, ToolIntegrationState expected)

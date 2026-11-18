@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 3,
+  "command": "tool remove",
+  "status": "invalid-input",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "tool remove couldn't start.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "tool-remove.unknown-tool",
+      "title": "Check the tool command.",
+      "message": "There is no supported tool called UnknownTool. Run open-forge tool list to see the IDs.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "UnknownTool",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "preview": false,
+    "tools": []
+  },
+  "recovery": null,
+  "next": null
+}

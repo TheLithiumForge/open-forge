@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 3,
+  "command": "tool list",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Found 2 supported tools.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {},
+  "limitations": [],
+  "data": {
+    "tools": [
+      {
+        "id": "codegraph",
+        "name": "CodeGraph",
+        "category": "Code search",
+        "purpose": "Gives coding agents a searchable graph of the code's symbols and calls.",
+        "method": "npm",
+        "upstream": "https://github.com/colbymchenry/codegraph",
+        "licence": "MIT",
+        "configured": true,
+        "integrated": true,
+        "installed": true,
+        "version": "1.6.2"
+      },
+      {
+        "id": "codebase-memory",
+        "name": "Codebase Memory",
+        "category": "Code search",
+        "purpose": "Indexes the codebase into a knowledge graph that coding agents can query.",
+        "method": "script",
+        "upstream": "https://github.com/DeusData/codebase-memory-mcp",
+        "licence": "MIT",
+        "configured": false,
+        "integrated": false,
+        "installed": false,
+        "version": null
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

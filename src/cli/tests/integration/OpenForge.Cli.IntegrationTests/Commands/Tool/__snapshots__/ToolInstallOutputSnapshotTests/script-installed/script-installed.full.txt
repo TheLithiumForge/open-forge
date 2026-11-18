@@ -1,0 +1,8 @@
+Finished tool install.
+Workspace: <workspace>
+Open Forge ran these commands for Codebase Memory:
+  curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash  (done)
+      Codebase Memory's installer configures every coding agent it finds for your account and adds its folder to your PATH
+Then Open Forge made these changes:
+  .cbmignore               Keep archived Open Forge memory out of the index  (done)
+  .agents/open-forge.json  Add codebase-memory to this project's tools  (done)

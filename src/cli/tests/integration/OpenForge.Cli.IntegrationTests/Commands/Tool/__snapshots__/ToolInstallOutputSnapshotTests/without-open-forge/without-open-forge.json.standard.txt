@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 3,
+  "command": "tool install",
+  "status": "blocked",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "tool install can't start yet.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "tool-install.open-forge-missing",
+      "title": "Check the tool command.",
+      "message": "This folder doesn't use Open Forge yet. Run open-forge install first, then run this command again.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "codegraph",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "preview": false,
+    "tools": []
+  },
+  "recovery": null,
+  "next": null
+}

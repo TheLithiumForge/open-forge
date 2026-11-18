@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 3,
+  "command": "tool install",
+  "status": "failed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "tool install stopped at a failure.",
+    "kind": "failed"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "tool-install.command-failed",
+      "title": "Check the tool command.",
+      "message": "`codegraph install --yes --location local` failed. Read its output above, fix the problem it names, then run the same Open Forge command again.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "codegraph",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "preview": false,
+    "tools": [
+      {
+        "id": "codegraph",
+        "name": "CodeGraph",
+        "installedVersion": null,
+        "uninstallDescription": null,
+        "steps": [
+          {
+            "kind": "install",
+            "command": "npm i -g @colbymchenry/codegraph@1.6.2",
+            "effect": null,
+            "notes": [],
+            "outcome": "done",
+            "exitCode": null,
+            "output": null
+          },
+          {
+            "kind": "setup",
+            "command": "codegraph install --yes --location local",
+            "effect": "Adds CodeGraph to the coding agents it finds in this project",
+            "notes": [
+              "CodeGraph keeps its default telemetry. Turn it off with: codegraph telemetry off"
+            ],
+            "outcome": "failed",
+            "exitCode": 7,
+            "output": "synthetic failure line one\nsynthetic failure line two"
+          }
+        ],
+        "changes": [
+          {
+            "path": "codegraph.json",
+            "kind": "integration",
+            "purpose": "Keep archived Open Forge memory out of the graph",
+            "outcome": "not-started"
+          },
+          {
+            "path": ".agents/open-forge.json",
+            "kind": "add-tool",
+            "purpose": null,
+            "outcome": "not-started"
+          }
+        ]
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

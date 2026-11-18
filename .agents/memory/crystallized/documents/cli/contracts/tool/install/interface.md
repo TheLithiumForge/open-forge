@@ -48,6 +48,23 @@ After the run, the same lines carry their outcome.
 A failed command shows its exit code, the tail of its output and a plain next step.
 The [common Interface](../interface.md) defines consent and result coordinates.
 
+
+## Findings catalogue
+
+| Code | Meaning |
+| --- | --- |
+| `tool-install.invalid-input` | Correct the named operand or option |
+| `tool-install.unknown-tool` | Use an ID from `tool list` |
+| `tool-install.settings-unavailable` | Fix `.agents/open-forge.json`, which can't be read or parsed |
+| `tool-install.open-forge-missing` | Run `open-forge install` first. Install records the tool in `.agents/open-forge.json` |
+| `tool-install.integration-conflict` | Fix the named tool file. Open Forge left it unchanged |
+| `tool-install.requirement-missing` | Install the named package manager or runner. Nothing ran |
+| `tool-install.confirmation-required` | Run in a terminal or pass `--yes`. Nothing ran |
+| `tool-install.command-failed` | Read the failed command's exit code and output, fix the problem and run again |
+| `tool-install.target-changed-during-apply` | A file changed while Open Forge was writing it. Run the command again |
+| `tool-install.write-failed` | Open Forge couldn't write its changes. The cause names the reason |
+| `tool-install.interrupted` | The command was cancelled. Nothing more ran or changed |
+
 ## Example
 
 ```text

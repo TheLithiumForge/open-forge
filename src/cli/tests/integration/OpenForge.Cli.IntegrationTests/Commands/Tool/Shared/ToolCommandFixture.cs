@@ -1,7 +1,6 @@
-using System.Runtime.CompilerServices;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Composition.Models;
-using OpenForge.Cli.Core.Commands.Tool;
+using OpenForge.Cli.Core.Commands.Tool.Models;
 using OpenForge.Cli.Core.Framework.Settings;
 using OpenForge.Cli.Core.Framework.Settings.Shared.Serialization;
 using OpenForge.Cli.Core.Framework.Tools;
@@ -18,7 +17,7 @@ using OpenForge.Cli.TestSupport.Snapshots;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Tool.Shared;
 
-internal sealed record ToolCommandRun(int ExitCode, string Output, string Prompts);
+internal sealed record ToolCommandRun(int ExitCode, string Output, string Error, string Prompts);
 
 /// <summary>
 /// One owned workspace and one composed CLI with a fake process host. The platform is pinned so the catalogue's
@@ -111,18 +110,11 @@ internal sealed class ToolCommandFixture : IDisposable
             });
         var completion = await application.RunAsync(arguments, new CliProcessEnvironment(Path), new CliOutputWriters(output, error),
             TestContext.Current.CancellationToken);
-        var json = arguments.Contains(CliPresentationDefinitions.JsonFormat, StringComparer.Ordinal);
-        var content = json
-            ? CommandOutputSnapshotFormatting.PrettyPrintJson(Normalize(output.ToString(), json)) + error
-            : Normalize(output.ToString() + error, json);
-        return new(completion.ExitCode, content, Normalize(prompts.ToString(), json: false));
+        return new(completion.ExitCode, Normalize(output.ToString()), Normalize(error.ToString()), Normalize(prompts.ToString()));
     }
 
-    internal static void Match(string content, string name, [CallerFilePath] string sourceFile = "", [CallerMemberName] string testName = "")
-        => CommandOutputSnapshot.MatchSnapshot(content, name, sourceFile, testName);
-
-    private string Normalize(string content, bool json)
-        => CommandOutputNormalization.Normalize(content, Path, CliBuildVersion.InformationalVersion, normalizeTextPaths: !json);
+    private string Normalize(string content)
+        => CommandOutputNormalization.Normalize(content, Path, CliBuildVersion.InformationalVersion);
 
     public void Dispose()
     {

@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 3,
+  "command": "tool install",
+  "status": "invalid-input",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "tool install couldn't start.",
+    "kind": "cannot-start"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "tool-install.confirmation-required",
+      "title": "Check the tool command.",
+      "message": "Tool install needs confirmation, and this session cannot ask.",
+      "subject": {
+        "kind": "identifier",
+        "path": null,
+        "id": "tool install",
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "preview": false,
+    "tools": [
+      {
+        "id": "codegraph",
+        "name": "CodeGraph",
+        "installedVersion": null,
+        "uninstallDescription": null,
+        "steps": [
+          {
+            "kind": "install",
+            "command": "npm i -g @colbymchenry/codegraph@1.6.2",
+            "effect": null,
+            "notes": [],
+            "outcome": "planned",
+            "exitCode": null,
+            "output": null
+          },
+          {
+            "kind": "setup",
+            "command": "codegraph install --yes --location local",
+            "effect": "Adds CodeGraph to the coding agents it finds in this project",
+            "notes": [
+              "CodeGraph keeps its default telemetry. Turn it off with: codegraph telemetry off"
+            ],
+            "outcome": "planned",
+            "exitCode": null,
+            "output": null
+          }
+        ],
+        "changes": [
+          {
+            "path": "codegraph.json",
+            "kind": "integration",
+            "purpose": "Keep archived Open Forge memory out of the graph",
+            "outcome": "planned"
+          },
+          {
+            "path": ".agents/open-forge.json",
+            "kind": "add-tool",
+            "purpose": null,
+            "outcome": "planned"
+          }
+        ]
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

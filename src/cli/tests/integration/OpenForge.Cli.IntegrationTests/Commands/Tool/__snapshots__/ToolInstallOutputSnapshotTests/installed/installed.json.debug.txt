@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 3,
+  "command": "tool install",
+  "status": "completed",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Finished tool install.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {},
+  "limitations": [],
+  "data": {
+    "preview": false,
+    "tools": [
+      {
+        "id": "codegraph",
+        "name": "CodeGraph",
+        "installedVersion": null,
+        "uninstallDescription": null,
+        "steps": [
+          {
+            "kind": "install",
+            "command": "npm i -g @colbymchenry/codegraph@1.6.2",
+            "effect": null,
+            "notes": [],
+            "outcome": "done",
+            "exitCode": null,
+            "output": null
+          },
+          {
+            "kind": "setup",
+            "command": "codegraph install --yes --location local",
+            "effect": "Adds CodeGraph to the coding agents it finds in this project",
+            "notes": [
+              "CodeGraph keeps its default telemetry. Turn it off with: codegraph telemetry off"
+            ],
+            "outcome": "done",
+            "exitCode": null,
+            "output": null
+          }
+        ],
+        "changes": [
+          {
+            "path": "codegraph.json",
+            "kind": "integration",
+            "purpose": "Keep archived Open Forge memory out of the graph",
+            "outcome": "done"
+          },
+          {
+            "path": ".agents/open-forge.json",
+            "kind": "add-tool",
+            "purpose": null,
+            "outcome": "done"
+          }
+        ]
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

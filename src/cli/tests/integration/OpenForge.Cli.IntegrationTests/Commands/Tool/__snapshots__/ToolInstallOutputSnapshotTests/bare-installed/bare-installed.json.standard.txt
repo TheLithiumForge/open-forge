@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 3,
+  "command": "tool install",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Finished tool install.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {},
+  "limitations": [],
+  "data": {
+    "preview": false,
+    "tools": [
+      {
+        "id": "codegraph",
+        "name": "CodeGraph",
+        "installedVersion": null,
+        "uninstallDescription": null,
+        "steps": [
+          {
+            "kind": "install",
+            "command": "npm i -g @colbymchenry/codegraph@1.6.2",
+            "effect": null,
+            "notes": [],
+            "outcome": "done",
+            "exitCode": null,
+            "output": null
+          }
+        ],
+        "changes": []
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

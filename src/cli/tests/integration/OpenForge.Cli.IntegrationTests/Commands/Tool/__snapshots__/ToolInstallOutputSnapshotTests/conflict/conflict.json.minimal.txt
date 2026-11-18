@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 3,
+  "command": "tool install",
+  "status": "blocked",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "tool install can't start yet.",
+    "kind": "blocked"
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "code": "tool-install.integration-conflict",
+      "title": "Check the tool command.",
+      "message": "codegraph.json can't be changed safely. Expected depth to be zero at the end of the JSON payload. There is an open JSON object or array that should be closed. LineNumber: 0 | BytePositionInLine: 1. Fix it, then run the command again.",
+      "subject": {
+        "kind": "file",
+        "path": "codegraph.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "actions": []
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "errors": 1
+  },
+  "limitations": [],
+  "data": {
+    "preview": false,
+    "tools": []
+  },
+  "recovery": null,
+  "next": null
+}

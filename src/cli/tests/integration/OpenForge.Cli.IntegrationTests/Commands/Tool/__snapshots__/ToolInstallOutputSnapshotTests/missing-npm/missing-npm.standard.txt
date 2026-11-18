@@ -1,0 +1,13 @@
+tool install can't start yet.
+Workspace: <workspace>
+  Error  codegraph  Check the tool command.
+         CodeGraph needs npm, which isn't installed. Install Node.js from https://nodejs.org (npm comes with it), then run open-forge tool install again.
+Open Forge will run these commands to install CodeGraph:
+  npm i -g @colbymchenry/codegraph@1.6.2
+  codegraph install --yes --location local
+      Adds CodeGraph to the coding agents it finds in this project
+      CodeGraph keeps its default telemetry. Turn it off with: codegraph telemetry off
+Then Open Forge will make these changes:
+  codegraph.json           Keep archived Open Forge memory out of the graph
+  .agents/open-forge.json  Add codegraph to this project's tools
+1 errors.

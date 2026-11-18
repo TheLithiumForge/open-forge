@@ -33,6 +33,16 @@ Each tool is one indented row with:
 JSON always carries every fact for every tool: ID, name, category, purpose, method, upstream, licence, configured, integrated, installed and version.
 `integrated` says whether Open Forge's integration changes are present in this project.
 
+
+## Findings catalogue
+
+| Code | Meaning |
+| --- | --- |
+| `tool-list.settings-unavailable` | Fix `.agents/open-forge.json`, which can't be read or parsed (warning) |
+| `tool-list.integration-conflict` | Fix the named tool file. Open Forge left it unchanged (warning) |
+| `tool-list.invalid-input` | Correct the named operand or option |
+| `tool-list.interrupted` | The command was cancelled. Nothing more ran or changed |
+
 ## Example
 
 ```text

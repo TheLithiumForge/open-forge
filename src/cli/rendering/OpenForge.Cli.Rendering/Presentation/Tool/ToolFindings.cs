@@ -1,4 +1,3 @@
-using OpenForge.Cli.Core.Commands.Tool;
 using OpenForge.Cli.Core.Commands.Tool.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Wording;
