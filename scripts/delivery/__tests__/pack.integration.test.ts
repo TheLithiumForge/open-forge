@@ -8,8 +8,9 @@ import { pack } from "../pack.ts";
 import { createManifest } from "../manifest.ts";
 import { sourceIdentity } from "../source.ts";
 import { ArchiveSuffix, deliveryDirectory, DevelopmentPublish, hostRuntime, nativeDirectory, suites, ThirdPartyNotices } from "../layout.ts";
-import { MainPackageName, PlatformPackages } from "../package-model.ts";
+import { PlatformPackages } from "../package-model.ts";
 import { inspectPackageContents } from "../package-contents.ts";
+import { HostArtifactCount } from "../package-model.ts";
 import { readPublication } from "../npm/publication.ts";
 
 const version = "0.0.0";
@@ -48,18 +49,19 @@ test("skip-tests packs an unqualified build without execution, preserves integri
   assert.equal(metadata.tested, false);
   assert.equal(JSON.parse(readFileSync(join(root, manifestPath), "utf8")).tested, false);
   assert.equal(existsSync(join(output, "journey")), false, "No npm installation test ran.");
-  assert.equal(metadata.files.length, 3);
+  assert.equal(metadata.files.length, HostArtifactCount);
   for (const tarball of readdirSync(output).filter((name) => name.endsWith(".tgz"))) {
     const contents = inspectPackageContents(output, tarball);
     assert.ok(contents.files.some((file) => file.path === "LICENSE"));
     assert.equal(
       contents.files.some((file) => file.path === ThirdPartyNotices),
-      contents.name !== MainPackageName,
+      contents.name === PlatformPackages[rid].packageName,
       "Only the platform package carries the native executable and its notices.",
     );
     assert.equal(contents.version, version);
   }
-  const archive = metadata.files.map((file: { path: string }) => file.path).find((path: string) => path.endsWith(ArchiveSuffix));
+  const packed = metadata.files.map((file: { path: string }) => file.path);
+  const archive = packed.find((path: string) => path.endsWith(ArchiveSuffix));
   const archived = execFileSync("tar", ["-tzf", join(output, archive)], { encoding: "utf8" })
     .split(/\r?\n/u)
     .filter(Boolean)

@@ -40,7 +40,7 @@ export async function publishPackages(root: string, publications: readonly Publi
   try {
     await setImmediate();
     if (!stopRequested()) {
-      existing = publications.map((publication) => registryVersionExists(root, publication.name, publication.version, publication.optionalDependencies));
+      existing = publications.map((publication) => registryVersionExists(root, publication.name, publication.version, publication.optionalDependencies, publication.dependencies));
       promote = publications.map((publication) => promotesLatest(publication.version, tag, () => registryHasStableVersion(root, publication.name)));
     }
   } catch (error) {

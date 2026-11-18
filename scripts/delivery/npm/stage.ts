@@ -4,8 +4,9 @@ import { join } from "node:path";
 import { candidateVersion, committedVersion, validateVersion } from "../version.ts";
 import { nativeManifest } from "./package-manifests.ts";
 import { stageWrapperPackage } from "./wrapper-stage.ts";
+import { stageAlias } from "./alias-stage.ts";
 
-import { PlatformPackages, type SupportedRuntime } from "../package-model.ts";
+import { AliasDirectory, PlatformPackages, type SupportedRuntime } from "../package-model.ts";
 import { FullGitShaPattern } from "../source-identity.ts";
 import { ThirdPartyNotices } from "../layout.ts";
 
@@ -25,6 +26,7 @@ export interface StagedPackages {
   version: string;
   mainPackageDirectory: string;
   platformPackageDirectory: string;
+  aliasPackageDirectory: string;
 }
 
 export function stagePackages(request: StageRequest): StagedPackages {
@@ -36,6 +38,7 @@ export function stagePackages(request: StageRequest): StagedPackages {
   const buildDirectory = join(npmArtifacts, "build", request.runtime);
   const stageDirectory = join(npmArtifacts, "stage", request.runtime);
   const mainPackageDirectory = join(stageDirectory, "open-forge");
+  const aliasPackageDirectory = join(stageDirectory, AliasDirectory);
   const platformPackageDirectory = join(stageDirectory, platformPackage.directoryName);
 
   rmSync(buildDirectory, { force: true, recursive: true });
@@ -47,13 +50,14 @@ export function stagePackages(request: StageRequest): StagedPackages {
   mkdirSync(platformBinDirectory, { recursive: true });
 
   stageWrapperPackage(request.repositoryRoot, mainPackageDirectory, version, launcherDirectory, request.targets);
+  stageAlias(request.repositoryRoot, aliasPackageDirectory, version);
   copyExecutable(request.nativeArtifact, join(platformBinDirectory, platformPackage.nativeFileName));
   copyFileSync(join(request.repositoryRoot, "LICENSE"), join(platformPackageDirectory, "LICENSE"));
   copyFileSync(join(request.repositoryRoot, ThirdPartyNotices), join(platformPackageDirectory, ThirdPartyNotices));
 
   writeManifest(join(platformPackageDirectory, "package.json"), nativeManifest(request.runtime, version));
 
-  return { version, mainPackageDirectory, platformPackageDirectory };
+  return { version, mainPackageDirectory, platformPackageDirectory, aliasPackageDirectory };
 }
 
 function resolveVersion(root: string, version: StageVersion): string {

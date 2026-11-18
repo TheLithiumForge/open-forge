@@ -9,6 +9,7 @@ import { npmInvocation, reportFailure, ProcessExit } from "../process.ts";
 import { capture } from "./smoke-process.ts";
 import { CiCommand } from "./command-names.ts";
 import { evaluateSmoke, SmokeCheck, SmokeArguments } from "./smoke-checks.ts";
+import { smokePublicAliases } from "./smoke-public-aliases.ts";
 
 const SmokeLayout = {
   prefix: "open-forge-public-",
@@ -52,6 +53,7 @@ try {
         throw new Error(`${check.name} failed.`);
       }
     }
+    if (options.aliases) smokePublicAliases(root, version, environment);
   }
 } catch (error) {
   reportFailure(error);
