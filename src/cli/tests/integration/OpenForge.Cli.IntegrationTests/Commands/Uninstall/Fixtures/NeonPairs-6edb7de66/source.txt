@@ -1,0 +1,15 @@
+Source of these bytes
+
+Branch: feature/demo-evals
+Commit: 6edb7de66d5f59936c236c4a6438237c1eb8223e
+
+The bytes were copied once from the eval harness's own output at that commit, so this test needs neither the
+branch nor the harness at run time.
+
+- scoped/: the Neon Pairs specification from src/evals/benchmarks/neon-pairs/specs, placed into the scope folders
+  from the case's scopes.json with scoped metadata, relinked links and the scope entrypoints, as
+  src/evals/materialize/scopes.ts and setup.ts write them before Open Forge installs, routes and indexes the folder.
+- strip-metadata/: the frozen specification at the docs root with its links, the expected result of
+  uninstall --strip metadata --flatten docs.
+- strip-metadata-links/: the same documents with the links between them removed by
+  src/evals/materialize/plain-links.ts, the expected result of uninstall --strip metadata,links --flatten docs.

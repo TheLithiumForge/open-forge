@@ -11,6 +11,9 @@ namespace OpenForge.Cli.Core.Commands.Shared.RouteScaffolding;
 /// </summary>
 internal sealed class RouteScaffoldComposer
 {
+    internal const string AxiomsHeading = "## Axioms";
+    internal const string InheritedAxiomsMarker = "- inherited - No local axioms; loaded ancestor axioms remain active.";
+
     private readonly FrameworkMarkdownDocumentWriter _writer = new();
 
     internal ImmutableArray<byte> Compose(RouteScaffoldDocument document)
@@ -22,9 +25,9 @@ internal sealed class RouteScaffoldComposer
 
             # {document.Title}
             {definition}
-            ## Axioms
+            {AxiomsHeading}
 
-            - inherited - No local axioms; loaded ancestor axioms remain active.
+            {InheritedAxiomsMarker}
 
             ## Entries
 

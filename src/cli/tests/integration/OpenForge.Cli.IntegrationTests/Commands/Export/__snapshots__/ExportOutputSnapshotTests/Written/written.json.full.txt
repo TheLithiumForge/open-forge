@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 3,
+  "command": "export",
+  "status": "completed",
+  "detail": "full",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Wrote 3 files to <destination>.",
+    "kind": "done"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/docs/README.md",
+      "kind": "file",
+      "action": "rewritten",
+      "outcome": "done",
+      "reason": "strip",
+      "owner": null,
+      "before": "<sha256>",
+      "after": "<sha256>"
+    },
+    {
+      "path": ".agents/docs/rules.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "done",
+      "reason": "flatten",
+      "owner": null,
+      "before": null,
+      "after": "<sha256>"
+    }
+  ],
+  "counts": {
+    "filesCopied": 1,
+    "filesRewritten": 1,
+    "filesMoved": 1,
+    "filesLeftOut": 0,
+    "filesKept": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "apply",
+    "strip": [
+      "metadata"
+    ],
+    "flatten": ".agents/docs",
+    "destination": "<destination>",
+    "plan": [
+      {
+        "action": "rewrite",
+        "path": ".agents/docs/README.md",
+        "reason": "strip",
+        "parts": [
+          "metadata",
+          "relink"
+        ],
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "outcome": "done"
+      },
+      {
+        "action": "move",
+        "path": ".agents/docs/game/rules.md",
+        "to": ".agents/docs/rules.md",
+        "reason": "flatten",
+        "parts": [
+          "metadata",
+          "relink"
+        ],
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "outcome": "done"
+      }
+    ],
+    "kept": [],
+    "collisions": [],
+    "verified": true
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": null
+}

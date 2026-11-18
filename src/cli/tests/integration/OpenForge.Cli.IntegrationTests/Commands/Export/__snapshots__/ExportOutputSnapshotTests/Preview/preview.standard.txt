@@ -1,0 +1,8 @@
+Would write 3 files to <destination>.
+Workspace: <workspace>
+  rewrite          .agents/docs/README.md  (metadata, links)
+  move             .agents/docs/game/rules.md -> .agents/docs/rules.md  (metadata, links)
+No files were changed.
+1 file copied, 1 file rewritten, 1 file moved.
+  Write the copy.
+Next: open-forge export <destination> --strip metadata --strip links --flatten .agents/docs --workspace <workspace>
