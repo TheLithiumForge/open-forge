@@ -206,7 +206,40 @@ public sealed class CommentLinkRepairIntegrationTests
         Assert.Contains(history.Entries, entry => entry.SourcePath == CodePath && entry.MovedPath == NewGuidePath);
     }
 
-    private static async ValueTask<LocalReferenceDoctorView> Read(RenameEvidenceGitWorkspace repository)
+    [Fact(DisplayName = "One history read covers several broken links in one file and links written in one commit")]
+    public async Task HistoryForSeveralLinks()
+    {
+        using var repository = new RenameEvidenceGitWorkspace();
+        await repository.InitializeAsync(unborn: true);
+        Seed(repository);
+        const string otherCodePath = "src/Invoice.cs";
+        var comment = $"// {SourceCommentLinkReader.OpenForgeMarker} {GuidePath}#{OldFragment} explains this behavior\n";
+        repository.Write(CodePath, $"{comment}class Order {{}}\n{comment}");
+        repository.Write(otherCodePath, comment);
+        await Commit(repository);
+        repository.Move(GuidePath, NewGuidePath);
+        await Commit(repository);
+        SourceLinkHistoryRequest? request = null;
+        SourceLinkHistory? history = null;
+
+        await Read(repository, (read, result) => (request, history) = (read, result));
+
+        Assert.NotNull(request);
+        Assert.NotNull(history);
+        Assert.Equal(request.References.Where(reference => reference.Facts.Target.Resolution
+                is SourceLinkTargetResolution.Missing or SourceLinkTargetResolution.FragmentMissing)
+                .Select(reference => (reference.SourcePath, reference.Destination)),
+            history.Entries.Select(entry => (entry.SourcePath, entry.Destination)));
+        var comments = history.Entries.Where(entry => entry.SourcePath is CodePath or otherCodePath).ToArray();
+        Assert.Equal(new[] { CodePath, CodePath, otherCodePath }.Order(StringComparer.Ordinal),
+            comments.Select(entry => entry.SourcePath).Order(StringComparer.Ordinal));
+        Assert.All(comments, entry => Assert.Equal(NewGuidePath, entry.MovedPath));
+        Assert.Single(comments.Select(entry => entry.Commit).Distinct());
+        Assert.Single(comments.Select(entry => entry.PreviousText).Distinct());
+    }
+
+    private static async ValueTask<LocalReferenceDoctorView> Read(RenameEvidenceGitWorkspace repository,
+        Action<SourceLinkHistoryRequest, SourceLinkHistory>? observe = null)
     {
         // The product bounds each Git history call and reports a timeout as absent Git evidence. A loaded
         // hosted runner can exceed that bound, and such a run proves nothing about the evidence, so read again.
@@ -218,6 +251,7 @@ public sealed class CommentLinkRepairIntegrationTests
             {
                 var read = await history.ReadAsync(request, token);
                 timedOut = read.TimedOut;
+                if (!timedOut) observe?.Invoke(request, read);
                 return read;
             }).ReadDoctorAsync(repository.Workspace, TestContext.Current.CancellationToken);
             if (!timedOut) return view;

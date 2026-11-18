@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
+using OpenForge.Cli.Composition.Shared.Git.Models;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths.Models;
 using OpenForge.Cli.Core.Framework.Sources.Identity;
@@ -31,20 +32,22 @@ internal sealed class GitRenameEvidenceReader
         var root = request.Workspace.PhysicalRoot;
         try
         {
-            var probe = await Run(["rev-parse", "--is-inside-work-tree", "--show-prefix", "--verify", "--quiet", "HEAD^{commit}"]);
-            if (probe is not { } readMetadata) return Unavailable(RenameGitAvailability.Unavailable);
-            var metadata = readMetadata.Output.Split('\n');
-            if (metadata.Length < 2 || metadata[0].TrimEnd('\r') != "true") return Unavailable(RenameGitAvailability.NoRepository);
-            if (metadata.Length < 3) return Unavailable(RenameGitAvailability.Unavailable);
-            var prefix = metadata[1].TrimEnd('\r');
+            // One rev-parse call answers the work-tree check, the prefix and HEAD.
+            var probe = GitWorkTreeCheck.Read(await _deadline.RunAsync(token => _git.RunAsync(root,
+                [.. GitWorkTreeCheck.Arguments, "--show-prefix", "--verify", "--quiet", "HEAD^{commit}"], token), cancellationToken));
+            if (probe.State == GitWorkTreeState.Unavailable) return Unavailable(RenameGitAvailability.Unavailable);
+            var metadata = probe.Lines;
+            if (metadata.Count < 2 || probe.State != GitWorkTreeState.Inside) return Unavailable(RenameGitAvailability.NoRepository);
+            if (metadata.Count < 3) return Unavailable(RenameGitAvailability.Unavailable);
+            var prefix = metadata[1];
             if (prefix.Length > 0) _ = SourceWorkspaceRelativePath.Validate(prefix.TrimEnd('/'), nameof(request), false);
-            if (readMetadata.ExitCode != 0) return Unavailable(RenameGitAvailability.Unborn);
+            if (probe.ExitCode != 0) return Unavailable(RenameGitAvailability.Unborn);
             var head = string.Join('\n', metadata.Skip(2)).Trim();
             if (!IsObjectId(head)) return Unavailable(RenameGitAvailability.Unavailable);
 
             var tree = await Run(["ls-tree", "-r", "-z", "--full-tree", head]);
-            if (tree is not { ExitCode: 0 } treeRead || !ValidNulOutput(treeRead.Output)) return Unavailable(RenameGitAvailability.Unavailable);
-            var inventory = ReadInventory(treeRead.Output, prefix);
+            if (tree is not { ExitCode: 0 } treeRead || GitOutput.ReadNulEntries(treeRead.Output) is not { } treeEntries) return Unavailable(RenameGitAvailability.Unavailable);
+            var inventory = ReadInventory(treeEntries, prefix);
             var policy = request.Policy;
             var resolver = _physicalPaths.CreateReadSession();
             var blockedPhysicalPaths = RenameCandidateAdmission.ReadBlockedPhysicalPaths(request.Workspace, resolver, policy);
@@ -83,19 +86,19 @@ internal sealed class GitRenameEvidenceReader
         async Task<(int ExitCode, string Output, string Error)?> Run(string[] arguments)
         {
             var result = await _deadline.RunAsync(token => _git.RunAsync(root, arguments, token), cancellationToken);
-            return result is { ExitCode: 0 } read && !string.IsNullOrWhiteSpace(read.Error) ? null : result;
+            return GitOutput.IsUntrusted(result) ? null : result;
         }
     }
 
-    private static ImmutableArray<RenameGitTrackedPath> ReadInventory(string output, string prefix)
+    private static ImmutableArray<RenameGitTrackedPath> ReadInventory(ImmutableArray<string> entries, string prefix)
     {
         var paths = ImmutableArray.CreateBuilder<RenameGitTrackedPath>();
-        foreach (var entry in output.Split('\0', StringSplitOptions.RemoveEmptyEntries))
+        foreach (var entry in entries)
         {
             var tab = entry.IndexOf('\t');
-            if (tab < 0) throw new ArgumentException("Git tree output requires a path separator.", nameof(output));
+            if (tab < 0) throw new ArgumentException("Git tree output requires a path separator.", nameof(entries));
             var fields = entry[..tab].Split(' ');
-            if (fields.Length != 3 || !IsObjectId(fields[2])) throw new ArgumentException("Git tree output requires an object identity.", nameof(output));
+            if (fields.Length != 3 || !IsObjectId(fields[2])) throw new ArgumentException("Git tree output requires an object identity.", nameof(entries));
             var path = entry[(tab + 1)..];
             if (fields[0] != "100644" && fields[0] != "100755" || fields[1] != "blob" || !path.StartsWith(prefix, StringComparison.Ordinal)) continue;
             path = path[prefix.Length..];
@@ -105,9 +108,6 @@ internal sealed class GitRenameEvidenceReader
 
         return paths.ToImmutable();
     }
-
-    private static bool ValidNulOutput(string output)
-        => output.Length == 0 || output[^1] == '\0' && output[0] != '\0' && !output.Contains("\0\0", StringComparison.Ordinal);
 
     private static bool IsObjectId(string value)
         => value.Length is 40 or 64 && value.All(character => character is >= '0' and <= '9' or >= 'a' and <= 'f');

@@ -60,8 +60,15 @@ For historical heading suggestions, compare parsed old and current headings with
 the changed line ranges of the Git target diff. Use a unique removed and added
 heading pair of the same level before the old section-content hash fallback.
 Keep heading-diff, section-content and weak unique-slug evidence distinct.
-Each Git invocation in a history read has its own five-second deadline under the
+A history read covers the links whose target or heading is missing. It runs one
+`git blame --porcelain` per source file, with one `-L` range per broken-link line,
+and maps each line to its commit. It runs the name-status rename diff once per
+commit, and `git show` of the old target and the target diff once per commit and
+target path. Entries keep the order of the links. Each Git invocation in a
+history read has its own five-second deadline under the
 [rename evidence](../../../technical-designs/forgiving-maintenance.md#observation-model) timeout rules.
+A timeout stops the read and marks it incomplete. There is no shared time budget
+or commit cap.
 
 Resolve the contained target and classify its kind before parsing. Use the
 [local fragment rules](interface.md#local-fragments) for Markdown headings,
