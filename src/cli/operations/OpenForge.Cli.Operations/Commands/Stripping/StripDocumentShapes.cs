@@ -24,7 +24,7 @@ internal sealed record StripManagedSectionRemoval(StripManagedSectionState State
 
 /// <summary>
 /// Recognizes entrypoints, which the entrypoints part deletes, and the document shapes uninstall
-/// removes: route scaffolds and the managed sections of root hosts. The strip and uninstall
+/// removes: route scaffolds and the managed sections of root hosts. The plain-docs and uninstall
 /// Interface contracts define these shapes.
 /// </summary>
 internal static class StripDocumentShapes

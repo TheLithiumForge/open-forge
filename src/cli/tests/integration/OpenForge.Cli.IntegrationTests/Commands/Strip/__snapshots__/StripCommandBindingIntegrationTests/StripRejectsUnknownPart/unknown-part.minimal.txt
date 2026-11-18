@@ -1,3 +1,0 @@
-Cannot strip: 'LINKS' is not a part. Use metadata, frontmatter, entrypoints or links.
-1 errors.
-Next: open-forge strip --help

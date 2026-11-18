@@ -1,6 +1,7 @@
 using OpenForge.Cli.Core.Commands.Stripping.Models.Planning;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models;
 using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
+using OpenForge.Cli.Core.Framework.Documents.Metadata.Models.Syntax;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Applicability;
 using OpenForge.Cli.Core.Framework.Documents.Metadata.Shared.Reading;
 using OpenForge.Cli.Core.Framework.Documents.Yaml.Models;
@@ -9,18 +10,15 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 namespace OpenForge.Cli.Core.Commands.Stripping.Shared.Documents;
 
 /// <summary>
-/// Removes Open Forge frontmatter keys by whole lines and keeps every other byte.
-/// The strip Interface contract's metadata part defines which keys go.
+/// Removes Open Forge frontmatter keys by whole lines and keeps every other byte. A native SKILL.md keeps
+/// its Skill keys. The plain-docs Interface contract's metadata part defines which keys go.
 /// </summary>
 internal static class StripMetadataEdits
 {
-    internal static StripDocumentEdits Read(string path, MarkdownDocumentFacts facts)
+    // part names the selected part, because frontmatter falls back to these edits for a native SKILL.md.
+    internal static StripDocumentEdits Read(string path, MarkdownDocumentFacts facts, StripRewritePart part = StripRewritePart.Metadata)
     {
-        if (SourceLogicalPath.ReadFileName(path) == SourceFormClassifier.NativeSkillFileName)
-        {
-            return StripDocumentEdits.None;
-        }
-
+        var skill = SourceLogicalPath.ReadFileName(path) == SourceFormClassifier.NativeSkillFileName;
         var frontmatter = facts.Frontmatter;
         if (frontmatter.State == MarkdownFrontmatterState.Missing)
         {
@@ -42,7 +40,7 @@ internal static class StripMetadataEdits
             return StripDocumentEdits.None;
         }
 
-        var removed = SelectRemoved(entries, out var duplicate);
+        var removed = SelectRemoved(entries, skill, out var duplicate);
         if (duplicate)
         {
             return StripDocumentEdits.Refuse("The frontmatter has more than one open-forge key.");
@@ -55,7 +53,7 @@ internal static class StripMetadataEdits
 
         if (removed.Count == entries.Count)
         {
-            return new StripDocumentEdits([StripFrontmatterEdits.WholeBlock(facts.Source, block.Start, bodyStart, StripRewritePart.Metadata)]);
+            return new StripDocumentEdits([StripFrontmatterEdits.WholeBlock(facts.Source, block.Start, bodyStart, part)]);
         }
 
         var edits = new List<StripTextEdit>();
@@ -76,13 +74,14 @@ internal static class StripMetadataEdits
                 return StripDocumentEdits.Refuse("An Open Forge key shares its lines with another key.");
             }
 
-            edits.Add(new StripTextEdit(lineStart, Math.Min(end, yamlSpan.End), string.Empty, StripRewritePart.Metadata));
+            edits.Add(new StripTextEdit(lineStart, Math.Min(end, yamlSpan.End), string.Empty, part));
         }
 
         return new StripDocumentEdits(edits);
     }
 
-    private static HashSet<YamlMappingEntry> SelectRemoved(IReadOnlyList<YamlMappingEntry> entries, out bool duplicate)
+    // A native SKILL.md keeps description, because the Skill format reads it.
+    private static HashSet<YamlMappingEntry> SelectRemoved(IReadOnlyList<YamlMappingEntry> entries, bool skill, out bool duplicate)
     {
         var scoped = entries.Where(entry => IsKey(entry, ApplyToMetadataReader.OpenForgeKey)).ToArray();
         duplicate = scoped.Length > 1;
@@ -99,7 +98,7 @@ internal static class StripMetadataEdits
         }
 
         foreach (var entry in entries.Where(entry => IsKey(entry, ApplyToMetadataReader.ApplyToKey)
-            || FrameworkMetadataFieldReader.Read(entry.Key.Scalar?.Value) is not null))
+            || FrameworkMetadataFieldReader.Read(entry.Key.Scalar?.Value) is { } field && !(skill && field == FrameworkMetadataField.Description)))
         {
             removed.Add(entry);
         }

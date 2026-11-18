@@ -397,12 +397,14 @@ attach, sync, detach, list, and inspect policy, plans, findings, results, and
 rendering remain under `Commands/Library/`. This placement adds no dependency
 injection, runtime registry, reflection, or sibling-private import.
 
-Uninstall and strip follow the same map. Their two commands share one plain-workspace
-plan under `Commands/Stripping/`: document edits, flatten moves, plan
-application, findings and the result model. Uninstall's removal selection and
-runtime-folder removal stay under `Commands/Uninstall/`. The Markdown parser supplies
-link label spans, and Framework Sources resolves local destinations, so neither
-command adds a parser.
+Uninstall and export follow the same map. Their two commands share one plain-docs
+plan under `Commands/Stripping/`: the removal selection, document edits, flatten
+moves, the selection flags, findings and the result model. Uninstall applies the
+plan in place through the same folder's plan application and runtime-folder
+removal. Export writes it to its destination from `Commands/Export/`, and the
+root host supplies Git's file list through the shared Git runner. The Markdown
+parser supplies link label spans, and Framework Sources resolves local
+destinations, so neither command adds a parser.
 
 Definitions, binding, behavior-owning composition, models, and supporting
 behavior remain within the narrowest command or capability owner. A private

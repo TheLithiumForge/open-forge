@@ -1090,24 +1090,12 @@
       ]
     },
     {
-      "code": "strip.invalid-input",
-      "forms": ["Cannot strip: <problem>"]
+      "code": "export.invalid-input",
+      "forms": ["Cannot export: <problem>"]
     },
     {
-      "code": "strip.flatten-collision",
+      "code": "export.flatten-collision",
       "forms": ["Flattening would place <n> files at <path>: <sources>. Nothing was changed."]
-    },
-    {
-      "code": "strip.flatten-managed",
-      "forms": ["<folder> holds <path>, which Open Forge manages. Flatten a category, subcategory or custom route instead. Nothing was changed."]
-    },
-    {
-      "code": "strip.target-changed",
-      "forms": ["<path> changed after the plan was made. Nothing was changed."]
-    },
-    {
-      "code": "strip.target-changed-during-apply",
-      "forms": ["<path> changed while changes were being written. Stopped after <n> of <m> changes."]
     },
     {
       "code": "uninstall.invalid-input",

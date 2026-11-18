@@ -82,10 +82,10 @@ internal static class StripResultFactory
     internal static string RetryCommand(StripRequest request, bool automatic, bool dryRun)
     {
         var arguments = new List<string> { StrippingDefinitions.CommandIdentity(request.Command) };
+        if (request.Destination is { } destination) arguments.Add(destination);
         foreach (var part in request.Parts.Select(StrippingDefinitions.PartName))
         {
-            if (request.Command == StripCommandKind.Strip) arguments.Add(part);
-            else CliRetryCommand.Add(arguments, StrippingDefinitions.StripOption, part);
+            CliRetryCommand.Add(arguments, StrippingDefinitions.StripOption, part);
         }
 
         CliRetryCommand.Add(arguments, StrippingDefinitions.FlattenOption, request.Flatten);

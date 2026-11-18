@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace OpenForge.Cli.Core.Presentation.Stripping.Models;
 
-// The strip Interface contract's Results section defines these fields for strip and uninstall.
+// The plain-docs Interface contract's Results section defines these fields for uninstall and export.
 internal sealed record StripData
 {
     public required string Mode { get; init; }
@@ -10,6 +10,9 @@ internal sealed record StripData
     public required IReadOnlyList<string> Strip { get; init; }
 
     public string? Flatten { get; init; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Destination { get; init; }
 
     public required IReadOnlyList<StripDataPlanEntry> Plan { get; init; }
 

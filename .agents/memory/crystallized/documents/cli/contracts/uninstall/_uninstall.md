@@ -1,13 +1,13 @@
 ---
 open-forge:
   description: Route the uninstall contracts that take Open Forge back out of a workspace while keeping the files the user wrote
-  responsibility: Route uninstall's public Interface and Behavior without redefining the strip parts
+  responsibility: Route uninstall's public Interface and Behavior without redefining the shared plain-docs plan
   tags: [Memory, Crystallized, CLI, Command, Contract, Uninstall, Lifecycle, Mutation, CurrentTruth]
 ---
 
 # Uninstall Command Contract Set
 
-`uninstall` removes the Framework and Extension files Open Forge installed and still recognizes, its managed sections and its state. Files the user wrote stay. The [strip contracts](../strip/_strip.md) define the optional `--strip` parts and `--flatten`.
+`uninstall` removes the Framework and Extension files Open Forge installed and still recognizes, its managed sections and its state. Files the user wrote stay. The [plain-docs contracts](../shared/plain-docs/_plain-docs.md) define the selection flags and the `--strip` parts it shares with [`export`](../export/_export.md).
 
 ## Axioms
 

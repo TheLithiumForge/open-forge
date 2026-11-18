@@ -165,7 +165,7 @@ one actual child is ceremonial and adds no useful operation boundary. Keep
 ordinary command paths shallow, normally one or two words after `open-forge`.
 
 The current direct roots are `find`, `index`, `status`, `context`,
-`references`, `doctor`, `repair`, `install`, `update`, `uninstall`, `strip`,
+`references`, `doctor`, `repair`, `install`, `update`, `uninstall`, `export`,
 `remove`, and `cleanup`. The
 current grouped families are:
 

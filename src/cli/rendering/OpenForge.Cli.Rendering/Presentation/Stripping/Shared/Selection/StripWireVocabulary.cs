@@ -3,7 +3,7 @@ using OpenForge.Cli.Core.Commands.Stripping.Models.Result;
 
 namespace OpenForge.Cli.Core.Presentation.Stripping.Shared.Selection;
 
-// The strip Interface contract's Results and Errors sections define these wire names for strip and uninstall.
+// The plain-docs Interface contract's Results and Errors sections define these wire names for uninstall and export.
 internal static class StripWireVocabulary
 {
     internal static string RewritePartName(StripRewritePart part)
@@ -62,7 +62,6 @@ internal static class StripWireVocabulary
             StripFindingCode.WorkspaceUnavailable => "workspace-unavailable",
             StripFindingCode.DocumentUnsupported => "document-unsupported",
             StripFindingCode.FlattenCollision => "flatten-collision",
-            StripFindingCode.FlattenManaged => "flatten-managed",
             StripFindingCode.LinkedFileSkipped => "linked-file-skipped",
             StripFindingCode.TargetChanged => "target-changed",
             StripFindingCode.TargetChangedDuringApply => "target-changed-during-apply",

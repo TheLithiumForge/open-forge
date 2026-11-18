@@ -6,7 +6,7 @@ using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 
 namespace OpenForge.Cli.Core.Commands.Stripping.Models.Planning;
 
-/// <summary>The current facts a removal source reads before strip plans its edits.</summary>
+/// <summary>The current facts the removal selection reads before the parts plan their edits.</summary>
 internal sealed record StripRemovalInput
 {
     public required StripRequest Request { get; init; }
@@ -19,10 +19,4 @@ internal sealed record StripRemovalInput
 
     // Reads one canonical workspace path as an exact snapshot, or null when it cannot be read safely.
     public required Func<string, CancellationToken, ValueTask<FileStateSnapshot?>> Read { get; init; }
-}
-
-/// <summary>Adds whole-file removals to a strip plan. Uninstall supplies the only source.</summary>
-internal interface IStripRemovalSource
-{
-    ValueTask<StripRemovalSet> ReadAsync(StripRemovalInput input, CancellationToken cancellationToken);
 }

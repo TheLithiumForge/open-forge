@@ -78,7 +78,7 @@ examples before its behavior notes and options.
 | Use documents you already have                             | [route include](/guides/cli#route-include), [route exclude](/guides/cli#route-exclude)                                                                                                                                                                                                                     |
 | Learn how the framework works                              | [help concepts](/guides/cli#help)                                                                                                                                                                                                                                                                          |
 | Check and repair                                           | [index](/guides/cli#index), [doctor](/guides/cli#doctor), [repair](/guides/cli#repair), [cleanup](/guides/cli#cleanup)                                                                                                                                                                                     |
-| Install, update, or remove Framework content               | [install](/guides/cli#install), [update](/guides/cli#update), [uninstall](/guides/cli#uninstall), [strip](/guides/cli#strip), [remove](/guides/cli#remove)                                                                                                                                                 |
+| Install, update, or remove Framework content               | [install](/guides/cli#install), [update](/guides/cli#update), [uninstall](/guides/cli#uninstall), [export](/guides/cli#export), [remove](/guides/cli#remove)                                                                                                                                               |
 | Manage optional Extension packages                         | [extension list](/guides/cli#extension-list), [extension inspect](/guides/cli#extension-inspect), [extension create](/guides/cli#extension-create), [extension install](/guides/cli#extension-install), [extension update](/guides/cli#extension-update), [extension remove](/guides/cli#extension-remove) |
 | Share files through a Library                              | [library list](/guides/cli#library-list), [library inspect](/guides/cli#library-inspect), [library attach](/guides/cli#library-attach), [library sync](/guides/cli#library-sync), [library detach](/guides/cli#library-detach)                                                                             |
 
@@ -99,15 +99,15 @@ References lists these links, Context checks them during requested link expansio
 
 ## Take Open Forge back out
 
-`uninstall` removes the files Open Forge installed and still recognizes, its sections in `AGENTS.md` and `CLAUDE.md`, route scaffolds and its state, ending with `.open-forge-state/`. Your files stay, and so do managed files you edited. Running it again once Open Forge is gone changes nothing. Add `--strip` with `metadata`, `frontmatter`, `entrypoints` or `links` to end with plain Markdown, or `--flatten docs` to put the documents in one folder. Flatten is for categories, subcategories and custom routes. `strip --flatten` refuses a folder that holds any file Open Forge manages, unless `entrypoints` deletes it in the same run, while `uninstall --flatten` removes or strips those files first. Run `strip` on its own to drop one part while Open Forge stays. See [uninstall](/guides/cli#uninstall) and [strip](/guides/cli#strip).
+`uninstall` removes the files Open Forge installed and still recognizes, its sections in `AGENTS.md` and `CLAUDE.md`, route scaffolds and its state, ending with `.open-forge-state/`. Your files stay, and so do managed files you edited. Running it again once Open Forge is gone changes nothing. `export <destination>` plans the same thing but writes the result to a new or empty folder and leaves the project unchanged, so you can keep using Open Forge. Both take `--strip` with `metadata`, `frontmatter`, `entrypoints` or `links` to end with plain Markdown, and `--flatten docs` to put the documents in one folder. See [uninstall](/guides/cli#uninstall), [export](/guides/cli#export) and the [selection flags](/guides/cli#selection-flags).
 
 The evals use three stages of the same routed documents:
 
-| Stage                | Command                                                                  |
-| -------------------- | ------------------------------------------------------------------------ |
-| Organized Open Forge | None. Keep the normal install.                                           |
-| Organized docs       | `open-forge uninstall --strip metadata,entrypoints`                      |
-| Unorganized docs     | `open-forge uninstall --strip metadata,entrypoints,links --flatten docs` |
+| Stage                | Command                                                                          |
+| -------------------- | -------------------------------------------------------------------------------- |
+| Organized Open Forge | None. Keep the normal install.                                                   |
+| Organized docs       | `open-forge export ../stage-4 --strip metadata,entrypoints`                      |
+| Unorganized docs     | `open-forge export ../stage-3 --strip metadata,entrypoints,links --flatten docs` |
 
 ## Everyday habits
 

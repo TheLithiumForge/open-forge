@@ -118,7 +118,7 @@ Direct commands keep their detailed files in one local scope:
 | `update`     | [`update Interface`](contracts/update/interface.md)                   | [`update Behavior`](contracts/update/behavior.md)                   | None; no Technical Design exists.                                         |
 | `remove`     | [`remove Interface`](contracts/remove/interface.md)                   | [`remove Behavior`](contracts/remove/behavior.md)                   | None; no Technical Design exists.                                         |
 | `uninstall`  | [`uninstall Interface`](contracts/uninstall/interface.md)             | [`uninstall Behavior`](contracts/uninstall/behavior.md)             | None; no Technical Design exists.                                         |
-| `strip`      | [`strip Interface`](contracts/strip/interface.md)                     | [`strip Behavior`](contracts/strip/behavior.md)                     | None; no Technical Design exists.                                         |
+| `export`     | [`export Interface`](contracts/export/interface.md)                   | [`export Behavior`](contracts/export/behavior.md)                   | None; no Technical Design exists.                                         |
 | `cleanup`    | [`cleanup Interface`](contracts/cleanup/interface.md)                 | [`cleanup Behavior`](contracts/cleanup/behavior.md)                 | None; no Technical Design exists.                                         |
 
 The public `index` command files are currently staged under

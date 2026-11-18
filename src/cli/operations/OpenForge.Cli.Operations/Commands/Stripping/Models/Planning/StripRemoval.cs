@@ -19,8 +19,6 @@ internal sealed record StripRemoval
 
 internal sealed record StripRemovalSet
 {
-    internal static StripRemovalSet Empty { get; } = new();
-
     public ImmutableArray<StripRemoval> Removals { get; init; } = [];
 
     public ImmutableArray<StripKeptFile> Kept { get; init; } = [];

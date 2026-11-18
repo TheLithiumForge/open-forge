@@ -129,19 +129,26 @@ Removal retains eligible removed bytes in recovery data. Use [Cleanup](routes.md
 
 Remove Open Forge from the workspace. Uninstall deletes the Framework and Extension files that still match what Open Forge installed, its sections in `AGENTS.md` and `CLAUDE.md`, route scaffolds, settings, the lock and folders left empty. Its last step removes `.open-forge-state/`, which stays only when it holds recovery data or a link or cannot be read. User files stay. Edited managed files stay and are listed as kept. Once the lock is gone, a second run changes nothing. Detach Libraries first. Run it only when the user asked to remove Open Forge.
 
-| Flag                     | Meaning                                                                                        |
-| ------------------------ | ---------------------------------------------------------------------------------------------- |
-| `--strip <parts>`        | Also strip `metadata`, `frontmatter`, `entrypoints` or `links` from the documents that stay. Repeat or use commas |
-| `--flatten <folder>`     | Move the documents below the folder's subfolders into the folder                               |
-| `--remove-edited <path>` | Remove a named edited managed file or section. Repeat as needed                                |
-| `--dry-run`              | List every delete, rewrite and move with SHA-256 hashes                                        |
-| `--automatic`            | Run without confirmation                                                                       |
+It takes the shared selection flags below, plus `--automatic` to run without confirmation.
 
-## `strip [<part>...]`
+## `export <destination>`
 
-Remove Open Forge metadata, whole frontmatter blocks, entrypoints or links between documents while the Framework stays installed. `metadata` removes only Open Forge keys, and `frontmatter` removes the whole block and wins over `metadata`. `entrypoints` deletes the entrypoint files, managed ones included, with any text in them. `links` removes every link between documents, `Entries` lists and whole `@open-forge` or `@rune` comments included, and keeps external links, images, links to other files and code. Source code is never read. Parts run as `frontmatter` or `metadata`, then `entrypoints`, then `links`, then flatten. `--flatten <folder>` works as in `uninstall`: it is for categories, subcategories and custom routes, keeps `SKILL.md` files and entrypoints that are not deleted in place and stops on a name collision before any write. `strip` refuses a folder holding any managed file it keeps, entrypoints included. `uninstall` never does, because nothing stays managed after it. Accepts `--dry-run` and `--automatic`.
+Write a copy of the project as it would look after `uninstall` to a new or empty folder, and leave the project unchanged. Open Forge's own files and state are left out, its sections in `AGENTS.md` and `CLAUDE.md` are removed and edited managed files are kept, as uninstall keeps them. Every other file is copied: Git's tracked files plus untracked files Git does not ignore, or everything except `.git` without Git. `.open-forge-state/` and links are never copied. Prefer a destination outside the project. One inside it is allowed and left out of the copy. A file, a folder that already holds files or a folder that holds the project is refused. Export asks no question and keeps no recovery data. When writing stops part way, delete the destination and run it again.
 
-Eval stages: Organized Open Forge is the normal install. Organized docs is `uninstall --strip metadata,entrypoints`. Unorganized docs is `uninstall --strip metadata,entrypoints,links --flatten docs`.
+Eval stages: Organized Open Forge is the normal install. Organized docs is `export ../stage-4 --strip metadata,entrypoints`. Unorganized docs is `export ../stage-3 --strip metadata,entrypoints,links --flatten docs`.
+
+## Selection flags
+
+`uninstall` and `export` share one plan and these flags.
+
+| Flag                     | Meaning                                                                                    |
+| ------------------------ | ------------------------------------------------------------------------------------------ |
+| `--strip <parts>`        | Strip `metadata`, `frontmatter`, `entrypoints` or `links` from the documents that stay     |
+| `--flatten <folder>`     | Move the documents below the folder's subfolders into the folder                           |
+| `--remove-edited <path>` | Remove a named edited managed file or section. Repeat as needed                            |
+| `--dry-run`              | List every delete, rewrite and move with SHA-256 hashes                                    |
+
+Repeat `--strip` or use commas. `metadata` removes only Open Forge keys, and `frontmatter` removes the whole block and wins over `metadata`. A `SKILL.md` keeps its normal Skill keys under both. `entrypoints` deletes the entrypoint files, managed ones included, with any text in them. `links` removes every link between documents, `Entries` lists and whole `@open-forge` or `@rune` comments included, and keeps external links, images, links to other files and code. Source code is never read. Parts run as `frontmatter` or `metadata`, then `entrypoints`, then `links`, then flatten. `--flatten` is for categories, subcategories and custom routes, keeps `SKILL.md` files and entrypoints that are not deleted in place and stops on a name collision before any write.
 
 ## Extensions
 

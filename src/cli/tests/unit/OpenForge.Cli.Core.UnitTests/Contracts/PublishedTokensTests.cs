@@ -115,7 +115,7 @@ public sealed class PublishedTokensTests
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(OpenForge.Cli.Core.Presentation.Route.Include.Models.RouteIncludeData.RegisteredAfter)), PublishedTokens.RouteInclusionData.RegisteredAfter);
         Assert.Equal(JsonNamingPolicy.CamelCase.ConvertName(nameof(OpenForge.Cli.Core.Presentation.Route.Include.Models.RouteIncludeData.Verified)), PublishedTokens.RouteInclusionData.Verified);
         Assert.Equal(OpenForge.Cli.Core.Commands.Uninstall.UninstallDefinitions.CommandIdentity, PublishedTokens.Uninstall.Command);
-        Assert.Equal(OpenForge.Cli.Core.Commands.Uninstall.UninstallDefinitions.Strip.Name, PublishedTokens.Uninstall.Strip);
+        Assert.Equal(OpenForge.Cli.Core.Commands.Stripping.StrippingDefinitions.Strip.Name, PublishedTokens.Uninstall.Strip);
         Assert.Equal(OpenForge.Cli.Core.Commands.Uninstall.UninstallDefinitions.Automatic.Name, PublishedTokens.Uninstall.Automatic);
         Assert.Equal(OpenForge.Cli.Core.Commands.Stripping.StrippingDefinitions.PartName(OpenForge.Cli.Core.Commands.Stripping.Models.Request.StripPart.Metadata), PublishedTokens.Uninstall.MetadataPart);
         var install = InstallSymbols.Create();

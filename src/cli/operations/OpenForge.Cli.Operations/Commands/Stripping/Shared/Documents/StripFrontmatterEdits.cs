@@ -6,8 +6,8 @@ using OpenForge.Cli.Core.Framework.Sources.Identity;
 namespace OpenForge.Cli.Core.Commands.Stripping.Shared.Documents;
 
 /// <summary>
-/// Removes the whole frontmatter block, whoever wrote its keys. The strip Interface
-/// contract's frontmatter part defines the boundary.
+/// Removes the whole frontmatter block, whoever wrote its keys. A native SKILL.md keeps its Skill keys
+/// and loses only Open Forge's. The plain-docs Interface contract's frontmatter part defines the boundary.
 /// </summary>
 internal static class StripFrontmatterEdits
 {
@@ -15,8 +15,12 @@ internal static class StripFrontmatterEdits
 
     internal static StripDocumentEdits Read(string path, MarkdownDocumentFacts facts)
     {
-        if (SourceLogicalPath.ReadFileName(path) == SourceFormClassifier.NativeSkillFileName
-            || facts.Frontmatter.State == MarkdownFrontmatterState.Missing)
+        if (SourceLogicalPath.ReadFileName(path) == SourceFormClassifier.NativeSkillFileName)
+        {
+            return StripMetadataEdits.Read(path, facts, StripRewritePart.Frontmatter);
+        }
+
+        if (facts.Frontmatter.State == MarkdownFrontmatterState.Missing)
         {
             return StripDocumentEdits.None;
         }

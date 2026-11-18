@@ -24,7 +24,7 @@ internal sealed record StripLinkContext
 
 /// <summary>
 /// Turns links to documents into their text, removes the comments that hold comment links, and
-/// rebases kept links whose source or target moved. The strip Interface contract's links part and
+/// rebases kept links whose source or target moved. The plain-docs Interface contract's links part and
 /// flatten define all three.
 /// </summary>
 internal static class StripLinkEdits

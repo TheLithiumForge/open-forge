@@ -19,8 +19,8 @@ Behavior:
   run reports it.
 
 Options:
-  --strip <parts>         Also strip metadata, frontmatter, entrypoints or links
-                          from the documents that stay. Repeat or use commas.
+  --strip <parts>         Strip metadata, frontmatter, entrypoints or links from
+                          the documents that stay. Repeat or use commas.
   --flatten <folder>      Move documents below this folder's subfolders into the
                           folder itself.
   --remove-edited <path>  Remove this managed file or section even though you
@@ -38,11 +38,15 @@ Details:
   stays, and Git-ignore rules stay. Detach Libraries first.
   Parts: metadata removes Open Forge frontmatter keys and keeps other keys and
   the body. frontmatter removes the whole frontmatter block and wins over
-  metadata. entrypoints deletes the entrypoint files, with their Entries lists
-  and any text you wrote in them. links turns links to documents into their text
-  and removes the whole comment around an @open-forge or @rune comment link.
-  External links, images, links to other files and code stay. Source code is
-  never read.
+  metadata. A SKILL.md keeps its Skill keys under both. entrypoints deletes the
+  entrypoint files, with their Entries lists and any text you wrote in them.
+  links turns links to documents into their text and removes the whole comment
+  around an @open-forge or @rune comment link. External links, images, links to
+  other files and code stay. Source code is never read.
+  Flatten: Use it on a category, subcategory or custom route. SKILL.md files
+  stay where they are, and so do entrypoints that are not deleted. Kept links
+  are rewritten so they still work. A name two files would share stops the run
+  before any write.
 
 Automation:
   --format json: one minified schema-3 JSON result on stdout for every status.
@@ -51,5 +55,5 @@ Automation:
   Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
 
 Related commands:
-  open-forge strip --help   Strip documents without uninstalling
+  open-forge export --help  Write the same plan to a new folder instead
   open-forge status --help  See which managed files you edited

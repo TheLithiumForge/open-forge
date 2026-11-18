@@ -19,7 +19,7 @@ internal enum StripRunOutcome
     Done,
 }
 
-/// <summary>The one result strip and uninstall both return, so their reports share one shape.</summary>
+/// <summary>The one result uninstall and export both return, so their reports share one shape.</summary>
 internal sealed record StripResult : ICliCommandResult
 {
     public required StripCommandKind Kind { get; init; }
@@ -44,6 +44,11 @@ internal sealed record StripResult : ICliCommandResult
 
     internal string? Flatten { get; init; }
 
+    // Export only: the destination's full path and how many files it copies byte for byte.
+    internal string? Destination { get; init; }
+
+    internal int Copied { get; init; }
+
     internal ImmutableArray<StripPlanEntry> Plan { get; init; } = [];
 
     internal ImmutableArray<StripKeptFile> Kept { get; init; } = [];
@@ -60,5 +65,6 @@ internal sealed record StripResult : ICliCommandResult
 
     internal string? RecoveryPath { get; init; }
 
-    internal bool NoOp => Status == CliSemanticStatus.Complete && Plan.IsEmpty;
+    // An export always writes its copy, so only uninstall can be a no-op.
+    internal bool NoOp => Kind == StripCommandKind.Uninstall && Status == CliSemanticStatus.Complete && Plan.IsEmpty;
 }

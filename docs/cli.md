@@ -37,7 +37,7 @@ examples need no preview. Mutation examples show a preview before application.
 | Read and discover context     | [status](#status), [context](#context), [find](#find), [references](#references), [route list](#route-list), [route inspect](#route-inspect)                                                                                             |
 | Add and organize knowledge    | [route init](#route-init), [route create](#route-create), [route include](#route-include), [route exclude](#route-exclude), [route update](#route-update), [route move](#route-move), [route remove](#route-remove)                      |
 | Check and repair              | [index](#index), [doctor](#doctor), [repair](#repair), [cleanup](#cleanup)                                                                                                                                                               |
-| Manage the Framework          | [install](#install), [update](#update), [uninstall](#uninstall), [strip](#strip), [remove](#remove)                                                                                                                                      |
+| Manage the Framework          | [install](#install), [update](#update), [uninstall](#uninstall), [export](#export), [remove](#remove)                                                                                                                                    |
 | Manage Extensions             | [extension list](#extension-list), [extension inspect](#extension-inspect), [extension create](#extension-create), [extension install](#extension-install), [extension update](#extension-update), [extension remove](#extension-remove) |
 | Share files through Libraries | [library list](#library-list), [library inspect](#library-inspect), [library attach](#library-attach), [library sync](#library-sync), [library detach](#library-detach)                                                                  |
 
@@ -217,7 +217,7 @@ skip those questions. Noninteractive Configure requires an explicit preset or
 These commands confirm this way and accept `--automatic`, which skips
 interaction and adds no force, prune, or other authority:
 
-- `install`, `update`, `uninstall`, `strip`, `remove`, `route remove`, and `repair`
+- `install`, `update`, `uninstall`, `remove`, `route remove`, and `repair`
 - `extension create`, `extension install`, `extension update`, and
   `extension remove`
 - `library attach`, `library sync`, and `library detach`
@@ -1897,29 +1897,16 @@ open-forge uninstall --dry-run
 open-forge uninstall --automatic
 ```
 
-Build plain docs from a full workspace:
+Build plain docs in place:
 
 ```sh
 open-forge uninstall --strip metadata,entrypoints --automatic
 open-forge uninstall --strip metadata,entrypoints,links --flatten docs --automatic
 ```
 
-#### Eval stages
-
-The evals compare three setups of the same routed documents:
-
-| Stage                | Command                                                                  |
-| -------------------- | ------------------------------------------------------------------------ |
-| Organized Open Forge | None. Keep the normal install.                                           |
-| Organized docs       | `open-forge uninstall --strip metadata,entrypoints`                      |
-| Unorganized docs     | `open-forge uninstall --strip metadata,entrypoints,links --flatten docs` |
-
 #### Options
 
-- Repeat `--strip <parts>` or list parts with commas: `metadata`, `frontmatter`, `entrypoints` and `links`. See [`strip`](#strip).
-- `--flatten <folder>` moves the documents below the folder's subfolders into the folder.
-- Repeat `--remove-edited <path>` to remove a managed file or section you edited.
-- `--dry-run` lists every delete, rewrite and move with SHA-256 hashes and writes nothing.
+- The [selection flags](#selection-flags) `--strip`, `--flatten`, `--remove-edited` and `--dry-run`, shared with [`export`](#export).
 - `--automatic` skips confirmation.
 
 See [global options](#global-options) for shared flags.
@@ -1950,55 +1937,86 @@ defines the complete boundary.
 
 Review the remaining files with `git status` and `git diff`.
 
-### `strip`
+### `export`
 
-Remove Open Forge metadata, whole frontmatter blocks, entrypoints or links between documents, or flatten routed documents into one folder. The Framework stays installed.
+Write a copy of the project as it would look after `uninstall` to a new folder. The project itself never changes.
 
 #### Common examples
 
 ```sh
-open-forge strip links --dry-run
-# Review the plan before applying it.
-open-forge strip links --automatic
-open-forge strip metadata,entrypoints --flatten docs --dry-run --format json
+open-forge export ../plain-docs --dry-run
+# Review the plan before writing the copy.
+open-forge export ../plain-docs --strip metadata,entrypoints
 ```
+
+#### Eval stages
+
+The evals compare three setups of the same routed documents:
+
+| Stage                | Command                                                                          |
+| -------------------- | -------------------------------------------------------------------------------- |
+| Organized Open Forge | None. Keep the normal install.                                                   |
+| Organized docs       | `open-forge export ../stage-4 --strip metadata,entrypoints`                      |
+| Unorganized docs     | `open-forge export ../stage-3 --strip metadata,entrypoints,links --flatten docs` |
 
 #### Options
 
-- `<part>...` selects `metadata`, `frontmatter`, `entrypoints` or `links`. Separate several with spaces or commas.
-- `--flatten <folder>` moves the documents below the folder's subfolders into the folder.
-- `--dry-run` lists every delete, rewrite and move with SHA-256 hashes and writes nothing.
-- `--automatic` skips confirmation.
+- `<destination>` is a new or empty folder. Outside the project is recommended. A relative path starts from the current directory.
+- The [selection flags](#selection-flags) `--strip`, `--flatten`, `--remove-edited` and `--dry-run`, shared with [`uninstall`](#uninstall).
 
 See [global options](#global-options) for shared flags.
 
 #### Behavior notes
 
-Strip edits the Markdown files below the main root, the native Skills folder and
-each registered outside route. Files Open Forge manages stay unchanged, so the
-Framework keeps working, except that `entrypoints` deletes managed entrypoints
-too. Source code is never read. Every byte outside the selected edits stays.
+Export plans exactly what `uninstall` would do, then writes the result to the
+destination instead of changing the project. Open Forge's own files and state are
+left out, its sections in `AGENTS.md` and `CLAUDE.md` are removed from the copy,
+and managed files you edited are kept, as uninstall keeps them. Every other file
+is copied: in a Git work tree, the tracked files and the untracked files Git does
+not ignore, and without Git, everything except `.git`. `.open-forge-state/` and
+links are never copied.
 
-- `metadata` removes Open Forge frontmatter keys in either form and keeps other keys and the body.
-- `frontmatter` removes the whole frontmatter block, whoever wrote the keys. With `metadata`, `frontmatter` wins.
-- `entrypoints` deletes the entrypoint files, which hold the generated `Entries` lists, together with any text you wrote in them.
-- `links` turns links to documents into their text, `Entries` lists included, and removes the whole comment around an `@open-forge` or `@rune` comment link. External links, images, links to other files and code stay.
-
-The parts run in a fixed order: `frontmatter` or `metadata`, then `entrypoints`, then `links`, then flatten.
-
-`--flatten` is for categories, subcategories and custom routes. `strip` refuses
-a folder that holds any file Open Forge manages, entrypoints included, unless
-`entrypoints` deletes it in the same run. `uninstall` removes or strips those
-files first. It keeps each file name. `SKILL.md` files stay where they are, and
-so do entrypoints that are not deleted. Kept links are rewritten so they still work. A name two files would
-share stops the run before any write, and each such name is reported with the
-files that would land there. The
-[Strip contract](../.agents/memory/crystallized/documents/cli/contracts/strip/_strip.md)
-defines the parts and how they compare with the eval harness.
+The destination must be a new or empty folder, and it must not hold the project.
+A destination inside the project is allowed and left out of the copy, but a
+folder outside it is easier to keep apart. Export asks no question, takes no lock
+and keeps no recovery data, because nothing in the project changes. When writing
+stops part way, the message names the destination to delete before you run the
+command again. The
+[Export contract](../.agents/memory/crystallized/documents/cli/contracts/export/_export.md)
+defines the complete boundary.
 
 #### Next step
 
-Run [`index`](#index) when you keep Open Forge and want fresh navigation.
+Open the destination, or run the eval against it.
+
+### Selection flags
+
+`uninstall` and `export` share one plan and these flags:
+
+- Repeat `--strip <parts>` or list parts with commas.
+- `--flatten <folder>` moves the documents below the folder's subfolders into the folder.
+- Repeat `--remove-edited <path>` to remove a managed file or section you edited.
+- `--dry-run` lists every delete, rewrite and move with SHA-256 hashes and writes nothing.
+
+The parts edit the Markdown files below the main root, the native Skills folder
+and each registered outside route. Source code is never read. Every byte outside
+the selected edits stays.
+
+- `metadata` removes Open Forge frontmatter keys in either form and keeps other keys and the body.
+- `frontmatter` removes the whole frontmatter block, whoever wrote the keys. With `metadata`, `frontmatter` wins.
+- `entrypoints` deletes the entrypoint files, managed ones included, which hold the generated `Entries` lists, together with any text you wrote in them.
+- `links` turns links to documents into their text, `Entries` lists included, and removes the whole comment around an `@open-forge` or `@rune` comment link. External links, images, links to other files and code stay.
+- A `SKILL.md` keeps its normal Skill frontmatter under `metadata` and `frontmatter`. Only Open Forge's keys go.
+
+The parts run in a fixed order: `frontmatter` or `metadata`, then `entrypoints`, then `links`, then flatten.
+
+`--flatten` is for categories, subcategories and custom routes. It keeps each
+file name. `SKILL.md` files stay where they are, and so do entrypoints that are
+not deleted. Kept links are rewritten so they still work. A name two files would
+share stops the run before any write, and each such name is reported with the
+files that would land there. The
+[plain-docs contract](../.agents/memory/crystallized/documents/cli/contracts/shared/plain-docs/_plain-docs.md)
+defines the parts and how they compare with the eval harness.
 
 <a id="remove-and-keep-removed"></a>
 

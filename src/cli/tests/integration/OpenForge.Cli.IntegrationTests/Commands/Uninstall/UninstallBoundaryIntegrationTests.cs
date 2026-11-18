@@ -106,7 +106,6 @@ public sealed class UninstallBoundaryIntegrationTests
         var moved = Assert.Single(result.Plan, entry => entry.Action == StripPlanAction.Move);
         Assert.Equal((note, WorkspaceLayout.DefaultMainRoot + "/note.md"), (moved.Path, moved.To));
         Assert.True(workspace.Exists(moved.To!));
-        Assert.DoesNotContain(result.Findings, finding => finding.Code == StripFindingCode.FlattenManaged);
     }
 
     // Nothing stays managed after uninstall, so a kept edited file is a user document like any other.
@@ -131,7 +130,6 @@ public sealed class UninstallBoundaryIntegrationTests
         Assert.Equal((Guide, GuideFolder + "/" + Path.GetFileName(Guide)), (moved.Path, moved.To));
         Assert.Contains(StripRewritePart.Metadata, moved.Parts);
         Assert.Equal(MarkdownFrontmatterState.Missing, new MarkdownDocumentParser().Parse(workspace.Read(moved.To!)).Frontmatter.State);
-        Assert.DoesNotContain(result.Findings, finding => finding.Code == StripFindingCode.FlattenManaged);
     }
 
     [Fact(DisplayName = "Uninstall deletes the route scaffold it wrote and keeps an entrypoint the user wrote in"), Trait("Feature", "uninstall"), Trait("Evidence", "Integration")]

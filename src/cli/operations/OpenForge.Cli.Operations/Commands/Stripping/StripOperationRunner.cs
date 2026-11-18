@@ -11,7 +11,7 @@ using OpenForge.Cli.Core.Shell.Interaction.Models;
 namespace OpenForge.Cli.Core.Commands.Stripping;
 
 /// <summary>
-/// The shared strip and uninstall flow: plan, preview or ask, then apply the same plan.
+/// Uninstall's flow over the shared plan: plan, preview or ask, then apply the same plan in place.
 /// </summary>
 internal sealed class StripOperationRunner(
     WorkspaceLockStoreRoot? lockStoreRoot,
@@ -20,10 +20,10 @@ internal sealed class StripOperationRunner(
 {
     private readonly PhysicalPathResolver _resolver = new();
 
-    internal async ValueTask<StripResult> RunAsync(StripRequest request, IStripRemovalSource? removals, CancellationToken token)
+    internal async ValueTask<StripResult> RunAsync(StripRequest request, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(request);
-        var builder = new StripPlanBuilder(_resolver, removals);
+        var builder = new StripPlanBuilder(_resolver);
         var built = await builder.BuildAsync(request, token).ConfigureAwait(false);
         if (built.Plan is not { } plan)
         {

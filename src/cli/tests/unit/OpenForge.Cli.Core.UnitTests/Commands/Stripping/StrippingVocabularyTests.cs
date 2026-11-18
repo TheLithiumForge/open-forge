@@ -46,19 +46,19 @@ public sealed class StrippingVocabularyTests
             AssertDistinct(Enum.GetValues<StripFindingCode>().Select(code => StripWireVocabulary.FindingCode(StrippingDefinitions.CommandIdentity(kind), code)));
         }
 
-        Assert.NotEqual(StrippingDefinitions.CommandIdentity(StripCommandKind.Strip), StrippingDefinitions.CommandIdentity(StripCommandKind.Uninstall));
+        Assert.NotEqual(StrippingDefinitions.CommandIdentity(StripCommandKind.Export), StrippingDefinitions.CommandIdentity(StripCommandKind.Uninstall));
         Assert.Throws<ArgumentOutOfRangeException>(() => StrippingDefinitions.PartName((StripPart)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => StripWireVocabulary.RewritePartName((StripRewritePart)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => StripWireVocabulary.ActionName((StripPlanAction)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => StripWireVocabulary.ReasonName((StripPlanReason)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => StripWireVocabulary.KeptReasonName((StripKeptReason)int.MaxValue));
         Assert.Throws<ArgumentOutOfRangeException>(() => StrippingDefinitions.CommandIdentity((StripCommandKind)int.MaxValue));
-        Assert.Throws<ArgumentOutOfRangeException>(() => StripWireVocabulary.FindingCode(StrippingDefinitions.StripCommandIdentity, (StripFindingCode)int.MaxValue));
+        Assert.Throws<ArgumentOutOfRangeException>(() => StripWireVocabulary.FindingCode(StrippingDefinitions.ExportCommandIdentity, (StripFindingCode)int.MaxValue));
     }
 
-    // The strip and uninstall Interface contracts specify these wire names. Each map must name every enum value.
+    // The plain-docs and uninstall Interface contracts specify these wire names. Each map must name every enum value.
     [Trait("Boundary", "Output")]
-    [Fact(DisplayName = "Strip wire vocabulary matches the names the strip and uninstall contracts specify"), Trait("Feature", "strip"), Trait("Evidence", "Unit")]
+    [Fact(DisplayName = "Strip wire vocabulary matches the names the plain-docs and uninstall contracts specify"), Trait("Feature", "strip"), Trait("Evidence", "Unit")]
     public void VocabularyMatchesTheContract()
     {
         AssertSpecified<StripPart>(StrippingDefinitions.PartName, new()
@@ -108,7 +108,6 @@ public sealed class StrippingVocabularyTests
             [StripFindingCode.WorkspaceUnavailable] = "workspace-unavailable",
             [StripFindingCode.DocumentUnsupported] = "document-unsupported",
             [StripFindingCode.FlattenCollision] = "flatten-collision",
-            [StripFindingCode.FlattenManaged] = "flatten-managed",
             [StripFindingCode.LinkedFileSkipped] = "linked-file-skipped",
             [StripFindingCode.TargetChanged] = "target-changed",
             [StripFindingCode.TargetChangedDuringApply] = "target-changed-during-apply",

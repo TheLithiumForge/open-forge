@@ -20,7 +20,7 @@ internal static class UninstallText
         """;
     internal static string HelpKept() => "Edited managed files and sections are listed as kept. Name one with --remove-edited to remove it anyway. Your own text in AGENTS.md and CLAUDE.md stays, and Git-ignore rules stay. Detach Libraries first.";
     internal static IReadOnlyList<(string Label, string? Description)> HelpRelated()
-        => [("open-forge strip --help", "Strip documents without uninstalling"), ("open-forge status --help", "See which managed files you edited")];
+        => [("open-forge export --help", "Write the same plan to a new folder instead"), ("open-forge status --help", "See which managed files you edited")];
 
     internal static string Preview(int changes) => changes == 1 ? "Would remove Open Forge with 1 change." : $"Would remove Open Forge with {changes} changes.";
     internal static string Done(int changes) => changes == 1 ? "Removed Open Forge with 1 change." : $"Removed Open Forge with {changes} changes.";

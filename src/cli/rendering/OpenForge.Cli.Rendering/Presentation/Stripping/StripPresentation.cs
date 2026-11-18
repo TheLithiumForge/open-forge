@@ -9,7 +9,7 @@ using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Presentation.Stripping;
 
-/// <summary>The one report rendering strip and uninstall share.</summary>
+/// <summary>The one report rendering uninstall and export share.</summary>
 internal static class StripPresentation
 {
     private static readonly StripDataJsonContext JsonContext = new(new JsonSerializerOptions

@@ -17,6 +17,7 @@ internal static class UninstallHelp
         [
             new CliHelpSection("Kept", UninstallText.HelpKept()),
             new CliHelpSection("Parts", StripText.HelpParts()),
+            new CliHelpSection("Flatten", StripText.HelpFlatten()),
         ],
         RelatedCommands = UninstallText.HelpRelated(),
     });

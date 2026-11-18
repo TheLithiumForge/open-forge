@@ -21,7 +21,8 @@ public sealed class TemporaryWorkspace : IDisposable
         FileLink,
     }
 
-    private const string OwnershipMarkerName = ".open-forge-test-workspace-owner";
+    // A test copy of the workspace, such as an export, carries this marker like any other file.
+    public const string OwnershipMarkerName = ".open-forge-test-workspace-owner";
     private const string WorkspaceNamePrefix = "open-forge-";
     private const string CaseSensitivityProbePrefix = "case-sensitivity-probe-";
     private const int OwnershipTokenByteLength = 32;

@@ -9,7 +9,7 @@ open-forge:
 
 ## Purpose
 
-`uninstall` removes the Framework and Extension files Open Forge installed and still recognizes, its managed sections in `AGENTS.md` and `CLAUDE.md`, route scaffolds and its state. Files the user wrote stay. Managed files the user edited stay too, unless the user names them. With [`--strip`](../strip/interface.md#parts) and [`--flatten`](../strip/interface.md#--flatten-folder) it also turns the remaining documents into plain Markdown, so one command builds an eval comparison setup from a full Open Forge workspace.
+`uninstall` removes the Framework and Extension files Open Forge installed and still recognizes, its managed sections in `AGENTS.md` and `CLAUDE.md`, route scaffolds and its state. Files the user wrote stay. Managed files the user edited stay too, unless the user names them. It shares the [plain-docs plan](../shared/plain-docs/interface.md) and its selection flags with [`export`](../export/interface.md), so `--strip` and `--flatten` also turn the remaining documents into plain Markdown. `uninstall` applies the plan in place. `export` writes the same plan to a new folder and leaves the workspace unchanged.
 
 The sibling [Behavior Contract](behavior.md) defines planning and application. [Issue 19](https://github.com/TheLithiumForge/open-forge/issues/19) records the request.
 
@@ -34,7 +34,7 @@ open-forge uninstall
   [global flags]
 ```
 
-`uninstall` takes no operands. `--strip` and `--flatten` keep their [strip meaning](../strip/interface.md). `--remove-edited` is an Authority modifier. Each occurrence names one workspace-relative file, with an optional leading `./`, that Open Forge manages: an owned Framework or Extension file, `AGENTS.md` or `CLAUDE.md`. Uninstall then removes that file, or that host's managed section, even when the user edited it. A path that names no managed file is `uninstall.invalid-input`. Repeating a path changes nothing.
+`uninstall` takes no operands. `--strip`, `--flatten`, `--remove-edited` and `--dry-run` are the [shared selection flags](../shared/plain-docs/interface.md#selection-flags). `--automatic` applies the plan without a confirmation prompt.
 
 ## What Uninstall Removes
 
@@ -70,41 +70,38 @@ Its frontmatter may hold only Open Forge keys. Any other line, key or section me
 
 ## Strip And Flatten
 
-`--strip` and `--flatten` apply the [strip parts](../strip/interface.md#parts) to the documents that stay. Deleted files are not stripped. Strip and flatten run after the removals are planned, so a flatten folder can empty once its scaffold goes. Strip's document set, link rules, collision rules and result fields apply unchanged, with `uninstall` finding codes.
+`--strip` and `--flatten` apply the [shared parts and flatten](../shared/plain-docs/interface.md#parts) to the documents that stay. Deleted files are not stripped. Strip and flatten run after the removals are planned, so a flatten folder can empty once its scaffold goes.
 
 ## Preview And Consent
 
-`--dry-run` lists every delete, rewrite and move with SHA-256 hashes and writes nothing. JSON output lists the same plan. Applying requires plan confirmation or `--automatic`. When the session cannot prompt and `--automatic` is absent, the result is `uninstall.confirmation-required`. JSON and redirected output never prompt. A workspace with nothing to remove and nothing to strip is a verified no-op that reports `Nothing to do.`
+`--dry-run` lists every delete, rewrite and move with SHA-256 hashes and writes nothing. JSON output lists the same plan. Each action changes the workspace: `delete` deletes the file, `rewrite` rewrites it in place, `move` moves it and `delete-directory` removes a folder left empty. Applying requires plan confirmation or `--automatic`. When the session cannot prompt and `--automatic` is absent, the result is `uninstall.confirmation-required`. JSON and redirected output never prompt. A workspace with nothing to remove and nothing to strip is a verified no-op that reports `Nothing to do.`
 
 ## Results
 
-The command is `uninstall` in the shared schema-3 report, with the [strip result fields](../strip/interface.md#results). Plan entries add these `reason` values: `framework`, `extension`, `root-host`, `scaffold` and `state`. The runtime folder's entry is `delete-directory` with reason `state`. `kept` lists edited files with reason `edited`, and a runtime folder that stays with reason `recovery-data`, `link` or `unreadable`.
+The command is `uninstall` in the shared schema-3 report, with the [plain-docs result fields](../shared/plain-docs/interface.md#results). Every plan entry is an effect. A move is two effects, the created destination and the deleted source. Plan entries add these `reason` values: `framework`, `extension`, `root-host`, `scaffold` and `state`. The runtime folder's entry is `delete-directory` with reason `state`. `kept` lists edited files with reason `edited`, and a runtime folder that stays with reason `recovery-data`, `link` or `unreadable`.
 
 ## Errors And Boundaries
 
-Uninstall uses every [strip code](../strip/interface.md#errors-and-boundaries) with the `uninstall.` prefix except `flatten-managed`, plus its own codes. Nothing stays managed after uninstall, so its `--flatten` never refuses a folder for holding managed files:
+Uninstall uses the [shared plain-docs codes](../shared/plain-docs/interface.md#shared-errors) with their shared meanings. It also uses every shared code with its own prefix: `uninstall.invalid-input`, `uninstall.workspace-unavailable`, `uninstall.ownership-unavailable`, `uninstall.library-attached`, `uninstall.target-unavailable`, `uninstall.edited-kept`, `uninstall.document-unsupported`, `uninstall.flatten-collision`, `uninstall.linked-file-skipped`, `uninstall.interrupted`. Its own codes are:
 
 | Code                                    | Meaning                                                                                                 |
 | --------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `uninstall.invalid-input`               | Same meaning as `strip.invalid-input`.                                                                  |
-| `uninstall.workspace-unavailable`       | Same meaning as `strip.workspace-unavailable`.                                                          |
-| `uninstall.document-unsupported`        | Same meaning as `strip.document-unsupported`.                                                           |
-| `uninstall.flatten-collision`           | Same meaning as `strip.flatten-collision`.                                                              |
-| `uninstall.linked-file-skipped`         | Same meaning as `strip.linked-file-skipped`.                                                            |
-| `uninstall.target-changed`              | Same meaning as `strip.target-changed`.                                                                 |
-| `uninstall.target-changed-during-apply` | Same meaning as `strip.target-changed-during-apply`.                                                    |
-| `uninstall.workspace-lock-unavailable`  | Same meaning as `strip.workspace-lock-unavailable`.                                                     |
-| `uninstall.confirmation-required`       | Same meaning as `strip.confirmation-required`.                                                          |
-| `uninstall.permission-declined`         | Same meaning as `strip.permission-declined`.                                                            |
-| `uninstall.recovery-unavailable`        | Same meaning as `strip.recovery-unavailable`.                                                           |
-| `uninstall.write-failed`                | Same meaning as `strip.write-failed`.                                                                   |
-| `uninstall.recovery-artifact-retained`  | Same meaning as `strip.recovery-artifact-retained`.                                                     |
-| `uninstall.interrupted`                 | Same meaning as `strip.interrupted`.                                                                    |
-| `uninstall.ownership-unavailable`       | The ownership lock cannot be read, so uninstall cannot tell what Open Forge installed.                  |
-| `uninstall.library-attached`            | A Library is attached. Detach it first.                                                                 |
-| `uninstall.target-unavailable`          | An owned target cannot be read or compared with its payload.                                            |
-| `uninstall.edited-kept`                 | Information. An edited managed file or section stays.                                                   |
+| `uninstall.target-changed`              | A planned file changed before the first effect. Nothing was changed.                                    |
+| `uninstall.target-changed-during-apply` | A planned file changed after effects started. The run stopped part way.                                 |
+| `uninstall.workspace-lock-unavailable`  | The workspace mutation lease is unavailable.                                                            |
+| `uninstall.confirmation-required`       | Applying needs confirmation or `--automatic`.                                                           |
+| `uninstall.permission-declined`         | The user declined the plan.                                                                             |
+| `uninstall.recovery-unavailable`        | Recovery data could not be prepared. Nothing was changed.                                               |
+| `uninstall.write-failed`                | A planned effect failed. The recovery bundle stays, and the next action is `doctor`.                    |
+| `uninstall.recovery-artifact-retained`  | The changes verified, but the recovery bundle could not be removed.                                     |
 | `uninstall.runtime-retained`            | `.open-forge-state/` stays. The message names why: recovery data, a link, or a read or removal failure. |
+
+Messages follow the shared families:
+
+- A missing confirmation is `Uninstall needs confirmation, and this session cannot ask.`
+- `target-changed` is `<path> changed after the plan was made. Nothing was changed.`
+- `target-changed-during-apply` is `<path> changed while changes were being written. Stopped after <n> of <m> changes.` with the `doctor` next action.
+- An interruption after the first effect ends with `Stopped after <n> of <m> changes.`
 
 ## Examples
 
@@ -126,7 +123,7 @@ The maintainer accepted these answers to the issue's questions:
 - **Route scaffolds count as installed files.** While ownership records exist, uninstall removes an unowned entrypoint that matches the scaffold shape above, whoever wrote it.
 - **Edited managed files stay by default.** Uninstall never asks about them one by one. `--remove-edited <path>` names each one to remove.
 - **Managed sections go, user text stays.** Uninstall removes only Open Forge's own sections in `AGENTS.md` and `CLAUDE.md`, keeps the user's text and deletes a host only when nothing else is left.
-- **`strip` is its own command,** and its parts are also options on `uninstall`.
+- **Uninstall and export are one plan with two outputs,** with the same selection flags. The standalone `strip` command is gone.
 
 ## Decisions To Confirm
 

@@ -53,9 +53,10 @@ boundary; this entrypoint does not duplicate that meaning.
 
 The direct root [`uninstall`](uninstall/_uninstall.md) command removes the
 Framework and Extension files Open Forge installed and still recognizes, its
-managed sections and its state. The direct root [`strip`](strip/_strip.md)
-command removes metadata, generated `Entries` and links between documents, and
-flattens routed documents. Uninstall offers the same parts as options.
+managed sections and its state. The direct root [`export`](export/_export.md)
+command writes the project as uninstall would leave it to a new folder. Both
+share the [plain-docs plan](shared/plain-docs/_plain-docs.md), with its strip
+parts and flatten.
 
 The [CLI Architecture](../architecture.md) defines the accepted implementation
 structure and cross-command boundaries. The [MVP Architecture](../mvp-architecture.md)
@@ -71,6 +72,7 @@ active development records track execution without replacing these contracts.
 - [Route the accepted current root cleanup contracts for lease-validated recovery-bundle and draft deletion](cleanup/_cleanup.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Cleanup #Mutation #Recovery #Safety #CurrentTruth
 - [Current Crystallized contract set for stateless ordered context resolution, projection, and explicit link expansion](context/_context.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Context #CurrentTruth
 - [Route the accepted current read-only Doctor Interface and Behavior contracts](doctor/_doctor.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Doctor #CurrentTruth
+- [Route the export contracts that write the project as uninstall would leave it to a new folder](export/_export.md) - #Memory #Crystallized #CLI #Command #Contract #Export #CurrentTruth
 - [Route the accepted current Extension list, inspect, create, install, update, and remove contracts](extension/_extension.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Extension #Lifecycle #CurrentTruth
 - [Route the accepted current `find` contracts for deterministic source inventory and typed tag or heading discovery](find/_find.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Find #Discovery #Tag #Heading #CurrentTruth
 - [Read built-in Open Forge topics without a workspace](help/_help.md) - #Memory #Crystallized #CLI #Command #Contract #Help #CurrentTruth
@@ -83,6 +85,5 @@ active development records track execution without replacing these contracts.
 - [Routing-only group entrypoint for the `route` command family](route/_route.md) - #Memory #Crystallized #CLI #Release #Command #Route #Contract #CurrentTruth
 - [Permanent route for accepted shared CLI contract sets](shared/_shared.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #CurrentTruth
 - [Current Crystallized contract set for workspace status, context-size comparison, root customization, managed Extensions, and recognized recovery bundles](status/_status.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Status #CurrentTruth
-- [Route the strip contracts that turn routed documents back into plain Markdown, shared by the strip command and uninstall](strip/_strip.md) - #Memory #Crystallized #CLI #Command #Contract #Strip #Uninstall #Mutation #CurrentTruth
 - [Route the uninstall contracts that take Open Forge back out of a workspace while keeping the files the user wrote](uninstall/_uninstall.md) - #Memory #Crystallized #CLI #Command #Contract #Uninstall #Lifecycle #Mutation #CurrentTruth
 - [Route the accepted current root Framework update contracts for trusted managed reconciliation](update/_update.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Update #Framework #Lifecycle #CurrentTruth

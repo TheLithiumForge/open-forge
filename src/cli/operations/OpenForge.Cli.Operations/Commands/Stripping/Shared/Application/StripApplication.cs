@@ -26,7 +26,7 @@ using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
 namespace OpenForge.Cli.Core.Commands.Stripping.Shared.Application;
 
 /// <summary>
-/// Applies one reviewed strip plan under the workspace lease. The strip Behavior
+/// Applies one reviewed plan in place for uninstall under the workspace lease. The uninstall Behavior
 /// contract defines the revalidation, effect order, recovery and verification.
 /// </summary>
 internal sealed class StripApplication(PhysicalPathResolver resolver, WorkspaceLockStoreRoot? lockStoreRoot)

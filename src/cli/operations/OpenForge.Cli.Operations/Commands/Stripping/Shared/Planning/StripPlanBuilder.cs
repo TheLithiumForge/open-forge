@@ -18,10 +18,10 @@ using OpenForge.Cli.Core.Shell.Definitions;
 namespace OpenForge.Cli.Core.Commands.Stripping.Shared.Planning;
 
 /// <summary>
-/// Forms one complete, deterministic strip plan from the current workspace bytes.
-/// The strip Behavior contract defines the order of reads, edits and effects.
+/// Forms the one deterministic plain-docs plan uninstall and export share: uninstall's selection, then the
+/// parts, then flatten. The plain-docs Behavior contract defines the order of reads, edits and effects.
 /// </summary>
-internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemovalSource? removals = null)
+internal sealed class StripPlanBuilder(PhysicalPathResolver resolver)
 {
     private const string CurrentDirectoryPrefix = "./";
 
@@ -43,12 +43,6 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
                 $"'{flatten}' is not an existing folder below the main root, the native Skills folder or a registered outside route."));
         }
 
-        if (request.Command == StripCommandKind.Strip && !read.Ownership.IsTrustworthy && read.Ownership.State != WorkspaceOwnershipReadState.Absent)
-        {
-            return Stop(request, CliSemanticStatus.Blocked, StripFindingCode.WorkspaceUnavailable,
-                read.Ownership.Cause ?? "The ownership lock cannot be read, so strip cannot tell which files Open Forge manages.");
-        }
-
         var inventory = StripDocumentInventory.Read(layout, token);
         var documents = ImmutableArray.CreateBuilder<StripDocument>();
         foreach (var path in inventory.Documents)
@@ -63,16 +57,14 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
             documents.Add(new StripDocument(path, file, source));
         }
 
-        var removalSet = removals is null
-            ? StripRemovalSet.Empty
-            : await removals.ReadAsync(new StripRemovalInput
-            {
-                Request = request,
-                LayoutRead = read,
-                Layout = layout,
-                Documents = documents.ToImmutable(),
-                Read = (path, readToken) => _files.ReadAsync(request.Workspace, path, readToken),
-            }, token).ConfigureAwait(false);
+        var removalSet = await new StripRemovalSource(resolver).ReadAsync(new StripRemovalInput
+        {
+            Request = request,
+            LayoutRead = read,
+            Layout = layout,
+            Documents = documents.ToImmutable(),
+            Read = (path, readToken) => _files.ReadAsync(request.Workspace, path, readToken),
+        }, token).ConfigureAwait(false);
         if (removalSet.Stop is { } stop)
         {
             return new StripPlanBuild(StripResultFactory.Stop(request, StatusOf(stop.Code), stop), null);
@@ -85,18 +77,8 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
             ? documents.Where(document => !deleted.Contains(document.Path) && StripDocumentShapes.IsEntrypoint(layout, document.Path)).ToArray()
             : [];
         deleted.UnionWith(entrypoints.Select(document => document.Path));
-        // Strip leaves managed files alone so the installed Framework keeps working. Uninstall strips the edited ones it keeps.
-        var remaining = documents.Where(document => !deleted.Contains(document.Path)
-            && (request.Command == StripCommandKind.Uninstall || !read.Ownership.Document.HasManagedPath(document.Path))).ToArray();
-        // Flatten is for categories, subcategories and custom routes, whose files the user owns. Strip never edits a
-        // managed file, so flattening around one would leave Open Forge's own navigation pointing at moved files.
-        // Entrypoints this run deletes no longer count. Uninstall removes ownership itself, so nothing it flattens stays managed.
-        if (folder is not null && request.Command == StripCommandKind.Strip && ManagedBelow(layout, read, folder, deleted) is { } managedPath)
-        {
-            return Stop(request, CliSemanticStatus.Blocked, StripFindingCode.FlattenManaged,
-                $"{folder} holds {managedPath}, which Open Forge manages. Flatten a category, subcategory or custom route instead. Nothing was changed.",
-                managedPath);
-        }
+        // Nothing stays managed after the selection, so the edited managed files it keeps are documents like any other.
+        var remaining = documents.Where(document => !deleted.Contains(document.Path)).ToArray();
 
         var flattenPlan = folder is null
             ? new StripFlattenPlan(ImmutableDictionary<string, string>.Empty, [])
@@ -163,7 +145,7 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
         var kept = removalSet.Kept.RemoveAll(file => deleted.Contains(file.Path));
         var runtimeFindings = ImmutableArray<StripFinding>.Empty;
         StripPlanEntry? runtime = null;
-        if (removalSet.RemovesRuntimeFolder)
+        if (removalSet.RemovesRuntimeFolder && request.Command == StripCommandKind.Uninstall)
         {
             var state = StripRuntimeFolder.Classify(request.Workspace);
             if (state.State is StripRuntimeFolderState.Absent or StripRuntimeFolderState.Removable)
@@ -218,13 +200,6 @@ internal sealed class StripPlanBuilder(PhysicalPathResolver resolver, IStripRemo
             }
         }
     }
-
-    private static string? ManagedBelow(WorkspaceLayout layout, WorkspaceLayoutRead read, string folder, IReadOnlySet<string> deleted)
-        => read.Ownership.Document.ManagedPaths().Select(owned => owned.Path)
-            .Where(path => path.StartsWith(folder + "/", StringComparison.Ordinal) && !deleted.Contains(path)
-                && File.Exists(Path.Combine(layout.Workspace.LexicalRoot, path.Replace('/', Path.DirectorySeparatorChar))))
-            .Order(StringComparer.Ordinal)
-            .FirstOrDefault();
 
     private static string? ReadFlattenFolder(WorkspaceLayout layout, string value)
     {

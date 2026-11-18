@@ -1,0 +1,5 @@
+Wrote 3 files to <destination>.
+Workspace: <workspace>
+  rewrite          .agents/docs/README.md  (metadata, relink)
+  move             .agents/docs/game/rules.md -> .agents/docs/rules.md  (metadata, relink)
+1 file copied, 1 file rewritten, 1 file moved.

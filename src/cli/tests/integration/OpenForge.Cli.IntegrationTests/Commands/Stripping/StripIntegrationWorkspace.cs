@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Composition.Models;
+using OpenForge.Cli.Core.Commands.Export;
 using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
 using OpenForge.Cli.Core.Commands.Install.Shared.Configuration;
@@ -24,7 +25,7 @@ using OpenForge.Cli.TestSupport;
 
 namespace OpenForge.Cli.IntegrationTests.Commands.Stripping;
 
-/// <summary>An owned workspace for strip and uninstall evidence, with exact-byte helpers.</summary>
+/// <summary>An owned workspace for uninstall and export evidence, with exact-byte helpers and an owned export destination.</summary>
 internal sealed class StripIntegrationWorkspace : IDisposable
 {
     private static readonly UTF8Encoding Utf8 = new(encoderShouldEmitUTF8Identifier: false);
@@ -32,6 +33,7 @@ internal sealed class StripIntegrationWorkspace : IDisposable
     private readonly WorkspaceLockTestStore _lockStore;
     private readonly HashSet<string> _ownedDirectories = new(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
     private readonly HashSet<string> _ownedFiles = new(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+    private DirectoryInfo? _destination;
 
     private StripIntegrationWorkspace(TemporaryWorkspace temporary, WorkspaceLockTestStore lockStore)
     {
@@ -129,8 +131,28 @@ internal sealed class StripIntegrationWorkspace : IDisposable
     internal StripOperationRunner Runner()
         => new(_lockStore.StoreRoot, null, static _ => throw new InvalidOperationException("Automatic runs never ask."));
 
-    internal ValueTask<StripResult> StripAsync(StripRequest request)
-        => Runner().RunAsync(request, null, TestContext.Current.CancellationToken);
+    // An empty folder outside the workspace that this fixture owns and deletes.
+    internal string Destination => (_destination ??= Directory.CreateTempSubdirectory("open-forge-export-")).FullName;
+
+    internal StripRequest ExportRequest(ImmutableArray<StripPart> parts, string? flatten = null, bool dryRun = false)
+        => Request(StripCommandKind.Export, parts, flatten, dryRun) with { Destination = Destination, Automatic = false };
+
+    // These workspaces are not Git work trees, so export lists their files by walking them.
+    internal ValueTask<StripResult> ExportAsync(StripRequest request)
+        => new ExportOperation(static (_, _) => ValueTask.FromResult<IReadOnlyList<string>?>(null))
+            .ExecuteAsync(request, TestContext.Current.CancellationToken);
+
+    internal string ReadExport(string path) => File.ReadAllText(System.IO.Path.Combine(Destination, path), Utf8);
+
+    internal byte[] ReadExportBytes(string path) => File.ReadAllBytes(System.IO.Path.Combine(Destination, path));
+
+    // Every file in the export destination, as canonical relative paths. The copied fixture owner marker is not
+    // part of any scenario.
+    internal IReadOnlyList<string> ExportFiles()
+        => [.. Directory.EnumerateFiles(Destination, "*", SearchOption.AllDirectories)
+            .Select(file => System.IO.Path.GetRelativePath(Destination, file).Replace(System.IO.Path.DirectorySeparatorChar, '/'))
+            .Where(path => path != TemporaryWorkspace.OwnershipMarkerName)
+            .Order(StringComparer.Ordinal)];
 
     internal ValueTask<StripResult> UninstallAsync(StripRequest request)
         => new UninstallOperation(Runner()).ExecuteAsync(request, TestContext.Current.CancellationToken);
@@ -178,7 +200,7 @@ internal sealed class StripIntegrationWorkspace : IDisposable
                 }
             }
 
-            // Install, strip and uninstall create entries the temporary workspace never owned.
+            // Install and uninstall create entries the temporary workspace never owned.
             foreach (var entry in new[] { WorkspaceLayout.DefaultMainRoot, WorkspaceLayoutNames.AgentHostFileName, WorkspaceLayoutNames.ClaudeHostFileName, WorkspaceRuntimePaths.DirectoryName })
             {
                 var path = Combine(entry);
@@ -188,6 +210,11 @@ internal sealed class StripIntegrationWorkspace : IDisposable
         }
         finally
         {
+            if (_destination is { Exists: true } destination)
+            {
+                destination.Delete(recursive: true);
+            }
+
             _lockStore.Dispose();
             _temporary.Dispose();
         }

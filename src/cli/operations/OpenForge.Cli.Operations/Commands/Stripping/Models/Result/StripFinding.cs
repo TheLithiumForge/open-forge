@@ -9,7 +9,6 @@ internal enum StripFindingCode
     WorkspaceUnavailable,
     DocumentUnsupported,
     FlattenCollision,
-    FlattenManaged,
     LinkedFileSkipped,
     TargetChanged,
     TargetChangedDuringApply,

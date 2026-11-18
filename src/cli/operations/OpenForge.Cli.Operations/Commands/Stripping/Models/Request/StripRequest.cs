@@ -10,6 +10,9 @@ internal sealed record StripRequest
 
     public required StripCommandKind Command { get; init; }
 
+    // Export only: the destination folder exactly as the user supplied it.
+    public string? Destination { get; init; }
+
     public ImmutableArray<StripPart> Parts { get; init; } = [];
 
     public string? Flatten { get; init; }

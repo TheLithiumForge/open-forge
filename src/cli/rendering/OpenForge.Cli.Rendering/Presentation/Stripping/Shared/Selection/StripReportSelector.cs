@@ -7,6 +7,7 @@ using OpenForge.Cli.Core.Presentation.Stripping.Models;
 using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Definitions;
 using OpenForge.Cli.Core.Shell.Pipeline.Models.Operation;
+using OpenForge.Cli.OutputText.Export;
 using OpenForge.Cli.OutputText.Strip;
 using OpenForge.Cli.OutputText.Uninstall;
 
@@ -31,7 +32,7 @@ internal static class StripReportSelector
                 : null,
             Workspace = result.WorkspacePath is { } workspace ? new CliWorkspaceEcho(workspace, result.WorkspaceExplicit) : null,
             Findings = [.. result.Findings.Select(finding => Finding(result, finding))],
-            Effects = [.. result.Plan.SelectMany(entry => Effects(entry, EffectOutcome(result.Outcome), full))],
+            Effects = [.. result.Plan.SelectMany(entry => Effects(result.Kind, entry, EffectOutcome(result.Outcome), full))],
             Counts = Counts(result),
             Recovery = new CliRecovery(result.RecoveryPath, result.Recovery switch
             {
@@ -47,6 +48,7 @@ internal static class StripReportSelector
                 Mode = result.DryRun ? DryRunMode : ApplyMode,
                 Strip = [.. result.PartNames],
                 Flatten = result.Flatten,
+                Destination = result.Destination,
                 Plan = [.. result.Plan.Select(entry => new StripDataPlanEntry
                 {
                     Action = StripWireVocabulary.ActionName(entry.Action),
@@ -68,21 +70,27 @@ internal static class StripReportSelector
     private static CliHeadline Headline(StripResult result, StripFinding? error)
     {
         var changes = result.Plan.Length;
-        var uninstall = result.Kind == StripCommandKind.Uninstall;
         if (result.Status == CliSemanticStatus.Complete && result.NoOp)
         {
-            return new CliHeadline(uninstall ? UninstallText.NothingToDo() : StripText.NothingToDo(), CliHeadlineKind.NothingToDo);
+            return new CliHeadline(UninstallText.NothingToDo(), CliHeadlineKind.NothingToDo);
         }
 
         if (result.Status is CliSemanticStatus.Complete or CliSemanticStatus.Attention)
         {
             var kind = result.Status == CliSemanticStatus.Attention ? CliHeadlineKind.Warnings : CliHeadlineKind.Done;
-            if (result.DryRun)
+            if (result.Kind == StripCommandKind.Export)
             {
-                return new CliHeadline(uninstall ? UninstallText.Preview(changes) : StripText.Preview(changes), CliHeadlineKind.Preview);
+                // An export writes every copied file plus every rewritten or moved one.
+                var files = result.Copied + result.Plan.Count(entry => entry.Action != StripPlanAction.Delete);
+                var destination = result.Destination ?? string.Empty;
+                return result.DryRun
+                    ? new CliHeadline(ExportText.Preview(files, destination), CliHeadlineKind.Preview)
+                    : new CliHeadline(ExportText.Done(files, destination), kind);
             }
 
-            return new CliHeadline(uninstall ? UninstallText.Done(changes) : StripText.Done(changes), kind);
+            return result.DryRun
+                ? new CliHeadline(UninstallText.Preview(changes), CliHeadlineKind.Preview)
+                : new CliHeadline(UninstallText.Done(changes), kind);
         }
 
         var message = error?.LockFailure is { } lockFailure
@@ -155,9 +163,24 @@ internal static class StripReportSelector
             _ => throw new ArgumentOutOfRangeException(nameof(outcome), outcome, "The strip run outcome is not defined."),
         };
 
-    private static IEnumerable<CliEffect> Effects(StripPlanEntry entry, CliEffectOutcome outcome, bool full)
+    // An export's effects describe the copy: a rewrite is a rewritten file, a move a created one, and a left-out file has none.
+    private static IEnumerable<CliEffect> Effects(StripCommandKind kind, StripPlanEntry entry, CliEffectOutcome outcome, bool full)
     {
         var reason = StripWireVocabulary.ReasonName(entry.Reason);
+        if (kind == StripCommandKind.Export)
+        {
+            if (entry.Action == StripPlanAction.Move)
+            {
+                yield return new CliEffect { Path = entry.To!, Kind = CliEffectKind.File, Action = CliEffectAction.Created, Outcome = outcome, Reason = reason, After = full ? entry.After : null };
+            }
+            else if (entry.Action == StripPlanAction.Rewrite)
+            {
+                yield return new CliEffect { Path = entry.Path, Kind = CliEffectKind.File, Action = CliEffectAction.Rewritten, Outcome = outcome, Reason = reason, Before = full ? entry.Before : null, After = full ? entry.After : null };
+            }
+
+            yield break;
+        }
+
         switch (entry.Action)
         {
             case StripPlanAction.Move:
@@ -180,7 +203,7 @@ internal static class StripReportSelector
 
     private static IReadOnlyList<CliCount> Counts(StripResult result)
     {
-        if (result.Plan.IsEmpty && result.Kept.IsEmpty)
+        if (result.Plan.IsEmpty && result.Kept.IsEmpty && result.Copied == 0)
         {
             return [];
         }
@@ -190,6 +213,18 @@ internal static class StripReportSelector
         var moved = result.Plan.Count(entry => entry.Action == StripPlanAction.Move);
         var folders = result.Plan.Count(entry => entry.Action == StripPlanAction.DeleteDirectory);
         var edited = result.Kept.Count(kept => kept.Reason == StripKeptReason.Edited);
+        if (result.Kind == StripCommandKind.Export)
+        {
+            return
+            [
+                new CliCount("filesCopied", StripText.LabelFilesCopied(result.Copied), result.Copied),
+                new CliCount("filesRewritten", StripText.LabelFilesRewritten(rewritten), rewritten),
+                new CliCount("filesMoved", StripText.LabelFilesMoved(moved), moved),
+                new CliCount("filesLeftOut", StripText.LabelFilesLeftOut(deleted), deleted),
+                new CliCount("filesKept", StripText.LabelFilesKept(edited), edited),
+            ];
+        }
+
         return
         [
             new CliCount("filesDeleted", StripText.LabelFilesDeleted(deleted), deleted),
