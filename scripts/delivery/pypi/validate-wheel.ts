@@ -13,8 +13,11 @@ export function assertSourceLicenses(root: string, wheel: string, npmVersion: st
   const archive = readFileSync(wheel);
   const info = wheelInfo(pythonVersion(npmVersion));
   const source = sourceLicenses(root);
-  assert.deepEqual(readZipEntry(archive, `${info}/${PythonPackage.license}`), source.license, "Wheel license does not match the source.");
-  assert.deepEqual(readZipEntry(archive, `${info}/${PythonPackage.notices}`), source.notices, "Wheel third-party notices do not match the source.");
+  // Compare with Buffer.equals: a failing deepEqual on the notices builds a byte-by-byte diff that takes
+  // tens of seconds and many gigabytes, which killed the Linux CI runner.
+  const matches = (path: string, expected: Buffer) => readZipEntry(archive, `${info}/${path}`)?.equals(expected) === true;
+  assert.ok(matches(PythonPackage.license, source.license), "Wheel license does not match the source.");
+  assert.ok(matches(PythonPackage.notices, source.notices), "Wheel third-party notices do not match the source.");
 }
 
 export function expectedHostWheel(directory: string, version: string, runtime: SupportedRuntime): { name: string; bytes: Buffer } {
