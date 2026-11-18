@@ -6,7 +6,8 @@ namespace OpenForge.Cli.Composition.Shared.WorkspaceFiles;
 /// <summary>
 /// The one host helper that lists a workspace's files. Git's own list holds tracked files plus untracked files Git
 /// does not ignore, and outside Git the workspace walk applies the .gitignore rules. Route inspect reads it through
-/// its enumerator, and comment discovery and export read that enumerator's result.
+/// its enumerator, and comment discovery and export read that enumerator's result. The shared GitOutput rules read
+/// Git's answer.
 /// </summary>
 internal static class WorkspaceFileList
 {
@@ -17,38 +18,22 @@ internal static class WorkspaceFileList
         return files.Failure is null ? files.Paths : null;
     }
 
-    // Null when the root is not a Git work tree. False when it is one but Git reported a problem, so no list is read.
-    internal static async ValueTask<bool?> ProbeAsync(GitProcessRunner git, string root, CancellationToken cancellationToken)
-    {
-        var probe = await git.RunAsync(root, ["rev-parse", "--is-inside-work-tree"], cancellationToken).ConfigureAwait(false);
-        if (probe is not { ExitCode: 0 } confirmed || confirmed.Output.Trim() != "true")
-        {
-            return null;
-        }
-
-        return string.IsNullOrWhiteSpace(confirmed.Error);
-    }
-
     // Null unless Git listed cleanly. checkpoint runs once per listed path so a caller can enforce its deadline.
     internal static async ValueTask<IReadOnlyList<string>?> ListAsync(
         GitProcessRunner git, string root, Action checkpoint, CancellationToken cancellationToken)
     {
         var inventory = await git.RunAsync(root,
             ["ls-files", "--cached", "--others", "--exclude-standard", "-z", "--", "."], cancellationToken).ConfigureAwait(false);
-        if (inventory is not { ExitCode: 0 } files || !string.IsNullOrWhiteSpace(files.Error)
-            || files.Output.Length != 0 && (files.Output[^1] != '\0' || files.Output[0] == '\0' || files.Output.Contains("\0\0", StringComparison.Ordinal)))
+        if (inventory is not { ExitCode: 0 } files || GitOutput.IsUntrusted(files) || GitOutput.ReadNulEntries(files.Output) is not { } entries)
         {
             return null;
         }
 
         var paths = new List<string>();
-        foreach (var range in files.Output.AsSpan().Split('\0'))
+        foreach (var entry in entries)
         {
             checkpoint();
-            if (!files.Output.AsSpan(range).IsEmpty)
-            {
-                paths.Add(files.Output[range]);
-            }
+            paths.Add(entry);
         }
 
         return paths;

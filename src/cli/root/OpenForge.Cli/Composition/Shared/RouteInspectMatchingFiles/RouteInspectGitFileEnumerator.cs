@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using OpenForge.Cli.Composition.Shared.Git;
+using OpenForge.Cli.Composition.Shared.Git.Models;
 using OpenForge.Cli.Composition.Shared.WorkspaceFiles;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
@@ -52,18 +53,17 @@ internal sealed class RouteInspectGitFileEnumerator
             CheckDeadline();
             try
             {
-                var usable = await WorkspaceFileList.ProbeAsync(_git, workspaceRoot, deadline.Token).ConfigureAwait(false);
-                if (usable is not null)
+                var probe = GitWorkTreeCheck.Read(
+                    await _git.RunAsync(workspaceRoot, GitWorkTreeCheck.Arguments, deadline.Token).ConfigureAwait(false));
+                if (probe is { State: GitWorkTreeState.Inside, ExitCode: 0 })
                 {
                     scope = RouteInspectMatchingFilesScope.GitTrackedAndUntracked;
-                }
-
-                if (usable == true
-                    && await WorkspaceFileList.ListAsync(_git, workspaceRoot, CheckDeadline, deadline.Token).ConfigureAwait(false) is { } paths)
-                {
-                    var result = RouteInspectFileEnumeration.Success(RouteInspectMatchingFilesScope.GitTrackedAndUntracked, paths);
-                    CheckDeadline();
-                    return result;
+                    if (await WorkspaceFileList.ListAsync(_git, workspaceRoot, CheckDeadline, deadline.Token).ConfigureAwait(false) is { } paths)
+                    {
+                        var result = RouteInspectFileEnumeration.Success(scope.Value, paths);
+                        CheckDeadline();
+                        return result;
+                    }
                 }
             }
             catch (Exception exception) when (exception is DecoderFallbackException or IOException or UnauthorizedAccessException)
