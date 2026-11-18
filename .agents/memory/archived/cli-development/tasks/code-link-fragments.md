@@ -20,7 +20,7 @@ The issue #21 follow-up fixes all 66 audited code-link occurrences across 15 doc
 
 Each replacement selects code checked in retained Git history. Historical citations keep the code their prose describes, including retired TypeScript modules and behavior that later changed. The two colon-style line suffixes now use GitHub line fragments. Stale line ranges now select the relevant methods or constants. The `ReadAxioms` citations select its checked implementation at lines 97-129 of commit `62b0e23e8dd6f88c6ef44c70285ae9a58b12ad6f`.
 
-Eight retired TypeScript files are kept as `.ts.txt` files under `../../cli-v2/source-snapshots/`. They match commit `c246601c64acf3916adf3da71126a17d424dfbc9` byte for byte. These copies keep the historical citations usable in a checkout because a public permalink for that revision could not be verified. The other citations use GitHub blobs from revisions contained in retained remote refs.
+Eight retired TypeScript files were never published at their original paths. Their citations use GitHub permalinks to byte-identical `.ts.txt` copies at commit `d9be2d93be415648e7669b9542237d2c13e5ca87`, which matches commit `c246601c64acf3916adf3da71126a17d424dfbc9`. The copies are no longer kept in the checkout. The other citations use GitHub blobs from revisions contained in retained remote refs.
 
 Focused References reads check all 15 affected documents. The 11 local replacement links resolve. The 55 web replacement links report `external-unchecked`, with their selected code checked through Git. Those reads also report 56 other archival findings outside the supplied code-link list. The local audit keeps them at `artifacts/comment-links-historical-reference-coverage.json` for a separate follow-up.
 
@@ -33,7 +33,7 @@ Status: PR 25 corrections verified locally.
 The maintainer committed and pushed the earlier work as `c41e95b1b`. The PR 25
 review requested three corrections:
 
-- A1 - Context keeps valid code-file links as complete observations without selecting their bodies. Invalid ranges and symbols keep separate findings. Regression cases cover plain files, valid fragments, invalid fragments and authored overwrite locations.
+- A1 - Context keeps valid code-file links as complete observations without selecting their bodies. Invalid ranges and symbols keep separate findings. Two Context cases, one valid symbol and one out-of-range line, show the composition. The 29 unit cases cover classification. The maintainer accepted dropping the Context overwrite-location cases.
 - A2 - References puts authored link coordinates in `subject.location`. The code-fragment regression directly checks both new finding codes.
 - A3 - Context and References give each line or symbol finding a manual correction with its authored destination and physical source location. When these are the only findings, the next step is a manual sentence. References keeps these actions visible at every detail level.
 
@@ -43,7 +43,7 @@ CI. Current verification receipts are under `artifacts/issue22/pr25/`.
 
 The managed builds pass with zero warnings and errors. All 17 affected Integration cases and both affected EndToEnd cases pass with zero skips or failures. Both .NET formatting checks and the documentation site build pass. No timeout flakes occurred. One fixture setup error was corrected before the final passing run.
 
-We accepted 135 reviewed Imprint snapshots. These include 64 new Context captures, eight code-fragment References captures, six existing broken-link References captures, two help pages, 54 Status metric captures and one custom-root payload capture. The Status changes reflect the 274-byte Skill paragraph change, token rounding and startup-share ratios. The default-layout byte fixture changes only that paragraph. Both CLI Skill copies match.
+We accepted 89 reviewed Imprint snapshots. These include 18 Context captures (narrowed from 64 in the lean version), eight code-fragment References captures, six existing broken-link References captures, two help pages, 54 Status metric captures and one custom-root payload capture. The Status changes reflect the 274-byte Skill paragraph change, token rounding and startup-share ratios. The default-layout byte fixture changes only that paragraph. Both CLI Skill copies match.
 
 Index preview and apply completed without findings or effects. The new contract link and this checkpoint's outgoing references checked without findings. No broken links from the earlier audit were edited. Full suites and native builds were left to CI under the updated lane rules.
 

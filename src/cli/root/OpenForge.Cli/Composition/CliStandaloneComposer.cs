@@ -239,7 +239,7 @@ internal static class CliStandaloneComposer
             new ReferencesBindingComponents
             {
                 Help = OpenForge.Cli.Core.Presentation.References.ReferencesPresentation.CreateHelp(),
-                Operation = ReferencesOperationFactory.Create(),
+                Operation = ReferencesOperationFactory.Create(OpenForge.Cli.Composition.Shared.WorkspaceFiles.WorkspaceFileList.ReadAsync),
             }), OpenForge.Cli.Core.Presentation.References.ReferencesPresentation.Rendering);
 
     private static ICliCommandBinding BuildContext(ContextSymbols symbols)

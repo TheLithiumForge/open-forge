@@ -1,0 +1,4 @@
+No problems found. 3 info findings were recorded.
+Workspace: <workspace>
+  5 links and 3 routes checked.
+  To list the info findings: open-forge doctor --detail full

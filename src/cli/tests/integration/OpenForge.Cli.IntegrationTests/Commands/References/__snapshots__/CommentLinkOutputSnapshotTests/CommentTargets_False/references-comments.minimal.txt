@@ -1,0 +1,2 @@
+./src/Order.cs
+  out  :1:4   .agents/docs/guide.md#rules

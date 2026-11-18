@@ -48,7 +48,6 @@ internal enum SourceLinkDestinationFindingCode
     FragmentMissing,
     LineOutOfRange,
     SymbolMissing,
-    LegacyAnchor,
 }
 
 internal sealed record SourceLinkIdentity

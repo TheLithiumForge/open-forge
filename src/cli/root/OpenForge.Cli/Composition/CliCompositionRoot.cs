@@ -70,7 +70,8 @@ internal static class CliCompositionRoot
                     StrictUtf8FileReader.ReadAsync,
                     new MarkdownDocumentParser().Parse),
                 new LocalReferenceCandidateReader(),
-                new OpenForge.Cli.Composition.Shared.Git.GitSourceLinkHistoryReader().ReadAsync),
+                new OpenForge.Cli.Composition.Shared.Git.GitSourceLinkHistoryReader().ReadAsync,
+                OpenForge.Cli.Composition.Shared.WorkspaceFiles.WorkspaceFileList.ReadAsync),
             new FrameworkLifecycleOperationalContributor(
                 physicalPathResolver,
                 new FrameworkLifecycleTargetReader(physicalPathResolver)),

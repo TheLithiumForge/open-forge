@@ -1,6 +1,5 @@
-using System.Text;
 using OpenForge.Cli.Composition.Models;
-using OpenForge.Cli.Composition.Shared.Git;
+using OpenForge.Cli.Composition.Shared.WorkspaceFiles;
 using OpenForge.Cli.Core.Commands.Export;
 using OpenForge.Cli.Core.Commands.Export.Models.Binding;
 using OpenForge.Cli.Core.Commands.Stripping;
@@ -37,25 +36,9 @@ internal static class CliStripComposer
             ExportBinding = CliReportBinding.Close(ExportBinding.CreateRequestBinding(ExportBinding.CreateSymbols(), new ExportBindingComponents
             {
                 Help = ExportHelp.Create(),
-                Operation = new ExportOperation(ReadGitFilesAsync),
+                Operation = new ExportOperation(WorkspaceFileList.ReadGitAsync),
             }), StripPresentation.Rendering),
         };
-    }
-
-    // An unusable Git list falls back to export's own walk, which lists every file except .git.
-    private static async ValueTask<IReadOnlyList<string>?> ReadGitFilesAsync(string root, CancellationToken token)
-    {
-        try
-        {
-            var git = new GitProcessRunner("git");
-            return await GitWorkspaceFileList.ProbeAsync(git, root, token).ConfigureAwait(false) == true
-                ? await GitWorkspaceFileList.ListAsync(git, root, static () => { }, token).ConfigureAwait(false)
-                : null;
-        }
-        catch (Exception exception) when (exception is DecoderFallbackException or IOException or UnauthorizedAccessException)
-        {
-            return null;
-        }
     }
 
     private static CliConfirmQuestion Question(StripPlan plan)

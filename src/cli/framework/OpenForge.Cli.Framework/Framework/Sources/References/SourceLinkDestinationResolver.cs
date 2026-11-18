@@ -111,25 +111,6 @@ internal sealed class SourceLinkDestinationResolver
             if (path.Length == 0 || path.StartsWith('/') || path.Contains('\\') || IsDriveRooted(path)
                 || TryReadAbsoluteUri(path, out _))
                 return Malformed(ReadFragment(raw), SourceLinkTargetResolution.Malformed, "A comment target needs a local file path.");
-            var legacy = input.Catalogue.FindAllById(path);
-            if (legacy.Count > 0 && !path.StartsWith("./", StringComparison.Ordinal)
-                && !path.StartsWith("../", StringComparison.Ordinal) && !path.StartsWith(".agents/", StringComparison.Ordinal))
-            {
-                return Malformed(ReadFragment(raw), SourceLinkTargetResolution.Malformed,
-                    "This comment uses a legacy source ID. Choose a file path from the suggested targets.") with
-                {
-                    Finding = new SourceLinkDestinationFinding
-                    {
-                        Code = SourceLinkDestinationFindingCode.LegacyAnchor,
-                        Cause = "This comment uses a legacy source ID. Replace it with a repository-root file path.",
-                        Candidates = legacy.Select(source => new SourceLinkIdentity
-                        {
-                            Id = source.Identity.AutomaticId,
-                            Path = source.Base.CanonicalPath,
-                        }).ToArray(),
-                    },
-                };
-            }
             raw = ReadCommentRelativeDestination(input.SourceCanonicalPath, raw);
         }
         if (TryReadAbsoluteUri(raw, out var uri))

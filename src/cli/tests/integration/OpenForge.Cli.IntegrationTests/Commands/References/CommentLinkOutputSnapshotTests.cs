@@ -11,22 +11,22 @@ namespace OpenForge.Cli.IntegrationTests.Commands.References;
 [Trait("Feature", "comment-links"), Trait("Evidence", "Integration"), Trait("Boundary", "Output")]
 public sealed class CommentLinkOutputSnapshotTests
 {
-    [Theory(DisplayName = "References and Doctor show comment targets and legacy path suggestions"), InlineData(false), InlineData(true)]
-    public async Task CommentFindings(bool doctor)
+    [Theory(DisplayName = "References and Doctor show comment targets"), InlineData(false), InlineData(true)]
+    public async Task CommentTargets(bool doctor)
     {
         using var workspace = new RoutedOutputWorkspace();
         const string codePath = "src/Order.cs";
         var root = WorkspaceLayout.DefaultMainRoot;
         SetLoader(workspace);
-        workspace.Write(codePath, $"// {SourceCommentLinkReader.OpenForgeMarker} {root}/docs/guide.md#rules explains the rule\n// {SourceCommentLinkReader.RuneMarker} docs/reference legacy annotation\nclass Order {{}}\n");
+        workspace.Write(codePath, $"// {SourceCommentLinkReader.OpenForgeMarker} {root}/docs/guide.md#rules explains the rule\nclass Order {{}}\n");
         var before = workspace.Snapshot();
         await new ReadCommandOutputCapture(workspace.Path).MatchDetailsAsync(new ReadOutputScenario
         {
             Situation = doctor ? "doctor-comments" : "references-comments",
             Arguments = doctor ? [DoctorDefinitions.DoctorCommand.Name]
                 : [ReferencesDefinitions.CommandIdentity, $"./{codePath}", ReferencesDefinitions.Direction.Name, ReferencesDefinitions.Out],
-            ExitCode = 2,
-        }, testName: $"{nameof(CommentFindings)}_{doctor}");
+            ExitCode = 0,
+        }, testName: $"{nameof(CommentTargets)}_{doctor}");
         Assert.Equal(before, workspace.Snapshot());
     }
 

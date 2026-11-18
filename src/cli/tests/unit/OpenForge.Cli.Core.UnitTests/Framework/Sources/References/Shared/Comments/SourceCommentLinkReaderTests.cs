@@ -68,13 +68,13 @@ public sealed class SourceCommentLinkReaderTests
         Assert.All(links, link => Assert.Equal(Target, link.RawDestination));
     }
 
-    [Fact(DisplayName = "Generated and vendored sources do not contribute comment links")]
+    [Fact(DisplayName = "Sources marked as generated do not contribute comment links")]
     public void GeneratedSources()
     {
-        var source = $"// {SourceCommentLinkReader.OpenForgeMarker} {Target} reason\n";
-        var document = new MarkdownDocumentParser().Parse(source);
-        Assert.Empty(SourceAuthoredLinkReader.Read($"sample{SourceCommentDiscoveryPolicy.GeneratedSuffix}", document));
-        foreach (var directory in SourceCommentDiscoveryPolicy.ExcludedDirectories)
-            Assert.Empty(SourceAuthoredLinkReader.Read($"{directory}/sample.cs", document));
+        foreach (var marker in SourceCommentDiscoveryPolicy.GeneratedMarkers)
+        {
+            var source = $"// {marker}\n// {SourceCommentLinkReader.OpenForgeMarker} {Target} reason\n";
+            Assert.Empty(SourceAuthoredLinkReader.Read("sample.cs", new MarkdownDocumentParser().Parse(source)));
+        }
     }
 }
