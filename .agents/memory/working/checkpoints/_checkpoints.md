@@ -32,4 +32,4 @@ A Checkpoint records the current state, current step, and next steps for one act
 
 ## Entries
 
-- [Issue 21 comment-link implementation and focused verification state](comment-links.md) - #Memory #Working #Checkpoint #CLI #Contextual
+- none - No entries - #Empty

@@ -217,7 +217,7 @@ internal static class ReferencesText
 
     // @OpenForgeText references.help.details-2
     internal static string HelpBoundaryDetails()
-        => "Comments use @open-forge <path> <text> or @rune <path> <text>. A plain path starts at the repository root. ./ and ../ start next to the comment's file. Markdown uses HTML comments. Markdown fragments select headings. Other files accept existing line ranges such as #L1-L3 or lexical symbols such as #Type.Member. Line and symbol findings give the destination and source location to fix by hand. This report does not fetch URLs, expand target bodies into context, build an index or repair destinations.";
+        => "Comments use @open-forge <path> <text>, and the @rune marker is also recognised. A plain path starts at the repository root. ./ and ../ start next to the comment's file. Markdown uses HTML comments. Markdown fragments select headings. Other files accept existing line ranges such as #L1-L3 or lexical symbols such as #Type.Member. Line and symbol findings give the destination and source location to fix by hand. This report does not fetch URLs, expand target bodies into context, build an index or repair destinations.";
     // @OpenForgeText references.fragment.label-line-range-out-of-range
     internal static string LabelLineRangeOutOfRange() => "line range out of range";
 
