@@ -2,7 +2,7 @@
 
 Open Forge gives your coding agent the rules, docs and decisions each task needs, and a place to keep what it learns for the next session.
 
-I built it because one long `AGENTS.md` hands every task every rule, and every new session starts by relearning the project. At The Lithium Forge we forge software, and over time that became a way of working, a forge methodology. Open Forge opens it up to everyone, together with the tooling that makes it easy to follow. It has three parts: agent documents with the routes that link them, a CLI that installs and maintains them, and optional workflows from Extensions. It's all built on Markdown files in your repository, so you read, diff and review it like the rest of your code.
+I built it because one long `AGENTS.md` hands every task every rule, and every new session starts by relearning the project. At The Lithium Forge we forge software, and over time that became a way of working, a forge methodology. Open Forge opens it up to everyone, together with the tooling that makes it easy to follow. It has two parts: agent documents with the routes that link them, and a CLI that maintains them, extends them with Extensions, Libraries and tools, and exports them as plain docs. It's all built on Markdown files in your repository, so you read, diff and review it like the rest of your code.
 
 E.g. a rule tagged `LoadNow` with `applyTo: ["src/export/**"]` loads only for tasks that change export code. A fact your team accepted last month, such as "CSV exports use UTF-8", sits in Crystallized Memory, so the next export task starts from it instead of guessing.
 
@@ -17,11 +17,11 @@ The design comes from an idea I call **Adaptive Context Engineering (ACE)**. An 
 
 ## Highlights
 
-Open Forge has two parts, and you can use either one on its own. The Framework is the set of files your agents read. The CLI installs and maintains them.
+Open Forge has two parts. The Framework is the agent system, the Markdown rules, docs and memory your agents read. The CLI is an optional tool that maintains, extends and exports it.
 
 ### Framework
 
-The Framework is Markdown in your repository:
+The Framework gives each task the rules and knowledge that apply to it, all from Markdown in your repository:
 
 - [Context on demand](#how-it-works) - agents read the loader and the files tagged `LoadNow` at startup. Everything else opens when a task needs it, and `applyTo` limits a rule to the files it covers.
 - Scopes - specialized rules live with their work, such as frontend rules in a frontend scope. Scopes nest as deep as you need.
@@ -29,12 +29,16 @@ The Framework is Markdown in your repository:
 - [Memory](#memory) - Working, Emerging, Crystallized and Archived keep temporary notes, unsettled findings, accepted knowledge and history apart.
 - [Your own docs](#your-own-docs) - include a file or a whole `docs` folder where it lives, and agents find it through the loader.
 - [Your files](#change-the-defaults) - edit any shipped file, or keep a local change in a `{name}.overwrite.md` that updates leave alone.
-- [Sharing](#share-with-your-team) - share context in one repo, across repos with Libraries, or with any project through Extensions.
-- Any agent tool - it works with every tool that reads `AGENTS.md` or `CLAUDE.md`. There's no database, no runtime and nothing specific to one vendor.
 
 ### CLI
 
-The CLI is optional. It does the repetitive work, and every command that changes files can show its plan first with `--dry-run`:
+The CLI is optional. Everything it does, you can do by editing files, and every command that changes files can show its plan first with `--dry-run`. It's one native executable for Linux, macOS and Windows on x64 and Arm64, from [GitHub releases, npm or PyPI](#install). PyPI wheels start with the next release.
+
+The CLI has three parts, which maintain the workspace, extend the Framework and keep it portable.
+
+#### Maintain
+
+These commands set up the workspace and keep it current:
 
 - Install - `install` sets up Minimal, Essentials, Full Core or your own selection, through a short wizard or one command.
 - Update - `update` brings changed Framework files to the current version and lists every file it replaces, so local edits are never replaced silently.
@@ -42,8 +46,25 @@ The CLI is optional. It does the repetitive work, and every command that changes
 - Checks and repairs - `status` and `doctor` find broken links and stale navigation. `repair` fixes the renames and moves it can confirm, with evidence from Git.
 - Comment links - an `@open-forge <path>` comment links code to a doc. `references` lists these links in both directions, and `doctor` reports broken ones.
 - Context for agents - `context` shows the startup routes, and `find` searches by tags and headings. `--format json` returns output for scripts and agents.
+
+#### Extend
+
+These commands add packages, shared folders and tools:
+
+- [Extensions](#extensions) - `extension install` adds packaged methods such as Planning, and `extension create` packages your own.
+- [Libraries](#library) - `library attach` links a shared folder, such as a Git submodule, into place.
+- [Sharing](#share-with-your-team) - share context in one repo, across repos with Libraries, or with any project through Extensions.
 - [Code-search tools](#credits) - `tool install` installs CodeGraph or Codebase Memory with their own installers, then sets them up for the project.
-- One executable - a native build for Linux, macOS and Windows on x64 and Arm64, or the npm package.
+
+### Portability
+
+Your context stays in plain files you can take with you:
+
+- Markdown - the Framework is Markdown in your repository, with no database and no runtime.
+- Any agent tool - it works with every tool that reads `AGENTS.md` or `CLAUDE.md`, with nothing specific to one vendor.
+- Export - `export <folder>` writes a copy of the project as it would look after `uninstall`, and the project itself doesn't change. `--strip` can remove Open Forge metadata, frontmatter, entrypoints and document links, and `--flatten` moves the documents in a folder's subfolders up into it.
+- Uninstall - `uninstall` removes the Framework and Extension files Open Forge installed, its sections in `AGENTS.md` and `CLAUDE.md` and its settings. Files you wrote stay, and so do installed files you edited. It takes the same options as `export`.
+- [MIT license](#license) - you can use, change and share Open Forge, including in commercial work.
 
 ## Requirements
 
@@ -73,7 +94,7 @@ To use the npm alias after that release, run:
 npm install -g open-forge@beta
 ```
 
-The alias uses `@thelithiumforge/open-forge` at the same version. That entry package selects one native platform package. Install one entry name or the other globally because both provide `open-forge`.
+The alias uses `@thelithiumforge/open-forge` at the same version. That entry package selects one native platform package, which holds the executable, its license and `THIRD-PARTY-NOTICES.txt`. Install one entry name or the other globally because both provide `open-forge`.
 
 To install the beta from PyPI with pipx, run:
 
@@ -84,7 +105,7 @@ open-forge --version
 
 To run it with uv, use `uvx --prerelease allow open-forge --version`. Stable releases work with `pipx install open-forge` and `uvx open-forge`.
 
-PyPI has one wheel per platform, and pip or uv picks the one that matches your system. Each wheel holds the same native executable as npm and puts it straight on your PATH, so Python doesn't start when you run `open-forge`. Linux wheels require glibc 2.39 or later, and macOS wheels require macOS 15 or later. Windows wheels cover x64 and ARM64.
+PyPI has one wheel per platform, and pip or uv picks the one that matches your system. Each wheel holds the same native executable as npm, its license and `THIRD-PARTY-NOTICES.txt`. It puts the executable straight on your PATH, so Python doesn't start when you run `open-forge`. Linux wheels require glibc 2.39 or later, and macOS wheels require macOS 15 or later. Windows wheels cover x64 and ARM64.
 
 ### From a GitHub release
 
