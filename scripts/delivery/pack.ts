@@ -15,7 +15,7 @@ import { packNpmPackages } from "./npm/pack-packages.ts";
 import { testInstalledNative } from "./npm/__tests__/installed-native.ts";
 import { runStage } from "./stage.ts";
 import { recordWrapper } from "./npm/wrapper-artifact.ts";
-import { hostWheel } from "./pypi/wheel.ts";
+import { hostWheel, sourceLicenses } from "./pypi/wheel.ts";
 import { smokeAliases } from "./aliases/smoke.ts";
 
 export function pack(root: string, rid: SupportedRuntime, skipTests = false, targets: readonly SupportedRuntime[] = AllTargets): void {
@@ -48,7 +48,7 @@ export function pack(root: string, rid: SupportedRuntime, skipTests = false, tar
       compiledLauncher: join(directory, "build/launcher"),
     }),
   );
-  const wheel = hostWheel(manifest.version, rid, readFileSync(packages.stagedNative), readFileSync(join(root, "LICENSE")));
+  const wheel = hostWheel(manifest.version, rid, readFileSync(packages.stagedNative), sourceLicenses(root));
   writeFileSync(join(output, wheel.name), wheel.bytes);
   if (!skipTests)
     runStage("Test installed npm package", () =>

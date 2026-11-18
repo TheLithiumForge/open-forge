@@ -235,9 +235,9 @@ The maintainer configures this once before enabling uploads:
 
 The PyPI job uses `id-token: write` and the [PyPA publishing action](https://docs.pypi.org/trusted-publishers/using-a-publisher/). It uses no long-lived PyPI token. `github` and `npm` destinations keep their existing scope. Clear `PUBLISH_PYPI` to disable the PyPI job.
 
-`pack` creates the npm alias and one `open-forge` wheel tagged for the host platform. The wheel holds the same staged executable as npm at `open_forge-<version>.data/scripts/`, which installers copy onto the environment's PATH. The ZIP entry gives the executable mode `0755`, which pip reads to mark the installed file executable on Linux and macOS. The wheel has no dependencies and no Python code.
+`pack` creates the npm alias and one `open-forge` wheel tagged for the host platform. The wheel holds the same staged executable as npm at `open_forge-<version>.data/scripts/`, which installers copy onto the environment's PATH. Its `.dist-info/licenses/` folder holds `LICENSE` and `THIRD-PARTY-NOTICES.txt`. The ZIP entry gives the executable mode `0755`, which pip reads to mark the installed file executable on Linux and macOS. The wheel has no dependencies and no Python code.
 
-Collection checks each host's wheel against that host's portable archive and records its hash in `release.json`. `release:pypi` verifies those hashes before copying the wheels into `artifacts/pypi`. It stays offline. The OIDC job uploads them in one step.
+Collection checks each host's wheel against that host's portable archive and records its hash in `release.json`. `release:pypi` verifies those hashes and checks both license files against the repository before copying the wheels into `artifacts/pypi`. It stays offline. The OIDC job uploads them in one step.
 
 The publication checkpoint includes wheels when `--pypi` or `RELEASE_PYPI=true` is set. Cross-service uploads are separate effects. A failed PyPI job leaves earlier npm and GitHub uploads present. Re-run the failed job after checking PyPI's state. The action rejects existing files, so a partial PyPI upload needs maintainer recovery.
 

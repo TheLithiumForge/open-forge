@@ -10,6 +10,9 @@ import { sourceIdentity } from "../source.ts";
 import { ArchiveSuffix, deliveryDirectory, DevelopmentPublish, hostRuntime, nativeDirectory, suites, ThirdPartyNotices } from "../layout.ts";
 import { PlatformPackages } from "../package-model.ts";
 import { inspectPackageContents } from "../package-contents.ts";
+import { PythonPackage, wheelInfo } from "../pypi/wheel-model.ts";
+import { pythonVersion } from "../pypi/version.ts";
+import { readZipEntry } from "../pypi/zip-entry.ts";
 import { HostArtifactCount } from "../package-model.ts";
 import { readPublication } from "../npm/publication.ts";
 
@@ -61,6 +64,14 @@ test("skip-tests packs an unqualified build without execution, preserves integri
     assert.equal(contents.version, version);
   }
   const packed = metadata.files.map((file: { path: string }) => file.path);
+  const wheel = readFileSync(
+    join(
+      output,
+      packed.find((path: string) => path.endsWith(PythonPackage.suffix)),
+    ),
+  );
+  const wheelNotices = `${wheelInfo(pythonVersion(version))}/${PythonPackage.notices}`;
+  assert.deepEqual(readZipEntry(wheel, wheelNotices), readFileSync(join(root, ThirdPartyNotices)), "The wheel carries the executable and its notices.");
   const archive = packed.find((path: string) => path.endsWith(ArchiveSuffix));
   const archived = execFileSync("tar", ["-tzf", join(output, archive)], { encoding: "utf8" })
     .split(/\r?\n/u)

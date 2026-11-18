@@ -16,7 +16,7 @@ import { readReleasePublications } from "../release-publications.ts";
 
 import { AllTargets } from "../../targets.ts";
 import { ThirdPartyNotices } from "../../layout.ts";
-import { hostWheel } from "../../pypi/wheel.ts";
+import { hostWheel, sourceLicenses } from "../../pypi/wheel.ts";
 import { pythonVersion } from "../../pypi/version.ts";
 import { wheelName } from "../../pypi/wheel-model.ts";
 import { preparePyPI, releaseWheels, PyPIOutput } from "../../pypi/release-wheels.ts";
@@ -61,7 +61,7 @@ for (const targets of [AllTargets, ["osx-x64", "win-x64"]] as const)
       const target = npm.pack(staged.platformPackageDirectory, join(root, "packs", platform.runtime, "target"));
       const alias = npm.pack(staged.aliasPackageDirectory, join(root, "packs", platform.runtime, "alias"));
       for (const pack of [main, target, alias]) copyFileSync(pack.path, join(directory, pack.path.split(/[\\/]/u).at(-1) ?? "missing"));
-      const wheel = hostWheel(version, platform.runtime, readFileSync(native), readFileSync(join(root, "LICENSE")));
+      const wheel = hostWheel(version, platform.runtime, readFileSync(native), sourceLicenses(root));
       writeFileSync(join(directory, wheel.name), wheel.bytes);
       const archive = `open-forge-${version}-${platform.runtime}.tar.gz`;
       execFileSync("tar", ["-czf", join(directory, archive), "-C", portable, platform.nativeFileName, "LICENSE", ThirdPartyNotices]);
@@ -85,6 +85,7 @@ for (const targets of [AllTargets, ["osx-x64", "win-x64"]] as const)
     assert.throws(() => readReleasePublications(root, releaseDirectory, source, "0.1.0-beta.2"), AssertionError);
     writeFileSync(join(root, ThirdPartyNotices), "changed notices");
     assert.throws(() => readReleasePublications(root, releaseDirectory, source, version), AssertionError);
+    assert.throws(() => releaseWheels(root, releaseDirectory, source, version), AssertionError);
     copyFileSync(join(repository, ThirdPartyNotices), join(root, ThirdPartyNotices));
     preparePyPI(root, releaseDirectory, source, version);
     assert.deepEqual(readdirSync(join(root, PyPIOutput)).sort(), targets.map((target) => wheelName(pythonVersion(version), target)).sort());

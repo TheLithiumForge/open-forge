@@ -14,5 +14,5 @@ export const WheelFixture = {
   version: "0.9.0-beta.18",
   pythonVersion: "0.9.0b18",
   native: Buffer.from("owned inert executable fixture"),
-  license: Buffer.from("owned license fixture\n"),
+  licenses: { license: Buffer.from("owned license fixture\n"), notices: Buffer.from("owned notices fixture\n") },
 } as const;

@@ -7,6 +7,7 @@ import { readTargets } from "../targets.ts";
 import { validateOutput, resetOutput } from "../output.ts";
 import { pythonVersion } from "./version.ts";
 import { PythonPackage, wheelName } from "./wheel-model.ts";
+import { assertSourceLicenses } from "./validate-wheel.ts";
 
 export const PyPIOutput = "artifacts/pypi";
 
@@ -30,7 +31,9 @@ export function releaseWheels(root: string, directory: string, source: { sha: st
     const entry: unknown = matches[0];
     assert.ok(typeof entry === "object" && entry !== null && "sha256" in entry && typeof entry.sha256 === "string");
     assert.equal(hashArtifact(root, `${directory}/${path}`), entry.sha256, "Wheel bytes changed after collection.");
-    return validateOutput(root, `${directory}/${path}`);
+    const wheel = validateOutput(root, `${directory}/${path}`);
+    assertSourceLicenses(root, wheel, version);
+    return wheel;
   });
 }
 

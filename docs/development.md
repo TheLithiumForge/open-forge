@@ -407,7 +407,8 @@ Release does not compile, repack or change the product version.
 Each host also packs the same-version npm alias and one platform-tagged
 `open-forge` wheel. The wheel holds the host's native executable as an
 installed script, so pip and uv pick the right wheel by its tag and put the
-executable on PATH. Collection checks each wheel against the host's portable
+executable on PATH. Its `.dist-info/licenses/` folder holds `LICENSE` and
+`THIRD-PARTY-NOTICES.txt`. Collection checks each wheel against the host's portable
 archive. npm publishes platform packages, then the main package and alias.
 PyPI publishing defaults off until the maintainer completes the
 [trusted publisher setup](../scripts/delivery/README.md#pypi-setup).

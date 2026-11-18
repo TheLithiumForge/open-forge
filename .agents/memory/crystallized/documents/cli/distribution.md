@@ -70,7 +70,8 @@ holds that target's staged executable as
 plus the required metadata. Installers copy that file into the environment's
 scripts directory, which is on PATH, so no Python code runs when the command
 starts. The wheel has no dependencies, no console-script entry point and no
-Python package.
+Python package. Its `.dist-info/licenses/` folder holds `LICENSE` and
+`THIRD-PARTY-NOTICES.txt`.
 
 All wheels use the same selected version and release run. Python 3.9 or later
 is required. Installation performs no source build or executable download.
@@ -94,7 +95,8 @@ dependency.
 Wheel ZIP entries have fixed timestamps, order and Unix permissions, with mode
 `0755` on the executable so pip marks the installed script executable. TypeScript
 writes the metadata and SHA-256 `RECORD` from those entries. Collection checks
-the wheel against the same native bytes used by npm before any upload.
+the wheel against the same native bytes used by npm before any upload, and
+`release:pypi` rejects a wheel whose license files differ from the repository's.
 
 The Release workflow can publish PyPI wheels through trusted publishing after
 npm publication. Its repository switch defaults off until the maintainer

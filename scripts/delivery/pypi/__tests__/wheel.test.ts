@@ -4,6 +4,7 @@ import { test } from "node:test";
 import { AllTargets } from "../../targets.ts";
 import { hostWheel, wheelEntries } from "../wheel.ts";
 import { PythonPackage, PythonPackageName, WheelField, wheelInfo, wheelName, wheelScript } from "../wheel-model.ts";
+import { readZipEntry } from "../zip-entry.ts";
 import { ExpectedWheelTag, WheelFixture } from "./wheel-fixtures.ts";
 
 function headers(bytes: Buffer): Map<string, string[]> {
@@ -20,7 +21,7 @@ function headers(bytes: Buffer): Map<string, string[]> {
 for (const runtime of AllTargets)
   test(`wheel for ${runtime} installs only the native executable as a script`, () => {
     const fixture = WheelFixture;
-    const entries = wheelEntries(fixture.version, runtime, fixture.native, fixture.license);
+    const entries = wheelEntries(fixture.version, runtime, fixture.native, fixture.licenses);
     const info = wheelInfo(fixture.pythonVersion);
     const file = (path: string) => entries.find((entry) => entry.path === path) ?? assert.fail(path);
     assert.deepEqual(
@@ -32,12 +33,13 @@ for (const runtime of AllTargets)
       entries.filter((entry) => entry.executable === true).map((entry) => entry.path),
       [wheelScript(fixture.pythonVersion, runtime)],
     );
-    assert.deepEqual(file(`${info}/${PythonPackage.license}`).bytes, fixture.license);
+    assert.deepEqual(file(`${info}/${PythonPackage.license}`).bytes, fixture.licenses.license);
+    assert.deepEqual(file(`${info}/${PythonPackage.notices}`).bytes, fixture.licenses.notices);
     const fields = headers(file(`${info}/${PythonPackage.metadata}`).bytes);
     assert.deepEqual(fields.get(WheelField.name), [PythonPackageName]);
     assert.deepEqual(fields.get(WheelField.version), [fixture.pythonVersion]);
     assert.deepEqual(fields.get(WheelField.python), [PythonPackage.minimum]);
-    assert.deepEqual(fields.get(WheelField.license), [PythonPackage.licenseFile]);
+    assert.deepEqual(fields.get(WheelField.license), [PythonPackage.licenseFile, PythonPackage.noticesFile]);
     const wheel = headers(file(`${info}/${PythonPackage.wheel}`).bytes);
     assert.deepEqual(wheel.get(WheelField.pure), [String(false)]);
     assert.deepEqual(wheel.get(WheelField.tag), [ExpectedWheelTag[runtime]]);
@@ -49,8 +51,11 @@ for (const runtime of AllTargets)
         entry.path === recordPath ? `${recordPath},,` : `${entry.path},sha256=${createHash("sha256").update(entry.bytes).digest("base64url")},${entry.bytes.length}`,
       ),
     );
-    const archive = hostWheel(fixture.version, runtime, fixture.native, fixture.license);
+    const archive = hostWheel(fixture.version, runtime, fixture.native, fixture.licenses);
     assert.equal(archive.name, wheelName(fixture.pythonVersion, runtime));
     assert.ok(archive.name.endsWith(`-${ExpectedWheelTag[runtime]}${PythonPackage.suffix}`));
-    assert.deepEqual(hostWheel(fixture.version, runtime, fixture.native, fixture.license).bytes, archive.bytes);
+    assert.deepEqual(hostWheel(fixture.version, runtime, fixture.native, fixture.licenses).bytes, archive.bytes);
+    assert.deepEqual(readZipEntry(archive.bytes, `${info}/${PythonPackage.license}`), fixture.licenses.license);
+    assert.deepEqual(readZipEntry(archive.bytes, `${info}/${PythonPackage.notices}`), fixture.licenses.notices);
+    assert.equal(readZipEntry(archive.bytes, `${info}/${PythonPackage.notices}.missing`), undefined);
   });

@@ -1,4 +1,5 @@
 import { AliasPackageName, PlatformPackages, type SupportedRuntime } from "../package-model.ts";
+import { ThirdPartyNotices } from "../layout.ts";
 
 // PyPI has no scopes, so the one distribution takes the unscoped npm alias name.
 export const PythonPackageName = AliasPackageName;
@@ -12,6 +13,8 @@ export const PythonPackage = {
   record: "RECORD",
   license: "licenses/LICENSE",
   licenseFile: "LICENSE",
+  notices: `licenses/${ThirdPartyNotices}`,
+  noticesFile: ThirdPartyNotices,
   // Installers copy `<name>-<version>.data/scripts/` onto the environment's scripts directory, which is on PATH.
   scripts: "scripts",
 } as const;

@@ -8,7 +8,7 @@ import { compileLauncher } from "../../npm/stage.ts";
 import { resetOutput } from "../../output.ts";
 import { repositoryRoot } from "../../repository.ts";
 import { committedVersion } from "../../version.ts";
-import { hostWheel } from "../wheel.ts";
+import { hostWheel, sourceLicenses } from "../wheel.ts";
 
 // Explicit host-only installation proof using an existing executable.
 const native = process.argv[2];
@@ -27,6 +27,6 @@ const packed = packNpmPackages({
   nativeArtifact: resolve(native),
   compiledLauncher: launcher,
 });
-const wheel = hostWheel(version, runtime, readFileSync(packed.stagedNative), readFileSync(join(repositoryRoot, "LICENSE")));
+const wheel = hostWheel(version, runtime, readFileSync(packed.stagedNative), sourceLicenses(repositoryRoot));
 writeFileSync(join(output, wheel.name), wheel.bytes);
 smokeAliases(output, runtime, version);
