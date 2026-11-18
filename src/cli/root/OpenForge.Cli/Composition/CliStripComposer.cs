@@ -36,7 +36,7 @@ internal static class CliStripComposer
             ExportBinding = CliReportBinding.Close(ExportBinding.CreateRequestBinding(ExportBinding.CreateSymbols(), new ExportBindingComponents
             {
                 Help = ExportHelp.Create(),
-                Operation = new ExportOperation(WorkspaceFileList.ReadGitAsync),
+                Operation = new ExportOperation(WorkspaceFileList.ReadAsync),
             }), StripPresentation.Rendering),
         };
     }

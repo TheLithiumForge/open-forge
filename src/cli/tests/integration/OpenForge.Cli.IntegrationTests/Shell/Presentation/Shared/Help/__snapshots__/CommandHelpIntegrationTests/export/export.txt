@@ -12,7 +12,8 @@ Behavior:
   Export plans exactly what uninstall would do and writes the result to a new
   or empty folder. The project itself never changes. Open Forge's own files and
   state are left out, and every other file is copied: Git's tracked and
-  untracked files that are not ignored, or everything except .git without Git.
+  untracked files that are not ignored, or without Git every file the
+  .gitignore rules allow.
   Prefer a folder outside the project. Preview with --dry-run. Export asks no
   question and keeps no recovery data. When writing stops part way, delete the
   destination and run the command again.

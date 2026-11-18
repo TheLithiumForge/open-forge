@@ -1973,8 +1973,8 @@ destination instead of changing the project. Open Forge's own files and state ar
 left out, its sections in `AGENTS.md` and `CLAUDE.md` are removed from the copy,
 and managed files you edited are kept, as uninstall keeps them. Every other file
 is copied: in a Git work tree, the tracked files and the untracked files Git does
-not ignore, and without Git, everything except `.git`. `.open-forge-state/` and
-links are never copied.
+not ignore, and without Git, every file the workspace's `.gitignore` rules allow,
+as comment discovery reads them. `.open-forge-state/` and links are never copied.
 
 The destination must be a new or empty folder, and it must not hold the project.
 A destination inside the project is allowed and left out of the copy, but a

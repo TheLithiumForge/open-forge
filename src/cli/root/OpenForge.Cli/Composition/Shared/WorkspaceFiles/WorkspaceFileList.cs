@@ -1,4 +1,3 @@
-using System.Text;
 using OpenForge.Cli.Composition.Shared.Git;
 using OpenForge.Cli.Composition.Shared.RouteInspectMatchingFiles;
 
@@ -6,32 +5,16 @@ namespace OpenForge.Cli.Composition.Shared.WorkspaceFiles;
 
 /// <summary>
 /// The one host helper that lists a workspace's files. Git's own list holds tracked files plus untracked files Git
-/// does not ignore. Route inspect reads it through its enumerator, comment discovery reads that enumerator's result,
-/// and export reads the Git list directly and applies its own fallback without Git.
+/// does not ignore, and outside Git the workspace walk applies the .gitignore rules. Route inspect reads it through
+/// its enumerator, and comment discovery and export read that enumerator's result.
 /// </summary>
 internal static class WorkspaceFileList
 {
-    // Comment discovery: Git's list, or the ignore-aware workspace walk outside Git, through route inspect's enumerator.
+    // Comment discovery and export: Git's list, or the ignore-aware workspace walk outside Git, through route inspect's enumerator.
     internal static async ValueTask<IReadOnlyList<string>?> ReadAsync(string workspaceRoot, CancellationToken cancellationToken)
     {
         var files = await new RouteInspectGitFileEnumerator().EnumerateAsync(workspaceRoot, cancellationToken).ConfigureAwait(false);
         return files.Failure is null ? files.Paths : null;
-    }
-
-    // Export: Git's list only. Null outside a usable Git work tree, where export lists every file except .git itself.
-    internal static async ValueTask<IReadOnlyList<string>?> ReadGitAsync(string workspaceRoot, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var git = new GitProcessRunner("git");
-            return await ProbeAsync(git, workspaceRoot, cancellationToken).ConfigureAwait(false) == true
-                ? await ListAsync(git, workspaceRoot, static () => { }, cancellationToken).ConfigureAwait(false)
-                : null;
-        }
-        catch (Exception exception) when (exception is DecoderFallbackException or IOException or UnauthorizedAccessException)
-        {
-            return null;
-        }
     }
 
     // Null when the root is not a Git work tree. False when it is one but Git reported a problem, so no list is read.

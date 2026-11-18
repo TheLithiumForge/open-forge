@@ -23,4 +23,4 @@ When a write fails or the caller interrupts, stop at once. The result is `export
 
 ## Required Evidence
 
-Cover a preview that writes nothing, a complete copy, uninstall's selection in the copy, each part through the copy, a destination inside the project, every refused destination, the file list without Git, and the eval harness's expected bytes through `export`. Verify the project's bytes are unchanged after every run. Git's file list is one shared helper with route inspect, whose Git evidence covers tracked, untracked and ignored files.
+Cover a preview that writes nothing, a complete copy, uninstall's selection in the copy, each part through the copy, a destination inside the project, every refused destination, the file list without Git, and the eval harness's expected bytes through `export`. Verify the project's bytes are unchanged after every run. The file list is one shared helper with comment discovery and route inspect, whose evidence covers Git's list and the `.gitignore`-aware walk.

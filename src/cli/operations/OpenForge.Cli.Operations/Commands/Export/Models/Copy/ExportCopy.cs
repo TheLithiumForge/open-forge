@@ -4,10 +4,10 @@ using OpenForge.Cli.Core.Commands.Stripping.Models.Planning;
 namespace OpenForge.Cli.Core.Commands.Export.Models.Copy;
 
 /// <summary>
-/// Git's list of the project's files, tracked plus untracked and not ignored, as canonical
-/// workspace-relative paths, or null when the root is not a usable Git work tree.
+/// The project's files as canonical workspace-relative paths: Git's list, tracked plus untracked and not ignored,
+/// or the .gitignore-aware walk outside Git. Null when the files cannot be listed.
 /// </summary>
-internal delegate ValueTask<IReadOnlyList<string>?> ExportGitFileList(string root, CancellationToken token);
+internal delegate ValueTask<IReadOnlyList<string>?> ExportFileList(string root, CancellationToken token);
 
 /// <summary>One file in the copy. Null bytes copy the project file byte for byte.</summary>
 internal sealed record ExportFile(string Source, string Target, ImmutableArray<byte>? Bytes);

@@ -14,7 +14,7 @@ namespace OpenForge.Cli.Core.Commands.Export;
 /// Writes the shared plan to a destination folder and never changes the project. The export
 /// Interface and Behavior contracts define the destination, the copy and what a failed write leaves.
 /// </summary>
-internal sealed class ExportOperation(ExportGitFileList gitFiles)
+internal sealed class ExportOperation(ExportFileList files)
 {
     private readonly PhysicalPathResolver _resolver = new();
 
@@ -36,15 +36,22 @@ internal sealed class ExportOperation(ExportGitFileList gitFiles)
             return (built.Stopped ?? throw new InvalidOperationException("A stopped plan needs its result.")) with { Destination = destination };
         }
 
-        ExportCopy copy;
+        ExportCopy? listed;
         try
         {
-            copy = await ExportCopyPlanner.PlanAsync(plan, root, destination, gitFiles, token).ConfigureAwait(false);
+            listed = await ExportCopyPlanner.PlanAsync(plan, root, destination, files, token).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
         {
             return StripResultFactory.Stop(request, CliSemanticStatus.Blocked,
                 StripResultFactory.Error(StripFindingCode.WorkspaceUnavailable, $"The project's files cannot be listed: {exception.Message}")) with
+            { Destination = destination };
+        }
+
+        if (listed is not { } copy)
+        {
+            return StripResultFactory.Stop(request, CliSemanticStatus.Blocked,
+                StripResultFactory.Error(StripFindingCode.WorkspaceUnavailable, "The project's files cannot be listed.")) with
             { Destination = destination };
         }
 

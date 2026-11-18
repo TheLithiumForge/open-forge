@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using OpenForge.Cli.Core.Commands.Export.Models.Copy;
 using OpenForge.Cli.Core.Commands.Stripping.Models.Planning;
-using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Framework.Workspace.Shared.Runtime;
 
 namespace OpenForge.Cli.Core.Commands.Export.Shared.Copy;
@@ -14,11 +13,16 @@ internal static class ExportCopyPlanner
 {
     private static readonly StringComparison PathComparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
-    internal static async ValueTask<ExportCopy> PlanAsync(StripPlan plan, string root, string destination, ExportGitFileList gitFiles, CancellationToken token)
+    // Null when the project's files cannot be listed.
+    internal static async ValueTask<ExportCopy?> PlanAsync(StripPlan plan, string root, string destination, ExportFileList list, CancellationToken token)
     {
         var inside = Path.GetRelativePath(root, destination).Replace(Path.DirectorySeparatorChar, '/');
         var excluded = inside.StartsWith("..", StringComparison.Ordinal) || Path.IsPathRooted(inside) ? null : inside;
-        var listed = await gitFiles(root, token).ConfigureAwait(false) ?? Walk(root, token);
+        if (await list(root, token).ConfigureAwait(false) is not { } listed)
+        {
+            return null;
+        }
+
         var files = new SortedSet<string>(StringComparer.Ordinal);
         var linked = new SortedSet<string>(StringComparer.Ordinal);
         foreach (var path in listed)
@@ -87,33 +91,4 @@ internal static class ExportCopyPlanner
 
     private static bool Within(string path, string folder)
         => string.Equals(path, folder, PathComparison) || path.StartsWith(folder + "/", PathComparison);
-
-    // Without Git, every file except those under .git. Links are listed so the caller can report them.
-    private static List<string> Walk(string root, CancellationToken token)
-    {
-        var paths = new List<string>();
-        var pending = new Stack<(DirectoryInfo Directory, string Prefix)>();
-        pending.Push((new DirectoryInfo(root), string.Empty));
-        while (pending.TryPop(out var current))
-        {
-            foreach (var entry in current.Directory.EnumerateFileSystemInfos())
-            {
-                token.ThrowIfCancellationRequested();
-                var path = current.Prefix + entry.Name;
-                if (entry is DirectoryInfo directory && !entry.Attributes.HasFlag(FileAttributes.ReparsePoint))
-                {
-                    if (!string.Equals(entry.Name, WorkspaceLayoutNames.GitMetadataDirectoryName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        pending.Push((directory, path + "/"));
-                    }
-
-                    continue;
-                }
-
-                paths.Add(path);
-            }
-        }
-
-        return paths;
-    }
 }

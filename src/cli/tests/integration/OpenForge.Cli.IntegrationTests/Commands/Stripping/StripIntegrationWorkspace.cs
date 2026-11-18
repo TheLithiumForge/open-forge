@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Text;
 using OpenForge.Cli.Composition;
 using OpenForge.Cli.Composition.Models;
+using OpenForge.Cli.Composition.Shared.WorkspaceFiles;
 using OpenForge.Cli.Core.Commands.Export;
 using OpenForge.Cli.Core.Commands.Install;
 using OpenForge.Cli.Core.Commands.Install.Models.Configuration;
@@ -137,10 +138,9 @@ internal sealed class StripIntegrationWorkspace : IDisposable
     internal StripRequest ExportRequest(ImmutableArray<StripPart> parts, string? flatten = null, bool dryRun = false)
         => Request(StripCommandKind.Export, parts, flatten, dryRun) with { Destination = Destination, Automatic = false };
 
-    // These workspaces are not Git work trees, so export lists their files by walking them.
+    // These workspaces are not Git work trees, so export lists their files with the .gitignore-aware walk.
     internal ValueTask<StripResult> ExportAsync(StripRequest request)
-        => new ExportOperation(static (_, _) => ValueTask.FromResult<IReadOnlyList<string>?>(null))
-            .ExecuteAsync(request, TestContext.Current.CancellationToken);
+        => new ExportOperation(WorkspaceFileList.ReadAsync).ExecuteAsync(request, TestContext.Current.CancellationToken);
 
     internal string ReadExport(string path) => File.ReadAllText(System.IO.Path.Combine(Destination, path), Utf8);
 

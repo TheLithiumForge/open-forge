@@ -51,7 +51,7 @@ The message names the destination and the problem, and the next step is to choos
 The copy starts from the project's files:
 
 - In a Git work tree, Git's own file list: tracked files plus untracked files that Git does not ignore.
-- Without Git, every file except those under `.git`.
+- Without Git, the same walk that [comment discovery](../shared/source-references/interface.md#comment-links) uses: every file except `.git` and nested Git repositories, applying the workspace's `.gitignore` rules.
 - Never `.open-forge-state/`, a symbolic link, a junction or anything inside them. A link is reported as `export.linked-file-skipped`.
 
 The plan then shapes the copy. In the copy, its actions mean:
@@ -92,7 +92,7 @@ open-forge export ../stage-3 --strip metadata,entrypoints,links --flatten docs
 The maintainer accepted these:
 
 - `export` replaces the standalone `strip` command. It writes the project as `uninstall` would leave it to a new or empty folder and never changes the project.
-- The copy starts from Git's file list, tracked plus untracked and not ignored, or every file except `.git` without Git, and never `.open-forge-state/`.
+- The copy starts from Git's file list, tracked plus untracked and not ignored, or without Git the same `.gitignore`-aware walk comment discovery uses, and never `.open-forge-state/`.
 - The destination may be inside the project, which is allowed but not recommended. It must be new or empty, and it must not be a file or contain the project.
 - No confirmation prompt, recovery bundle, lease or interruption tracking. A run that stops part way names the destination to delete and rerun.
 
