@@ -1,11 +1,11 @@
 tool install stopped at a failure.
 Workspace: <workspace>
   Error  codegraph  Check the tool command.
-         `codegraph install --yes --location local --target claude,codex` failed. Read its output above, fix the problem it names, then run the same Open Forge command again.
+         `codegraph install --yes --location local` failed. Read its output above, fix the problem it names, then run the same Open Forge command again.
 Open Forge ran these commands for CodeGraph:
   npm i -g @colbymchenry/codegraph@1.6.2  (done)
-  codegraph install --yes --location local --target claude,codex  (failed)
-      Adds CodeGraph to Claude Code and Codex in this project
+  codegraph install --yes --location local  (failed)
+      Adds CodeGraph to the coding agents it finds in this project
       CodeGraph keeps its default telemetry. Turn it off with: codegraph telemetry off
       It exited with code 7. Its last output:
         synthetic failure line one

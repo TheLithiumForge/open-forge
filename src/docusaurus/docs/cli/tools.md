@@ -17,7 +17,7 @@ open-forge tool list
 
 Each row shows the tool's ID, how it installs (`npm` or `script`), whether this project uses it and the version on your machine. Today both tools are in the Code search category:
 
-- **CodeGraph** (`codegraph`) installs with npm and adds itself to Claude Code and Codex in your project.
+- **CodeGraph** (`codegraph`) installs with npm and adds itself to the coding agents it finds in your project.
 - **Codebase Memory** (`codebase-memory`) installs with its own script. Its installer configures every coding agent it finds for your account and adds its folder to your PATH.
 
 ## Install a tool
@@ -33,8 +33,8 @@ Then run it without `--dry-run`. Open Forge shows the same plan and asks before 
 ```text
 Open Forge will run these commands to install CodeGraph:
   npm i -g @colbymchenry/codegraph@1.6.2
-  codegraph install --yes --location local --target claude,codex
-      Adds CodeGraph to Claude Code and Codex in this project
+  codegraph install --yes --location local
+      Adds CodeGraph to the coding agents it finds in this project
       CodeGraph keeps its default telemetry. Turn it off with: codegraph telemetry off
 Then Open Forge will make these changes:
   codegraph.json           Keep archived Open Forge memory out of the graph
@@ -43,6 +43,10 @@ Continue? [y/N]
 ```
 
 If npm isn't installed, Open Forge stops before running anything and tells you to install Node.js, which includes npm. For a script install it checks for curl and bash, or for Windows PowerShell on Windows.
+
+If the tool is already installed, Open Forge skips its install command, shows the installed version and still runs the tool's setup, which repairs it. If a command fails, Open Forge stops, shows the command's exit code and the end of its output, and leaves its own changes unmade.
+
+Install works in a folder where Open Forge is installed, because it records the tool in `.agents/open-forge.json`. Run `open-forge install` first in a new project.
 
 ## Set up a teammate's machine
 

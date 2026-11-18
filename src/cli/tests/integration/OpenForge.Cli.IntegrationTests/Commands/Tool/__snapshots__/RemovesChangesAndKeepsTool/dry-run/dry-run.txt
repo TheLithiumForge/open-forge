@@ -3,6 +3,6 @@ Open Forge will remove these changes:
   codegraph.json           Keep archived Open Forge memory out of the graph
   .agents/open-forge.json  Remove codegraph from this project's tools
 CodeGraph's own uninstall:
-  Removes CodeGraph from Claude Code and Codex in this project and uninstalls the codegraph command. Your project index stays.
-  codegraph uninstall --yes --location local --target claude,codex --keep-cli
+  Removes CodeGraph from every coding agent in this project and uninstalls the codegraph command. Your project index stays.
+  codegraph uninstall --yes --location local --keep-cli
   npm uninstall -g @colbymchenry/codegraph

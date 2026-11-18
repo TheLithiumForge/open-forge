@@ -29,8 +29,8 @@ The plan uses the active voice and this shape:
 ```text
 Open Forge will run these commands to install CodeGraph:
   npm i -g @colbymchenry/codegraph@1.6.2
-  codegraph install --yes --location local --target claude,codex
-                              Adds CodeGraph to Claude Code and Codex in this project
+  codegraph install --yes --location local
+                              Adds CodeGraph to the coding agents it finds in this project
                               CodeGraph keeps its default telemetry. Turn it off with: codegraph telemetry off
 Then Open Forge will make these changes:
   codegraph.json              Keep archived Open Forge memory out of the graph

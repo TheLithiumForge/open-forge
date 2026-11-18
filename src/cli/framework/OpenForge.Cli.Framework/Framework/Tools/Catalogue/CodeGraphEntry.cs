@@ -12,7 +12,9 @@ internal static class CodeGraphEntry
     internal const string Package = "@colbymchenry/codegraph";
     internal const string ConfigurationPath = "codegraph.json";
     internal const string ExcludeMember = "exclude";
-    private const string Agents = "--location local --target claude,codex";
+    // --yes alone means --location global, so the project scope is explicit. The target stays CodeGraph's own default:
+    // with --yes, install uses its detected agents and uninstall uses all of them.
+    private const string Project = "--location local";
 
     internal static ToolEntry Create() => new()
     {
@@ -26,13 +28,13 @@ internal static class CodeGraphEntry
         Method = ToolMethod.Npm,
         Detection = new($"{Id} --version"),
         Install = new([new($"npm i -g {Package}@{Version}")]),
-        Setup = new([new($"{Id} install --yes {Agents}")], "Adds CodeGraph to Claude Code and Codex in this project")
+        Setup = new([new($"{Id} install --yes {Project}")], "Adds CodeGraph to the coding agents it finds in this project")
         {
             Notes = ["CodeGraph keeps its default telemetry. Turn it off with: codegraph telemetry off"],
         },
         Uninstall = new(
-            [new($"{Id} uninstall --yes {Agents} --keep-cli"), new($"npm uninstall -g {Package}")],
-            "Removes CodeGraph from Claude Code and Codex in this project and uninstalls the codegraph command. Your project index stays."),
+            [new($"{Id} uninstall --yes {Project} --keep-cli"), new($"npm uninstall -g {Package}")],
+            "Removes CodeGraph from every coding agent in this project and uninstalls the codegraph command. Your project index stays."),
         Integrations = [new ToolJsonUnion(ConfigurationPath, "Keep archived Open Forge memory out of the graph", ExcludeMember, "/**")],
     };
 }

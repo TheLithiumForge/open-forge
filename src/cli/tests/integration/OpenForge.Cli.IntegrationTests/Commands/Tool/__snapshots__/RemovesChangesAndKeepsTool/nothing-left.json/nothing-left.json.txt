@@ -23,11 +23,11 @@
         "id": "codegraph",
         "name": "CodeGraph",
         "installedVersion": "1.6.2",
-        "uninstallDescription": "Removes CodeGraph from Claude Code and Codex in this project and uninstalls the codegraph command. Your project index stays.",
+        "uninstallDescription": "Removes CodeGraph from every coding agent in this project and uninstalls the codegraph command. Your project index stays.",
         "steps": [
           {
             "kind": "uninstall",
-            "command": "codegraph uninstall --yes --location local --target claude,codex --keep-cli",
+            "command": "codegraph uninstall --yes --location local --keep-cli",
             "effect": null,
             "notes": [],
             "outcome": "not-run",

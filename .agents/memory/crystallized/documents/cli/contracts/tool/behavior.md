@@ -39,7 +39,7 @@ V1 has two entries, both in the Code search category:
 
 | Tool            | Install method | Project setup                                                 | Integration change                                  |
 | --------------- | -------------- | ------------------------------------------------------------- | --------------------------------------------------- |
-| CodeGraph       | `npm`          | `codegraph install --yes --location local --target claude,codex` | Union archived memory into `codegraph.json` `exclude` |
+| CodeGraph       | `npm`          | `codegraph install --yes --location local` | Union archived memory into `codegraph.json` `exclude` |
 | Codebase Memory | `script`       | None. Its installer configures the agents it finds            | Marked block in `.cbmignore`                        |
 
 The [Tool setup design](../../technical-designs/tool-setup.md) records the exact commands and their upstream evidence.
@@ -71,7 +71,7 @@ Open Forge keeps the tail of each command's output. A failed command reports its
 ## Setup
 
 Run the tool's own project setup unchanged and say in one sentence what it does.
-CodeGraph's setup adds CodeGraph to Claude Code and Codex in the project. With `--yes`, CodeGraph keeps its default telemetry, so the plan adds: `Turn it off with: codegraph telemetry off`.
+CodeGraph's setup adds CodeGraph to the coding agents it finds in the project. Open Forge passes `--location local` and leaves the target list to CodeGraph's own default. With `--yes`, CodeGraph keeps its default telemetry, so the plan adds: `Turn it off with: codegraph telemetry off`.
 Codebase Memory has no separate setup. Its installer configures every coding agent it finds for the person's account and adds its folder to PATH.
 Open Forge writes no MCP entries, hooks, permissions, instruction blocks or Skills of its own.
 

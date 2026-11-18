@@ -37,14 +37,15 @@ Each entry is one typed C# record. Commands are fixed strings with a shell kind:
 | Method       | `npm`, tested version 1.6.2                                                                                        |
 | Install      | `npm i -g @colbymchenry/codegraph@1.6.2`                                                                           |
 | Detection    | `codegraph --version`                                                                                              |
-| Setup        | `codegraph install --yes --location local --target claude,codex`                                                   |
-| Uninstall    | `codegraph uninstall --yes --location local --target claude,codex --keep-cli`, then `npm uninstall -g @colbymchenry/codegraph` |
+| Setup        | `codegraph install --yes --location local`                                                   |
+| Uninstall    | `codegraph uninstall --yes --location local --keep-cli`, then `npm uninstall -g @colbymchenry/codegraph` |
 | Integration  | JSON union of `<mainRoot>/memory/archived/**` into `codegraph.json` at `/exclude`                                 |
 
 Evidence, checked on 17 November 2026 at tag v1.6.2:
 
 - The [README](https://github.com/colbymchenry/codegraph/blob/v1.6.2/README.md) documents `npm i -g @colbymchenry/codegraph`, `codegraph install` with `--yes`, `--location`, `--target` and `--init`, `codegraph uninstall` with `--keep-cli`, `--target` and `--yes`, `codegraph telemetry off` and `codegraph.json` with an `exclude` array.
-- The [CLI source](https://github.com/colbymchenry/codegraph/blob/v1.6.2/src/bin/codegraph.ts) accepts `--location local` on both install and uninstall.
+- The [CLI source](https://github.com/colbymchenry/codegraph/blob/v1.6.2/src/bin/codegraph.ts) defines `install --yes` as "Non-interactive: defaults to --location=global --target=auto, auto-allow on" and `uninstall --yes` as "Non-interactive: defaults to --location=global --target=all". Both prompt for `--target` and `--location` only without `--yes`.
+- So `--yes` alone runs without prompts but writes account-wide agent files. Open Forge adds only `--location local`, which keeps setup and uninstall in the project, and leaves the targets to CodeGraph's own defaults: the agents it detects on install and all of them on uninstall.
 - `install` wires up agents only. It doesn't index, place a binary or change PATH. npm puts `codegraph` in its own global bin.
 - The installer asks about telemetry up front. `--yes` skips that question and keeps the default, so the plan names `codegraph telemetry off`.
 
@@ -110,6 +111,19 @@ A changed target is `target-changed-during-apply`. A verified run deletes its re
 - Unit tests in the Framework project cover the integration edits and the settings `tools` edits.
 - Integration snapshot tests cover `tool list`, `tool install` and `tool remove` through the composed CLI with a fake process host.
 - EndToEnd covers Tool help only.
+
+## Accepted decisions
+
+The maintainer accepted these on 18 November 2026:
+
+1. A detected tool, at any version, skips its install command, and the plan shows that version.
+2. Codebase Memory isn't pinned. Its installers fetch the latest release, and 0.12.1 is the tested version. `CBM_DOWNLOAD_URL` stays unused because upstream calls it a testing override.
+3. Codebase Memory's own installer adds its folder to PATH. Open Forge never edits PATH itself, and the plan says so.
+4. On Windows, Codebase Memory installs through `install.ps1`, which takes no input, rather than the interactive `setup-windows.ps1`.
+5. CodeGraph uses its own default targets with `--location local`, as the evidence above shows.
+6. In the plan, a setup command's effect and notes sit on their own indented lines under the command.
+7. Remove applies Open Forge's own changes without a plan question and asks only about the tool's uninstall. `--dry-run` previews both.
+8. Install stops in a folder without `.agents`, because the tools list has nowhere to go.
 
 ## Parked ideas
 
