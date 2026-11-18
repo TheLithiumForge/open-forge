@@ -15,6 +15,36 @@ The design comes from an idea I call **Adaptive Context Engineering (ACE)**. An 
 [![Docs](https://img.shields.io/badge/docs-site-d9480f)](https://thelithiumforge.github.io/open-forge/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
+## Highlights
+
+Open Forge has two parts, and you can use either one on its own. The Framework is the set of files your agents read. The CLI installs and maintains them.
+
+### Framework
+
+The Framework is Markdown in your repository:
+
+- [Context on demand](#how-it-works) - agents read the loader and the files tagged `LoadNow` at startup. Everything else opens when a task needs it, and `applyTo` limits a rule to the files it covers.
+- Scopes - specialized rules live with their work, such as frontend rules in a frontend scope. Scopes nest as deep as you need.
+- [Core categories](#core-categories) - Directives hold required behavior, Guidance holds advice, and Patterns, Skills, Templates and Maps hold reusable shapes, capabilities, starting files and pointers. Each category answers one question.
+- [Memory](#memory) - Working, Emerging, Crystallized and Archived keep temporary notes, unsettled findings, accepted knowledge and history apart.
+- [Your own docs](#your-own-docs) - include a file or a whole `docs` folder where it lives, and agents find it through the loader.
+- [Your files](#change-the-defaults) - edit any shipped file, or keep a local change in a `{name}.overwrite.md` that updates leave alone.
+- [Sharing](#share-with-your-team) - share context in one repo, across repos with Libraries, or with any project through Extensions.
+- Any agent tool - it works with every tool that reads `AGENTS.md` or `CLAUDE.md`. There's no database, no runtime and nothing specific to one vendor.
+
+### CLI
+
+The CLI is optional. It does the repetitive work, and every command that changes files can show its plan first with `--dry-run`:
+
+- Install - `install` sets up Minimal, Essentials, Full Core or your own selection, through a short wizard or one command.
+- Update - `update` brings changed Framework files to the current version and lists every file it replaces, so local edits are never replaced silently.
+- Navigation - `index` fills missing frontmatter and the `Entries` lists agents navigate by.
+- Checks and repairs - `status` and `doctor` find broken links and stale navigation. `repair` fixes the renames and moves it can confirm, with evidence from Git.
+- Comment links - an `@open-forge <path>` comment links code to a doc. `references` lists these links in both directions, and `doctor` reports broken ones.
+- Context for agents - `context` shows the startup routes, and `find` searches by tags and headings. `--format json` returns output for scripts and agents.
+- [Code-search tools](#credits) - `tool install` installs CodeGraph or Codebase Memory with their own installers, then sets them up for the project.
+- One executable - a native build for Linux, macOS and Windows on x64 and Arm64, or the npm package.
+
 ## Requirements
 
 To use Open Forge, you need:
@@ -41,7 +71,7 @@ sha256sum --check --ignore-missing SHA256SUMS
 tar -xzf open-forge-<version>-linux-x64.tar.gz
 ```
 
-The archive holds a single `open-forge` executable (`open-forge.exe` on Windows) and its license. Put it on your `PATH`, or keep it in your repository, e.g. as `tools/open-forge`, and run it as `./tools/open-forge`.
+The archive holds a single `open-forge` executable (`open-forge.exe` on Windows), its license and `THIRD-PARTY-NOTICES.txt` with the licenses of the code built into it. Put it on your `PATH`, or keep it in your repository, e.g. as `tools/open-forge`, and run it as `./tools/open-forge`.
 
 ### From source
 
@@ -569,12 +599,36 @@ This repository uses Open Forge to build Open Forge, so its own documents double
 
 ## Roadmap
 
-Markdown and the CLI are where Open Forge starts. The CLI can already install code-search tools such as CodeGraph and Codebase Memory with their own installers and set them up for a project, using `open-forge tool install`. Directions for later include vector search and more plugins.
+Markdown and the CLI are where Open Forge starts. Directions for later include vector search and more plugins.
 
 ## Changelog
 
 Each version's changes are in the [GitHub releases](https://github.com/TheLithiumForge/open-forge/releases).
 
+## Credits
+
+Open Forge builds on other people's work.
+
+The CLI is built with:
+
+| Project                                                          | Used for                                       | License      |
+| ---------------------------------------------------------------- | ---------------------------------------------- | ------------ |
+| [.NET](https://github.com/dotnet/runtime)                        | The runtime and the native executable          | MIT          |
+| [System.CommandLine](https://github.com/dotnet/command-line-api) | Command-line parsing                           | MIT          |
+| [Markdig](https://github.com/xoofx/markdig)                      | Markdown parsing                               | BSD-2-Clause |
+| [YamlDotNet](https://github.com/aaubry/YamlDotNet)               | Frontmatter parsing, with its static generator | MIT          |
+
+Their copyright notices and full license texts are in [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt), which ships with the executable.
+
+`tool install` sets up these tools:
+
+| Tool                                                               | What it does                                                             | License |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------ | ------- |
+| [CodeGraph](https://github.com/colbymchenry/codegraph)             | Gives coding agents a searchable graph of the code's symbols and calls   | MIT     |
+| [Codebase Memory](https://github.com/DeusData/codebase-memory-mcp) | Indexes the codebase into a knowledge graph that coding agents can query | MIT     |
+
+Open Forge doesn't ship these tools. `tool install` runs each tool's own installer, and each tool keeps its own license.
+
 ## License
 
-[MIT](LICENSE).
+Open Forge is released under the [MIT License](LICENSE), copyright 2026 TheLithiumForge. You can use, change and share it, including in commercial work, as long as you keep the copyright and license notice. The projects in [Credits](#credits) keep their own licenses.
