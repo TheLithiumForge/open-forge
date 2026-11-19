@@ -92,6 +92,11 @@ internal static class RepairAuthoredReferenceBoundary
         IDictionary<string, Utf8SourceMap> maps,
         out bool established)
     {
+        if (reference.IsComment && !OpenForge.Cli.Core.Framework.Sources.Loading.SourceGeneratedDestinationResolver.IsMarkdown(reference.SourcePath))
+        {
+            established = true;
+            return false;
+        }
         var region = document.GeneratedRegion;
         if (region.State == MarkdownGeneratedRegionState.Absent)
         {
@@ -117,8 +122,8 @@ internal static class RepairAuthoredReferenceBoundary
 
             var generatedLocation = map.Map(generatedSpan.Start, generatedSpan.Length);
             var links = reference.Kind == LocalReferenceKind.Link
-                ? document.Links
-                : document.Images;
+                ? OpenForge.Cli.Core.Framework.Sources.References.SourceAuthoredLinkReader.Read(reference.SourcePath, document)
+                : document.Images.Select(image => new OpenForge.Cli.Core.Framework.Sources.Models.References.SourceAuthoredLink(image));
             foreach (var link in links)
             {
                 var linkLocation = map.Map(link.Span.Start, link.Span.Length);

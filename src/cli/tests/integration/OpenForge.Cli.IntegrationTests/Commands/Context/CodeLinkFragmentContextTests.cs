@@ -1,6 +1,7 @@
 using System.Text.Json;
 using OpenForge.Cli.Core.Commands.Context;
 using OpenForge.Cli.Core.Commands.Context.Models.Result;
+using OpenForge.Cli.Core.Framework.Sources.References.Shared.Comments;
 using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Presentation.Context.Shared.Wording;
 using OpenForge.Cli.Core.Shell.Definitions;
@@ -18,9 +19,12 @@ public sealed class CodeLinkFragmentContextTests
     private const string CodePath = "Code.cs";
 
     [Theory(DisplayName = "Context checks code files without selecting their bodies and gives manual fragment corrections")]
-    [InlineData("Type.Member", null)]
-    [InlineData("L4-L5", nameof(ContextFindingCode.LineOutOfRange))]
-    public async Task CodeFragments(string fragment, string? codeName)
+    [InlineData("Type.Member", null, false)]
+    [InlineData("L4-L5", nameof(ContextFindingCode.LineOutOfRange), false)]
+    [InlineData("L2-L4", null, true)]
+    [InlineData("Type.Member", null, true)]
+    [InlineData("Type.Missing", nameof(ContextFindingCode.SymbolMissing), true)]
+    public async Task CodeFragments(string fragment, string? codeName, bool comment)
     {
         var code = codeName is null ? (ContextFindingCode?)null : Enum.Parse<ContextFindingCode>(codeName);
         using var workspace = new RoutedOutputWorkspace();
@@ -32,9 +36,11 @@ public sealed class CodeLinkFragmentContextTests
             IncludeFinalLineEnding = true,
         }));
         workspace.Write(CodePath, "class Type\n{\n    void Member() {}\n}\n");
+        var destination = $"{(comment ? string.Empty : "../../")}{CodePath}#{fragment}";
         var sourcePath = $"{mainRoot}/docs/guide.md";
+        var link = comment ? $"<!-- {SourceCommentLinkReader.OpenForgeMarker} {destination} explains the code -->" : $"[Code]({destination})";
         workspace.Replace(sourcePath, OpenForgeDocumentSeed.Metadata(
-            description: "Guide", tags: ["Docs", "Guide"], body: $"# Guide\n\n[Code](../../{CodePath}#{fragment})\n"));
+            description: "Guide", tags: ["Docs", "Guide"], body: $"# Guide\n\n{link}\n"));
         var before = workspace.Snapshot();
         var snapshots = new Dictionary<string, string>(StringComparer.Ordinal);
         await new ReadCommandOutputCapture(workspace.Path).MatchDetailsAsync(new ReadOutputScenario
@@ -47,9 +53,9 @@ public sealed class CodeLinkFragmentContextTests
         using var json = JsonDocument.Parse(snapshots[$"code-fragment{CommandOutputSnapshot.JsonContentNameSegment}{CliPresentationDefinitions.Full}"]);
         var root = json.RootElement;
         Assert.DoesNotContain(root.GetProperty("data").GetProperty("sources").EnumerateArray(), source => source.GetProperty("path").GetString() == CodePath);
-        var link = Assert.Single(root.GetProperty("data").GetProperty("links").EnumerateArray());
-        Assert.Equal(CodePath, link.GetProperty("resolvedPath").GetString());
-        Assert.False(link.GetProperty("followed").GetBoolean());
+        var checkedLink = Assert.Single(root.GetProperty("data").GetProperty("links").EnumerateArray());
+        Assert.Equal(CodePath, checkedLink.GetProperty("resolvedPath").GetString());
+        Assert.False(checkedLink.GetProperty("followed").GetBoolean());
         if (code is { } findingCode)
         {
             var finding = Assert.Single(root.GetProperty("findings").EnumerateArray());
@@ -57,7 +63,7 @@ public sealed class CodeLinkFragmentContextTests
             var subject = finding.GetProperty("subject");
             Assert.Equal(sourcePath, subject.GetProperty("path").GetString());
             Assert.Equal(8, subject.GetProperty("location").GetProperty("line").GetInt32());
-            Assert.Equal(1, subject.GetProperty("location").GetProperty("column").GetInt32());
+            Assert.Equal(comment ? 6 : 1, subject.GetProperty("location").GetProperty("column").GetInt32());
             var action = Assert.Single(finding.GetProperty("actions").EnumerateArray());
             Assert.Equal(CliNextActionKind.Sentence.ToString().ToLowerInvariant(), action.GetProperty("kind").GetString());
             Assert.Equal(CliNextActionKind.Sentence.ToString().ToLowerInvariant(), root.GetProperty("next").GetProperty("kind").GetString());
@@ -65,9 +71,9 @@ public sealed class CodeLinkFragmentContextTests
         else
         {
             Assert.Empty(root.GetProperty("findings").EnumerateArray());
-            Assert.Equal(ContextWording.Resolution(ContextLinkResolution.Complete), link.GetProperty("resolution").GetString());
+            Assert.Equal(ContextWording.Resolution(ContextLinkResolution.Complete), checkedLink.GetProperty("resolution").GetString());
             Assert.Equal(JsonValueKind.Null, root.GetProperty("next").ValueKind);
         }
-        CommandOutputSnapshot.MatchDetailSnapshot(snapshots, testName: $"{nameof(CodeFragments)}_{fragment}");
+        CommandOutputSnapshot.MatchDetailSnapshot(snapshots, testName: $"{nameof(CodeFragments)}_{fragment}{(comment ? "_Comment" : string.Empty)}");
     }
 }

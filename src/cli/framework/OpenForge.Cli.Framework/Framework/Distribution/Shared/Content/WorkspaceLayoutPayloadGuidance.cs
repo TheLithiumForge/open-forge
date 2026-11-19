@@ -22,6 +22,7 @@ internal static class WorkspaceLayoutPayloadGuidance
     internal const string ExampleExcludedPath = WorkspaceLayout.DefaultMainRoot + "/patterns/_patterns.md";
     internal const string ExampleRepairNotePath = WorkspaceLayout.DefaultMainRoot + "/memory/crystallized/repair-note.md";
     internal const string ExampleRepairTargetPath = WorkspaceLayout.DefaultMainRoot + "/memory/crystallized/order-rule.md";
+    internal const string ExampleCommentTargetPath = WorkspaceLayout.DefaultMainRoot + "/guidance/style.md";
     internal const string ContextExamplePrefix = "context " + SourceWorkspaceRelativePath.LiteralReferencePrefix;
     internal const string ExcludeCategoryTemplate = "Inside `" + WorkspaceLayout.DefaultMainRoot + "/`, use a direct child folder's catalogue to remove its row from the loader.";
     private static readonly Lazy<FrameworkPayload?> ShippedPayload = new(() => EmbeddedFrameworkPayloadReader.Read().Payload);
@@ -101,6 +102,7 @@ internal static class WorkspaceLayoutPayloadGuidance
             && WorkspaceLayoutPayloadRenderer.RebaseDestination(layout, packagePath, ExampleContributionPath) is { } contribution)
             return code.Replace(ExampleContributionPath, contribution, StringComparison.Ordinal);
 
+        code = code.Replace(ExampleCommentTargetPath, layout.MapPayloadPath(ExampleCommentTargetPath), StringComparison.Ordinal);
         if (packagePath == CliSkillDirectory + "/" + ReferencesDirectoryName + "/" + RoutesReferenceName + SourceFormClassifier.MarkdownExtension)
             return code.Replace(ExampleRepairNotePath, layout.MapPayloadPath(ExampleRepairNotePath), StringComparison.Ordinal)
                 .Replace(ExampleRepairTargetPath, layout.MapPayloadPath(ExampleRepairTargetPath), StringComparison.Ordinal);

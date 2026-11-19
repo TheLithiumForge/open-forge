@@ -47,6 +47,10 @@ internal enum DoctorCandidateBasisKind
     Title,
     LiteralContent,
     RouteNeighborhood,
+    GitRename,
+    GitHeadingChange,
+    SectionContent,
+    UniqueSlug,
 }
 
 internal abstract record DoctorEvidence

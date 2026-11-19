@@ -65,7 +65,9 @@ internal sealed class RepairMaintenancePlanner(PhysicalPathResolver paths, IRout
             selected.Proposal.MissingPath,
             selected.Proposal.RenameProof?.OldPath, selected.Proposal.RenameProof?.NewPath,
             selected.Proposal.SourceMoveProof?.OldPath, selected.Proposal.SourceMoveProof?.NewPath,
-        }).OfType<string>().Distinct(StringComparer.Ordinal).ToArray();
+        }).OfType<string>()
+            .Where(path => SourceLogicalPath.IsPrimarySource(layout, path) || layout.TryGetMaintenanceBoundary(path, out _))
+            .Distinct(StringComparer.Ordinal).ToArray();
         var folders = affected.Select(SourceLogicalPath.ReadParent).Distinct(StringComparer.Ordinal).ToArray();
         var selectedMissingPaths = plan.Selection.Selected.SelectMany(selected => new[] { selected.Proposal.MissingPath, selected.Proposal.RenameProof?.OldPath })
             .OfType<string>().ToHashSet(StringComparer.Ordinal);

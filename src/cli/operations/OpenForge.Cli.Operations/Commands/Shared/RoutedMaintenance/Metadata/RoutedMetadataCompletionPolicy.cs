@@ -47,6 +47,12 @@ internal sealed class RoutedMetadataCompletionPolicy
     {
         if (!SourceFormClassifier.TryClassify(context.Layout, path, out var form) || form == SourceDocumentForm.OverwriteCompanion)
             return RoutedMetadataEligibility.UnsupportedForm;
+        return ReferenceProtection(path, context);
+    }
+
+    internal RoutedMetadataEligibility ReferenceProtection(string path, RoutedMetadataPolicyContext context)
+    {
+        if (SourceOverwritePath.HasSuffix(path)) return RoutedMetadataEligibility.UnsupportedForm;
         if (context.Ownership.HasManagedPath(path)) return RoutedMetadataEligibility.ManagedContent;
         if ((context.Ownership.Framework?.Regions ?? []).Concat(context.Ownership.Extensions.SelectMany(owner => owner.Regions))
                 .Any(region => region.Path == path && region.Region != WorkspaceOwnershipDefinitions.EntriesRegion))

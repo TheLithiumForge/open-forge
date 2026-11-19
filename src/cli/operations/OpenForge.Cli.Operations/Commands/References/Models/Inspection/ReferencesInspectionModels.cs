@@ -10,6 +10,8 @@ namespace OpenForge.Cli.Core.Commands.References.Models.Inspection;
 
 internal sealed record ReferencesAuthoredLink
 {
+    internal bool IsComment { get; init; }
+
     internal ReferencesAuthoredLink(
         ReferencesDirection direction,
         ReferencesSource source,

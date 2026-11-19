@@ -63,7 +63,9 @@ a persistent reverse index, diagnose a workspace, or repair a reference.
 
 ### Accepted Authored Reference Forms
 
-Reference extraction reports only non-image link nodes produced by the already
+Shared [comment links](../shared/source-references/interface.md#comment-links) also produce authored occurrences. Both markers work in code comments and Markdown HTML comments. The default incoming scan adds eligible comment-bearing workspace files. Exact `./path` operands can select code files. Comment discovery skips files that Git ignores and files marked as generated.
+
+Markdown reference extraction reports non-image link nodes produced by the already
 accepted fixed CommonMark/Markdig parser. The accepted forms are:
 
 - inline links;
@@ -188,9 +190,10 @@ sources, entrypoints, `SKILL.md`, Markdown Skill resources, Templates, and valid
 base/overwrite layers grouped as logical sources. Eligible registered outside
 Markdown also participates, including unlisted files. Active included Markdown files
 and the listed descendants of included catalogues also participate. Other
-included text formats are opaque. Non-Markdown resources,
-provider bridges outside the primary content locations, receipts, recovery data, and operational
-metadata are excluded. An unreadable, unsafe, malformed, or otherwise
+included text formats contribute only recognized comment links. Eligible comment-bearing
+workspace files also participate under the shared [comment rules](../shared/source-references/interface.md#comment-links).
+Native Markdown links and images are read only from Markdown files. Receipts,
+recovery data and operational metadata are excluded. An unreadable, unsafe, malformed, or otherwise
 uninspectable candidate affects incoming coverage rather than disappearing. The
 command does not silently broaden that universe to every workspace Markdown
 file. The shared filter contract owns omission and set composition but does not
@@ -288,7 +291,8 @@ merely because no network request was attempted.
 The incoming universe also includes active included Markdown files and listed
 descendants of included catalogues. Use `./<workspace-path>` to select one.
 Authored links in those files count normally. Loader and catalogue Entries stay
-navigation and are not counted. Other included text formats are opaque.
+navigation and are not counted. Other included text formats contribute only
+recognized comment links under the shared comment rules.
 
 ## Human Output
 

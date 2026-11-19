@@ -78,7 +78,7 @@ internal static class RepairSelectionPlanner
             resolution = candidate is null
                 ? null
                 : new RepairProposalResolution(
-                    RepairDestinationFormatter.Format(proposal.SourceCanonicalPath, candidate.Target), candidate.Target);
+                    RepairDestinationFormatter.Format(proposal.SourceCanonicalPath, candidate.Target, proposal.IsComment), candidate.Target);
         }
 
         if (resolution is null)

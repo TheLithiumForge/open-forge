@@ -74,20 +74,23 @@ internal sealed class GitProcessRunner(
             return null;
         }
 
-        // Windows pipe reads can retain native IO after a cancelled task completes.
-        // Cancel the process wait, then reap the child and drain both pipes before disposal.
+        // A cancelled Windows pipe read or write can complete its task while the native IO is still pending, and the
+        // late completion then crashes the process with "'overlapped' has already been freed". So no pipe IO takes the
+        // token: cancel only the process wait, then reap the child, which ends every pipe operation, and await them all
+        // before disposal.
         var output = readOutput(process);
         var error = readError(process);
+        var input = Task.CompletedTask;
         try
         {
             processStarted?.Invoke(process);
-            if (invocation.StandardInput is { } input)
+            if (invocation.StandardInput is { } bytes)
             {
-                await process.StandardInput.BaseStream.WriteAsync(input, cancellationToken).ConfigureAwait(false);
-                await process.StandardInput.BaseStream.FlushAsync(cancellationToken).ConfigureAwait(false);
-                process.StandardInput.Close();
+                input = WriteInputAsync(process, bytes);
             }
+
             await process.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
+            await input.ConfigureAwait(false);
             return (process.ExitCode, await output.ConfigureAwait(false), await error.ConfigureAwait(false));
         }
         finally
@@ -106,6 +109,21 @@ internal sealed class GitProcessRunner(
 
             await process.WaitForExitAsync(CancellationToken.None).ConfigureAwait(false);
             await Task.WhenAll(output, error).ConfigureAwait(false);
+            await input.ConfigureAwait(false);
+        }
+    }
+
+    // A child that exits or is killed before reading all of its input breaks the pipe. That is not a Git failure.
+    private static async Task WriteInputAsync(Process process, byte[] bytes)
+    {
+        try
+        {
+            await process.StandardInput.BaseStream.WriteAsync(bytes, CancellationToken.None).ConfigureAwait(false);
+            await process.StandardInput.BaseStream.FlushAsync(CancellationToken.None).ConfigureAwait(false);
+            process.StandardInput.Close();
+        }
+        catch (IOException)
+        {
         }
     }
 }

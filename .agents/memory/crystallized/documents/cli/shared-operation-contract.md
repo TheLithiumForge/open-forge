@@ -121,6 +121,8 @@ defines the pure projection boundary.
 
 ## Authored Local Destinations
 
+Comment links share local target and fragment checks. Their marker grammar, root-relative and file-relative path forms and repair behavior are defined by [Comment Links](contracts/shared/source-references/interface.md#comment-links). Markdown destinations keep the containing-file-relative rules below.
+
 A contained local destination without a fragment is valid when its file
 or folder exists. A folder may be written with or without a trailing slash.
 The ordinary lexical and physical containment, symlink, junction and escape

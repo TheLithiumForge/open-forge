@@ -30,7 +30,7 @@ internal sealed record RepairFinding
         ArgumentException.ThrowIfNullOrWhiteSpace(cause);
         if (sourceCanonicalPath is not null)
         {
-            sourceCanonicalPath = RepairPathValidation.ValidateMarkdown(
+            sourceCanonicalPath = RepairPathValidation.ValidateSourcePath(
                 sourceCanonicalPath,
                 nameof(sourceCanonicalPath));
         }

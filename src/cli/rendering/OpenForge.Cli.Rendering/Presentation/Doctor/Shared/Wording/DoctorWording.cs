@@ -390,6 +390,10 @@ internal static class DoctorWording
             DoctorCandidateBasisKind.Title => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTitleMatch(),
             DoctorCandidateBasisKind.LiteralContent => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelContentMatch(),
             DoctorCandidateBasisKind.RouteNeighborhood => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNearbyRoute(),
+            DoctorCandidateBasisKind.GitRename => global::OpenForge.Cli.OutputText.Doctor.DoctorText.CandidateGitRename(),
+            DoctorCandidateBasisKind.GitHeadingChange => global::OpenForge.Cli.OutputText.Doctor.DoctorText.CandidateGitHeadingChange(),
+            DoctorCandidateBasisKind.SectionContent => global::OpenForge.Cli.OutputText.Doctor.DoctorText.CandidateSectionContent(),
+            DoctorCandidateBasisKind.UniqueSlug => global::OpenForge.Cli.OutputText.Doctor.DoctorText.CandidateUniqueSlug(),
             _ => throw new ArgumentOutOfRangeException(nameof(basis), basis, "The candidate basis is not defined."),
         };
 

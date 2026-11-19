@@ -14,6 +14,7 @@ import {
   longRunningTest,
   minutesToMilliseconds,
   repositoryPath,
+  skippedAnnotation,
   slowestSummary,
 } from "../suite-diagnostics.ts";
 import { failedTests, reportedTests, slowestTests, type ReportedTest } from "../test-report.ts";
@@ -54,6 +55,7 @@ test("annotations escape workflow command text and link repository files", () =>
   assert.equal(failureAnnotation(Root, "unit", { ...failed, file: undefined, message: "" }), "::error title=Test unit failed::Install keeps content");
   assert.equal(longRunningAnnotation("public", Report), `::warning title=Test public long-running test::${Report}`);
   assert.equal(durationAnnotation("public", minutesToMilliseconds(12) + 18_000, 376), "::notice title=Test public time::376 tests passed in 12.3 min.");
+  assert.equal(skippedAnnotation("native-public", "Too slow: here, now"), "::notice title=Test native-public skipped::Too slow: here, now");
 });
 
 test("reports yield failed and slowest tests, and unreadable reports yield none", () => {

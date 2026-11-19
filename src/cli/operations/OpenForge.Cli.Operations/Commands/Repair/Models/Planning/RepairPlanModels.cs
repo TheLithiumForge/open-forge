@@ -338,7 +338,7 @@ internal sealed record RepairConflict
 
         if (sourceCanonicalPath is not null)
         {
-            SourceCanonicalPath = RepairPathValidation.ValidateMarkdown(
+            SourceCanonicalPath = RepairPathValidation.ValidateSourcePath(
                 sourceCanonicalPath,
                 nameof(sourceCanonicalPath));
         }
