@@ -12,7 +12,7 @@ internal sealed record RepairOccurrenceState
         SourceLocation occurrence,
         FileStateSnapshot observedFileState)
     {
-        SourceCanonicalPath = RepairPathValidation.ValidateMarkdown(
+        SourceCanonicalPath = RepairPathValidation.ValidateSourcePath(
             sourceCanonicalPath,
             nameof(sourceCanonicalPath));
         ArgumentNullException.ThrowIfNull(occurrence);

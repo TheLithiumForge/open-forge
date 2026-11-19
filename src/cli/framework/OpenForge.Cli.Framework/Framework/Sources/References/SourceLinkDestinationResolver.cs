@@ -105,6 +105,19 @@ internal sealed class SourceLinkDestinationResolver
         ArgumentNullException.ThrowIfNull(input);
         cancellationToken.ThrowIfCancellationRequested();
         var raw = input.RawDestination;
+        if (input.IsComment)
+        {
+            var path = raw.Split('#', 2)[0];
+            if (path.Length == 0 || path.StartsWith('/') || path.Contains('\\') || IsDriveRooted(path)
+                || TryReadAbsoluteUri(path, out _))
+                return Malformed(ReadFragment(raw), SourceLinkTargetResolution.Malformed, "A comment target needs a local file path.");
+            if (!raw.StartsWith("./", StringComparison.Ordinal) && !raw.StartsWith("../", StringComparison.Ordinal))
+            {
+                var directory = Path.GetDirectoryName(input.SourceCanonicalPath.Replace('/', Path.DirectorySeparatorChar)) ?? string.Empty;
+                var depth = directory.Length == 0 ? 0 : directory.Split(Path.DirectorySeparatorChar).Length;
+                raw = string.Concat(Enumerable.Repeat("../", depth)) + raw;
+            }
+        }
         if (TryReadAbsoluteUri(raw, out var uri))
         {
             return uri.Scheme is "http" or "https"

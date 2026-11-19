@@ -23,6 +23,8 @@ internal sealed record DoctorCandidate
 {
     public required DoctorSubject Subject { get; init; }
 
+    public string? TargetFragment { get; init; }
+
     public required IReadOnlyList<DoctorCandidateBasis> Evidence { get; init; }
 
     public required DoctorProvenance Provenance { get; init; }

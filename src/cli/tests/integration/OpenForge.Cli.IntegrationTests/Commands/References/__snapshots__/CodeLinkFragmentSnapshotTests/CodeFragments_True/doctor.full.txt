@@ -4,14 +4,14 @@ Links
   Warning  .agents/docs/guide.md:11:1  Linked symbol was not found [reference.symbol-missing]
          A dotted symbol part in ../../Code.cs#Type.Missing was not found as an identifier token in the file.
          fix by hand
-         Correct this link in .agents/docs/guide.md at line 11, column 1 through the owner of Code.cs.
+         Fix the link by hand.
          authored value: ../../Code.cs#Type.Missing
          state: missing
          read from .agents/docs/guide.md
   Warning  .agents/docs/guide.md:12:1  Linked line range is out of range [reference.line-out-of-range]
          The line range in ../../Code.cs#L4-L5 is outside the file or is reversed.
          fix by hand
-         Correct this link in .agents/docs/guide.md at line 12, column 1 through the owner of Code.cs.
+         Fix the link by hand.
          authored value: ../../Code.cs#L4-L5
          state: missing
          read from .agents/docs/guide.md
@@ -32,4 +32,4 @@ Extensions
          read from <workspace>/.agents/open-forge.lock.json
   7 links and 3 routes checked.
   2 must be fixed by hand.
-Next: Correct this link in .agents/docs/guide.md at line 12, column 1 through the owner of Code.cs.
+Next: Fix the link by hand.

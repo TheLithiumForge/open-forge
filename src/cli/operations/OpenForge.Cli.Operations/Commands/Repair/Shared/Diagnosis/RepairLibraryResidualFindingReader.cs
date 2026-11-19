@@ -48,7 +48,8 @@ internal static class RepairLibraryResidualFindingReader
 
         try
         {
-            return RepairPathValidation.ValidateMarkdown(path, nameof(path));
+            var markdown = OpenForge.Cli.Core.Framework.Sources.Identity.SourceWorkspaceRelativePath.ValidateMarkdown(path, nameof(path));
+            return RepairPathValidation.ValidateSourcePath(markdown, nameof(path));
         }
         catch (ArgumentException)
         {

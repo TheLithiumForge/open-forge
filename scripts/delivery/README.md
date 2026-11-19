@@ -78,6 +78,14 @@ The six `test:built` modes run on **one host**: unit tests once, integration
 tests twice, and public-command tests three times. They exercise managed and
 native combinations. Linux does not execute macOS or Windows tests.
 
+For now osx-x64 skips native integration, so `build:native` does not publish
+it and `test:built` runs five modes. Its native publish is too slow on the
+Intel macOS runner for the Build time limit, and osx-arm64 runs it for macOS.
+The skip is one entry in [layout.ts](layout.ts). `dist --plan`, `build:native`
+and `test:built` name it with its reason, and in GitHub Actions `test:built`
+adds a notice. The [delivery system](../../.agents/memory/crystallized/documents/cli/delivery-system.md#how-long-does-a-build-take)
+records the evidence.
+
 Native commands detect the current host. `--rid` makes that choice explicit
 and must match it. Supported RIDs are `linux-x64`, `linux-arm64`, `osx-x64`,
 `osx-arm64`, `win-x64` and `win-arm64`.
@@ -164,9 +172,10 @@ checks. If no run qualifies, Release builds once.
 
 On direct branch pushes, `ci:reuse` skips duplicate checks and builds when
 another branch's trusted Build of that commit has passed. When that Build
-started earlier and is still running, `ci:reuse` waits for it, for up to 90
-minutes. It skips only if that Build passes. If it fails, is cancelled or runs
-too long, this push builds the commit itself, so a branch never shows green
+started earlier and is still running, `ci:reuse` waits for it, for up to 130
+minutes. That covers the 120-minute Build job limit and the wait for a runner.
+It skips only if that Build passes. If it fails, is cancelled or runs too long,
+this push builds the commit itself, so a branch never shows green
 without a passing Build. Pull requests, manual runs and calls from Release
 always build. A newer push to a pull request cancels that pull request's older
 Build. Direct pushes, manual runs and Release calls are never cancelled or
@@ -351,11 +360,10 @@ carries that log's last error and linker lines. On osx-arm64, the native
 Integration tests link with Apple's classic linker (`-Wl,-ld_classic`), because
 the default linker asserts on that large executable. The shipped CLI keeps the
 default linker. The longest suite, public, takes under half of the test step, which
-has taken up to 22 minutes on osx-x64. The 20-minute deadline is about twice
+has taken up to 33 minutes on osx-x64. The 30-minute deadline is about twice
 that suite's time on the slowest host. With the slowest build and suites
-observed so far, a stall in the last suite reaches its deadline by about minute
-85, inside the Build job limit of 90 minutes, so the diagnostics artifact is
-uploaded.
+observed so far, a stall in the last suite reaches its deadline inside the
+Build job limit of 120 minutes, so the diagnostics artifact is uploaded.
 
 ## Follow and qualify a delivery
 

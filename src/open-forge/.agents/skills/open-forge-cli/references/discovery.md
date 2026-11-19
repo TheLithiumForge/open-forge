@@ -86,6 +86,8 @@ Include and exclude each take one exact source reference per occurrence. Unresol
 
 ## `references <source-reference>`
 
+References also lists [comment links](common.md#comment-links) in code and Markdown. Use an exact `./path` operand for a code file.
+
 Show direct incoming impact and outgoing dependencies before changing a source.
 
 | Flag                           | Meaning                                                                                 |

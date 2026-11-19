@@ -1,4 +1,5 @@
 using System.Text.Json;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.Core.Shell.Definitions.Shared.Commands;
 using OpenForge.Cli.IntegrationTests.Hosting;
 using OpenForge.Cli.TestSupport;
@@ -36,15 +37,18 @@ public sealed class DoctorMaintenanceGuidanceIntegrationTests
     public async Task GitSuccessors(int count)
     {
         using var git = new RenameEvidenceGitWorkspace();
-        await git.InitializeAsync();
-        var bytes = await File.ReadAllBytesAsync(git.PathFor(".agents/guidance/cli-design.md"), TestContext.Current.CancellationToken);
-        var agents = Path.GetFullPath(git.PathFor(".agents"));
-        Assert.StartsWith(git.RepositoryRoot + Path.DirectorySeparatorChar, agents, StringComparison.Ordinal);
-        Directory.Delete(agents, recursive: true);
+        await git.InitializeAsync(unborn: true);
+        const string old = WorkspaceLayout.DefaultMainRoot + "/guidance/cli-design.md";
         git.Write("AGENTS.md", "# Workspace\n\nRead `.agents/loader.md`.\n");
         git.Write(".agents/loader.md", Loader());
         git.Write(".agents/guidance/_guidance.md", Root("- none - No entries - #Empty"));
-        git.Write(".agents/guidance/source.md", Note("Incoming reference", "# Source\n\n[Rules](cli-design.md)\n"));
+        git.Write(".agents/guidance/source.md", Note("Incoming reference", $"# Source\n\n[Rules]({Path.GetFileName(old)})\n"));
+        git.Write(old, Note("Authored rename rules", "# Rules\n\nKeep this authored policy.\n"));
+        // Commit only this scenario so bounded Git reads don't depend on the repository's size.
+        await git.GitAsync("add", "--all");
+        await git.GitAsync("-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false", "commit", "--quiet", "-m", "Authored rename fixture");
+        var bytes = await File.ReadAllBytesAsync(git.PathFor(old), TestContext.Current.CancellationToken);
+        File.Delete(git.PathFor(old));
         for (var index = 0; index < count; index++)
             await File.WriteAllBytesAsync(git.PathFor($".agents/guidance/successor-{index}.md"), bytes, TestContext.Current.CancellationToken);
         var before = git.Snapshot();
@@ -52,7 +56,7 @@ public sealed class DoctorMaintenanceGuidanceIntegrationTests
         using var firstReport = JsonDocument.Parse(first.Output);
         var firstFinding = Finding(firstReport, count == 1 ? "reference.target-renamed" : "reference.target-missing", ".agents/guidance/source.md");
         Assert.Equal(count == 1 ? "safe-exact" : "guided-choice", firstFinding.GetProperty("resolution").GetString());
-        if (count == 2) Assert.Equal(".agents/guidance/cli-design.md is missing. More than one file looks like its new location.", firstFinding.GetProperty("message").GetString());
+        if (count == 2) Assert.Equal(count, firstFinding.GetProperty("candidates").GetArrayLength());
         Assert.Equal(before, git.Snapshot());
         Assert.Equal(0, (await CliHostCapture.RunAsync(["index", "--workspace", git.Root], git.Root)).ExitCode);
         var after = await CliHostCapture.RunAsync(["doctor", "--workspace", git.Root, "--format", "json", "--detail", "full"], git.Root);

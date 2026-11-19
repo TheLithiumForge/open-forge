@@ -70,13 +70,15 @@ internal sealed record SourceLinkDestinationInput
         get => _sourceCanonicalPath;
         init
         {
-            _sourceCanonicalPath = SourceWorkspaceRelativePath.ValidateMarkdown(
+            _sourceCanonicalPath = SourceWorkspaceRelativePath.Validate(
                 value,
-                nameof(value));
+                nameof(value), allowWorkspaceRoot: false);
         }
     }
 
     public required string RawDestination { get; init; }
+
+    public bool IsComment { get; init; }
 }
 
 internal sealed record SourceLinkTarget

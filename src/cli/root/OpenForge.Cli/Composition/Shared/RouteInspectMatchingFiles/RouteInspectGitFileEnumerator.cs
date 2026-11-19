@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using OpenForge.Cli.Composition.Shared.Git;
+using OpenForge.Cli.Composition.Shared.Git.Models;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 
@@ -51,32 +52,26 @@ internal sealed class RouteInspectGitFileEnumerator
             CheckDeadline();
             try
             {
-                var probe = await _git.RunAsync(workspaceRoot, ["rev-parse", "--is-inside-work-tree"], deadline.Token).ConfigureAwait(false);
-                if (probe is { ExitCode: 0 } confirmed && confirmed.Output.Trim() == "true")
+                var probe = GitWorkTreeCheck.Read(
+                    await _git.RunAsync(workspaceRoot, GitWorkTreeCheck.Arguments, deadline.Token).ConfigureAwait(false));
+                if (probe is { State: GitWorkTreeState.Inside, ExitCode: 0 })
                 {
                     scope = RouteInspectMatchingFilesScope.GitTrackedAndUntracked;
-                    if (string.IsNullOrWhiteSpace(confirmed.Error))
+                    var inventory = await _git.RunAsync(workspaceRoot,
+                        ["ls-files", "--cached", "--others", "--exclude-standard", "-z", "--", "."], deadline.Token).ConfigureAwait(false);
+                    if (inventory is { ExitCode: 0 } files && !GitOutput.IsUntrusted(files)
+                        && GitOutput.ReadNulEntries(files.Output) is { } entries)
                     {
-                        var inventory = await _git.RunAsync(workspaceRoot,
-                            ["ls-files", "--cached", "--others", "--exclude-standard", "-z", "--", "."], deadline.Token).ConfigureAwait(false);
-                        if (inventory is { ExitCode: 0 } files && string.IsNullOrWhiteSpace(files.Error)
-                            && (files.Output.Length == 0 || files.Output[^1] == '\0'
-                                && files.Output[0] != '\0' && !files.Output.Contains("\0\0", StringComparison.Ordinal)))
+                        var paths = new List<string>();
+                        foreach (var path in entries)
                         {
-                            var paths = new List<string>();
-                            foreach (var range in files.Output.AsSpan().Split('\0'))
-                            {
-                                CheckDeadline();
-                                if (!files.Output.AsSpan(range).IsEmpty)
-                                {
-                                    paths.Add(files.Output[range]);
-                                }
-                            }
-
-                            var result = RouteInspectFileEnumeration.Success(scope.Value, paths);
                             CheckDeadline();
-                            return result;
+                            paths.Add(path);
                         }
+
+                        var result = RouteInspectFileEnumeration.Success(scope.Value, paths);
+                        CheckDeadline();
+                        return result;
                     }
                 }
             }

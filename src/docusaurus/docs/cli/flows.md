@@ -11,6 +11,8 @@ has every option, and the [glossary](../glossary.md) defines the terms. Shell
 blocks use `\` for line continuation. In PowerShell, put a wrapped command on
 one line or use a backtick.
 
+To connect a code comment to a rule, put `@open-forge <path> <text>` first in the comment, then use `open-forge references ./path/to/code.cs --direction out` to check its target. In Markdown, use the same marker inside an HTML comment. See [comment links](/guides/cli#comment-links) for path forms and examples.
+
 Start with the base Framework. Later flows use Documents from Project Documents,
 and Decisions and their Template from Planning. `development-toolkit` installs
 both. Essentials leaves Templates out, so restore that category before installing

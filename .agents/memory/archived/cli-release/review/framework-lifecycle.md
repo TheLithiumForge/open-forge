@@ -118,7 +118,7 @@ this packet's prose and its later command-local placement.
 
 Historical CLI-v2 material and the frozen MVP are evidence only. The [CLI-v2
 archive](../../../archived/cli-v2/_cli-v2.md) and [frozen MVP
-implementation](../../../../../src/cli-mvp/cli.ts) do not define this lifecycle.
+implementation](https://github.com/TheLithiumForge/open-forge/blob/768bd51a5a9f205c2b752d004a7c8635cc82486c/src/cli-mvp/cli.ts) do not define this lifecycle.
 The repository `.temp/` directory is raw repository evidence storage, not
 Framework lifecycle temporary state and not a lifecycle cleanup or installation
 target.

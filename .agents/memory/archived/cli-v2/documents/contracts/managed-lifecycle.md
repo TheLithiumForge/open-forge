@@ -59,7 +59,7 @@ The accepted semantic shape is:
 }
 ```
 
-[`managed-record.ts`](../../../../../../src/cli/commands/status/managed-record.ts)
+[`managed-record.ts`](https://github.com/TheLithiumForge/open-forge/blob/d9be2d93be415648e7669b9542237d2c13e5ca87/.agents/memory/archived/cli-v2/source-snapshots/commands/status/managed-record.ts.txt)
 is authoritative for the exact implemented schema declarations, member and
 source vocabularies, path and checksum controls, and import paths. This
 contract owns their meaning and validation guarantees.

@@ -44,7 +44,15 @@ internal sealed class ReferenceProtectionReader(PhysicalPathResolver paths)
         => ProtectionPolicy.Protection(path, policy)
             is RoutedMetadataEligibility.Eligible or RoutedMetadataEligibility.LibraryProjection;
 
+    internal static bool AllowsAuthoredFile(string path, RoutedMetadataPolicyContext policy)
+        => ProtectionPolicy.ReferenceProtection(path, policy)
+            is RoutedMetadataEligibility.Eligible or RoutedMetadataEligibility.LibraryProjection;
+
     internal static ReferenceProtection Read(string path, RoutedMetadataPolicyContext policy)
         => new(ProtectionPolicy.Protection(path, policy),
+            policy.Ownership.ManagedPaths().FirstOrDefault(claim => claim.Path == path));
+
+    internal static ReferenceProtection ReadAuthoredFile(string path, RoutedMetadataPolicyContext policy)
+        => new(ProtectionPolicy.ReferenceProtection(path, policy),
             policy.Ownership.ManagedPaths().FirstOrDefault(claim => claim.Path == path));
 }

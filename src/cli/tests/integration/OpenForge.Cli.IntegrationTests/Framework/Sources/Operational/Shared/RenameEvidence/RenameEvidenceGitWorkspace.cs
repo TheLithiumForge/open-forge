@@ -5,6 +5,7 @@ using OpenForge.Cli.Composition.Shared.Git;
 using OpenForge.Cli.Core.Framework.Workspace.Models;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.RenameEvidence.Models.Input;
 using OpenForge.Cli.TestSupport;
+using OpenForge.Cli.TestSupport.Isolation;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Operational.Shared.RenameEvidence;
 
@@ -76,7 +77,8 @@ internal sealed class RenameEvidenceGitWorkspace : IDisposable
 
     internal async Task GitAsync(params string[] arguments)
     {
-        var result = await new GitProcessRunner("git", Configure).RunAsync(RepositoryRoot, arguments, TestContext.Current.CancellationToken);
+        var result = await new GitProcessRunner("git", Configure)
+            .RunAsync(RepositoryRoot, [.. GitFixtureMaintenance.CommandOptions, .. arguments], TestContext.Current.CancellationToken);
         Assert.True(result is { ExitCode: 0 }, result?.Error ?? "Git did not start.");
     }
 

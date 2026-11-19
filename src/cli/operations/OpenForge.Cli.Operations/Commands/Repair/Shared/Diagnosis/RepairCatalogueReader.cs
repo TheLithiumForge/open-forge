@@ -129,7 +129,7 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
             }
 
             proposalReads[index] = new RepairProposalInput(
-                proposal,
+                proposal with { IsComment = reference.IsComment },
                 new RepairOccurrenceState(
                     reference.SourcePath,
                     reference.DestinationLocation,
@@ -186,7 +186,7 @@ internal sealed class RepairCatalogueReader(PhysicalPathResolver physicalPathRes
         if (reference.Facts.Target is
             {
                 Kind: SourceLinkTargetKind.Local,
-                Resolution: SourceLinkTargetResolution.Missing,
+                Resolution: SourceLinkTargetResolution.Missing or SourceLinkTargetResolution.FragmentMissing or SourceLinkTargetResolution.Malformed,
             })
         {
             return new RepairProposal(

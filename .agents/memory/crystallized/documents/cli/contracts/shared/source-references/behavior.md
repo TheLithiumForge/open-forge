@@ -54,6 +54,22 @@ punctuation, including `%23`, is part of the decoded path, not a fragment or que
 
 ## Local Fragment Checks
 
+Comment extraction and path interpretation follow [Comment Links](interface.md#comment-links). Keep exact occurrence and target-word spans in the shared source-reference layer. Consume the Markdown parser's opaque and HTML facts to exclude Markdown code examples. Code comment recognition uses the file's comment delimiters and handles the declared marker grammar without treating the surrounding programming language as Markdown. Only Markdown sources contribute native Markdown images. Reuse content and parsed documents from the retained diagnosis during comment discovery. Read newly discovered file content only when retained text is unavailable. Keep read failures distinct from an empty result.
+
+For historical heading suggestions, compare parsed old and current headings within
+the changed line ranges of the Git target diff. Use a unique removed and added
+heading pair of the same level before the old section-content hash fallback.
+Keep heading-diff, section-content and weak unique-slug evidence distinct.
+A history read covers the links whose target or heading is missing. It runs one
+`git blame --porcelain` per source file, with one `-L` range per broken-link line,
+and maps each line to its commit. It runs the name-status rename diff once per
+commit, and `git show` of the old target and the target diff once per commit and
+target path. Entries keep the order of the links. Each Git invocation in a
+history read has its own five-second deadline under the
+[rename evidence](../../../technical-designs/forgiving-maintenance.md#observation-model) timeout rules.
+A timeout stops the read and marks it incomplete. There is no shared time budget
+or commit cap.
+
 Resolve the contained target and classify its kind before parsing. Use the
 [local fragment rules](interface.md#local-fragments) for Markdown headings,
 file line ranges and lexical symbols. Read file bytes only when a fragment needs

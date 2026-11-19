@@ -2323,7 +2323,7 @@ The most probable regression is restoring a deleted loader row from config. Dete
 
 Next is accidental editing of included documents. Compare complete target bytes before and after maintenance, including foreign frontmatter and non-Markdown text.
 
-Shared sources can lose inherited conditions when traversal chooses the first parent. The current linked-entry reader explicitly keeps “the first catalogue that linked it as its parent.” Reject new ambiguous inclusions and diagnose existing ambiguity before generalizing that reader. [Reader](../../../../../src/cli/operations/OpenForge.Cli.Operations/Commands/Context/Shared/Graph/ContextLinkedEntryReader.cs)
+Shared sources can lose inherited conditions when traversal chooses the first parent. The current linked-entry reader explicitly keeps “the first catalogue that linked it as its parent.” Reject new ambiguous inclusions and diagnose existing ambiguity before generalizing that reader. [Reader](https://github.com/TheLithiumForge/open-forge/blob/2f8a323a85016fb85396e8a7bf44fb120282cccd/src/cli/operations/OpenForge.Cli.Operations/Commands/Context/Shared/Graph/ContextLinkedEntryReader.cs)
 
 Startup figures can understate required reading. Compare Status’s effective measurement with Context’s actual required-file closure, retaining pending conditions as incomplete information.
 

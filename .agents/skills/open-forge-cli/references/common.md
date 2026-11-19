@@ -24,6 +24,18 @@ The context folder is chosen at first installation with `install --main-root <fo
 
 Outside folders are registered separately in settings v5 `outsideRoutes`. They do not join primary path mapping or implicit package permission. Exact references retain filename and extension, but discovery and result operand identity depend on registration or retained inclusion. See [outside routes](routes.md#outside-routes).
 
+## Comment links
+
+A comment link connects code and docs with `@open-forge <path> <explanation>` at the start of a comment. The `@rune` marker is also recognised.
+
+Illustrative:
+
+```csharp
+// @open-forge .agents/guidance/style.md#naming explains this choice
+```
+
+Plain paths start at the repository root, and `./` or `../` start next to the commented file. Markdown targets use heading slugs, code targets use symbols or line ranges, and Markdown files use HTML comments. References, Context and Doctor check comment links, and `repair --relink` updates a moved target.
+
 ## Global Flags
 
 Every command accepts these flags. Extension Create accepts `--workspace` but creates in its explicit catalogue, so that flag has no effect there.

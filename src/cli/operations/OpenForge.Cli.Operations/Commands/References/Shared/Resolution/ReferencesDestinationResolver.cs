@@ -73,6 +73,7 @@ internal sealed class ReferencesDestinationResolver
                 Catalogue = input.Catalogue,
                 SourceCanonicalPath = input.Layer.CanonicalPath,
                 RawDestination = input.RawDestination,
+                IsComment = input.IsComment,
             },
             cancellationToken).ConfigureAwait(false);
         return new ReferencesDestinationFacts(

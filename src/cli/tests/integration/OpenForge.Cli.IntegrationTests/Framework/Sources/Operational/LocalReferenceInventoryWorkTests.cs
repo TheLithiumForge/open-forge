@@ -5,6 +5,9 @@ using OpenForge.Cli.Core.Framework.Sources.Operational;
 using OpenForge.Cli.Core.Framework.Sources.Operational.Shared.Routes;
 using OpenForge.Cli.Core.Framework.Sources.Reading;
 using OpenForge.Cli.Core.Framework.Sources.References;
+using OpenForge.Cli.Core.Framework.Sources.References.Shared.Comments;
+using OpenForge.Cli.Core.Framework.Sources.Identity;
+using OpenForge.Cli.Core.Framework.Workspace.Models.Layout;
 using OpenForge.Cli.IntegrationTests.Framework.Sources.Shared;
 
 namespace OpenForge.Cli.IntegrationTests.Framework.Sources.Operational;
@@ -37,10 +40,34 @@ public sealed class LocalReferenceInventoryWorkTests
 
         Assert.Equal(0, parses);
         Assert.Equal(0, reads);
-        Assert.Equal(acquiredBefore + 1, acquisition.ReadCount);
+        // One target read and one probe of the fixture's previously unseen ownership marker.
+        Assert.Equal(acquiredBefore + 2, acquisition.ReadCount);
         Assert.Same(routes.Catalogue, references.Catalogue);
         foreach (var source in routes.Sources)
             Assert.Same(source.Document, references.Documents[source.Source.Identity.CanonicalBasePath]);
         Assert.Single(references.References);
+    }
+
+    [Fact(DisplayName = "Comment discovery reuses the retained host bytes and parsed document"),
+        Trait("Feature", "references"), Trait("Evidence", "Integration"), Trait("Boundary", "OS")]
+    public async Task CommentScanRetainsHostDocument()
+    {
+        using var workspace = SourceIntegrationWorkspace.Create("comment-inventory-work");
+        var target = WorkspaceLayout.DefaultMainRoot + "/target" + SourceFormClassifier.MarkdownExtension;
+        var host = $"# Workspace\n\n<!-- {SourceCommentLinkReader.OpenForgeMarker} {target}#target explains this choice -->\n";
+        workspace.Write(SourceLogicalPath.WorkspaceEntryPath, host);
+        workspace.Write(WorkspaceLayout.DefaultMainRoot + "/" + WorkspaceLayoutNames.LoaderFileName, "# Loader\n");
+        workspace.Write(target, "# Target\n");
+        var layout = WorkspaceLayout.Create(workspace.Workspace, WorkspaceLayout.DefaultMainRoot);
+        var session = await new SourceReadSessionReader(new PhysicalPathResolver()).ReadAsync(layout, TestContext.Current.CancellationToken);
+        var document = session.DocumentReader.ParseDocument(host);
+        var before = session.DocumentReader.Acquisition.ReadCount;
+
+        var comments = await SourceCommentSourceReader.ReadAsync(session, TestContext.Current.CancellationToken,
+            new Dictionary<string, string>(StringComparer.Ordinal) { [SourceLogicalPath.WorkspaceEntryPath] = host });
+
+        Assert.Same(document, comments.Documents[SourceLogicalPath.WorkspaceEntryPath]);
+        Assert.Equal(SourceLogicalPath.WorkspaceEntryPath, Assert.Single(comments.Sources).Identity.CanonicalBasePath);
+        Assert.Equal(before + 1, session.DocumentReader.Acquisition.ReadCount);
     }
 }
