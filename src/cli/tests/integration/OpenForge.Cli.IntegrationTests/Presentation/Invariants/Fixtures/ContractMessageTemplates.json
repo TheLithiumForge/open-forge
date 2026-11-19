@@ -1088,6 +1088,30 @@
         "<path> has no optional description or tags.",
         "Optional metadata is missing for <path>."
       ]
+    },
+    {
+      "code": "export.invalid-input",
+      "forms": ["Cannot export: <problem>"]
+    },
+    {
+      "code": "export.flatten-collision",
+      "forms": ["Flattening would place <n> files at <path>: <sources>. Nothing was changed."]
+    },
+    {
+      "code": "uninstall.invalid-input",
+      "forms": ["Cannot uninstall: <problem>"]
+    },
+    {
+      "code": "uninstall.flatten-collision",
+      "forms": ["Flattening would place <n> files at <path>: <sources>. Nothing was changed."]
+    },
+    {
+      "code": "uninstall.target-changed",
+      "forms": ["<path> changed after the plan was made. Nothing was changed."]
+    },
+    {
+      "code": "uninstall.target-changed-during-apply",
+      "forms": ["<path> changed while changes were being written. Stopped after <n> of <m> changes."]
     }
   ]
 }

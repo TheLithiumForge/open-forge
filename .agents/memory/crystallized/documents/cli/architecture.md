@@ -296,7 +296,7 @@ state.
 
 ## Link Fragments
 
-Framework Sources also handles comment markers, target-word spans and path bases under the [comment-link contract](contracts/shared/source-references/interface.md#comment-links). References, Context and the local-reference contributor consume these shared facts. Comment discovery extends reference scans without adding routing, loading or metadata authority. The host supplies bounded optional Git history reads and the comment discovery file list, which reuses the Route Inspect workspace enumeration. Framework keeps evidence interpretation and commands keep repair selection and effects.
+Framework Sources also handles comment markers, target-word spans and path bases under the [comment-link contract](contracts/shared/source-references/interface.md#comment-links). References, Context and the local-reference contributor consume these shared facts. Comment discovery extends reference scans without adding routing, loading or metadata authority. The host supplies bounded optional Git history reads and the comment discovery file list. One host helper, `WorkspaceFileList`, owns Git's file list for comment discovery, Route Inspect and export. Framework keeps evidence interpretation and commands keep repair selection and effects.
 
 Framework Sources classifies local targets before parsing fragments. Its shared
 resolver gives commands heading, line-range and lexical-symbol facts under the
@@ -396,6 +396,15 @@ record and complete-inventory facts belong to `Framework/Libraries/`. Library
 attach, sync, detach, list, and inspect policy, plans, findings, results, and
 rendering remain under `Commands/Library/`. This placement adds no dependency
 injection, runtime registry, reflection, or sibling-private import.
+
+Uninstall and export follow the same map. Their two commands share one plain-docs
+plan under `Commands/Stripping/`: the removal selection, document edits, flatten
+moves, the selection flags, findings and the result model. Uninstall applies the
+plan in place through the same folder's plan application and runtime-folder
+removal. Export writes it to its destination from `Commands/Export/`, and the
+root host supplies Git's file list through the shared `WorkspaceFileList`. The Markdown
+parser supplies link label spans, and Framework Sources resolves local
+destinations, so neither command adds a parser.
 
 Definitions, binding, behavior-owning composition, models, and supporting
 behavior remain within the narrowest command or capability owner. A private

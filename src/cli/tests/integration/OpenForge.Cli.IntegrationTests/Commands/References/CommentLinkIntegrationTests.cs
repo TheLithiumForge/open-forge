@@ -1,4 +1,4 @@
-using OpenForge.Cli.Composition.Shared.CommentLinks;
+using OpenForge.Cli.Composition.Shared.WorkspaceFiles;
 using OpenForge.Cli.Core.Commands.References;
 using OpenForge.Cli.Core.Framework.Libraries.Shared.GitIgnore;
 using OpenForge.Cli.IntegrationTests.Framework.Sources.Operational.Shared.RenameEvidence;
@@ -99,7 +99,7 @@ public sealed class CommentLinkIntegrationTests
         repository.Write(LibraryGitIgnoreSection.Path, $"{ignoredDirectory}/\n");
         repository.Write(CodePath, comment);
         repository.Write($"{ignoredDirectory}/{CodePath}", comment);
-        var result = await ReferencesOperationFactory.Create(CommentLinkFileList.ReadAsync).ExecuteAsync(
+        var result = await ReferencesOperationFactory.Create(WorkspaceFileList.ReadAsync).ExecuteAsync(
             new(repository.Workspace, "guide", ReferencesDirection.In, []), TestContext.Current.CancellationToken);
 
         Assert.Equal(CliSemanticStatus.Complete, result.Status);

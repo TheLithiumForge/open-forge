@@ -1,0 +1,3 @@
+Cannot export: <destination> is not empty. Choose a new or empty folder, ideally outside the project.
+1 errors.
+Next: open-forge export --help

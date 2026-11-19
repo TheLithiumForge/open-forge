@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 3,
+  "command": "export",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would write 4 files to <destination>.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/docs/README.md",
+      "kind": "file",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": "strip",
+      "owner": null
+    },
+    {
+      "path": ".agents/docs/moves.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": "flatten",
+      "owner": null
+    },
+    {
+      "path": ".agents/docs/rules.md",
+      "kind": "file",
+      "action": "created",
+      "outcome": "planned",
+      "reason": "flatten",
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesCopied": 1,
+    "filesRewritten": 1,
+    "filesMoved": 2,
+    "filesLeftOut": 1,
+    "filesKept": 0
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "strip": [
+      "frontmatter",
+      "entrypoints",
+      "links"
+    ],
+    "flatten": ".agents/docs",
+    "destination": "<destination>",
+    "plan": [
+      {
+        "action": "rewrite",
+        "path": ".agents/docs/README.md",
+        "reason": "strip",
+        "parts": [
+          "frontmatter",
+          "links"
+        ],
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "delete",
+        "path": ".agents/docs/game/_game.md",
+        "reason": "strip",
+        "parts": [
+          "entrypoints"
+        ],
+        "before": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "move",
+        "path": ".agents/docs/game/moves.md",
+        "to": ".agents/docs/moves.md",
+        "reason": "flatten",
+        "parts": [
+          "frontmatter",
+          "links"
+        ],
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "move",
+        "path": ".agents/docs/game/rules.md",
+        "to": ".agents/docs/rules.md",
+        "reason": "flatten",
+        "parts": [
+          "frontmatter",
+          "links"
+        ],
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "outcome": "planned"
+      }
+    ],
+    "kept": [],
+    "collisions": [],
+    "verified": false
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge export <destination> --strip frontmatter --strip entrypoints --strip links --flatten .agents/docs --workspace <workspace>",
+    "reason": "Write the copy."
+  }
+}

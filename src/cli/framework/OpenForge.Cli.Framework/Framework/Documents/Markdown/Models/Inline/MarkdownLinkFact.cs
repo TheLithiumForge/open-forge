@@ -70,4 +70,7 @@ internal sealed record MarkdownLinkFact
     internal MarkdownTextSpan? DestinationSpan { get; }
 
     internal MarkdownLinkLabelFact Label { get; }
+
+    // The exact source between the label brackets. Strip turns a link into this text.
+    internal MarkdownTextSpan? LabelSpan { get; init; }
 }

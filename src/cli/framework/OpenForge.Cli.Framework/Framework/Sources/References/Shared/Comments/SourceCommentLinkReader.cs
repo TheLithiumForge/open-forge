@@ -9,8 +9,8 @@ internal static class SourceCommentLinkReader
 {
     internal const string OpenForgeMarker = "@open-forge";
     internal const string RuneMarker = "@rune";
-    private const string HtmlOpen = "<!--";
-    private const string HtmlClose = "-->";
+    internal const string HtmlOpen = "<!--";
+    internal const string HtmlClose = "-->";
     private const string BlockOpen = "/*";
     private const string BlockClose = "*/";
 

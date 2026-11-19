@@ -1,0 +1,59 @@
+  Write a copy of this project without Open Forge to a new folder.
+
+Usage:
+  open-forge export <destination> [--strip <parts>]... [--flatten <folder>] [--remove-edited <path>]... [--dry-run]
+
+Examples:
+  open-forge export ../plain-docs --dry-run
+  open-forge export ../stage-4 --strip metadata,entrypoints
+  open-forge export ../stage-3 --strip metadata,entrypoints,links --flatten docs
+
+Behavior:
+  Export plans exactly what uninstall would do and writes the result to a new
+  or empty folder. The project itself never changes. Open Forge's own files and
+  state are left out, and every other file is copied: Git's tracked and
+  untracked files that are not ignored, or without Git every file the
+  .gitignore rules allow.
+  Prefer a folder outside the project. Preview with --dry-run. Export asks no
+  question and keeps no recovery data. When writing stops part way, delete the
+  destination and run the command again.
+
+Arguments:
+  <destination>  A new or empty folder for the copy. A folder outside the
+                 project is recommended.
+
+Options:
+  --strip <parts>         Strip metadata, frontmatter, entrypoints or links from
+                          the documents that stay. Repeat or use commas.
+  --flatten <folder>      Move documents below this folder's subfolders into the
+                          folder itself.
+  --remove-edited <path>  Remove this managed file or section even though you
+                          edited it. Repeat for more.
+  --dry-run               List every delete, rewrite and move with hashes,
+                          without writing.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Parts: metadata removes Open Forge frontmatter keys and keeps other keys and
+  the body. frontmatter removes the whole frontmatter block and wins over
+  metadata. A SKILL.md keeps its Skill keys under both. entrypoints deletes the
+  entrypoint files, with their Entries lists and any text you wrote in them.
+  links turns links to documents into their text and removes the whole comment
+  around an @open-forge or @rune comment link. External links, images, links to
+  other files and code stay. Source code is never read.
+  Flatten: Use it on a category, subcategory or custom route. SKILL.md files
+  stay where they are, and so do entrypoints that are not deleted. Kept links
+  are rewritten so they still work. A name two files would share stops the run
+  before any write.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  open-forge uninstall --help
+      Apply the same plan to this workspace

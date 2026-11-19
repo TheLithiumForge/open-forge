@@ -35,9 +35,9 @@ examples need no preview. Mutation examples show a preview before application.
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Learn Open Forge concepts     | [help](#help)                                                                                                                                                                                                                            |
 | Read and discover context     | [status](#status), [context](#context), [find](#find), [references](#references), [route list](#route-list), [route inspect](#route-inspect)                                                                                             |
-| Add and organize knowledge    | [route init](#route-init), [route create](#route-create), [route include](#route-include), [route exclude](#route-exclude), [route update](#route-update), [route move](#route-move), [route remove](#route-remove)                                                                                        |
+| Add and organize knowledge    | [route init](#route-init), [route create](#route-create), [route include](#route-include), [route exclude](#route-exclude), [route update](#route-update), [route move](#route-move), [route remove](#route-remove)                      |
 | Check and repair              | [index](#index), [doctor](#doctor), [repair](#repair), [cleanup](#cleanup)                                                                                                                                                               |
-| Manage the Framework          | [install](#install), [update](#update), [remove](#remove)                                                                                                                                                                                |
+| Manage the Framework          | [install](#install), [update](#update), [uninstall](#uninstall), [export](#export), [remove](#remove)                                                                                                                                    |
 | Manage Extensions             | [extension list](#extension-list), [extension inspect](#extension-inspect), [extension create](#extension-create), [extension install](#extension-install), [extension update](#extension-update), [extension remove](#extension-remove) |
 | Share files through Libraries | [library list](#library-list), [library inspect](#library-inspect), [library attach](#library-attach), [library sync](#library-sync), [library detach](#library-detach)                                                                  |
 
@@ -217,7 +217,7 @@ skip those questions. Noninteractive Configure requires an explicit preset or
 These commands confirm this way and accept `--automatic`, which skips
 interaction and adds no force, prune, or other authority:
 
-- `install`, `update`, `remove`, `route remove`, and `repair`
+- `install`, `update`, `uninstall`, `remove`, `route remove`, and `repair`
 - `extension create`, `extension install`, `extension update`, and
   `extension remove`
 - `library attach`, `library sync`, and `library detach`
@@ -293,14 +293,14 @@ no-ops create nothing in this folder.
 
 When a command cannot take the lock, it changes nothing and says why:
 
-| Cause | Message |
-| --- | --- |
-| Busy | `Another Open Forge command holds the lock at <path>. Nothing was changed.` |
-| Access denied | `Cannot open the lock at <path>: access denied. Nothing was changed.` |
-| Unsupported | `Cannot lock <path>: this filesystem does not support file locks. Nothing was changed.` |
-| Invalid target | `Cannot use <path> as the lock: it is not an ordinary file. Nothing was changed.` |
-| I/O error | `Cannot open the lock at <path>. Nothing was changed.` |
-| Cancelled | `Cancelled before taking the lock at <path>. Nothing was changed.` |
+| Cause          | Message                                                                                 |
+| -------------- | --------------------------------------------------------------------------------------- |
+| Busy           | `Another Open Forge command holds the lock at <path>. Nothing was changed.`             |
+| Access denied  | `Cannot open the lock at <path>: access denied. Nothing was changed.`                   |
+| Unsupported    | `Cannot lock <path>: this filesystem does not support file locks. Nothing was changed.` |
+| Invalid target | `Cannot use <path> as the lock: it is not an ordinary file. Nothing was changed.`       |
+| I/O error      | `Cannot open the lock at <path>. Nothing was changed.`                                  |
+| Cancelled      | `Cancelled before taking the lock at <path>. Nothing was changed.`                      |
 
 Only a busy lock means another command is running. Retry when it finishes.
 
@@ -729,15 +729,15 @@ The directory must be inside the workspace without overlapping the main root, fi
 
 Use exact source references with the filename, such as `./docs/_docs.md` and `./docs/testing.md`. Registration creates no short ID or alias. The spelling stays literal, while discovery and command admission depend on registration or retained inclusion.
 
-| Command | Within a registered outside route |
-| --- | --- |
-| `route create` | Create a Markdown leaf and necessary descendant chains below an existing recognized anchor |
-| `route init` | Initialize or restore a generic canonical entrypoint chain, stopping at the registered directory |
-| `route update` | Change eligible existing metadata or complete an eligible empty body |
-| `index` | Maintain listed roots by default, or an explicitly selected unlisted tree |
-| `repair` | Maintain only the affected closure of selected proven repairs |
-| `route move` | Move an eligible leaf or descendant category within the same registration |
-| `route remove` | Remove eligible descendants and record literal file/directory exclusions without deregistering |
+| Command        | Within a registered outside route                                                                |
+| -------------- | ------------------------------------------------------------------------------------------------ |
+| `route create` | Create a Markdown leaf and necessary descendant chains below an existing recognized anchor       |
+| `route init`   | Initialize or restore a generic canonical entrypoint chain, stopping at the registered directory |
+| `route update` | Change eligible existing metadata or complete an eligible empty body                             |
+| `index`        | Maintain listed roots by default, or an explicitly selected unlisted tree                        |
+| `repair`       | Maintain only the affected closure of selected proven repairs                                    |
+| `route move`   | Move an eligible leaf or descendant category within the same registration                        |
+| `route remove` | Remove eligible descendants and record literal file/directory exclusions without deregistering   |
 
 For example, after registration:
 
@@ -1464,7 +1464,7 @@ open-forge install --configure --frontmatter root --automatic
 
 | Option                                              | What it does                                                                                                                                        |
 | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--main-root <folder>` | Choose a new or existing context folder at first installation, defaulting to `.agents`. Existing installations cannot change roots. |
+| `--main-root <folder>`                              | Choose a new or existing context folder at first installation, defaulting to `.agents`. Existing installations cannot change roots.                 |
 | `--configure`                                       | Revisit route choices or the frontmatter form in an installed workspace                                                                             |
 | `--preset <minimal\|essentials\|full-core\|custom>` | Select built-in routes without the preset question                                                                                                  |
 | `--frontmatter <root\|scoped>`                      | Choose where Open Forge writes file metadata: root or scoped. A fresh unattended Install uses root. Change an installed workspace with --configure. |
@@ -1535,12 +1535,12 @@ Status names a custom context folder. Status and Install expose `data.layout` wi
 
 ##### Setup choices
 
-| Preset       | Supplied defaults                                                                                                                                           |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Preset       | Supplied defaults                                                                                                                                                           |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `minimal`    | Directives and Crystallized Memory, with the Memory catalogue, plus the loader, the guide at `<mainRoot>/README.md` and the managed sections in `AGENTS.md` and `CLAUDE.md` |
-| `essentials` | Everything in Minimal, plus Patterns, Skills and Emerging Memory, and Working Memory with private contents and a shared entrypoint                          |
-| `full-core`  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                                          |
-| `custom`     | The current concrete selection in an existing workspace, or Essentials in a fresh one, with selected row overrides                                          |
+| `essentials` | Everything in Minimal, plus Patterns, Skills and Emerging Memory, and Working Memory with private contents and a shared entrypoint                                          |
+| `full-core`  | Every built-in category and Memory state, with no Install-owned Git-ignore entries                                                                                          |
+| `custom`     | The current concrete selection in an existing workspace, or Essentials in a fresh one, with selected row overrides                                                          |
 
 Essentials omits Guidance, Maps, Templates, and Archived Memory. Full Core
 includes the base categories, not optional Extensions or an agent runtime.
@@ -1885,6 +1885,139 @@ Doctor shows how many links it ignored and notes listed paths that no longer exi
 
 An older CLI ignores settings keys it does not know. A beta14 CLI ignores both ignore lists. Doctor reports an unrecognized settings version as information and continues with the keys it understands.
 
+### `uninstall`
+
+Remove Open Forge from the workspace and keep the files you wrote.
+
+#### Common examples
+
+```sh
+open-forge uninstall --dry-run
+# Review the plan before applying it.
+open-forge uninstall --automatic
+```
+
+Build plain docs in place:
+
+```sh
+open-forge uninstall --strip metadata,entrypoints --automatic
+open-forge uninstall --strip metadata,entrypoints,links --flatten docs --automatic
+```
+
+#### Options
+
+- The [selection flags](#selection-flags) `--strip`, `--flatten`, `--remove-edited` and `--dry-run`, shared with [`export`](#export).
+- `--automatic` skips confirmation.
+
+See [global options](#global-options) for shared flags.
+
+#### Behavior notes
+
+Uninstall deletes the Framework and Extension files that still match what Open
+Forge installed. It removes Open Forge's own sections in `AGENTS.md` and
+`CLAUDE.md` and keeps your text there. A host with nothing else left is deleted.
+It also deletes route scaffolds, meaning entrypoints that hold nothing but what
+Open Forge writes for a route, whoever wrote them, then `.agents/open-forge.json`,
+`.agents/open-forge.lock.json` and folders left empty. The plan's last step
+removes `.open-forge-state/`. It stays when it holds recovery data, a link or
+cannot be read, and the result says why.
+
+Files you wrote stay. Managed files you edited stay too and are listed as kept.
+Name one with `--remove-edited` to remove it anyway. Git-ignore rules stay.
+Detach Libraries before uninstalling.
+
+The same workspace and options give the same bytes. A file that changed after
+the plan stops the run. A run that stops part way says how many changes it made
+and keeps its recovery bundle. Once
+the ownership records are gone, a second run reports `Nothing to do.` The
+[Uninstall contract](../.agents/memory/crystallized/documents/cli/contracts/uninstall/_uninstall.md)
+defines the complete boundary.
+
+#### Next step
+
+Review the remaining files with `git status` and `git diff`.
+
+### `export`
+
+Write a copy of the project as it would look after `uninstall` to a new folder. The project itself never changes.
+
+#### Common examples
+
+```sh
+open-forge export ../plain-docs --dry-run
+# Review the plan before writing the copy.
+open-forge export ../plain-docs --strip metadata,entrypoints
+```
+
+#### Eval stages
+
+The evals compare three setups of the same routed documents:
+
+| Stage                | Command                                                                          |
+| -------------------- | -------------------------------------------------------------------------------- |
+| Organized Open Forge | None. Keep the normal install.                                                   |
+| Organized docs       | `open-forge export ../stage-4 --strip metadata,entrypoints`                      |
+| Unorganized docs     | `open-forge export ../stage-3 --strip metadata,entrypoints,links --flatten docs` |
+
+#### Options
+
+- `<destination>` is a new or empty folder. Outside the project is recommended. A relative path starts from the current directory.
+- The [selection flags](#selection-flags) `--strip`, `--flatten`, `--remove-edited` and `--dry-run`, shared with [`uninstall`](#uninstall).
+
+See [global options](#global-options) for shared flags.
+
+#### Behavior notes
+
+Export plans exactly what `uninstall` would do, then writes the result to the
+destination instead of changing the project. Open Forge's own files and state are
+left out, its sections in `AGENTS.md` and `CLAUDE.md` are removed from the copy,
+and managed files you edited are kept, as uninstall keeps them. Every other file
+is copied: in a Git work tree, the tracked files and the untracked files Git does
+not ignore, and without Git, every file the workspace's `.gitignore` rules allow,
+as comment discovery reads them. `.open-forge-state/` and links are never copied.
+
+The destination must be a new or empty folder, and it must not hold the project.
+A destination inside the project is allowed and left out of the copy, but a
+folder outside it is easier to keep apart. Export asks no question, takes no lock
+and keeps no recovery data, because nothing in the project changes. When writing
+stops part way, the message names the destination to delete before you run the
+command again. The
+[Export contract](../.agents/memory/crystallized/documents/cli/contracts/export/_export.md)
+defines the complete boundary.
+
+#### Next step
+
+Open the destination, or run the eval against it.
+
+### Selection flags
+
+`uninstall` and `export` share one plan and these flags:
+
+- Repeat `--strip <parts>` or list parts with commas.
+- `--flatten <folder>` moves the documents below the folder's subfolders into the folder.
+- Repeat `--remove-edited <path>` to remove a managed file or section you edited.
+- `--dry-run` lists every delete, rewrite and move with SHA-256 hashes and writes nothing.
+
+The parts edit the Markdown files below the main root, the native Skills folder
+and each registered outside route. Source code is never read. Every byte outside
+the selected edits stays.
+
+- `metadata` removes Open Forge frontmatter keys in either form and keeps other keys and the body.
+- `frontmatter` removes the whole frontmatter block, whoever wrote the keys. With `metadata`, `frontmatter` wins.
+- `entrypoints` deletes the entrypoint files, managed ones included, which hold the generated `Entries` lists, together with any text you wrote in them.
+- `links` turns links to documents into their text, `Entries` lists included, and removes the whole comment around an `@open-forge` or `@rune` comment link. External links, images, links to other files and code stay.
+- A `SKILL.md` keeps its normal Skill frontmatter under `metadata` and `frontmatter`. Only Open Forge's keys go.
+
+The parts run in a fixed order: `frontmatter` or `metadata`, then `entrypoints`, then `links`, then flatten.
+
+`--flatten` is for categories, subcategories and custom routes. It keeps each
+file name. `SKILL.md` files stay where they are, and so do entrypoints that are
+not deleted. Kept links are rewritten so they still work. A name two files would
+share stops the run before any write, and each such name is reported with the
+files that would land there. The
+[plain-docs contract](../.agents/memory/crystallized/documents/cli/contracts/shared/plain-docs/_plain-docs.md)
+defines the parts and how they compare with the eval harness.
+
 <a id="remove-and-keep-removed"></a>
 
 ### `remove`
@@ -1941,7 +2074,7 @@ Removal records exclusions in `.agents/open-forge.json`:
 
 | Setting              | Keeps removed                                            |
 | -------------------- | -------------------------------------------------------- |
-| `removedCategories`  | Root categories in the selected layout                          |
+| `removedCategories`  | Root categories in the selected layout                   |
 | `removedFiles`       | Exact workspace-relative file destinations               |
 | `removedDirectories` | Directories and every descendant, including future files |
 | `removedExtensions`  | Packages, including requests through dependencies        |
@@ -2590,7 +2723,6 @@ The target is the first word after the marker. Encode spaces in filenames. Markd
 References lists comment links in both directions and accepts exact code paths. Context checks them when you request link expansion. Doctor reports missing targets and failed fragments. Comment links need no IDs or frontmatter. In a Git repository, files that Git ignores are skipped. Outside Git, every file except `.git` and nested Git repositories is read, still applying `.gitignore` rules. A file whose first 1,024 characters contain `<auto-generated` or `@generated` counts as generated and is skipped.
 
 Doctor and Repair suggest moved targets using Git history, heading changes, matching section content and a unique heading slug, in that order. A file move needs a commit, because Git rename detection compares the commit that last touched the link with `HEAD`. A target moved but not yet committed gets no rename suggestion. Weak suggestions require selection. Preview `repair --relink` before applying a chosen target. Repair changes only the target word and keeps the marker, comment delimiters and explanation. Relinks write an encoded repository-root path. For example, selecting `docs/new guide.md#rule` writes `docs/new%20guide.md#rule`. Repair keeps Git rename, heading-diff, old section-content and weak unique-slug evidence distinct in its choices.
-
 
 ## .gitignore fallback rules
 

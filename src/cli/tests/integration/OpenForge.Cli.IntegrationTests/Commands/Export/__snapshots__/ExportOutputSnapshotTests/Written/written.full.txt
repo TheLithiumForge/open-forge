@@ -1,0 +1,7 @@
+Wrote 3 files to <destination>.
+Workspace: <workspace>
+  rewrite          .agents/docs/README.md  (metadata, relink)
+      before 1c415c08b68fa57123daf17720ae5fa0af2f52a63fedbfff4b8cfd1af2fec198  after 7b6347421d2d1ace9b3fab0e6e052a7b4f4c3ff8e042783e19f63a0caeba5812
+  move             .agents/docs/game/rules.md -> .agents/docs/rules.md  (metadata, relink)
+      before cdafc9dc11867b8cd4acca9c167acd3688d70450aaa56645ed8742cdf78d5cd1  after dbcc0456455ee9d66fb076c2949aaa8f1b0e9b13d1bb4ee876c731a10b11097c
+1 file copied, 1 file rewritten, 1 file moved.
