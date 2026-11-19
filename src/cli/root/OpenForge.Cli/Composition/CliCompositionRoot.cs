@@ -91,17 +91,18 @@ internal static class CliCompositionRoot
             inputs.LockStoreRoot);
         var library = CliLibraryComposer.Compose(interaction);
         var rootRemove = CliRootRemoveComposer.Compose(interaction, inputs.LockStoreRoot);
+        var tool = CliToolComposer.Compose(interaction, inputs);
         var tree = CliCommandTree.Create(
             CreateRootHelp(
             [
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingSetUpAndManage(),
-                    [standalone.InstallBinding.Command, standalone.UpdateBinding.Command, rootRemove.Command, extension.Branch.Command, library.Branch.Command]),
+                    [standalone.InstallBinding.Command, standalone.UpdateBinding.Command, rootRemove.Command, extension.Branch.Command, library.Branch.Command, tool.Branch.Command]),
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingReadAndDiscover(),
                     [standalone.HelpBinding.Command, standalone.StatusBinding.Command, standalone.ContextBinding.Command, standalone.FindBinding.Command, standalone.ReferencesBinding.Command, route.Branch.Command]),
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingCheckAndMaintain(),
                     [standalone.DoctorBinding.Command, standalone.IndexBinding.Command, standalone.RepairBinding.Command, standalone.CleanupBinding.Command]),
             ]),
-            [route.Branch, extension.Branch, library.Branch],
+            [route.Branch, extension.Branch, library.Branch, tool.Branch],
             [
                 route.ListBinding,
                 route.InspectBinding,
@@ -135,6 +136,9 @@ internal static class CliCompositionRoot
                 library.SyncBinding,
                 library.DetachBinding,
                 rootRemove,
+                tool.ListBinding,
+                tool.InstallBinding,
+                tool.RemoveBinding,
             ],
             rootLeaves: [.. standalone.RootLeaves, new CliRootLeaf(rootRemove.Command)]);
         return new CliCoreApplication(

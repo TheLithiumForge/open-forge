@@ -1,0 +1,5 @@
+tool remove couldn't start.
+Workspace: <workspace>
+  Error  UnknownTool  Check the tool command. [tool-remove.unknown-tool]
+         There is no supported tool called UnknownTool. Run open-forge tool list to see the IDs.
+1 errors.

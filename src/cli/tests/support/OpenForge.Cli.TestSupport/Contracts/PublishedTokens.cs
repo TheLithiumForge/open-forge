@@ -374,7 +374,7 @@ public static class PublishedTokens
         public const string RootsProperty = "roots";
         public const string OutsideRoutesProperty = "outsideRoutes";
         public const string RelativePath = ".agents/open-forge.json";
-        public const int SchemaVersion = 5;
+        public const int SchemaVersion = 6;
         public const string SchemaVersionProperty = "schemaVersion";
         public const string MainRootProperty = "mainRoot";
         public const string FrontmatterProperty = "frontmatter";

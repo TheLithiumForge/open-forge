@@ -1,0 +1,3 @@
+Finished tool install.
+Open Forge ran these commands for CodeGraph:
+  npm i -g @colbymchenry/codegraph@1.6.2  (done)

@@ -1,0 +1,4 @@
+Found 2 supported tools.
+Code search
+  codegraph        npm     configured, installed 1.6.2  Gives coding agents a searchable graph of the code's symbols and calls.
+  codebase-memory  script  not installed                Indexes the codebase into a knowledge graph that coding agents can query.

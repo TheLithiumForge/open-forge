@@ -1,0 +1,5 @@
+tool install can't start yet.
+Workspace: <workspace>
+  Error  codegraph  Check the tool command.
+         This folder doesn't use Open Forge yet. Run open-forge install first, then run this command again.
+1 errors.

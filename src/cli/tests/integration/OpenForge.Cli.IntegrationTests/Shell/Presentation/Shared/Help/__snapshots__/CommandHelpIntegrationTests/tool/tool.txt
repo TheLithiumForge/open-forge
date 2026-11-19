@@ -1,0 +1,40 @@
+  Install supported tools and set them up for this project.
+
+Usage:
+  open-forge tool <command> [options]
+
+Examples:
+  open-forge tool list
+  open-forge tool install codegraph --dry-run
+  open-forge tool install
+
+Behavior:
+  List shows the supported tools, how each one installs and whether this project
+  uses it.
+  Install runs the tool's own install and setup commands, then adds Open Forge's
+  small changes. It shows every command and asks first.
+  To update a tool, use its own update command or install it again.
+
+Commands:
+  list          List supported tools, their install method and their state.
+  install <id>  Install a tool and set it up for this project, or install this
+                project's missing tools.
+  remove <id>   Remove Open Forge's changes for a tool and offer its own
+                uninstall.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  tool list --help     List supported tools, their install method and their
+                       state.
+  tool install --help  Install a tool and set it up for this project, or install
+                       this project's missing tools.
+  tool remove --help   Remove Open Forge's changes for a tool and offer its own
+                       uninstall.

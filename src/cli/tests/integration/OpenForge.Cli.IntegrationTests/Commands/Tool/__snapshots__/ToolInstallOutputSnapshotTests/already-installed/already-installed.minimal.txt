@@ -1,0 +1,9 @@
+Finished tool install.
+CodeGraph 1.6.2 is already installed.
+Open Forge ran these commands for CodeGraph:
+  codegraph install --yes --location local  (done)
+      Adds CodeGraph to the coding agents it finds in this project
+      CodeGraph keeps its default telemetry. Turn it off with: codegraph telemetry off
+Then Open Forge made these changes:
+  codegraph.json           Keep archived Open Forge memory out of the graph  (done)
+  .agents/open-forge.json  Add codegraph to this project's tools  (done)

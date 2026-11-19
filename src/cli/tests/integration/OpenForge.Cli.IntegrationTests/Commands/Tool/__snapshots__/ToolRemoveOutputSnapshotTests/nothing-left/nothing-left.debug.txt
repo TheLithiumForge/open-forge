@@ -1,0 +1,6 @@
+Nothing to do for tool remove.
+Workspace: <workspace>
+CodeGraph's own uninstall:
+  Removes CodeGraph from every coding agent in this project and uninstalls the codegraph command. Your project index stays.
+  codegraph uninstall --yes --location local --keep-cli
+  npm uninstall -g @colbymchenry/codegraph

@@ -1,0 +1,10 @@
+Run it too?
+Codebase Memory's own uninstall:
+Removes Codebase Memory, its PATH entry and its entries from every coding agent
+on your account. Your indexes stay.
+codebase-memory-mcp uninstall --yes
+
+  1. No, keep it installed
+  2. Yes, run its uninstall
+
+Choose a number (1-2), or press Enter for 1:

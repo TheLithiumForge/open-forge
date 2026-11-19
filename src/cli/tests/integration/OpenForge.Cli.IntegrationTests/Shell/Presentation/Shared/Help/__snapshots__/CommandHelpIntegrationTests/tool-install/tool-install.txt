@@ -1,0 +1,42 @@
+  Install a tool and set it up for this project, or install this project's
+  missing tools.
+
+Usage:
+  open-forge tool install [<id>] [--yes] [--dry-run] [options]
+
+Examples:
+  open-forge tool install codegraph
+  open-forge tool install codegraph --dry-run
+  open-forge tool install
+
+Behavior:
+  With an ID, installs the tool when it's missing, runs its own project setup
+  and adds Open Forge's changes.
+  Without an ID, installs the tools this project uses that are missing on this
+  machine. Use it after cloning a project.
+  Shows the exact commands and changes, then asks. Checks npm or the install
+  script's runner first and says what to install when one is missing.
+  To update a tool, use its own update command or install it again.
+
+Arguments:
+  <id>  The tool ID from open-forge tool list. Leave it out to install this
+        project's tools that are missing.
+
+Options:
+  --yes      Accept the shown plan without asking.
+  --dry-run  Show the plan without running or changing anything.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  tool list --help    List supported tools, their install method and their
+                      state.
+  tool remove --help  Remove Open Forge's changes for a tool and offer its own
+                      uninstall.

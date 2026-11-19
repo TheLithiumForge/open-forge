@@ -294,6 +294,13 @@ facts, and cancellation explicitly. It constructs native interaction from
 ordinary .NET stream and redirection facts; the libraries never cache ambient console
 state.
 
+## Tool setup
+
+The [Tool setup design](technical-designs/tool-setup.md) defines the tool catalogue and its placement.
+The Framework owns the catalogue and integration edits. Operations owns the three Tool commands.
+Root hosts the process runner. Tools run their own install, setup and uninstall commands.
+Open Forge's own file edits use the shared write path. The settings `tools` list is the only record.
+
 ## Link Fragments
 
 Framework Sources also handles comment markers, target-word spans and path bases under the [comment-link contract](contracts/shared/source-references/interface.md#comment-links). References, Context and the local-reference contributor consume these shared facts. Comment discovery extends reference scans without adding routing, loading or metadata authority. The host supplies bounded optional Git history reads and the comment discovery file list, which reuses the Route Inspect workspace enumeration. Framework keeps evidence interpretation and commands keep repair selection and effects.

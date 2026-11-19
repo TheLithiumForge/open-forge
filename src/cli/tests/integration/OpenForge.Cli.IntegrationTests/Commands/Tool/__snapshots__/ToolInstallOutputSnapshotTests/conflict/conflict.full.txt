@@ -1,0 +1,5 @@
+tool install can't start yet.
+Workspace: <workspace>
+  Error  codegraph.json  Check the tool command. [tool-install.integration-conflict]
+         codegraph.json can't be changed safely. Expected depth to be zero at the end of the JSON payload. There is an open JSON object or array that should be closed. LineNumber: 0 | BytePositionInLine: 1. Fix it, then run the command again.
+1 errors.

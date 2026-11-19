@@ -8,6 +8,10 @@ open-forge:
 
 ## Context
 
+Tool setup adds one key to the authored settings: a `tools` list of the tool IDs a project uses.
+It adds nothing to the lock, machine state or `.open-forge-state/`.
+The [Tool setup design](../../documents/cli/technical-designs/tool-setup.md) defines it.
+
 A workspace accumulated four files under one naming convention:
 a generated lifecycle record (17 KB of baselines),
 `.agents/open-forge.permissions.json` (a short authored allow-list),

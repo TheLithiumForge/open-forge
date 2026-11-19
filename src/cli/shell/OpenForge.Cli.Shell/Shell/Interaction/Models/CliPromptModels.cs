@@ -38,6 +38,8 @@ internal sealed record CliSelectQuestion<T>(string Question, IReadOnlyList<CliCh
 {
     internal IReadOnlyList<string> Context { get; init; } = [];
     internal IReadOnlyList<string> LineExplanations { get; init; } = [];
+    // The zero-based choice that Enter selects without a number. Without it, an empty answer cancels.
+    internal int? EnterChoice { get; init; }
 }
 internal enum CliDependencyDirection { Requires, Dependents }
 internal enum CliSelectionAction { Install, Update, Remove }

@@ -1,3 +1,4 @@
+using OpenForge.Cli.Core.Presentation.Shared.Wording;
 using OpenForge.Cli.Core.Presentation.Shared.Prompts;
 using OpenForge.Cli.Core.Shell.Interaction.Models;
 using OpenForge.Cli.TestSupport.Interaction;
@@ -149,6 +150,26 @@ public sealed class CliPromptsTests
         Assert.Equal(CliPromptState.Answered, reply.State);
         Assert.Equal("second", reply.Value);
         Assert.Contains("Choose a number (1-2), or press Enter to cancel:", scripted.Output.ToString(), StringComparison.Ordinal);
+    }
+
+    [Trait("Boundary", "Output")]
+    [Fact(DisplayName = "Select line mode Enter takes the declared Enter choice and the footer names it"), Trait("Feature", "cli-interaction"), Trait("Evidence", "Unit")]
+    public async Task SelectLineModeEnterChoice()
+    {
+        var scripted = ScriptedCliTerminal.Lines([string.Empty]);
+        var prompts = new CliPrompts(scripted.Terminal);
+        var question = new CliSelectQuestion<string>("Which one?", [
+            new CliChoice<string>("first", "first"),
+            new CliChoice<string>("second", "second"),
+        ])
+        { EnterChoice = 1 };
+
+        var reply = await prompts.SelectAsync(question, new CliPromptPolicy(Allowed: true), CancellationToken.None);
+
+        Assert.Equal(CliPromptState.Answered, reply.State);
+        Assert.Equal(question.Choices[1].Value, reply.Value);
+        Assert.Contains(CliPromptWording.SelectLineDefault(question.Choices.Count, 2), scripted.Output.ToString(), StringComparison.Ordinal);
+        Assert.DoesNotContain(CliPromptWording.SelectLine(question.Choices.Count), scripted.Output.ToString(), StringComparison.Ordinal);
     }
 
     [Trait("Boundary", "Input")]

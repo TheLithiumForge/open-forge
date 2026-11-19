@@ -216,6 +216,8 @@ admissible combinations are:
 | --------------- | ----------- | ----------- | -------------- | ------------------------------------- |
 | Current writer  | `framework` | `install`   | `workspace`    | `install`                             |
 | Current writer  | `workspace` | `remove`    | `workspace`    | `remove`                              |
+| Current writer  | `tool`      | `install`   | `workspace`    | `tool install`                        |
+| Current writer  | `tool`      | `remove`    | `workspace`    | `tool remove`                         |
 | Current writer  | `extension` | `install`   | `workspace`    | `extension install`                   |
 | Current writer  | `index`     | `index`     | `workspace`    | `index`                               |
 | Current writer  | `route`     | `include`   | `workspace`    | `route include`                       |

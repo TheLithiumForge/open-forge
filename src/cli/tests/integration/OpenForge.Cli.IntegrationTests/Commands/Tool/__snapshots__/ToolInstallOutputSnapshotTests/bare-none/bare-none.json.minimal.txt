@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 3,
+  "command": "tool install",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "This project has no tools to install. Add one with open-forge tool install <id>.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {},
+  "limitations": [],
+  "data": {
+    "preview": false,
+    "tools": []
+  },
+  "recovery": null,
+  "next": null
+}

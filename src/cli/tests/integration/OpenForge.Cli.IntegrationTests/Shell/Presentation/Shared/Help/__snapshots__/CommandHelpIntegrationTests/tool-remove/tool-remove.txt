@@ -1,0 +1,36 @@
+  Remove Open Forge's changes for a tool and offer its own uninstall.
+
+Usage:
+  open-forge tool remove <id> [--yes] [--dry-run] [options]
+
+Examples:
+  open-forge tool remove codegraph
+  open-forge tool remove codegraph --dry-run
+
+Behavior:
+  Removes Open Forge's changes for the tool and takes it out of this project's
+  tools.
+  Then shows what the tool's own uninstall does and asks whether to run it too.
+  The default is no, and --yes keeps the tool installed.
+
+Arguments:
+  <id>  The tool ID from open-forge tool list.
+
+Options:
+  --yes      Don't ask. Keep the tool installed and show its uninstall commands.
+  --dry-run  Show the plan without running or changing anything.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  tool list --help     List supported tools, their install method and their
+                       state.
+  tool install --help  Install a tool and set it up for this project, or install
+                       this project's missing tools.

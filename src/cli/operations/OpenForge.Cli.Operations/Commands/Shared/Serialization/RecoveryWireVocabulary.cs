@@ -32,6 +32,7 @@ internal static class RecoveryWireVocabulary
             RecoveryBundleProducer.Repair => "repair",
             RecoveryBundleProducer.Library => "library",
             RecoveryBundleProducer.Workspace => "workspace",
+            RecoveryBundleProducer.Tool => "tool",
             _ => Undefined(nameof(value), value),
         };
 

@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 3,
+  "command": "tool remove",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Nothing to do for tool remove.",
+    "kind": "nothing-to-do"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {},
+  "limitations": [],
+  "data": {
+    "preview": false,
+    "tools": [
+      {
+        "id": "codegraph",
+        "name": "CodeGraph",
+        "installedVersion": "1.6.2",
+        "uninstallDescription": "Removes CodeGraph from every coding agent in this project and uninstalls the codegraph command. Your project index stays.",
+        "steps": [
+          {
+            "kind": "uninstall",
+            "command": "codegraph uninstall --yes --location local --keep-cli",
+            "effect": null,
+            "notes": [],
+            "outcome": "not-run",
+            "exitCode": null,
+            "output": null
+          },
+          {
+            "kind": "uninstall",
+            "command": "npm uninstall -g @colbymchenry/codegraph",
+            "effect": null,
+            "notes": [],
+            "outcome": "not-run",
+            "exitCode": null,
+            "output": null
+          }
+        ],
+        "changes": []
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

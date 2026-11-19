@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 3,
+  "command": "tool list",
+  "status": "incomplete",
+  "detail": "debug",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Found 2 supported tools.",
+    "kind": "incomplete"
+  },
+  "findings": [
+    {
+      "severity": "warning",
+      "code": "tool-list.settings-unavailable",
+      "title": "Check the tool command.",
+      "message": ".agents/open-forge.json can't be used. Expected depth to be zero at the end of the JSON payload. There is an open JSON object or array that should be closed. LineNumber: 0 | BytePositionInLine: 1. Fix it, then run the command again.",
+      "subject": {
+        "kind": "file",
+        "path": ".agents/open-forge.json",
+        "id": null,
+        "location": null
+      },
+      "category": null,
+      "resolution": null,
+      "actions": [],
+      "candidates": [],
+      "evidence": [],
+      "provenance": null
+    }
+  ],
+  "effects": [],
+  "counts": {
+    "warnings": 1
+  },
+  "limitations": [],
+  "data": {
+    "tools": [
+      {
+        "id": "codegraph",
+        "name": "CodeGraph",
+        "category": "Code search",
+        "purpose": "Gives coding agents a searchable graph of the code's symbols and calls.",
+        "method": "npm",
+        "upstream": "https://github.com/colbymchenry/codegraph",
+        "licence": "MIT",
+        "configured": false,
+        "integrated": false,
+        "installed": false,
+        "version": null
+      },
+      {
+        "id": "codebase-memory",
+        "name": "Codebase Memory",
+        "category": "Code search",
+        "purpose": "Indexes the codebase into a knowledge graph that coding agents can query.",
+        "method": "script",
+        "upstream": "https://github.com/DeusData/codebase-memory-mcp",
+        "licence": "MIT",
+        "configured": false,
+        "integrated": false,
+        "installed": false,
+        "version": null
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 3,
+  "command": "tool install",
+  "status": "completed",
+  "detail": "minimal",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "current-directory"
+  },
+  "summary": {
+    "headline": "Previewed tool install. Nothing was run or changed.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [],
+  "counts": {},
+  "limitations": [],
+  "data": {
+    "preview": true,
+    "tools": [
+      {
+        "id": "codebase-memory",
+        "name": "Codebase Memory",
+        "installedVersion": null,
+        "uninstallDescription": null,
+        "steps": [
+          {
+            "kind": "install",
+            "command": "curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash",
+            "effect": "Codebase Memory's installer configures every coding agent it finds for your account and adds its folder to your PATH",
+            "notes": [],
+            "outcome": "planned",
+            "exitCode": null,
+            "output": null
+          }
+        ],
+        "changes": [
+          {
+            "path": ".cbmignore",
+            "kind": "integration",
+            "purpose": "Keep archived Open Forge memory out of the index",
+            "outcome": "planned"
+          },
+          {
+            "path": ".agents/open-forge.json",
+            "kind": "add-tool",
+            "purpose": null,
+            "outcome": "planned"
+          }
+        ]
+      }
+    ]
+  },
+  "recovery": null,
+  "next": null
+}

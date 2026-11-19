@@ -1,0 +1,9 @@
+Finished tool remove.
+Open Forge removed these changes:
+  codegraph.json           Keep archived Open Forge memory out of the graph  (done)
+  .agents/open-forge.json  Remove codegraph from this project's tools  (done)
+CodeGraph's own uninstall:
+  Removes CodeGraph from every coding agent in this project and uninstalls the codegraph command. Your project index stays.
+It wasn't run. To uninstall, run these commands yourself:
+  codegraph uninstall --yes --location local --keep-cli
+  npm uninstall -g @colbymchenry/codegraph

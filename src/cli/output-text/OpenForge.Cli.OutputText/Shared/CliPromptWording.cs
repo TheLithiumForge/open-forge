@@ -7,6 +7,10 @@ internal static class CliPromptWording
     // @OpenForgeText shared.wording.choose-a-number-1-or-press-enter-to-cancel
     internal static string SelectLine(int count) => string.Create(CultureInfo.InvariantCulture, $"Choose a number (1-{count}), or press Enter to cancel:");
 
+    // @OpenForgeText shared.wording.choose-a-number-1-or-press-enter-for
+    internal static string SelectLineDefault(int count, int choice)
+        => string.Create(CultureInfo.InvariantCulture, $"Choose a number (1-{count}), or press Enter for {choice}:");
+
     // @OpenForgeText shared.wording.is-required-by-unchoose-that-first
     internal static string Required(string label, string owners) => $"To leave {label} out, unchoose {owners} first.";
 

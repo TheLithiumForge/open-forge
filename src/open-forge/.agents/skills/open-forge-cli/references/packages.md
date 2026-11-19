@@ -278,6 +278,12 @@ Individual-link Remove cleans up its owned ignore rule within its removal plan. 
 
 For result handling or permission questions, use [shared options and results](common.md). For reference repair or retained recovery data, use [route maintenance](routes.md).
 
+## Tools
+
+`tool list` shows the supported tools by category, with each one's install method (`npm` or `script`), whether the project uses it and the installed version. `tool install <id>` installs a missing tool with its documented command, runs the tool's own project setup, keeps archived memory out of its index and adds the ID to `tools` in `.agents/open-forge.json`. Bare `tool install` installs only the project's listed tools that are missing on this machine. `tool remove <id>` undoes Open Forge's changes, then asks whether to run the tool's own uninstall. The answer defaults to no.
+
+Install shows every command before it runs and asks. It accepts `--yes` and `--dry-run`. Run it only when the user asks, because a tool's own installer can change account-wide agent settings or PATH. When a package manager or runner is missing, report the command's plain instruction instead of installing one. To update a tool, use its own update command or install it again.
+
 ## Workspace Runtime And Recovery
 
 Install, Update, Remove and Library mutations use the workspace lock and prepare new bundles in `.open-forge-state/`. Package destinations cannot enter that reserved folder, including through links. Extension Create keeps its separate create-only destination and takes no workspace lock.

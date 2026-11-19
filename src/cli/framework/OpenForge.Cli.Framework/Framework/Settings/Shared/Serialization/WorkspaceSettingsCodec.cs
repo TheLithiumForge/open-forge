@@ -64,6 +64,7 @@ internal static partial class WorkspaceSettingsCodec
                     RemovedLibraries = ReadRemovedLibraries(root),
                     Roots = ReadRoots(root, mainRoot ?? WorkspaceLayout.DefaultMainRoot),
                     OutsideRoutes = ReadOutsideRoutes(root, mainRoot ?? WorkspaceLayout.DefaultMainRoot),
+                    Tools = ReadStringArray(root, WorkspaceSettingsDefinitions.ToolsProperty),
                 },
                 Cause: null);
         }

@@ -569,7 +569,7 @@ This repository uses Open Forge to build Open Forge, so its own documents double
 
 ## Roadmap
 
-Markdown and the CLI are where Open Forge starts. Directions for later include vector search and plugins such as code search.
+Markdown and the CLI are where Open Forge starts. The CLI can already install code-search tools such as CodeGraph and Codebase Memory with their own installers and set them up for a project, using `open-forge tool install`. Directions for later include vector search and more plugins.
 
 ## Changelog
 

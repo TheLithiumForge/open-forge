@@ -40,6 +40,7 @@ examples need no preview. Mutation examples show a preview before application.
 | Manage the Framework          | [install](#install), [update](#update), [remove](#remove)                                                                                                                                                                                |
 | Manage Extensions             | [extension list](#extension-list), [extension inspect](#extension-inspect), [extension create](#extension-create), [extension install](#extension-install), [extension update](#extension-update), [extension remove](#extension-remove) |
 | Share files through Libraries | [library list](#library-list), [library inspect](#library-inspect), [library attach](#library-attach), [library sync](#library-sync), [library detach](#library-detach)                                                                  |
+| Set up developer tools        | [tool list](#tool-list), [tool install](#tool-install), [tool remove](#tool-remove)                                                                                                                                                      |
 
 ## Start with the everyday commands
 
@@ -2655,3 +2656,108 @@ for operations that need more detail:
 The Framework stays usable when no executable is present. Plain Markdown is
 the durable interface. The CLI makes common inspection and maintenance tasks
 faster, more repeatable, and easier to review.
+
+## Developer tools
+
+Tool commands help you install supported third-party tools and set them up for a project. Each tool installs the way its own documentation says, with npm or with its own install script. Open Forge then runs the tool's own project setup and adds one small change of its own: it keeps archived Open Forge memory out of the tool's index. The project records the tools it uses in `tools` in `.agents/open-forge.json`, so a teammate can install them with one command.
+
+Open Forge never edits PATH, installs runtimes or changes a tool's own settings. A tool's own installer may, and the plan says so. Every command is shown before it runs.
+
+| Tool              | ID                | Category    | Installs with | Project setup                                         |
+| ----------------- | ----------------- | ----------- | ------------- | ----------------------------------------------------- |
+| CodeGraph         | `codegraph`       | Code search | `npm`         | Adds CodeGraph to the coding agents it finds in the project |
+| Codebase Memory   | `codebase-memory` | Code search | `script`      | Its installer configures every coding agent it finds   |
+
+To update a tool, use its own update command or run `open-forge tool install <id>` again.
+
+### `tool list`
+
+Show the supported tools by category, with each one's install method, whether this project uses it and the version installed on this machine.
+
+#### Common examples
+
+```sh
+open-forge tool list
+open-forge tool list --format json
+```
+
+#### Options
+
+Accepts the global options. `--detail standard` adds each tool's name, licence and upstream link.
+
+#### Behavior notes
+
+List runs each tool's version command and changes nothing. The `npm` and `script` tags are colored when the terminal supports color.
+
+#### Next step
+
+Run `open-forge tool install <id> --dry-run` to see what installing a tool would do.
+
+### `tool install`
+
+Install a tool and set it up for this project, or install this project's tools that are missing on this machine.
+
+#### Common examples
+
+```sh
+# Review the plan before applying it.
+open-forge tool install codegraph --dry-run
+open-forge tool install codegraph
+
+# After cloning a project, install the tools it lists.
+open-forge tool install
+```
+
+#### Options
+
+- `--yes` accepts the shown plan without asking.
+- `--dry-run` shows the plan and runs or changes nothing.
+
+#### Behavior notes
+
+The plan names every command and every file Open Forge changes:
+
+```text
+Open Forge will run these commands to install CodeGraph:
+  npm i -g @colbymchenry/codegraph@1.6.2
+  codegraph install --yes --location local
+      Adds CodeGraph to the coding agents it finds in this project
+      CodeGraph keeps its default telemetry. Turn it off with: codegraph telemetry off
+Then Open Forge will make these changes:
+  codegraph.json           Keep archived Open Forge memory out of the graph
+  .agents/open-forge.json  Add codegraph to this project's tools
+Continue? [y/N]
+```
+
+When the tool is already installed, Install skips its install command and still runs its project setup, which repairs that setup. Without an ID, Install runs only the install commands of the listed tools that are missing. It never reruns their setup, because the project is already configured.
+
+Install checks npm, or curl and bash (Windows PowerShell on Windows) for a script, before it runs anything. When one is missing, it runs nothing and says what to install. A failed command shows its exit code and the end of its output. Install needs an Open Forge workspace, because it records the tool in `.agents/open-forge.json`.
+
+#### Next step
+
+Run `open-forge tool list` to check the installed version.
+
+### `tool remove`
+
+Remove Open Forge's changes for a tool and offer the tool's own uninstall.
+
+#### Common examples
+
+```sh
+# Review the plan before applying it.
+open-forge tool remove codegraph --dry-run
+open-forge tool remove codegraph
+```
+
+#### Options
+
+- `--yes` doesn't ask. The tool stays installed and its uninstall commands are shown.
+- `--dry-run` shows what would be removed and changes nothing.
+
+#### Behavior notes
+
+Remove takes the archive exclusion out of the tool's file and the tool out of `tools`. A file left with nothing else is deleted. Then, when the tool is installed, Remove explains what the tool's own uninstall does and asks `Run it too?`. The default answer is no. Codebase Memory's uninstall removes it from every coding agent on your account, so read the description before you answer yes.
+
+#### Next step
+
+Run `open-forge tool list` to confirm the project no longer lists the tool.

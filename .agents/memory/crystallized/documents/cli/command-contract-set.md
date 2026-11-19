@@ -131,6 +131,11 @@ contracts to `contracts/index/_index.md` and
 proved identity behavior. Frozen `open-forge-old` compatibility does not change
 either command's public identity or the replacement's logical contract topology.
 
+The [Tool group](contracts/tool/_tool.md) has three leaves in this order:
+`list`, `install` and `remove`. Each leaf has its own Interface and Behavior.
+The [Tool setup design](technical-designs/tool-setup.md) defines their common
+implementation model.
+
 The grouped `route` command is routing-only. Each operation has its own local
 Interface and Behavior files. Route Update alone has a bounded local Technical
 Design:

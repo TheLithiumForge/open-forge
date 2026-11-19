@@ -12,6 +12,7 @@ internal enum RecoveryBundleProducer
     Repair,
     Library,
     Workspace,
+    Tool,
 }
 
 internal enum RecoveryBundleOperation
@@ -143,6 +144,8 @@ internal sealed record RecoveryBundleAttribution
             (RecoveryBundleProducer.Library, RecoveryBundleOperation.Sync) => true,
             (RecoveryBundleProducer.Library, RecoveryBundleOperation.Detach) => true,
             (RecoveryBundleProducer.Workspace, RecoveryBundleOperation.Remove) => true,
+            (RecoveryBundleProducer.Tool, RecoveryBundleOperation.Install) => true,
+            (RecoveryBundleProducer.Tool, RecoveryBundleOperation.Remove) => true,
             _ => false,
         };
 }
