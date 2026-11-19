@@ -1,9 +1,12 @@
 import { ProcessExit } from "../process.ts";
+import { DeliveryOption, optionArgument } from "../option-names.ts";
 
 export const SmokeCheck = { version: "Published version", install: "Install Essentials", status: "Installed workspace status", configure: "Configure guidance preview" } as const;
 export const SmokeText = { current: "Open Forge is installed and current.", entries: "Entries would be updated", replaced: "replaced" } as const;
+export const SmokeOption = { aliases: "aliases" } as const;
 export const SmokeArguments = {
-  version: ["--version"],
+  version: [optionArgument(DeliveryOption.version)],
+  aliases: [`--${SmokeOption.aliases}`],
   install: ["install", "--preset", "essentials", "--automatic"],
   status: ["status"],
   configure: ["install", "--configure", "--preset", "custom", "--route", "guidance=add", "--dry-run"],

@@ -3,7 +3,8 @@ import { basename, join } from "node:path";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { hashArtifact } from "../manifest.ts";
-import { MainPackageName, type SupportedRuntime } from "../package-model.ts";
+import { AliasPackageName, MainPackageName, type SupportedRuntime } from "../package-model.ts";
+import { aliasManifest, AliasLauncher, LauncherPath, WrapperReadme } from "./package-manifests.ts";
 import { inspectPackageContents } from "../package-contents.ts";
 import { validateOutput } from "../output.ts";
 
@@ -16,6 +17,7 @@ export interface Publication {
   sha256: string;
   dirty: boolean;
   optionalDependencies?: Record<string, string>;
+  dependencies?: Record<string, string>;
 }
 
 export function readPublicationPackage(
@@ -46,5 +48,18 @@ export function readPublicationPackage(
   if (name === MainPackageName) {
     assert.deepEqual(contents.optionalDependencies, targetDependencies(version, targets));
   }
-  return { name, version, tarball, sha256: file.sha256, dirty, ...(name === MainPackageName ? { optionalDependencies: targetDependencies(version, targets) } : {}) };
+  if (name === AliasPackageName) {
+    assert.deepEqual(contents.manifest, aliasManifest(version), "Alias manifest differs from the selected release.");
+    assert.deepEqual(contents.files.map((entry) => entry.path).sort(), ["LICENSE", WrapperReadme, LauncherPath, "package.json"].sort());
+    assert.equal(contents.files.find((entry) => entry.path === LauncherPath)?.sha256, createHash("sha256").update(AliasLauncher).digest("hex"));
+  }
+  return {
+    name,
+    version,
+    tarball,
+    sha256: file.sha256,
+    dirty,
+    ...(name === MainPackageName ? { optionalDependencies: targetDependencies(version, targets) } : {}),
+    ...(name === AliasPackageName ? { dependencies: { [MainPackageName]: version } } : {}),
+  };
 }

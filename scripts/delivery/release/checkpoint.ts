@@ -9,12 +9,14 @@ import { checkpointSeconds, MillisecondsPerSecond, publicationPlan, readReleaseT
 import { readReleasePlan } from "./read-release-plan.ts";
 
 try {
-  const { values } = parseArgs({ options: { from: { type: "string", default: ReleaseDirectory }, target: { type: "string" }, tag: { type: "string" }, wait: { type: "string" } } });
+  const { values } = parseArgs({
+    options: { from: { type: "string", default: ReleaseDirectory }, target: { type: "string" }, tag: { type: "string" }, wait: { type: "string" }, pypi: { type: "boolean" } },
+  });
   const version = committedVersion(repositoryRoot);
   const target = readReleaseTarget(values.target ?? process.env["RELEASE_TARGET"]);
   const channel = values.tag ?? releaseChannel(version);
   const seconds = checkpointSeconds(values.wait);
-  const plan = readReleasePlan(repositoryRoot, values.from, sourceIdentity(repositoryRoot), version, target, channel);
+  const plan = readReleasePlan(repositoryRoot, values.from, sourceIdentity(repositoryRoot), version, target, channel, values.pypi || process.env["RELEASE_PYPI"] === "true");
   process.stdout.write(`${publicationPlan(plan)}\nWaiting ${seconds} seconds before publication. Cancel now to publish nothing.\n`);
   await setTimeout(seconds * MillisecondsPerSecond);
 } catch (error) {
