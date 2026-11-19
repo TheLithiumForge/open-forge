@@ -71,7 +71,7 @@ internal static class CliCompositionRoot
                     new MarkdownDocumentParser().Parse),
                 new LocalReferenceCandidateReader(),
                 new OpenForge.Cli.Composition.Shared.Git.GitSourceLinkHistoryReader().ReadAsync,
-                OpenForge.Cli.Composition.Shared.CommentLinks.CommentLinkFileList.ReadAsync),
+                OpenForge.Cli.Composition.Shared.WorkspaceFiles.WorkspaceFileList.ReadAsync),
             new FrameworkLifecycleOperationalContributor(
                 physicalPathResolver,
                 new FrameworkLifecycleTargetReader(physicalPathResolver)),
@@ -92,11 +92,12 @@ internal static class CliCompositionRoot
         var library = CliLibraryComposer.Compose(interaction);
         var rootRemove = CliRootRemoveComposer.Compose(interaction, inputs.LockStoreRoot);
         var tool = CliToolComposer.Compose(interaction, inputs);
+        var strip = CliStripComposer.Compose(interaction, inputs.LockStoreRoot);
         var tree = CliCommandTree.Create(
             CreateRootHelp(
             [
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingSetUpAndManage(),
-                    [standalone.InstallBinding.Command, standalone.UpdateBinding.Command, rootRemove.Command, extension.Branch.Command, library.Branch.Command, tool.Branch.Command]),
+                    [standalone.InstallBinding.Command, standalone.UpdateBinding.Command, strip.UninstallBinding.Command, strip.ExportBinding.Command, rootRemove.Command, extension.Branch.Command, library.Branch.Command, tool.Branch.Command]),
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingReadAndDiscover(),
                     [standalone.HelpBinding.Command, standalone.StatusBinding.Command, standalone.ContextBinding.Command, standalone.FindBinding.Command, standalone.ReferencesBinding.Command, route.Branch.Command]),
                 new(global::OpenForge.Cli.OutputText.Shared.SharedText.HelpHeadingCheckAndMaintain(),
@@ -139,8 +140,10 @@ internal static class CliCompositionRoot
                 tool.ListBinding,
                 tool.InstallBinding,
                 tool.RemoveBinding,
+                strip.UninstallBinding,
+                strip.ExportBinding,
             ],
-            rootLeaves: [.. standalone.RootLeaves, new CliRootLeaf(rootRemove.Command)]);
+            rootLeaves: [.. standalone.RootLeaves, new CliRootLeaf(rootRemove.Command), new CliRootLeaf(strip.UninstallBinding.Command), new CliRootLeaf(strip.ExportBinding.Command)]);
         return new CliCoreApplication(
             process,
             tree,

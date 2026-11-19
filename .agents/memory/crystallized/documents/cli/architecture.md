@@ -303,7 +303,7 @@ Open Forge's own file edits use the shared write path. The settings `tools` list
 
 ## Link Fragments
 
-Framework Sources also handles comment markers, target-word spans and path bases under the [comment-link contract](contracts/shared/source-references/interface.md#comment-links). References, Context and the local-reference contributor consume these shared facts. Comment discovery extends reference scans without adding routing, loading or metadata authority. The host supplies bounded optional Git history reads and the comment discovery file list, which reuses the Route Inspect workspace enumeration. Framework keeps evidence interpretation and commands keep repair selection and effects.
+Framework Sources also handles comment markers, target-word spans and path bases under the [comment-link contract](contracts/shared/source-references/interface.md#comment-links). References, Context and the local-reference contributor consume these shared facts. Comment discovery extends reference scans without adding routing, loading or metadata authority. The host supplies bounded optional Git history reads and the comment discovery file list. One host helper, `WorkspaceFileList`, owns Git's file list for comment discovery, Route Inspect and export. Framework keeps evidence interpretation and commands keep repair selection and effects.
 
 Framework Sources classifies local targets before parsing fragments. Its shared
 resolver gives commands heading, line-range and lexical-symbol facts under the
@@ -403,6 +403,15 @@ record and complete-inventory facts belong to `Framework/Libraries/`. Library
 attach, sync, detach, list, and inspect policy, plans, findings, results, and
 rendering remain under `Commands/Library/`. This placement adds no dependency
 injection, runtime registry, reflection, or sibling-private import.
+
+Uninstall and export follow the same map. Their two commands share one plain-docs
+plan under `Commands/Stripping/`: the removal selection, document edits, flatten
+moves, the selection flags, findings and the result model. Uninstall applies the
+plan in place through the same folder's plan application and runtime-folder
+removal. Export writes it to its destination from `Commands/Export/`, and the
+root host supplies Git's file list through the shared `WorkspaceFileList`. The Markdown
+parser supplies link label spans, and Framework Sources resolves local
+destinations, so neither command adds a parser.
 
 Definitions, binding, behavior-owning composition, models, and supporting
 behavior remain within the narrowest command or capability owner. A private
@@ -581,7 +590,7 @@ The accepted local delivery trial adds host-detected `dist`, independent
 `dist:wrapper`, and explicit `publish:native` / `publish:wrapper` commands.
 Local publication consumes existing validated tarballs; wrapper packaging needs
 no native artifact or .NET SDK. Complete-release orchestration still checks all
-six native packages before the wrapper. Authoring these commands does not
+six native packages before the scoped wrapper and its unscoped alias. Authoring these commands does not
 authorize an agent to publish. Distribution defines the package boundaries.
 
 Developer builds restore by default; explicit offline and no-restore modes
@@ -632,7 +641,7 @@ only the shipped launcher.
 Target selection is shared by wrapper generation, host packing and release
 collection. The recorded wrapper dependency graph defines that version’s
 selected platforms. Release publication validates exactly those native packages
-and publishes the wrapper last. Default selection remains all six targets.
+and publishes the scoped wrapper, then the unscoped alias. Default selection remains all six targets.
 These scripts contain no CLI domain behavior or general build framework.
 `src/cli/` contains only C# implementation, projects and their required resources.
 Maintained repository agent tooling belongs under `scripts/agent-tooling/`.
@@ -650,8 +659,9 @@ test, collection and npm publication behavior belongs to shared root scripts.
 
 Root package.json owns one product version. Standard npm version handling and a
 small lifecycle hook project that exact version to one .NET property. Staging
-generates all seven npm manifests and dependencies from the version and platform
-table. The informational version derives from the .NET version. Builds stamp the selected version before compilation. Optional SHA builds
+generates all eight npm manifests and dependencies from the version and platform
+table. Python wheel metadata maps that same version to PEP 440. Each target's
+`open-forge` wheel carries its executable as an installed script. The informational version derives from the .NET version. Builds stamp the selected version before compilation. Optional SHA builds
 change only the produced artifact version. Tests, packages and releases consume
 that identity rather than supplying a second version. A release may reuse a
 successful build only for the selected source commit and version.

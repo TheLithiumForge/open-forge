@@ -1,0 +1,237 @@
+{
+  "schemaVersion": 3,
+  "command": "uninstall",
+  "status": "completed",
+  "detail": "standard",
+  "filter": null,
+  "workspace": {
+    "path": "<workspace>",
+    "selectedBy": "explicit-workspace"
+  },
+  "summary": {
+    "headline": "Would remove Open Forge with 11 changes.",
+    "kind": "preview"
+  },
+  "findings": [],
+  "effects": [
+    {
+      "path": ".agents/README.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": "framework",
+      "owner": null
+    },
+    {
+      "path": ".agents/directives/_directives.md",
+      "kind": "file",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": "strip",
+      "owner": null
+    },
+    {
+      "path": ".agents/loader.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": "framework",
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/_memory.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": "framework",
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/crystallized/_crystallized.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": "framework",
+      "owner": null
+    },
+    {
+      "path": ".agents/memory/crystallized/project.md",
+      "kind": "file",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": "strip",
+      "owner": null
+    },
+    {
+      "path": ".agents/open-forge.json",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": "state",
+      "owner": null
+    },
+    {
+      "path": ".agents/open-forge.lock.json",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": "state",
+      "owner": null
+    },
+    {
+      "path": "AGENTS.md",
+      "kind": "file",
+      "action": "rewritten",
+      "outcome": "planned",
+      "reason": "root-host",
+      "owner": null
+    },
+    {
+      "path": "CLAUDE.md",
+      "kind": "file",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": "root-host",
+      "owner": null
+    },
+    {
+      "path": ".open-forge-state",
+      "kind": "directory",
+      "action": "deleted",
+      "outcome": "planned",
+      "reason": "state",
+      "owner": null
+    }
+  ],
+  "counts": {
+    "filesDeleted": 7,
+    "filesRewritten": 3,
+    "filesMoved": 0,
+    "foldersDeleted": 1,
+    "filesKept": 1,
+    "infos": 1
+  },
+  "limitations": [],
+  "data": {
+    "mode": "dry-run",
+    "strip": [
+      "metadata"
+    ],
+    "flatten": null,
+    "plan": [
+      {
+        "action": "delete",
+        "path": ".agents/README.md",
+        "reason": "framework",
+        "parts": [],
+        "before": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "rewrite",
+        "path": ".agents/directives/_directives.md",
+        "reason": "strip",
+        "parts": [
+          "metadata"
+        ],
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "delete",
+        "path": ".agents/loader.md",
+        "reason": "framework",
+        "parts": [],
+        "before": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "delete",
+        "path": ".agents/memory/_memory.md",
+        "reason": "framework",
+        "parts": [],
+        "before": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "delete",
+        "path": ".agents/memory/crystallized/_crystallized.md",
+        "reason": "framework",
+        "parts": [],
+        "before": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "rewrite",
+        "path": ".agents/memory/crystallized/project.md",
+        "reason": "strip",
+        "parts": [
+          "metadata"
+        ],
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "delete",
+        "path": ".agents/open-forge.json",
+        "reason": "state",
+        "parts": [],
+        "before": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "delete",
+        "path": ".agents/open-forge.lock.json",
+        "reason": "state",
+        "parts": [],
+        "before": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "rewrite",
+        "path": "AGENTS.md",
+        "reason": "root-host",
+        "parts": [
+          "managed-section"
+        ],
+        "before": "<sha256>",
+        "after": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "delete",
+        "path": "CLAUDE.md",
+        "reason": "root-host",
+        "parts": [],
+        "before": "<sha256>",
+        "outcome": "planned"
+      },
+      {
+        "action": "delete-directory",
+        "path": ".open-forge-state",
+        "reason": "state",
+        "parts": [],
+        "outcome": "planned"
+      }
+    ],
+    "kept": [
+      {
+        "path": ".agents/directives/_directives.md",
+        "reason": "edited"
+      }
+    ],
+    "collisions": [],
+    "verified": false
+  },
+  "recovery": {
+    "path": null,
+    "disposition": "not-required"
+  },
+  "next": {
+    "kind": "command",
+    "command": "open-forge uninstall --strip metadata --workspace <workspace> --automatic",
+    "reason": "Apply this plan."
+  }
+}

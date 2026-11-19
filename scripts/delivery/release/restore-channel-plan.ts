@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { valid } from "semver";
-import { MainPackageName, PlatformPackages } from "../package-model.ts";
+import { AliasPackageName, MainPackageName, PlatformPackages } from "../package-model.ts";
 import { AllTargets } from "../targets.ts";
 import { releaseChannel, ReleaseChannel } from "./release-selection.ts";
 import { distTagArguments } from "../npm/dist-tag.ts";
@@ -21,7 +21,7 @@ export function restoreChannels(version: string, channels?: string): string[] {
 export function restoreChannelPlan(version: string, previous: string, channels?: string): ChannelRestore[] {
   assert.ok(valid(previous), "--to must be an exact SemVer.");
   const tags = restoreChannels(version, channels);
-  const names = [...AllTargets.map((rid) => PlatformPackages[rid].packageName), MainPackageName];
+  const names = [...AllTargets.map((rid) => PlatformPackages[rid].packageName), MainPackageName, AliasPackageName];
   return names.flatMap((name) => tags.map((channel) => ({ name, version: previous, channel })));
 }
 
@@ -31,4 +31,12 @@ export function restoreArguments(change: ChannelRestore): string[] {
 
 export function restoreCommands(plan: readonly ChannelRestore[]): string[] {
   return plan.map((change) => `npm ${restoreArguments(change).join(" ")}`);
+}
+
+// Checks every package before any change. A package without the previous version, such as an alias
+// introduced by the bad release, is skipped and returned so its tags can be handled by hand.
+export function applyRestorePlan(plan: readonly ChannelRestore[], exists: (name: string, version: string) => boolean, apply: (change: ChannelRestore) => void): string[] {
+  const skipped = [...new Set(plan.map((change) => change.name))].filter((name) => !exists(name, plan.find((change) => change.name === name)?.version ?? assert.fail()));
+  for (const change of plan) if (!skipped.includes(change.name)) apply(change);
+  return skipped;
 }

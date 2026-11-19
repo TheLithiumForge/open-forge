@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Text;
 using OpenForge.Cli.Composition.Shared.Git;
 using OpenForge.Cli.Composition.Shared.Git.Models;
+using OpenForge.Cli.Composition.Shared.WorkspaceFiles;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Operation;
 using OpenForge.Cli.Core.Commands.Route.Inspect.Models.Result;
 
@@ -57,18 +58,8 @@ internal sealed class RouteInspectGitFileEnumerator
                 if (probe is { State: GitWorkTreeState.Inside, ExitCode: 0 })
                 {
                     scope = RouteInspectMatchingFilesScope.GitTrackedAndUntracked;
-                    var inventory = await _git.RunAsync(workspaceRoot,
-                        ["ls-files", "--cached", "--others", "--exclude-standard", "-z", "--", "."], deadline.Token).ConfigureAwait(false);
-                    if (inventory is { ExitCode: 0 } files && !GitOutput.IsUntrusted(files)
-                        && GitOutput.ReadNulEntries(files.Output) is { } entries)
+                    if (await WorkspaceFileList.ListAsync(_git, workspaceRoot, CheckDeadline, deadline.Token).ConfigureAwait(false) is { } paths)
                     {
-                        var paths = new List<string>();
-                        foreach (var path in entries)
-                        {
-                            CheckDeadline();
-                            paths.Add(path);
-                        }
-
                         var result = RouteInspectFileEnumeration.Success(scope.Value, paths);
                         CheckDeadline();
                         return result;

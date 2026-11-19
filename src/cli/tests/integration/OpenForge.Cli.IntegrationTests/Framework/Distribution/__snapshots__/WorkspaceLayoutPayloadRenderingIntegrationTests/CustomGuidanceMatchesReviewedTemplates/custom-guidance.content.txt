@@ -227,6 +227,10 @@ Context files live in `docs/context/`. Native Skills stay in `.agents/skills/`, 
 
 Use the optional CLI to read and maintain Open Forge's Markdown, rules, and links. Read this guide before running commands other than `context`. Reading it grants no installation or package-change authority.
 
+Install the CLI with `npm install -g @thelithiumforge/open-forge@beta`. The next release adds the same-version alias `npm install -g open-forge@beta`. Install one npm name because both provide `open-forge`. Once PyPI publishing is enabled, use `pipx install --pip-args=--pre open-forge` or `uvx --prerelease allow open-forge --version`. Stable releases work with `pipx install open-forge` and `uvx open-forge`.
+
+Each PyPI wheel holds one platform's native executable, the same one npm installs, and puts it on PATH. Wheels cover x64 and ARM64 and need Python 3.9 or later, glibc 2.39 or later on Linux and macOS 15 or later on macOS.
+
 First installation can select the context folder with `install --main-root <folder>`. The default is `--main-root .agents`. Native Skills stay in `.agents/skills/`, and settings and ownership stay in `.agents/open-forge.json` and `.agents/open-forge.lock.json`. Use `./...` for exact workspace-relative operands and source IDs for layout-independent selections. Older CLIs do not support custom roots. Relocating an established installation is not available yet. Read [installation details](references/packages.md#install) before an authorized setup change.
 
 Before you write workspace files or metadata, read the file formats in `docs/context/README.md`, or run `open-forge help concepts` if that page was deleted.
@@ -264,10 +268,10 @@ Select relevant scopes from returned descriptions and batch their source IDs. Af
 
 - [Reading and discovery](references/discovery.md): context, tags, headings, direct references, route inspection, and health checks. Find candidates, inspect their relationships, then load only the relevant chain or bounded linked context.
 - [Route maintenance](references/routes.md): create, update, move, remove, index, repair, and cleanup. Read before changing routes or generated navigation.
-- [Framework and packages](references/packages.md): install setup, update, removal, all Extension and Library commands, and the Tool commands for supported tools such as CodeGraph. Read for an authorized lifecycle task.
+- [Framework and packages](references/packages.md): install setup, update, removal, uninstall and export, all Extension and Library commands, and the Tool commands for supported tools such as CodeGraph. Read for an authorized lifecycle task.
 - [Shared options and results](references/common.md): global flags, source syntax, worktrees and sandboxes, previews, unattended execution, permission boundaries, and exit codes. Read before an unfamiliar command or when interpreting a result.
 
-Preview each mutation with `--dry-run` and inspect its plan before applying. Run installation or package changes only when requested. `--automatic`, `--yes`, `--force`, and `--allow-path` add no human authorization. Check semantic status and exit code. Writing commands keep locks and new recovery bundles in the workspace's fixed `.open-forge-state/` folder. Read the worktree and sandbox rules in [shared options and results](references/common.md#worktrees-and-sandboxes) before diagnosing a lock failure. Resolve an in-scope suggested next step or report the boundary when a command is incomplete or blocked. Do not force the same effect through manual edits.
+Preview each mutation with `--dry-run` and inspect its plan before applying. Run installation or package changes only when requested. `--automatic`, `--yes`, `--force`, and `--allow-path` add no human authorization. Check semantic status and exit code. Writing commands keep locks and new recovery bundles in the workspace's fixed `.open-forge-state/` folder. Uninstall removes that folder as its last step. Read the worktree and sandbox rules in [shared options and results](references/common.md#worktrees-and-sandboxes) before diagnosing a lock failure. Resolve an in-scope suggested next step or report the boundary when a command is incomplete or blocked. Do not force the same effect through manual edits.
 
 .agents/skills/open-forge-cli/references/common.md
 ---
@@ -902,6 +906,31 @@ Remove one exact path or delegate to a typed route, Extension, or Library remova
 | `--allow-path <path>`                      | Grant a supported additional destination permission. Repeat as needed within the authorized task |
 
 Removal retains eligible removed bytes in recovery data. Use [Cleanup](routes.md#cleanup) only after the user has checked the changes.
+
+## `uninstall`
+
+Remove Open Forge from the workspace. Uninstall deletes the Framework and Extension files that still match what Open Forge installed, its sections in `AGENTS.md` and `CLAUDE.md`, route scaffolds, settings, the lock and folders left empty. Its last step removes `.open-forge-state/`, which stays only when it holds recovery data or a link or cannot be read. User files stay. Edited managed files stay and are listed as kept. Once the lock is gone, a second run changes nothing. Detach Libraries first. Run it only when the user asked to remove Open Forge.
+
+It takes the shared selection flags below, plus `--automatic` to run without confirmation.
+
+## `export <destination>`
+
+Write a copy of the project as it would look after `uninstall` to a new or empty folder, and leave the project unchanged. Open Forge's own files and state are left out, its sections in `AGENTS.md` and `CLAUDE.md` are removed and edited managed files are kept, as uninstall keeps them. Every other file is copied: Git's tracked files plus untracked files Git does not ignore, or without Git every file the `.gitignore` rules allow. `.open-forge-state/` and links are never copied. Prefer a destination outside the project. One inside it is allowed and left out of the copy. A file, a folder that already holds files or a folder that holds the project is refused. Export asks no question and keeps no recovery data. When writing stops part way, delete the destination and run it again.
+
+Eval stages: Organized Open Forge is the normal install. Organized docs is `export ../stage-4 --strip metadata,entrypoints`. Unorganized docs is `export ../stage-3 --strip metadata,entrypoints,links --flatten docs`.
+
+## Selection flags
+
+`uninstall` and `export` share one plan and these flags.
+
+| Flag                     | Meaning                                                                                    |
+| ------------------------ | ------------------------------------------------------------------------------------------ |
+| `--strip <parts>`        | Strip `metadata`, `frontmatter`, `entrypoints` or `links` from the documents that stay     |
+| `--flatten <folder>`     | Move the documents below the folder's subfolders into the folder                           |
+| `--remove-edited <path>` | Remove a named edited managed file or section. Repeat as needed                            |
+| `--dry-run`              | List every delete, rewrite and move with SHA-256 hashes                                    |
+
+Repeat `--strip` or use commas. `metadata` removes only Open Forge keys, and `frontmatter` removes the whole block and wins over `metadata`. A `SKILL.md` keeps its normal Skill keys under both. `entrypoints` deletes the entrypoint files, managed ones included, with any text in them. `links` removes every link between documents, `Entries` lists and whole `@open-forge` or `@rune` comments included, and keeps external links, images, links to other files and code. Source code is never read. Parts run as `frontmatter` or `metadata`, then `entrypoints`, then `links`, then flatten. `--flatten` is for categories, subcategories and custom routes, keeps `SKILL.md` files and entrypoints that are not deleted in place and stops on a name collision before any write.
 
 ## Extensions
 

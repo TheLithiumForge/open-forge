@@ -1,0 +1,10 @@
+Would write 4 files to <destination>.
+Workspace: <workspace>
+  rewrite          .agents/docs/README.md  (frontmatter, links)
+  delete           .agents/docs/game/_game.md  (entrypoints)
+  move             .agents/docs/game/moves.md -> .agents/docs/moves.md  (frontmatter, links)
+  move             .agents/docs/game/rules.md -> .agents/docs/rules.md  (frontmatter, links)
+No files were changed.
+1 file copied, 1 file rewritten, 2 files moved, 1 file left out.
+  Write the copy.
+Next: open-forge export <destination> --strip frontmatter --strip entrypoints --strip links --flatten .agents/docs --workspace <workspace>

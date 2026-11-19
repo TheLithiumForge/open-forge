@@ -108,7 +108,22 @@ internal static class MarkdownInlineFactCollector
             rawDestination: link.Url ?? string.Empty,
             span: span,
             destinationSpan: destinationSpan,
-            label: MarkdownInlineTextReader.ReadLinkLabel(link)));
+            label: MarkdownInlineTextReader.ReadLinkLabel(link))
+        {
+            LabelSpan = ReadLabelSpan(link, span, bodyStart),
+        });
+    }
+
+    private static MarkdownTextSpan? ReadLabelSpan(LinkInline link, MarkdownTextSpan span, int bodyStart)
+    {
+        if (link.FirstChild is not { } first || link.LastChild is not { } last)
+        {
+            return new MarkdownTextSpan(span.Start + 1, 0);
+        }
+
+        return first.Span.Start < 0 || last.Span.End < first.Span.Start
+            ? null
+            : ToDocumentSpan(new SourceSpan(first.Span.Start, last.Span.End), bodyStart);
     }
 
     private static void AddAutolinkFact(

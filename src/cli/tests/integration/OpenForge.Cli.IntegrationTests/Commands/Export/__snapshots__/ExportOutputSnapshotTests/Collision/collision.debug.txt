@@ -1,0 +1,12 @@
+Flattening would place 2 files at .agents/docs/notes.md: .agents/docs/game/notes.md, .agents/docs/other/notes.md. Nothing was changed.
+Workspace: <workspace>
+  Error  .agents/docs/notes.md  Flattened names collide [export.flatten-collision]
+         Flattening would place 2 files at .agents/docs/notes.md: .agents/docs/game/notes.md, .agents/docs/other/notes.md. Nothing was changed.
+         fix by hand
+  Error  .agents/docs/rules.md  Flattened names collide [export.flatten-collision]
+         Flattening would place 2 files at .agents/docs/rules.md: .agents/docs/game/rules.md, .agents/docs/other/rules.md. Nothing was changed.
+         fix by hand
+Collisions:
+  .agents/docs/notes.md <- .agents/docs/game/notes.md, .agents/docs/other/notes.md
+  .agents/docs/rules.md <- .agents/docs/game/rules.md, .agents/docs/other/rules.md
+2 errors.

@@ -1,9 +1,12 @@
-import { MainPackageName, PlatformPackages, type SupportedRuntime } from "../package-model.ts";
+import { AliasPackageName, MainPackageName, PlatformPackages, type SupportedRuntime } from "../package-model.ts";
 import { validateVersion } from "../version.ts";
+import { ThirdPartyNotices } from "../layout.ts";
 
 import { AllTargets, targetDependencies } from "../targets.ts";
 
 export const WrapperReadme = "README.md";
+export const LauncherPath = "bin/open-forge.js";
+export const AliasLauncher = `#!/usr/bin/env node\nimport "${MainPackageName}/${LauncherPath}";\n`;
 
 const publication = { license: "MIT", publishConfig: { access: "public" } } as const;
 
@@ -41,6 +44,21 @@ export function nativeManifest(runtime: SupportedRuntime, version: string) {
     os: [platform.nodePlatform],
     cpu: [platform.nodeArchitecture],
     ...(platform.nodePlatform === "linux" ? { libc: "glibc" } : {}),
-    files: ["bin", "LICENSE"],
+    files: ["bin", "LICENSE", ThirdPartyNotices],
+  };
+}
+
+export function aliasManifest(version: string) {
+  return {
+    ...publication,
+    ...projectLinks,
+    name: AliasPackageName,
+    version: validateVersion(version),
+    description: "Open Forge CLI. Alias for @thelithiumforge/open-forge at the same version.",
+    type: "module",
+    bin: { [AliasPackageName]: `./${LauncherPath}` },
+    files: ["bin", "LICENSE", WrapperReadme],
+    engines: { node: ">=22.18.0" },
+    dependencies: { [MainPackageName]: version },
   };
 }

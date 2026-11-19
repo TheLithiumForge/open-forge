@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { AllTargets, parseTargets, readTargets } from "./targets.ts";
-import { chmodSync, copyFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { chmodSync, copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join, relative } from "node:path";
 import { PlatformPackages, type SupportedRuntime } from "./package-model.ts";
 import { readBuilt } from "./built-artifacts.ts";
@@ -8,13 +8,15 @@ import { reportFailure, run } from "./process.ts";
 import { readOptions } from "./options.ts";
 import { repositoryRoot } from "./repository.ts";
 import { committedVersion } from "./version.ts";
-import { deliveryDirectory, hostRuntime, nativeDirectory } from "./layout.ts";
+import { deliveryDirectory, hostRuntime, nativeDirectory, ThirdPartyNotices } from "./layout.ts";
 import { hashArtifact } from "./manifest.ts";
 import { removeOutputs, resetOutput } from "./output.ts";
 import { packNpmPackages } from "./npm/pack-packages.ts";
 import { testInstalledNative } from "./npm/__tests__/installed-native.ts";
 import { runStage } from "./stage.ts";
 import { recordWrapper } from "./npm/wrapper-artifact.ts";
+import { hostWheel, sourceLicenses } from "./pypi/wheel.ts";
+import { smokeAliases } from "./aliases/smoke.ts";
 
 export function pack(root: string, rid: SupportedRuntime, skipTests = false, targets: readonly SupportedRuntime[] = AllTargets): void {
   targets = readTargets(targets);
@@ -31,8 +33,9 @@ export function pack(root: string, rid: SupportedRuntime, skipTests = false, tar
   copyFileSync(join(root, native), join(portable, platform.nativeFileName));
   chmodSync(join(portable, platform.nativeFileName), 0o755);
   copyFileSync(join(root, "LICENSE"), join(portable, "LICENSE"));
+  copyFileSync(join(root, ThirdPartyNotices), join(portable, ThirdPartyNotices));
   const archive = `open-forge-${manifest.version}-${rid}.tar.gz`;
-  run("tar", ["-czf", join(output, archive), "-C", portable, platform.nativeFileName, "LICENSE"], root);
+  run("tar", ["-czf", join(output, archive), "-C", portable, platform.nativeFileName, "LICENSE", ThirdPartyNotices], root);
   const packages = runStage("Create npm tarballs", () =>
     packNpmPackages({
       repositoryRoot: root,
@@ -45,6 +48,8 @@ export function pack(root: string, rid: SupportedRuntime, skipTests = false, tar
       compiledLauncher: join(directory, "build/launcher"),
     }),
   );
+  const wheel = hostWheel(manifest.version, rid, readFileSync(packages.stagedNative), sourceLicenses(root));
+  writeFileSync(join(output, wheel.name), wheel.bytes);
   if (!skipTests)
     runStage("Test installed npm package", () =>
       testInstalledNative({
@@ -55,7 +60,8 @@ export function pack(root: string, rid: SupportedRuntime, skipTests = false, tar
         ...packages,
       }),
     );
-  const paths = [archive, basename(packages.mainTarball), basename(packages.platformTarball)];
+  if (!skipTests) runStage("Test installed alias", () => smokeAliases(output, rid, manifest.version, false));
+  const paths = [archive, basename(packages.mainTarball), basename(packages.platformTarball), basename(packages.aliasTarball), wheel.name];
   const files = paths.map((path) => ({ path, sha256: hashArtifact(output, path) }));
   writeFileSync(join(output, "SHA256SUMS"), files.map((file) => `${file.sha256}  ${basename(file.path)}\n`).join(""));
   readBuilt(root, rid, !skipTests);

@@ -111,12 +111,7 @@ internal sealed class SourceLinkDestinationResolver
             if (path.Length == 0 || path.StartsWith('/') || path.Contains('\\') || IsDriveRooted(path)
                 || TryReadAbsoluteUri(path, out _))
                 return Malformed(ReadFragment(raw), SourceLinkTargetResolution.Malformed, "A comment target needs a local file path.");
-            if (!raw.StartsWith("./", StringComparison.Ordinal) && !raw.StartsWith("../", StringComparison.Ordinal))
-            {
-                var directory = Path.GetDirectoryName(input.SourceCanonicalPath.Replace('/', Path.DirectorySeparatorChar)) ?? string.Empty;
-                var depth = directory.Length == 0 ? 0 : directory.Split(Path.DirectorySeparatorChar).Length;
-                raw = string.Concat(Enumerable.Repeat("../", depth)) + raw;
-            }
+            raw = ReadCommentRelativeDestination(input.SourceCanonicalPath, raw);
         }
         if (TryReadAbsoluteUri(raw, out var uri))
         {
@@ -539,6 +534,66 @@ internal sealed class SourceLinkDestinationResolver
                 Target = target,
                 Finding = null,
             };
+    }
+
+    /// <summary>
+    /// Reads one authored destination lexically, without touching the filesystem.
+    /// Comment targets start at the repository root unless they start with ./ or ../.
+    /// </summary>
+    internal static SourceLocalDestination ReadLocalDestination(
+        string lexicalRoot,
+        string sourceCanonicalPath,
+        string rawDestination,
+        bool isComment = false)
+    {
+        var raw = isComment ? ReadCommentRelativeDestination(sourceCanonicalPath, rawDestination) : rawDestination;
+        if (raw.Length == 0 || TryReadAbsoluteUri(raw, out _))
+        {
+            return raw.Length == 0 ? SourceLocalDestination.Unresolved : SourceLocalDestination.External;
+        }
+
+        var hash = raw.IndexOf('#');
+        var suffix = hash >= 0 ? raw[hash..] : string.Empty;
+        if (hash == 0)
+        {
+            return new SourceLocalDestination
+            {
+                Kind = SourceLocalDestinationKind.Local,
+                CanonicalPath = sourceCanonicalPath,
+                LexicalPath = Path.Combine(lexicalRoot, sourceCanonicalPath.Replace('/', Path.DirectorySeparatorChar)),
+                Suffix = suffix,
+                IsFragmentOnly = true,
+            };
+        }
+
+        if (!TryDecodeDestinationPath(raw, out var decodedPath))
+        {
+            return SourceLocalDestination.Unresolved;
+        }
+
+        var lexical = SourceLinkLexicalPathResolver.Resolve(lexicalRoot, sourceCanonicalPath, decodedPath);
+        return lexical is { State: SourceLinkLexicalPathState.Complete, CanonicalPath: { } canonicalPath, LexicalTarget: { } target }
+            && canonicalPath != "."
+            ? new SourceLocalDestination
+            {
+                Kind = SourceLocalDestinationKind.Local,
+                CanonicalPath = canonicalPath.TrimEnd('/'),
+                LexicalPath = target,
+                Suffix = suffix,
+            }
+            : SourceLocalDestination.Unresolved;
+    }
+
+    private static string ReadCommentRelativeDestination(string sourceCanonicalPath, string raw)
+    {
+        if (raw.StartsWith("./", StringComparison.Ordinal) || raw.StartsWith("../", StringComparison.Ordinal))
+        {
+            return raw;
+        }
+
+        var directory = Path.GetDirectoryName(sourceCanonicalPath.Replace('/', Path.DirectorySeparatorChar)) ?? string.Empty;
+        var depth = directory.Length == 0 ? 0 : directory.Split(Path.DirectorySeparatorChar).Length;
+        return string.Concat(Enumerable.Repeat("../", depth)) + raw;
     }
 
     private static bool TryReadAbsoluteUri(string raw, [NotNullWhen(true)] out Uri? uri)

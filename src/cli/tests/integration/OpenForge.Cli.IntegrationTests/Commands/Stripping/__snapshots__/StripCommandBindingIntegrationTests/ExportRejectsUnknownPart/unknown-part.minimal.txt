@@ -1,0 +1,3 @@
+Cannot export: 'LINKS' is not a --strip part. Use metadata, frontmatter, entrypoints or links.
+1 errors.
+Next: open-forge export --help

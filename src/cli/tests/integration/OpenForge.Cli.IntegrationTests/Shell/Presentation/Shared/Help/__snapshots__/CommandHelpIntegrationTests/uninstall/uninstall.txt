@@ -1,0 +1,59 @@
+  Remove Open Forge from this workspace and keep the files you wrote.
+
+Usage:
+  open-forge uninstall [--strip <parts>]... [--flatten <folder>] [--remove-edited <path>]... [--dry-run] [--automatic]
+
+Examples:
+  open-forge uninstall --dry-run
+  open-forge uninstall --strip metadata,entrypoints --automatic
+  open-forge uninstall --strip metadata,entrypoints,links --flatten docs
+
+Behavior:
+  Uninstall deletes the Framework and Extension files that still match what
+  Open Forge installed, its sections in AGENTS.md and CLAUDE.md, route
+  scaffolds, its settings and lock, and folders left empty.
+  Files you wrote stay. Managed files you edited stay unless you name them.
+  Preview with --dry-run. Applying asks first unless you add --automatic.
+  Redirected or JSON requests that would write need --automatic.
+  Recovery data is kept until every change verifies, and an interrupted
+  run reports it.
+
+Options:
+  --strip <parts>         Strip metadata, frontmatter, entrypoints or links from
+                          the documents that stay. Repeat or use commas.
+  --flatten <folder>      Move documents below this folder's subfolders into the
+                          folder itself.
+  --remove-edited <path>  Remove this managed file or section even though you
+                          edited it. Repeat for more.
+  --dry-run               List every delete, rewrite and move with hashes,
+                          without writing.
+  --automatic             Apply the plan without a confirmation prompt.
+
+Global options: --workspace, --format, --detail, --detail-filter, --help,
+--version. See open-forge --help.
+
+Details:
+  Kept: Edited managed files and sections are listed as kept. Name one with
+  --remove-edited to remove it anyway. Your own text in AGENTS.md and CLAUDE.md
+  stays, and Git-ignore rules stay. Detach Libraries first.
+  Parts: metadata removes Open Forge frontmatter keys and keeps other keys and
+  the body. frontmatter removes the whole frontmatter block and wins over
+  metadata. A SKILL.md keeps its Skill keys under both. entrypoints deletes the
+  entrypoint files, with their Entries lists and any text you wrote in them.
+  links turns links to documents into their text and removes the whole comment
+  around an @open-forge or @rune comment link. External links, images, links to
+  other files and code stay. Source code is never read.
+  Flatten: Use it on a category, subcategory or custom route. SKILL.md files
+  stay where they are, and so do entrypoints that are not deleted. Kept links
+  are rewritten so they still work. A name two files would share stops the run
+  before any write.
+
+Automation:
+  --format json: one minified schema-3 JSON result on stdout for every status.
+  Exit codes: 0 completed, 1 failed, 2 completed with warnings, 3 incomplete, 4
+  invalid input, 5 blocked, 130 cancelled.
+  Text exits 0, 2, 3: stdout. Others and bounded debug diagnostics: stderr.
+
+Related commands:
+  open-forge export --help  Write the same plan to a new folder instead
+  open-forge status --help  See which managed files you edited

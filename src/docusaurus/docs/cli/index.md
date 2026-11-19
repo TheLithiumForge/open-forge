@@ -78,7 +78,7 @@ examples before its behavior notes and options.
 | Use documents you already have                             | [route include](/guides/cli#route-include), [route exclude](/guides/cli#route-exclude)                                                                                                                                                                                                                     |
 | Learn how the framework works                              | [help concepts](/guides/cli#help)                                                                                                                                                                                                                                                                          |
 | Check and repair                                           | [index](/guides/cli#index), [doctor](/guides/cli#doctor), [repair](/guides/cli#repair), [cleanup](/guides/cli#cleanup)                                                                                                                                                                                     |
-| Install, update, or remove Framework content               | [install](/guides/cli#install), [update](/guides/cli#update), [remove](/guides/cli#remove)                                                                                                                                                                                                                 |
+| Install, update, or remove Framework content               | [install](/guides/cli#install), [update](/guides/cli#update), [uninstall](/guides/cli#uninstall), [export](/guides/cli#export), [remove](/guides/cli#remove)                                                                                                                                               |
 | Manage optional Extension packages                         | [extension list](/guides/cli#extension-list), [extension inspect](/guides/cli#extension-inspect), [extension create](/guides/cli#extension-create), [extension install](/guides/cli#extension-install), [extension update](/guides/cli#extension-update), [extension remove](/guides/cli#extension-remove) |
 | Share files through a Library                              | [library list](/guides/cli#library-list), [library inspect](/guides/cli#library-inspect), [library attach](/guides/cli#library-attach), [library sync](/guides/cli#library-sync), [library detach](/guides/cli#library-detach)                                                                             |
 | Set up developer tools                                     | [tool list](/guides/cli#tool-list), [tool install](/guides/cli#tool-install), [tool remove](/guides/cli#tool-remove)                                                                                                                                                                                       |
@@ -97,6 +97,18 @@ Index and Repair preserve protected sources, including managed files. Doctor nam
 Code and docs can connect through `@open-forge <path> <text>` at the start of a comment. The `@rune` marker is also recognised. Markdown uses an HTML comment. Plain paths start at the repository root, while `./` and `../` start next to the file holding the comment.
 
 References lists these links, Context checks them during requested link expansion and Doctor reports broken targets. Repair suggests moved targets and edits the chosen target word with an encoded repository-root path. Its choices distinguish Git renames, heading diffs, old section content and weak unique slugs. The [comment-link reference](/guides/cli#comment-links) gives the grammar, examples and repair rules.
+
+## Take Open Forge back out
+
+`uninstall` removes the files Open Forge installed and still recognizes, its sections in `AGENTS.md` and `CLAUDE.md`, route scaffolds and its state, ending with `.open-forge-state/`. Your files stay, and so do managed files you edited. Running it again once Open Forge is gone changes nothing. `export <destination>` plans the same thing but writes the result to a new or empty folder and leaves the project unchanged, so you can keep using Open Forge. Both take `--strip` with `metadata`, `frontmatter`, `entrypoints` or `links` to end with plain Markdown, and `--flatten docs` to put the documents in one folder. See [uninstall](/guides/cli#uninstall), [export](/guides/cli#export) and the [selection flags](/guides/cli#selection-flags).
+
+The evals use three stages of the same routed documents:
+
+| Stage                | Command                                                                          |
+| -------------------- | -------------------------------------------------------------------------------- |
+| Organized Open Forge | None. Keep the normal install.                                                   |
+| Organized docs       | `open-forge export ../stage-4 --strip metadata,entrypoints`                      |
+| Unorganized docs     | `open-forge export ../stage-3 --strip metadata,entrypoints,links --flatten docs` |
 
 ## Everyday habits
 

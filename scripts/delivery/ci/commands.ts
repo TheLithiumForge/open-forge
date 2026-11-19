@@ -1,4 +1,6 @@
 import { CiCommand } from "./command-names.ts";
+import { SmokeOption } from "./smoke-checks.ts";
+import { DeliveryOption } from "../option-names.ts";
 
 export const ciCommands = {
   [CiCommand.reuse]: {
@@ -44,9 +46,12 @@ export const ciCommands = {
   },
   [CiCommand.smoke]: {
     script: "ci/smoke-public.ts",
-    options: ["version"],
+    options: [DeliveryOption.version, SmokeOption.aliases],
     description: "Check an exact published npm version in a fresh workspace.",
-    details: ["Requires --version <x.y.z-pre>. Contacts npm and installs into a new temporary directory."],
+    details: [
+      "Requires --version <x.y.z-pre>. Contacts npm and installs into a new temporary directory.",
+      "--aliases also checks the npm alias and PyPI wheel. Use only after both channels publish that version. Requires Python.",
+    ],
     examples: ["smoke:public --version 0.9.0-beta.11"],
   },
   [CiCommand.wsl]: {

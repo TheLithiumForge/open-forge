@@ -2,7 +2,7 @@
 
 Open Forge gives your coding agent the rules, docs and decisions each task needs, and a place to keep what it learns for the next session.
 
-I built it because one long `AGENTS.md` hands every task every rule, and every new session starts by relearning the project. Open Forge has three parts: agent documents with the routes that link them, a CLI that installs and maintains them, and optional workflows from Extensions. It's all built on Markdown files in your repository, so you read, diff and review it like the rest of your code.
+I built it because one long `AGENTS.md` hands every task every rule, and every new session starts by relearning the project. At The Lithium Forge we forge software, and over time that became a way of working, a forge methodology. Open Forge opens it up to everyone, together with the tooling that makes it easy to follow. It has two parts: agent documents with the routes that link them, and a CLI that maintains them, extends them with Extensions, Libraries and tools, and exports them as plain docs. It's all built on Markdown files in your repository, so you read, diff and review it like the rest of your code.
 
 E.g. a rule tagged `LoadNow` with `applyTo: ["src/export/**"]` loads only for tasks that change export code. A fact your team accepted last month, such as "CSV exports use UTF-8", sits in Crystallized Memory, so the next export task starts from it instead of guessing.
 
@@ -15,12 +15,64 @@ The design comes from an idea I call **Adaptive Context Engineering (ACE)**. An 
 [![Docs](https://img.shields.io/badge/docs-site-d9480f)](https://thelithiumforge.github.io/open-forge/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
+## Highlights
+
+Open Forge has two parts. The Framework is the agent system, the Markdown rules, docs and memory your agents read. The CLI is an optional tool that maintains, extends and exports it.
+
+### Framework
+
+The Framework gives each task the rules and knowledge that apply to it, all from Markdown in your repository:
+
+- [Context on demand](#how-it-works) - agents read the loader and the files tagged `LoadNow` at startup. Everything else opens when a task needs it, and `applyTo` limits a rule to the files it covers.
+- Scopes - specialized rules live with their work, such as frontend rules in a frontend scope. Scopes nest as deep as you need.
+- [Core categories](#core-categories) - Directives hold required behavior, Guidance holds advice, and Patterns, Skills, Templates and Maps hold reusable shapes, capabilities, starting files and pointers. Each category answers one question.
+- [Memory](#memory) - Working, Emerging, Crystallized and Archived keep temporary notes, unsettled findings, accepted knowledge and history apart.
+- [Your own docs](#your-own-docs) - include a file or a whole `docs` folder where it lives, and agents find it through the loader.
+- [Your files](#change-the-defaults) - edit any shipped file, or keep a local change in a `{name}.overwrite.md` that updates leave alone.
+
+### CLI
+
+The CLI is optional. Everything it does, you can do by editing files, and every command that changes files can show its plan first with `--dry-run`. It's one native executable for Linux, macOS and Windows on x64 and Arm64, from [GitHub releases, npm or PyPI](#install). PyPI wheels start with the next release.
+
+The CLI has three parts, which maintain the workspace, extend the Framework and keep it portable.
+
+#### Maintain
+
+These commands set up the workspace and keep it current:
+
+- Install - `install` sets up Minimal, Essentials, Full Core or your own selection, through a short wizard or one command.
+- Update - `update` brings changed Framework files to the current version and lists every file it replaces, so local edits are never replaced silently.
+- Navigation - `index` fills missing frontmatter and the `Entries` lists agents navigate by.
+- Checks and repairs - `status` and `doctor` find broken links and stale navigation. `repair` fixes the renames and moves it can confirm, with evidence from Git.
+- Comment links - an `@open-forge <path>` comment links code to a doc. `references` lists these links in both directions, and `doctor` reports broken ones.
+- Context for agents - `context` shows the startup routes, and `find` searches by tags and headings. `--format json` returns output for scripts and agents.
+
+#### Extend
+
+These commands add packages, shared folders and tools:
+
+- [Extensions](#extensions) - `extension install` adds packaged methods such as Planning, and `extension create` packages your own.
+- [Libraries](#library) - `library attach` links a shared folder, such as a Git submodule, into place.
+- [Sharing](#share-with-your-team) - share context in one repo, across repos with Libraries, or with any project through Extensions.
+- [Code-search tools](#credits) - `tool install` installs CodeGraph or Codebase Memory with their own installers, then sets them up for the project.
+
+### Portability
+
+Your context stays in plain files you can take with you:
+
+- Markdown - the Framework is Markdown in your repository, with no database and no runtime.
+- Any agent tool - it works with every tool that reads `AGENTS.md` or `CLAUDE.md`, with nothing specific to one vendor.
+- Export - `export <folder>` writes a copy of the project as it would look after `uninstall`, and the project itself doesn't change. `--strip` can remove Open Forge metadata, frontmatter, entrypoints and document links, and `--flatten` moves the documents in a folder's subfolders up into it.
+- Uninstall - `uninstall` removes the Framework and Extension files Open Forge installed, its sections in `AGENTS.md` and `CLAUDE.md` and its settings. Files you wrote stay, and so do installed files you edited. It takes the same options as `export`.
+- [MIT license](#license) - you can use, change and share Open Forge, including in commercial work.
+
 ## Requirements
 
 To use Open Forge, you need:
 
 - An agent tool that reads `AGENTS.md` or `CLAUDE.md`.
 - Node.js 22.18 or later, if you install the CLI from npm. The native release and the manual copy need no Node.js.
+- Python 3.9 or later with pipx or uv, if you install the CLI from PyPI.
 
 ## Install
 
@@ -32,6 +84,29 @@ npm install -g @thelithiumforge/open-forge@beta
 
 The CLI is optional. Everything it does, you can do by editing files. The other install methods are below.
 
+### Alias And Python
+
+The next release adds the unscoped npm alias and PyPI wheels. Until those packages are published, use the scoped npm command above.
+
+To use the npm alias after that release, run:
+
+```sh
+npm install -g open-forge@beta
+```
+
+The alias uses `@thelithiumforge/open-forge` at the same version. That entry package selects one native platform package, which holds the executable, its license and `THIRD-PARTY-NOTICES.txt`. Install one entry name or the other globally because both provide `open-forge`.
+
+To install the beta from PyPI with pipx, run:
+
+```sh
+pipx install --pip-args=--pre open-forge
+open-forge --version
+```
+
+To run it with uv, use `uvx --prerelease allow open-forge --version`. Stable releases work with `pipx install open-forge` and `uvx open-forge`.
+
+PyPI has one wheel per platform, and pip or uv picks the one that matches your system. Each wheel holds the same native executable as npm, its license and `THIRD-PARTY-NOTICES.txt`. It puts the executable straight on your PATH, so Python doesn't start when you run `open-forge`. Linux wheels require glibc 2.39 or later, and macOS wheels require macOS 15 or later. Windows wheels cover x64 and ARM64.
+
 ### From a GitHub release
 
 Download `open-forge-<version>-<platform>.tar.gz` from the [releases page](https://github.com/TheLithiumForge/open-forge/releases). The platform is `linux-x64`, `linux-arm64`, `osx-x64`, `osx-arm64`, `win-x64` or `win-arm64`. Check it against the release's `SHA256SUMS` and extract it. For example, on Linux:
@@ -41,7 +116,7 @@ sha256sum --check --ignore-missing SHA256SUMS
 tar -xzf open-forge-<version>-linux-x64.tar.gz
 ```
 
-The archive holds a single `open-forge` executable (`open-forge.exe` on Windows) and its license. Put it on your `PATH`, or keep it in your repository, e.g. as `tools/open-forge`, and run it as `./tools/open-forge`.
+The archive holds a single `open-forge` executable (`open-forge.exe` on Windows), its license and `THIRD-PARTY-NOTICES.txt` with the licenses of the code built into it. Put it on your `PATH`, or keep it in your repository, e.g. as `tools/open-forge`, and run it as `./tools/open-forge`.
 
 ### From source
 
@@ -473,6 +548,7 @@ The CLI speeds up the repetitive parts, such as finding context, keeping navigat
 | Check that everything still fits             | `open-forge status`, `open-forge doctor`           | Broken links and stale navigation show up before they mislead an agent            |
 | Pick up a new Framework version              | `open-forge update --dry-run`                      | Every file it would replace is listed, so local edits are never replaced silently |
 | Remove a default for good                    | `open-forge remove <path> --dry-run`               | Later updates respect the removal                                                 |
+| Take Open Forge back out                     | `open-forge uninstall --dry-run`                   | Your files stay, and edited managed files stay unless you name them               |
 
 Commands that change files offer `--dry-run`, so you see the plan before anything is written. These flags come up most often:
 
@@ -569,12 +645,36 @@ This repository uses Open Forge to build Open Forge, so its own documents double
 
 ## Roadmap
 
-Markdown and the CLI are where Open Forge starts. The CLI can already install code-search tools such as CodeGraph and Codebase Memory with their own installers and set them up for a project, using `open-forge tool install`. Directions for later include vector search and more plugins.
+Markdown and the CLI are where Open Forge starts. Directions for later include vector search and more plugins.
 
 ## Changelog
 
 Each version's changes are in the [GitHub releases](https://github.com/TheLithiumForge/open-forge/releases).
 
+## Credits
+
+Open Forge builds on other people's work.
+
+The CLI is built with:
+
+| Project                                                          | Used for                                       | License      |
+| ---------------------------------------------------------------- | ---------------------------------------------- | ------------ |
+| [.NET](https://github.com/dotnet/runtime)                        | The runtime and the native executable          | MIT          |
+| [System.CommandLine](https://github.com/dotnet/command-line-api) | Command-line parsing                           | MIT          |
+| [Markdig](https://github.com/xoofx/markdig)                      | Markdown parsing                               | BSD-2-Clause |
+| [YamlDotNet](https://github.com/aaubry/YamlDotNet)               | Frontmatter parsing, with its static generator | MIT          |
+
+Their copyright notices and full license texts are in [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt), which ships with the executable.
+
+`tool install` sets up these tools:
+
+| Tool                                                               | What it does                                                             | License |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------ | ------- |
+| [CodeGraph](https://github.com/colbymchenry/codegraph)             | Gives coding agents a searchable graph of the code's symbols and calls   | MIT     |
+| [Codebase Memory](https://github.com/DeusData/codebase-memory-mcp) | Indexes the codebase into a knowledge graph that coding agents can query | MIT     |
+
+Open Forge doesn't ship these tools. `tool install` runs each tool's own installer, and each tool keeps its own license.
+
 ## License
 
-[MIT](LICENSE).
+Open Forge is released under the [MIT License](LICENSE), copyright 2026 TheLithiumForge. You can use, change and share it, including in commercial work, as long as you keep the copyright and license notice. The projects in [Credits](#credits) keep their own licenses.

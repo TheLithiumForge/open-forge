@@ -6,7 +6,8 @@ import { join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { PlatformPackages } from "../../package-model.ts";
+import { AliasDirectory, PlatformPackages } from "../../package-model.ts";
+import { ThirdPartyNotices } from "../../layout.ts";
 import { IsolatedNpm } from "./isolated-npm.ts";
 import { packageReadme } from "../package-readme.ts";
 import {
@@ -52,14 +53,16 @@ for (const platform of ExpectedPlatforms) {
       const mainDirectory = join(stageRoot, ExpectedMainDirectory);
       const platformDirectory = join(stageRoot, platform.directoryName);
       const nativePath = `bin/${platform.nativeFileName}`;
-      const platformFiles = [licenseName, nativePath, manifestName].sort();
-      assert.deepEqual(readdirSync(stageRoot).sort(), [ExpectedMainDirectory, platform.directoryName].sort());
+      const platformFiles = [licenseName, ThirdPartyNotices, nativePath, manifestName].sort();
+      assert.deepEqual(readdirSync(stageRoot).sort(), [ExpectedMainDirectory, platform.directoryName, AliasDirectory].sort());
       assert.deepEqual(fileInventory(mainDirectory), ExpectedMainFiles);
       assert.deepEqual(fileInventory(platformDirectory), platformFiles);
       assert.deepEqual(readFileSync(join(platformDirectory, nativePath)), FixtureNativeBytes);
       const licenseBytes = readFileSync(join(repositoryRoot, licenseName));
       assert.deepEqual(readFileSync(join(mainDirectory, licenseName)), licenseBytes);
       assert.deepEqual(readFileSync(join(platformDirectory, licenseName)), licenseBytes);
+      assert.deepEqual(readFileSync(join(platformDirectory, ThirdPartyNotices)), readFileSync(join(repositoryRoot, ThirdPartyNotices)));
+      assert.equal(existsSync(join(stageRoot, AliasDirectory, ThirdPartyNotices)), false, "The alias carries only a forwarding launcher, so it needs no notices.");
       assert.equal(readFileSync(join(mainDirectory, readmeName), "utf8"), packageReadme(readFileSync(join(repositoryRoot, readmeName), "utf8")));
       if (process.platform !== "win32") {
         assert.equal(statSync(join(platformDirectory, nativePath)).mode & executablePermissions, executablePermissions);

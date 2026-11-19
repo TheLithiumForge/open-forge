@@ -46,6 +46,8 @@ Behavior file for technology-neutral resolution and conformance.
   accepted public shared result envelope, source-location, semantic-status,
   process-exit, primary-stream, and compatibility Interface and its
   technology-neutral formation Behavior.
+- [`plain-docs/`](plain-docs/_plain-docs.md) routes the plan, selection flags
+  and strip parts that `uninstall` and `export` share.
 - [`workspace-permissions/`](workspace-permissions/_workspace-permissions.md)
   routes the consumer-owned exact grant document, approval, result coordinates
   and permission publication boundary. Consumers opt in explicitly.
@@ -64,6 +66,7 @@ Behavior file for technology-neutral resolution and conformance.
 ## Entries
 
 - [Accepted current shared global-flag Interface and Behavior contract set](global-flags/_global-flags.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Global #Flag #CurrentTruth
+- [Route the plain-docs plan that uninstall and export share, with its selection flags, strip parts and flatten](plain-docs/_plain-docs.md) - #Memory #Crystallized #CLI #Command #Contract #Strip #Uninstall #Export #Shared #CurrentTruth
 - [Accepted shared CLI result envelope, source-location, status, exit, stream, and compatibility contracts](result-coordinates/_result-coordinates.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #Result #JSON #Status #CurrentTruth
 - [Accepted current shared source-reference Interface and Behavior contract set](source-references/_source-references.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Source #Reference #CurrentTruth
 - [Permanent route for the shared operation-specific source-universe filter contracts](source-universe-filters/_source-universe-filters.md) - #Memory #Crystallized #CLI #Release #Command #Contract #Shared #Source #Universe #Filter #CurrentTruth
