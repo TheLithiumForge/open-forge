@@ -5,9 +5,9 @@ namespace OpenForge.Cli.Core.Commands.Repair.Shared.Request;
 
 internal static class RepairPathValidation
 {
-    internal static string ValidateMarkdown(string path, string parameterName)
+    internal static string ValidateSourcePath(string path, string parameterName)
     {
-        var validated = SourceWorkspaceRelativePath.ValidateMarkdown(path, parameterName);
+        var validated = SourceWorkspaceRelativePath.Validate(path, parameterName, allowWorkspaceRoot: false);
         return ValidatePortable(validated, parameterName);
     }
 

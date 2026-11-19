@@ -178,6 +178,8 @@ internal static class DoctorWording
             DoctorFindingKind.ReferenceTargetMissing => global::OpenForge.Cli.OutputText.Shared.SharedText.TitleBrokenLink(),
             DoctorFindingKind.ReferenceTargetRenamed => global::OpenForge.Cli.OutputText.Doctor.DoctorMaintenanceText.RenameTitle(),
             DoctorFindingKind.ReferenceFragmentMissing => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleLinkedHeadingWasNotFound(),
+            DoctorFindingKind.ReferenceLineOutOfRange => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleLinkedLineRangeIsOutOfRange(),
+            DoctorFindingKind.ReferenceSymbolMissing => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleLinkedSymbolWasNotFound(),
             DoctorFindingKind.ReferenceFragmentUnverified => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleLinkedHeadingCouldNotBeChecked(),
             DoctorFindingKind.ReferenceDestinationMalformed => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleLinkDestinationIsInvalid(),
             DoctorFindingKind.ReferenceDestinationAbsolute => global::OpenForge.Cli.OutputText.Doctor.DoctorText.TitleAbsoluteLocalLinkIsUnsupported(),
@@ -305,6 +307,8 @@ internal static class DoctorWording
             DoctorFindingKind.RouteCompatibilityConflict => EnsureSentence(finding.Message),
             DoctorFindingKind.ReferenceTargetMissing => ReferenceTargetMissing(finding),
             DoctorFindingKind.ReferenceFragmentMissing => ReferenceFragmentMissing(finding),
+            DoctorFindingKind.ReferenceLineOutOfRange => global::OpenForge.Cli.OutputText.Doctor.DoctorText.LineRangeOutOfRange(finding.Subject.Identifier ?? string.Empty),
+            DoctorFindingKind.ReferenceSymbolMissing => global::OpenForge.Cli.OutputText.Doctor.DoctorText.SymbolMissing(finding.Subject.Identifier ?? string.Empty),
             DoctorFindingKind.ReferenceFragmentUnverified => ReferenceFragmentUnverified(finding),
             DoctorFindingKind.ReferenceDestinationMalformed => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatIsNotALinkOpenForgeCanCheck($"{FindingIdentifier(finding)}"),
             DoctorFindingKind.ReferenceDestinationAbsolute => global::OpenForge.Cli.OutputText.Doctor.DoctorPhrases.FormatIsAnAbsolutePathUseARelativePath($"{FindingIdentifier(finding)}"),
@@ -386,6 +390,10 @@ internal static class DoctorWording
             DoctorCandidateBasisKind.Title => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelTitleMatch(),
             DoctorCandidateBasisKind.LiteralContent => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelContentMatch(),
             DoctorCandidateBasisKind.RouteNeighborhood => global::OpenForge.Cli.OutputText.Shared.SharedText.LabelNearbyRoute(),
+            DoctorCandidateBasisKind.GitRename => global::OpenForge.Cli.OutputText.Doctor.DoctorText.CandidateGitRename(),
+            DoctorCandidateBasisKind.GitHeadingChange => global::OpenForge.Cli.OutputText.Doctor.DoctorText.CandidateGitHeadingChange(),
+            DoctorCandidateBasisKind.SectionContent => global::OpenForge.Cli.OutputText.Doctor.DoctorText.CandidateSectionContent(),
+            DoctorCandidateBasisKind.UniqueSlug => global::OpenForge.Cli.OutputText.Doctor.DoctorText.CandidateUniqueSlug(),
             _ => throw new ArgumentOutOfRangeException(nameof(basis), basis, "The candidate basis is not defined."),
         };
 
@@ -746,7 +754,8 @@ internal static class DoctorWording
             DoctorFindingKind.ReferenceFragmentUnverified => Action("open-forge doctor", global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageRunDoctorAgainAfterFixingTheSourceFile()),
             DoctorFindingKind.ReferenceTargetMissing or DoctorFindingKind.ReferenceFragmentMissing
                 when finding.Candidates is { Items.Count: > 0 } => Action("open-forge repair", global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageChooseOneOfTheBoundedCandidates()),
-            DoctorFindingKind.ReferenceTargetMissing or DoctorFindingKind.ReferenceFragmentMissing => Sentence(global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageFixTheLinkByHand()),
+            DoctorFindingKind.ReferenceTargetMissing or DoctorFindingKind.ReferenceFragmentMissing
+                or DoctorFindingKind.ReferenceLineOutOfRange or DoctorFindingKind.ReferenceSymbolMissing => Sentence(global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageFixTheLinkByHand()),
             DoctorFindingKind.ReferenceSameTargetPath or DoctorFindingKind.ReferenceSameTargetCase
                 or DoctorFindingKind.ReferenceSameTargetEncoding or DoctorFindingKind.ReferenceSameTargetFragment
                 => Action("open-forge repair --automatic", global::OpenForge.Cli.OutputText.Doctor.DoctorText.MessageApplyTheExactSameTargetCorrection()),

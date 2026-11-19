@@ -28,7 +28,7 @@ The delivery system builds, tests, packages and releases the Open Forge CLI. Eve
 - A test skipped on one platform must give a reason declared in [`platform-skips.ts`](../../../../../scripts/delivery/platform-skips.ts). An undeclared reason fails the delivery report.
 - `test:built` runs only against the commit and working tree that `build:native` built. Commit before building, and do not edit sources until the tests finish.
 - Commands that call `npm run`, such as `ci:job` and `smoke:public`, run through `npx forge` or `npm run`, which supply npm's environment.
-- Each test suite runs under a 20-minute deadline, prints progress every two minutes, and has xUnit name any test running longer than two minutes. At the deadline it records running processes, stops the suite's process tree and fails. Failed and hung tests become GitHub annotations, which are readable without signing in. The `node:test` checks in `verify` annotate their failed tests the same way. The Build job limit is 90 minutes. With the slowest build and suites observed so far, a stall in the last suite still reaches its deadline before that limit. The [delivery guide](../../../../../scripts/delivery/README.md#diagnose-slow-stalled-and-failed-suites) gives the details.
+- Each test suite runs under a 30-minute deadline, prints progress every two minutes, and has xUnit name any test running longer than two minutes. At the deadline it records running processes, stops the suite's process tree and fails. Failed and hung tests become GitHub annotations, which are readable without signing in. The `node:test` checks in `verify` annotate their failed tests the same way. The Build job limit is 120 minutes. With the slowest build and suites observed so far, a stall in the last suite still reaches its deadline before that limit. The [delivery guide](../../../../../scripts/delivery/README.md#diagnose-slow-stalled-and-failed-suites) gives the details.
 
 ## What does each check prove?
 
@@ -44,7 +44,7 @@ removes that evidence.
 | `check:docs`                          | `checks`, Linux              | Repository Markdown passes the document gate: links, frontmatter and inventory                                                                                                                                                 |
 | `build:native`                        | Each of six hosts            | The managed Release build and the Native AOT CLI and test executables compile for that RID. AOT cannot build for another operating system, and the tests must run on the platform they prove, so each RID uses a matching host |
 | Unit suite                            | Each host                    | Core logic, in about 11 seconds                                                                                                                                                                                                |
-| Integration suite, managed and native | Each host                    | Commands against that host's real filesystem, permissions and processes. The native run proves AOT trimming keeps the same behavior                                                                                            |
+| Integration suite, managed and native | Each host                    | Commands against that host's real filesystem, permissions and processes. The native run proves AOT trimming keeps the same behavior. osx-x64 skips it for now                                                                  |
 | Public suite, three modes             | Each host                    | Public commands as users run them: managed tests against the managed CLI, native tests, and managed tests against the native CLI that ships                                                                                    |
 | `ci:bundle`                           | Each host                    | The downloadable archive and checksum for that RID                                                                                                                                                                             |
 | `pack`                                | Each host                    | Packages come only from tested artifacts, and the installed npm launcher starts the native binary                                                                                                                              |
@@ -88,7 +88,7 @@ commit's own Build.
 A direct push reuses another branch's passed Build of the same commit. It waits
 for an earlier one that is still running and reuses it only if it passes, so a
 branch never shows green without a passing Build. A Build that fails, is
-cancelled or runs past 90 minutes makes the push build the commit itself.
+cancelled or runs past 130 minutes makes the push build the commit itself.
 Pull requests, manual runs and Release calls always build. A newer push to a pull request cancels that pull request's older Build, while direct pushes, manual runs and Release calls are never cancelled or queued by another run. Retry failed hosts
 with GitHub's **Re-run failed jobs**, then reuse the completed run.
 
@@ -110,7 +110,9 @@ Run these around a release, in order:
 
 ## How long does a Build take?
 
-`npx forge ci:timings` compares step times across recent Build runs. Native compilation and the six test suites take most of each job. osx-x64 is the slowest host and sets the Build's length: in the ten runs to 2026-10-11 its job took a median of 48 minutes and at most 59. The shared `checks` job adds about five minutes before the matrix starts. [Task 71](../../../archived/cli-development/tasks/task71-streamline-build-release-pipeline.md#timing-analysis) records the full analysis.
+`npx forge ci:timings` compares step times across recent Build runs. Native compilation and the six test suites take most of each job. osx-x64 is the slowest host and sets the Build's length: in the ten runs to 2026-10-11 its job took a median of 48 minutes and at most 59. The shared `checks` job adds about five minutes before the matrix starts.
+
+On 2026-11-14 the osx-x64 job took 66 to 69 minutes. Publishing the native Integration executable took 21 to 23 of them, for a suite that then ran in 3. On 2026-11-16 the Intel runners were 1.5 to 2 times slower. That publish took 30 to 36 minutes, the build alone over 50, and the job hit the 90-minute limit. The maintainer then decided that osx-x64 skips the native Integration publish and suite, and raised the Build job limit to 120 minutes. osx-arm64 still runs native Integration for macOS, as do the other four hosts. The skip is one entry in [`layout.ts`](../../../../../scripts/delivery/layout.ts), and `dist --plan` and `test:built` name it with its reason. Revisit it when Intel runner speed recovers or the job gets more headroom. [Task 71](../../../archived/cli-development/tasks/task71-streamline-build-release-pipeline.md#timing-analysis) records the full analysis.
 
 ## Guides and open work
 

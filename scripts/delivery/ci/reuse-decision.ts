@@ -3,8 +3,11 @@ import { GithubState } from "./github-summary.ts";
 
 export const PushEvent = "push";
 
-/** How long a push waits for an earlier Build of the same commit before building itself. */
-export const ReuseWait = { pollMilliseconds: 30_000, limitMilliseconds: 90 * 60_000 } as const;
+/**
+ * How long a push waits for an earlier Build of the same commit before building itself. The limit
+ * covers the 120-minute Build job limit plus a margin for the `checks` job and runner queueing.
+ */
+export const ReuseWait = { pollMilliseconds: 30_000, limitMilliseconds: 130 * 60_000 } as const;
 
 export const ReuseOutcome = { reuse: "reuse", build: "build", wait: "wait" } as const;
 export type ReuseOutcome = (typeof ReuseOutcome)[keyof typeof ReuseOutcome];

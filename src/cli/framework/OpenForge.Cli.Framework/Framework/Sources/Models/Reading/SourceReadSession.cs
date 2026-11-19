@@ -25,5 +25,7 @@ internal sealed record SourceReadSession
 
     internal SourceDocumentReader DocumentReader { get; }
 
+    internal bool CommentScanComplete { get; init; } = true;
+
     internal IReadOnlyList<SourceCatalogueSelectionScope> DefaultSelectionScopes { get; }
 }

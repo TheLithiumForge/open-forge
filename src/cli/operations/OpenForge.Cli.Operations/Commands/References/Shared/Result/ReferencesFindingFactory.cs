@@ -43,7 +43,10 @@ internal static class ReferencesFindingFactory
             input.Location,
             input.DestinationLocation,
             input.Candidates ?? [],
-            input.StatusOverride);
+            input.StatusOverride)
+        {
+            RawDestination = input.RawDestination,
+        };
 
         // One observation is recorded once. The same file is read by the outgoing scan and again
         // by the incoming scan, and the extractor and the resolver can both report one unusable

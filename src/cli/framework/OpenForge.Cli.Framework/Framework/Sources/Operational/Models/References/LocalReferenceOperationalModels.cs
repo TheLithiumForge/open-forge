@@ -15,6 +15,8 @@ internal enum LocalReferenceKind
 
 internal sealed record LocalReferenceObservation
 {
+    public bool IsComment { get; init; }
+
     public required string SourcePath { get; init; }
 
     public required string RoutePath { get; init; }
@@ -46,6 +48,10 @@ internal enum LocalReferenceCandidateScanState
 
 internal enum LocalReferenceCandidateBasisKind
 {
+    GitRename,
+    GitHeadingChange,
+    SectionContent,
+    UniqueSlug,
     Filename,
     Title,
     LiteralContent,
@@ -75,6 +81,8 @@ internal sealed record LocalReferenceCandidateBasis
 
     internal LocalReferenceCandidateBasisKind Kind { get; }
 
+    internal int Priority => Math.Min((int)Kind, (int)LocalReferenceCandidateBasisKind.Filename);
+
     internal string Value { get; }
 
     internal SourceLocation? Location { get; }
@@ -86,7 +94,7 @@ internal sealed record LocalReferenceCandidateBasis
         => new(kind, value, location);
 }
 
-internal sealed class LocalReferenceCandidateObservation
+internal sealed record LocalReferenceCandidateObservation
 {
     private LocalReferenceCandidateObservation(
         string sourcePath,
@@ -118,6 +126,8 @@ internal sealed class LocalReferenceCandidateObservation
     internal SourceLinkIdentity Candidate { get; }
 
     internal IReadOnlyList<LocalReferenceCandidateBasis> Bases { get; }
+
+    internal string? Fragment { get; init; }
 
     internal static LocalReferenceCandidateObservation Create(
         string sourcePath,

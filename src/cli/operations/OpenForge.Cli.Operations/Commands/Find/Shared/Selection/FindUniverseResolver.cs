@@ -10,6 +10,7 @@ using OpenForge.Cli.Core.Shell.Definitions;
 
 namespace OpenForge.Cli.Core.Commands.Find.Shared.Selection;
 
+// @open-forge .agents/memory/crystallized/documents/cli/contracts/find/behavior.md#source-universe-filter-responsibilities defines source selection
 internal sealed class FindUniverseResolver
 {
     private readonly SourceUniverseFilterResolver _filterResolver;

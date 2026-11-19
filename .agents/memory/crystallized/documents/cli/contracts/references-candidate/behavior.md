@@ -98,12 +98,15 @@ typed result and is not evaluated, scanned, or counted toward aggregate coverage
 
 Include/exclude filters are passed unchanged to the shared Source Universe
 Filters contract for incoming work. With no filter flags, use the normal default
-of all eligible primary-content Markdown sources. With filters, use the effective
+of all eligible primary-content Markdown sources and eligible comment-bearing
+workspace files. With filters, use the effective
 universe produced by the shared union and exclusion-precedence rules. With both,
 the filtered universe affects incoming only; outgoing remains the full selected
 source layer read. With out, reject the filters before scanning.
 
 ## Authored Link Extraction
+
+Also collect [comment links](../shared/source-references/interface.md#comment-links) through the shared reader. Keep their target-word spans and original destination text. Incoming discovery includes eligible comment-bearing workspace files. Exact code paths are valid reference operands. This adds comment occurrences to the existing one-hop result without changing Markdown link admission below.
 
 Extraction uses the one accepted fixed CommonMark/Markdig parser and its typed
 Markdown nodes. It does not add a regular-expression scan, a second parser, or a
@@ -229,9 +232,12 @@ Classify the authored destination before resolving it:
 - An unreadable target needed for local resolution has resolution `unreadable`
   and a `references.target-unreadable` finding.
 - A safely contained path with no existing target has resolution `missing` and a
-  `references.target-missing` finding. An existing target without the authored
-  fragment has resolution `fragment-missing` and a
-  `references.fragment-missing` finding.
+  `references.target-missing` finding. An existing Markdown target without the authored
+  heading has resolution `fragment-missing` and a
+  `references.fragment-missing` finding. Non-Markdown fragment checks use the
+  shared source-reference rules. Invalid line bounds have resolution
+  `line-out-of-range` and finding `references.line-out-of-range`. Missing lexical
+  symbol parts have resolution `symbol-missing` and finding `references.symbol-missing`.
 - An existing, safely contained, unambiguous target with an available fragment
   fact has resolution `complete`.
 
@@ -326,6 +332,8 @@ complete.
 The result builder receives already resolved selector occurrences, physical
 source-layer evidence, parsed occurrence facts, and findings. It does not rerun
 source enumeration, parsing, target resolution, or network work for a renderer.
+Link findings keep their authored destination and source location so the report
+can give a manual correction without reconstructing either value from text.
 It retains selector duplicates in `incomingSelection.supplied`, deduplicates
 logical identities only in `effectiveSources`, preserves every physical
 occurrence, and serializes all nullable members and arrays even when empty.
@@ -400,7 +408,8 @@ A conforming implementation should prove at least these observable scenarios:
    `in` or `out` removes the other section from work and accounting.
 2. Repeated or aliased direction values are invalid, and include/exclude with
    `out` is invalid.
-3. The default incoming universe is all eligible primary-content Markdown. shared
+3. The default incoming universe includes eligible primary-content Markdown and
+   eligible comment-bearing workspace files. Shared
    include/exclude selectors form unions with exclusion precedence, and a
    complete empty result follows only a complete effective scan.
 4. With both, filters change incoming work only; outgoing still reads the full
@@ -446,9 +455,10 @@ A conforming implementation should prove at least these observable scenarios:
 ## Included Source Boundary
 
 Use the combined primary, registered outside and included inventory. Count authored
-links in eligible Markdown once per merged physical file. Retain every included
-row and exact outside identity. Suppress Entries links as navigation and read no
-authored links from opaque formats. A file include never scans unlisted siblings.
+links in eligible Markdown and recognized comments once per merged physical file.
+Retain every included row and exact outside identity. Suppress Entries links as
+navigation. Other text formats contribute only comment links under the shared
+comment rules. A file include never scans unlisted siblings.
 Registered outside inventory can discover unlisted files independently. Included
 catalogue filters still expand only listed descendants.
 

@@ -86,6 +86,8 @@ Include and exclude each take one exact source reference per occurrence. Unresol
 
 ## `references <source-reference>`
 
+References also lists [comment links](common.md#comment-links) in code and Markdown. Use an exact `./path` operand for a code file.
+
 Show direct incoming impact and outgoing dependencies before changing a source.
 
 | Flag                           | Meaning                                                                                 |
@@ -148,6 +150,17 @@ a trailing slash requires a manual edit, and Repair never substitutes a file.
 Web URLs remain unchecked.
 
 Doctor and Repair use the same rename evidence and protected-source rules. Doctor gives one next step and none when clean. A Git timeout marks reference coverage incomplete without manual-removal advice and repeats the complete request, including its workspace.
+
+Markdown fragments select heading slugs. Non-Markdown files accept existing
+1-based lines (`#L111`, `#L111-L125`) or lexical symbols (`#Type.Member`). Each
+dotted symbol part needs an exact identifier token, including in comments or
+strings. Invalid bounds report `reference.line-out-of-range` in Doctor and
+`references.line-out-of-range` in References. Missing parts report
+`reference.symbol-missing` and `references.symbol-missing`. Context checks code
+links without selecting their bodies or reducing completeness for valid links.
+For line or symbol failures, Context and References give a manual correction
+with the authored destination and source location. If these are the only
+findings, that correction is the next step.
 
 Continue with [route maintenance](routes.md) for edits or [Framework and packages](packages.md) for lifecycle changes.
 

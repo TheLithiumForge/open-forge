@@ -22,7 +22,10 @@
         "kind": "file",
         "path": ".agents/docs/guide.md",
         "id": ".agents/docs/guide.md",
-        "location": null
+        "location": {
+          "line": 8,
+          "column": 1
+        }
       },
       "category": null,
       "actions": []

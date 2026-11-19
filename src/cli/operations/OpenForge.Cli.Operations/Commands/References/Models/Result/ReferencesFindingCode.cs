@@ -25,6 +25,8 @@ internal enum ReferencesFindingCode
     DestinationUnsupported,
     TargetMissing,
     FragmentMissing,
+    LineOutOfRange,
+    SymbolMissing,
     TargetUnsafe,
     TargetAmbiguous,
     TargetUnreadable,

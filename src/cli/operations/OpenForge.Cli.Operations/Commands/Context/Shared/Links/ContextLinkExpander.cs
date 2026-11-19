@@ -12,6 +12,7 @@ using OpenForge.Cli.Core.Framework.Documents.Markdown.Models.Structure;
 using OpenForge.Cli.Core.Framework.Filesystem.PhysicalPaths;
 using OpenForge.Cli.Core.Framework.Filesystem.TypedReads;
 using OpenForge.Cli.Core.Framework.Sources.Locations;
+using OpenForge.Cli.Core.Framework.Sources.Loading;
 using OpenForge.Cli.Core.Framework.Sources.Models.Locations;
 using OpenForge.Cli.Core.Framework.Sources.Models.References;
 using OpenForge.Cli.Core.Framework.Sources.References;
@@ -125,7 +126,7 @@ internal sealed class ContextLinkExpander
                 }
 
                 var map = new Utf8SourceMap(document.Source);
-                foreach (var authored in ReadAuthoredLinks(document))
+                foreach (var authored in ReadAuthoredLinks(layer.CanonicalPath, document))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     var location = map.Map(authored.Span.Start, authored.Span.Length);
@@ -138,6 +139,7 @@ internal sealed class ContextLinkExpander
                         Catalogue = graph.Catalogue,
                         SourceCanonicalPath = layer.CanonicalPath,
                         RawDestination = authored.RawDestination,
+                        IsComment = authored.IsComment,
                     };
                     var evidence = new ContextAuthoredLinkEvidence
                     {
@@ -178,7 +180,9 @@ internal sealed class ContextLinkExpander
                         blocked |= finding.Status == CliSemanticStatus.Blocked;
                     }
 
-                    var targetSource = facts.Target.Resolution == SourceLinkTargetResolution.Complete
+                    var checkedFile = facts.Target is { Kind: SourceLinkTargetKind.Local, Resolution: SourceLinkTargetResolution.Complete, Path: { } targetPath }
+                        && !facts.IsFolder && !SourceGeneratedDestinationResolver.IsMarkdown(targetPath);
+                    var targetSource = facts.Target.Resolution == SourceLinkTargetResolution.Complete && !checkedFile
                         ? await _linkedSourceReader.ReadAsync(
                             graph,
                             facts.Target,
@@ -189,6 +193,10 @@ internal sealed class ContextLinkExpander
                     if (facts.Target.Kind == SourceLinkTargetKind.External)
                     {
                         disposition = ContextLinkDisposition.ExternalUnchecked;
+                    }
+                    else if (checkedFile)
+                    {
+                        disposition = ContextLinkDisposition.FileChecked;
                     }
                     else if (facts.Target.Resolution != SourceLinkTargetResolution.Complete || targetSource is null)
                     {
@@ -408,12 +416,12 @@ internal sealed class ContextLinkExpander
             : ContextLinkDisposition.AlreadySelected;
     }
 
-    private static IReadOnlyList<MarkdownLinkFact> ReadAuthoredLinks(MarkdownDocumentFacts document)
+    private static IReadOnlyList<SourceAuthoredLink> ReadAuthoredLinks(string path, MarkdownDocumentFacts document)
     {
         var content = document.GeneratedRegion.State == MarkdownGeneratedRegionState.Complete
             ? document.GeneratedRegion.EntriesBlock?.Span
             : null;
-        return document.Links
+        return SourceAuthoredLinkReader.Read(path, document)
             .Where(link => content is null
                 || link.Span.Start < content.Start
                 || link.Span.End > content.End)

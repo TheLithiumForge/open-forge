@@ -16,6 +16,8 @@ internal enum SourceLinkTargetResolution
     Complete,
     Missing,
     FragmentMissing,
+    LineOutOfRange,
+    SymbolMissing,
     Malformed,
     Absolute,
     Query,
@@ -44,6 +46,8 @@ internal enum SourceLinkDestinationFindingCode
     TargetAmbiguous,
     IdentityCollision,
     FragmentMissing,
+    LineOutOfRange,
+    SymbolMissing,
 }
 
 internal sealed record SourceLinkIdentity
@@ -66,13 +70,15 @@ internal sealed record SourceLinkDestinationInput
         get => _sourceCanonicalPath;
         init
         {
-            _sourceCanonicalPath = SourceWorkspaceRelativePath.ValidateMarkdown(
+            _sourceCanonicalPath = SourceWorkspaceRelativePath.Validate(
                 value,
-                nameof(value));
+                nameof(value), allowWorkspaceRoot: false);
         }
     }
 
     public required string RawDestination { get; init; }
+
+    public bool IsComment { get; init; }
 }
 
 internal sealed record SourceLinkTarget

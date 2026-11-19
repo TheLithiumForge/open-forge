@@ -7,7 +7,7 @@ internal sealed record RepairSourceLocation
 {
     internal RepairSourceLocation(string sourceCanonicalPath, int line, int column)
     {
-        SourceCanonicalPath = RepairPathValidation.ValidateMarkdown(
+        SourceCanonicalPath = RepairPathValidation.ValidateSourcePath(
             sourceCanonicalPath,
             nameof(sourceCanonicalPath));
         if (line < 1)

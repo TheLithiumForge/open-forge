@@ -51,11 +51,6 @@ internal sealed class ReferencesLayerInspector
         var layer = input.Layer;
         var direction = input.Direction;
         var provenance = input.Provenance;
-        if (source.IncludedEntry is not null
-            && !OpenForge.Cli.Core.Framework.Sources.Loading.SourceGeneratedDestinationResolver.IsMarkdown(layer.CanonicalPath))
-        {
-            return new ReferencesLayerInspectionResult(null, true, false, false, false);
-        }
         SourceDocumentReadResult read;
         try
         {
@@ -199,6 +194,8 @@ internal sealed class ReferencesLayerInspector
             or ReferencesFindingCode.DestinationUnsupported
             or ReferencesFindingCode.TargetMissing
             or ReferencesFindingCode.FragmentMissing
+            or ReferencesFindingCode.LineOutOfRange
+            or ReferencesFindingCode.SymbolMissing
             or ReferencesFindingCode.TargetUnsafe
             or ReferencesFindingCode.TargetAmbiguous
             or ReferencesFindingCode.TargetUnreadable

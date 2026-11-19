@@ -7,6 +7,8 @@ open-forge:
 
 # Context Behavior Contract
 
+Requested link expansion includes [comment links](../shared/source-references/interface.md#comment-links). Validate their paths and fragments through the shared resolver. Existing expansion depth, deduplication and target-read rules still apply. A comment alone grants no required-read or routing behavior.
+
 ## Workspace Layout
 
 Use the combined catalogue's retained layout, identities and authored included rows through closure, linked reads and result projection. Resolve loader links from its actual directory and preserve included aliases. Build one logical source for each merged outside target. Inventory must not erase row conditions, reorder authored edges, replace the first-reaching parent or create startup membership.
@@ -286,6 +288,11 @@ physical target is inside the selected workspace. A link may target primary
 content or another contained local source. Record external HTTP and HTTPS links
 as unchecked observations without selecting or fetching them.
 
+Check contained non-Markdown file links before Markdown source selection.
+Keep a successfully checked file as a complete link observation without
+selecting its body or reducing completeness. Keep failed line and symbol
+checks as separate findings.
+
 Positive depths count link edges from the complete pre-expansion startup and
 explicit-route seeds. Depth one adds direct targets. Depth two adds targets of
 the depth-one sources. Higher positive values continue to that depth. `all`
@@ -452,6 +459,9 @@ rerunning the operation.
 
 The report selects its next action from the complete findings before detail or
 severity filtering, following the [Interface next rules](interface.md#next-rules).
+Each line-range or symbol finding gives a manual correction sentence with its
+authored destination and source location. If these are the only findings, the
+next step is one such sentence.
 Pending `applyTo` conditions direct the reader to supply working paths with
 `open-forge context --for <path>`. Unavailable closure, source, link or projection
 facts keep `open-forge doctor` as the next action, including when pending

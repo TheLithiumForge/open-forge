@@ -4,6 +4,18 @@ namespace OpenForge.Cli.OutputText.Doctor;
 
 internal static class DoctorText
 {
+    // @OpenForgeText doctor.candidate.fragment
+    internal static string CandidateFragment(string fragment) => $"target fragment #{fragment}";
+
+    // @OpenForgeText doctor.candidate.git-rename
+    internal static string CandidateGitRename() => "Git file move";
+    // @OpenForgeText doctor.candidate.git-heading-change
+    internal static string CandidateGitHeadingChange() => "Git heading change";
+    // @OpenForgeText doctor.candidate.section-content
+    internal static string CandidateSectionContent() => "matching old section content";
+    // @OpenForgeText doctor.candidate.unique-slug
+    internal static string CandidateUniqueSlug() => "unique heading slug (weak)";
+
     internal static string ContextFolderMissing(string path) => $"The {path} folder is missing";
     internal static string ContextFolderUnreadable(string path) => $"The {path} folder cannot be read";
     internal static string LoaderMissing(string path) => $"{path} is missing.";
@@ -714,5 +726,15 @@ internal static class DoctorText
         ];
     // @OpenForgeText doctor.help.details-1
     internal static string HelpChecksDetails()
-        => "Inspect recovery data, routes, references, managed Framework files, and managed Extensions.";
+        => "Inspect recovery data, routes, references, managed Framework files, and managed Extensions. Markdown fragments select headings. Other files accept existing line ranges such as #L1-L3 or lexical symbols such as #Type.Member.";
+    // @OpenForgeText doctor.fragment.title-linked-line-range-is-out-of-range
+    internal static string TitleLinkedLineRangeIsOutOfRange() => "Linked line range is out of range";
+
+    // @OpenForgeText doctor.fragment.title-linked-symbol-was-not-found
+    internal static string TitleLinkedSymbolWasNotFound() => "Linked symbol was not found";
+    // @OpenForgeText doctor.fragment.line-range-out-of-range
+    internal static string LineRangeOutOfRange(string destination) => $"The line range in {destination} is outside the file or is reversed.";
+
+    // @OpenForgeText doctor.fragment.symbol-missing
+    internal static string SymbolMissing(string destination) => $"A dotted symbol part in {destination} was not found as an identifier token in the file.";
 }

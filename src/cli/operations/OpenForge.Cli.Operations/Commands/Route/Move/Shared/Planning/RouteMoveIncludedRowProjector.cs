@@ -45,7 +45,8 @@ internal sealed class RouteMoveIncludedRowProjector(SourceLinkDestinationResolve
                 RawDestination = link.RawDestination,
             }, cancellationToken).ConfigureAwait(false);
             if (facts.Target.Kind == SourceLinkTargetKind.External) continue;
-            if (facts.Target.Path is not { } target || facts.Finding is not null && facts.Target.Resolution != SourceLinkTargetResolution.FragmentMissing)
+            if (facts.Target.Path is not { } target || facts.Finding is not null && facts.Target.Resolution is not (SourceLinkTargetResolution.FragmentMissing
+                    or SourceLinkTargetResolution.LineOutOfRange or SourceLinkTargetResolution.SymbolMissing))
                 return Stop(RouteMoveFindingCode.ReferenceCoverageIncomplete, facts.Finding?.Cause ?? "An authored outside row cannot be resolved completely.");
             var expectedTarget = input.MovedPaths.GetValueOrDefault(target, target);
             meanings.Add(RouteMoveReferenceScanner.ProjectMeaning(input, facts)

@@ -80,6 +80,8 @@ internal static class DoctorDefinitions
             DoctorFindingKind.ReferenceTargetMissing => "reference.target-missing",
             DoctorFindingKind.ReferenceTargetRenamed => "reference.target-renamed",
             DoctorFindingKind.ReferenceFragmentMissing => "reference.fragment-missing",
+            DoctorFindingKind.ReferenceLineOutOfRange => "reference.line-out-of-range",
+            DoctorFindingKind.ReferenceSymbolMissing => "reference.symbol-missing",
             DoctorFindingKind.ReferenceFragmentUnverified => "reference.fragment-unverified",
             DoctorFindingKind.ReferenceDestinationMalformed => "reference.destination-malformed",
             DoctorFindingKind.ReferenceDestinationAbsolute => "reference.destination-absolute",

@@ -64,6 +64,7 @@ export const buildCommands = {
     details: [
       "Requires current build:native artifacts. Runs unit tests once, integration twice and public-command tests three times.",
       "These are six execution modes on this host, not tests for six operating-system targets.",
+      "osx-x64 skips native integration for now and runs five. The output names each skipped suite with its reason.",
       "Writes reports under artifacts/delivery/<RID>/reports. Next: pack.",
     ],
     examples: ["test:built"],

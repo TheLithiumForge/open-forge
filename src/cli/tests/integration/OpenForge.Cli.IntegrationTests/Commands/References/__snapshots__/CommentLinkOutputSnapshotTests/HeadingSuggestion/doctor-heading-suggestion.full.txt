@@ -1,0 +1,30 @@
+No errors. 1 warning and 3 info findings were recorded.
+Workspace: <workspace>
+Links
+  Warning  src/Order.cs:1:4  Linked heading was not found [reference.fragment-missing]
+         .agents/docs/guide.md has no heading #reference.
+         needs a choice
+         open-forge repair
+         Choose one of the bounded candidates.
+         .agents/docs/reference.md: unique heading slug (weak); target fragment #reference
+         authored value: .agents/docs/guide.md#reference
+         state: missing
+         read from src/Order.cs
+Workspace
+  Info  .agents/open-forge.lock.json  No ownership record [library.ownership-observation]
+         No ownership record exists, so Libraries cannot be read from it.
+         state: unavailable
+         read from .agents/open-forge.lock.json
+Framework files
+  Info  <workspace>/.agents/open-forge.lock.json  No ownership record [framework.ownership-observation]
+         No ownership record exists, so Framework files cannot be read from it.
+         state: unavailable
+         read from <workspace>/.agents/open-forge.lock.json
+Extensions
+  Info  <workspace>/.agents/open-forge.lock.json  No ownership record [extension.ownership-observation]
+         No ownership record exists, so installed Extensions cannot be read from it.
+         state: unavailable
+         read from <workspace>/.agents/open-forge.lock.json
+  4 links and 3 routes checked.
+  1 needs a choice.
+Next: open-forge repair

@@ -21,7 +21,8 @@ internal static class ContextLinkCaseMismatchResolver
         if (initial.Target.Resolution is not (
                 SourceLinkTargetResolution.Complete
                 or SourceLinkTargetResolution.Missing
-                or SourceLinkTargetResolution.FragmentMissing)
+                or SourceLinkTargetResolution.FragmentMissing
+                or SourceLinkTargetResolution.LineOutOfRange or SourceLinkTargetResolution.SymbolMissing)
             || initial.Target.Path is not { } attemptedPath
             || TryReadActualPath(input.Workspace, attemptedPath, cancellationToken) is not { } actualPath)
         {
@@ -37,7 +38,8 @@ internal static class ContextLinkCaseMismatchResolver
             input with { RawDestination = corrected },
             cancellationToken).ConfigureAwait(false);
         if (facts.Target.Resolution is SourceLinkTargetResolution.Complete
-            or SourceLinkTargetResolution.FragmentMissing)
+            or SourceLinkTargetResolution.FragmentMissing
+                or SourceLinkTargetResolution.LineOutOfRange or SourceLinkTargetResolution.SymbolMissing)
         {
             return new ContextLinkDestinationResolution
             {

@@ -15,7 +15,7 @@ Decision](../../decisions/cli/cli-development-toolchain.md) preserves why these
 choices were accepted.
 
 [`package.json`](../../../../../package.json), `bun.lock`, `tsconfig.json`,
-`tsconfig.test.json`, [`eslint.config.mjs`](../../../../../eslint.config.mjs),
+`tsconfig.test.json`, [`eslint.config.mjs`](https://github.com/TheLithiumForge/open-forge/blob/768bd51a5a9f205c2b752d004a7c8635cc82486c/eslint.config.mjs),
 [`/.prettierrc.json`](../../../../../.prettierrc.json), `build.ts`, and the
 focused source under `src/cli/build/` and `src/cli/testing/` now own their exact
 executable values. This document retains their semantic relationship and

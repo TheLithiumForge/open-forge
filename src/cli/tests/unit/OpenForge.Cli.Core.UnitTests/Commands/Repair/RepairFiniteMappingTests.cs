@@ -39,7 +39,7 @@ public sealed class RepairFiniteMappingTests
             ["automatic", "prompt", "explicit-relink"],
             Enum.GetValues<RepairSelectionOrigin>().Select(RepairDefinitions.ReadMachineName));
         Assert.Equal(
-            ["filename", "title", "literal-content", "route-neighborhood"],
+            ["filename", "title", "literal-content", "route-neighborhood", "git-rename", "git-heading-change", "section-content", "unique-slug"],
             Enum.GetValues<RepairCandidateEvidenceKind>().Select(RepairDefinitions.ReadMachineName));
         Assert.Equal(
             ["none", "one", "several"],

@@ -1,0 +1,9 @@
+.agents/guidance/billing/alternate-rounding.md#rounding
+matching old section content: section #rounding content SHA256 1A7C882E71E96E05FBA7087942595D95B9FF146154EF359AC0D382FFF01930A2
+title match: Rounding
+content match: Rounding
+
+.agents/guidance/billing/money-rounding.md#rounding
+matching old section content: section #rounding content SHA256 1A7C882E71E96E05FBA7087942595D95B9FF146154EF359AC0D382FFF01930A2
+title match: Rounding
+content match: Rounding

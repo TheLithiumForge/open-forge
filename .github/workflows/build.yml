@@ -71,8 +71,10 @@ jobs:
     needs: [reuse, checks]
     if: needs.reuse.outputs.run == ''
     runs-on: ${{ matrix.runner }}
-    # osx-x64 has taken up to 59 minutes. Test suites stop at their own 20-minute deadline first.
-    timeout-minutes: 90
+    # osx-x64 sets the limit. Its job took up to 69 minutes on 2026-11-14 and reached 90 when the
+    # Intel runners slowed on 2026-11-16, so it skips native Integration (see layout.ts). Test
+    # suites stop at their own 30-minute deadline first.
+    timeout-minutes: 120
     env:
       RID: ${{ matrix.rid }}
     strategy:

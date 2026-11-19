@@ -86,6 +86,8 @@ internal enum DoctorFindingKind
 
     ReferenceTargetMissing,
     ReferenceFragmentMissing,
+    ReferenceLineOutOfRange,
+    ReferenceSymbolMissing,
     ReferenceFragmentUnverified,
     ReferenceDestinationMalformed,
     ReferenceDestinationAbsolute,
